@@ -7,6 +7,10 @@ sudo true
 sudo apt update
 sudo apt upgrade -y
 
+#Blocca la sospensione energetica del wifi
+sudo rfkill unblock wifi
+sudo rfkill unblock all
+
 # Pulizia dei pacchetti inutili e orfani APT
 sudo apt autoremove -y
 sudo apt autoremove --purge -y

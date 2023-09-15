@@ -145,3 +145,5 @@ nmcli device wifi list
 ### Abilitazione del firewall UFW ###
 sudo ufw enable
 
+###Questo comando bloccherà la modalità sospensione automatica del Wi-Fi. Dopo aver eseguito questo comando, il Wi-Fi rimarrà acceso anche quando il computer è in sospensione.
+sudo rfkill unblock wifi
