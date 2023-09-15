@@ -1,0 +1,46 @@
+00000000                                     1  *Esercizio 10
+00000000                                     2  *
+00000000                                     3  *Realizzare un programma che effettui la somma di due numeri utilizzando una apposita subroutine.
+00000000                                     4  *Per il passaggio dei parametri si utilizzano i registri.
+00000000                                     5  
+00000000                                     6  *Nota: Attenzione al fatto che, affinchè con questa tecnica funzioni tutto correttamente, occorre che il programma chiamante 
+00000000                                     7  *         e la soubroutine chiamata stabiliscano un accordo sui registri utilizzati per lo scambio.
+00000000                                     8  *         Nel programma che segue il chiamante pone i due addendi nei registri D0 e D1 e si aspetta che la soubroutine chiamata
+00000000                                     9  *         ponga il risultato della somma nel registro D2.
+00000000                                    10  
+00000000                                    11  
+00008000                                    12  		ORG	$8000
+00008000  3039 00008800                     13  START		MOVE.W	A,D0
+00008006  3239 00008802                     14  		MOVE.W	B,D1
+0000800C  4EB9 00008400                     15  		JSR		SOMMA
+00008012  33C2 00008808                     16  		MOVE.W	D2,RES1
+00008018                                    17  
+00008018  3039 00008804                     18  		MOVE.W	C,D0
+0000801E  3239 00008806                     19  		MOVE.W	D,D1
+00008024  4EB9 00008400                     20  		JSR		SOMMA
+0000802A  33C2 0000880A                     21  		MOVE		D2,RES2
+00008030                                    22  
+00008030  4E72 2000                         23  		STOP		#$2000
+00008034                                    24  
+00008034                                    25  * Area Dati
+00008800                                    26  		ORG		$8800
+00008800  0005                              27  A		DC.W		5
+00008802  0003                              28  B		DC.W		3
+00008804  0002                              29  C		DC.W		2
+00008806  0004                              30  D		DC.W		4
+00008808                                    31  RES1		DS.W		1
+0000880A                                    32  RES2		DS.W		1
+0000880C                                    33  
+0000880C                                    34  
+0000880C                                    35  * Subroutine per la somma di due numeri:
+0000880C                                    36  *    - si aspetta di trovare i due addendi nei registri D0 e D1 (parametri di ingresso)
+0000880C                                    37  *    - piazza il risultato dell'elaborazione nel registro D2 (parametro di uscita)
+0000880C                                    38  
+00008400                                    39  		ORG		$8400
+00008400  3400                              40  SOMMA	MOVE.W	D0,D2
+00008402  D441                              41  		ADD.W		D1,D2
+00008404  4E75                              42  		RTS
+00008406                                    43  		END		START
+
+No errors detected
+No warnings generated

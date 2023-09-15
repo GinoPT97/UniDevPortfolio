@@ -1,0 +1,2 @@
+/home/kenobi/Documenti/GitHub/CodicePersonale/Librerie-C/List/CMakeFiles/edit_cache.dir
+/home/kenobi/Documenti/GitHub/CodicePersonale/Librerie-C/List/CMakeFiles/rebuild_cache.dir

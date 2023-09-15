@@ -1,0 +1,68 @@
+* Esercizio 14
+
+* Realizzare un programma che converta una stringa in maiuscolo, 
+* sottraendo 32 al codice ASCII delle lettere minuscole.
+
+* La conversione venga effettuata attraverso un sottoprogramma
+* MAIUSC, che riceve l'indirizzo della stringa come parametro sullo stack.
+* La stringa sia terminata da '\0' come in C/C++
+
+* Si supponga di chiamare STRINGA l'etichetta relativa all'indirizzo
+* di partenza della stringa.
+* Il codice C++ del sottoprogramma sara' allora:
+    
+*    void MAIUSC (char STRINGA[]){    
+*    int i=0;	
+*       while(STRINGA[i]!='\0'){
+*  	if (STRINGA[i]>='a')
+* 		if(STRINGA[i]<='z')
+* 			STRINGA[i]=STRINGA[i]-32;
+* 	i++;
+*       }
+*    }
+
+* Si provi il programma con la stringa 'Oggi, 19 Maggio'
+
+
+		ORG		$8000
+INIZIO		MOVE.L	#STRINGA,-(SP)	Metti l'indirizzo della stringa sullo stack
+		JSR		MAIUSC		Chiama il sottoprogramma
+		ADDA		#4,SP			Rimuovi il parametro dallo stack
+		STOP		#$2000		Termina l'esecuzione
+
+*
+* Sottoprogramma di conversione
+*
+		ORG		$8100
+OFF_ADDR	EQU		8			Offset rispetto al frame-pointer dell'indirizzo della stringa
+
+MAIUSC	LINK		A6,#0			Imposta il frame pointer (non ci sono var. locali)
+		MOVEA.L	OFF_ADDR(A6),A0	Mette in A0 l'indirizzo della stringa
+CICLO		TST.B		(A0)			Legge il carattere corrente
+		BEQ		FINECICLO		Se e' il terminatore esce dal ciclo
+		CMP.B		#'a',(A0)		Se e' minore 'a', non convertire
+		BLO		NONCONV
+		CMP.B		#'z',(A0)		Se e' maggiore di 'z', non convertire
+		BHI		NONCONV	
+		SUB.B		#32,(A0)		Converti il valore
+NONCONV	ADDA		#1,A0			Incrementa il puntatore
+		BRA		CICLO			e ricomincia il ciclo
+FINECICLO	UNLK		A6			Ripristina il vecchio f.p.
+		RTS					Ritorna al chiamante
+
+
+*
+* Dichiarazione delle variabili
+*
+		ORG		$8800
+STRINGA	DC.B		'Oggi, 28 Maggio',0
+
+
+
+		END		INIZIO
+
+
+
+
+
+

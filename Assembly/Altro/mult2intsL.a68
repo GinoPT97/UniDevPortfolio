@@ -1,0 +1,23 @@
+*  Programma per moltiplicare MCND e MPY
+*
+      ORG   	$8000
+*
+MULT	CLR.W	         D0                 D0 accumula il risultato
+	MOVE.W       MPY,D1        D1 e' il contatatore di ciclo
+	BEQ             DONE            Se il contatore e' zero e' finito
+LOOP  ADD.W          MCND,D0     altrimenti aggiunge MCND al prodotto parziale
+           ADD.W          #-1,D1          decrementa il contatore
+           BNE              LOOP            Se MPY non si e' azzerato, ripete il giro
+DONE  MOVE.L      D0,PROD      Salva il risultato
+           JMP              $8808           esce
+
+PROD  DS.L   	1         Riserva spazio di memoria per PROD
+MPY   DC.W  	            3         Definisce il valore di MPY
+MCND  DC.W              4       Definisce il valore di MCND
+      END	      MULT      Termina assemblaggio e salta all'entry point
+
+
+
+
+
+

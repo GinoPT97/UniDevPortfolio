@@ -1,0 +1,3 @@
+intersezione(_,_,L).
+instersezione(A,B,I) :-
+

@@ -1,0 +1,18 @@
+* File: token.a68 - Find (address of) token in string
+
+	 ORG		$8000
+START	 MOVEA.L	#STRING,A0
+	 MOVE.B	#TOKEN,D0
+LOOP	 CMP.B	(A0)+,D0
+	 BNE	  	LOOP
+FOUND	 SUBQ.L  	#1,A0
+	 MOVE.L 	A0,TOKENA
+DONE	 JMP		DONE
+
+	 ORG		$8100
+TOKEN	 EQU		':'
+STRING DC.B		'QUI QUO:QUA'
+TOKENA DS.L		1	
+
+	END 	START
+

@@ -1,0 +1,44 @@
+*
+* Questo programma conta quanti elementi di un vettore sono compresi 
+* tra due valori (estremi inclusi).
+* Il programma è costituito da un ciclo che scorre tutti gli elementi del vettore.
+* Per ogni elemento prelevato dal vettore, il programma verifica se il valore
+* è minore o uguale di MAX, in caso positivo verifica se il valore è
+* maggiore o uguale di MIN, in caso ancora positivo incrementa il conteggio.
+* Per gestire il numero di ripetizioni del ciclo si usa il registro D0,
+* inizializzato con la dimensione del vettore.
+* Per gestire il conteggio si usa il registro D1, inizializzato con il valore zero.
+* Il risultato verrà alla fine copiato da D1 nella locazione RES.
+* Per indirizzare il vettore si usa A0.
+* Per prelevare i dati dal vettore si usa il modo di indirizzamento
+* con post-incremento, in modo da puntare automaticamente al
+* successivo elemento nel vettore dopo aver prelevato quello corrente.
+
+
+	ORG $8000
+INIZIO	MOVE DIM,D0
+	MOVE 0,D1
+	LEA V,A0
+
+CICLO	MOVE.B (A0)+,D2			sposta l'elemento del vettore nel registro D2 e post-decrementa A0
+	CMP.B MAX,D2			confronta con MAX
+	BGT DIVR				salta se MAX è maggiore di D2 (Branch if Greater Than)
+	CMP.B	MIN,D2			confronta con MIN
+	BLT DIVR				salta se MIN è minore di D2 (Branch if Less Than)
+	ADD #1,D1				incrementa il conteggio se invece l'elemento risulta compreso tra MIN e MAX
+DIVR	SUB #1,D0
+	BNE CICLO
+
+	MOVE D1,RES				pone il risultato in memoria alla locazione RES
+FINE	JMP FINE				Fine programma: ciclo infinito
+
+DIM	DC.W 8				dimensione del vettore
+V	DC.B  3,5,10,89,50,1,45,91		vettore
+MAX	DC.B 50				estremo superiore
+MIN	DC.B 10				estremo inferiore
+RES	DS.W	1				locazione di memoria che conterrà il risultato del conteggio
+
+	END INIZIO				la END va messa alla fine, dopo i dati
+
+
+

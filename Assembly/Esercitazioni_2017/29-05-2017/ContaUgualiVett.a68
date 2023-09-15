@@ -1,0 +1,75 @@
+* Esercizio 15
+* 
+* Si scriva un programma assembly che date due stringhe di eguale lunghezza calcoli il numero di caratteri 
+* omologhi delle due stringhe che sono uguali.
+* Il conteggio deve essere effettuato attraverso un sottoprogramma CONTAUG, che riceve l'indirizzo delle 
+* due stringhe come parametro sullo stack e restituisce come parametro di uscita il valore CAR_UG.
+* Le stringhe siano terminata da '\0' come in C/C++
+* 
+* Si supponga di chiamare STR1 e STR2 le etichette relative agli indirizzi di partenza delle due stringhe.
+* Il codice C++ del sottoprogramma sarà allora:
+* 
+* 	void CONTAUG (char STR1[], char STR2[], int & CAR_UG){
+*    		int i=0;
+* 		CAR_UG=0;
+*    		while(STR1[i]!='\0'){
+*      		   if (STR1[i]==STR2[i])
+* 	       		     CAR_UG++;
+* 		   i++;
+*   		}
+*   	}
+* 
+* Si provi il programma con le stringhe:	'Oggi 19 Maggio 2003'
+* 						'Ieri 18 Maggio 2003'
+
+	ORG	$8000
+MAIN	MOVE.L	#$FFFF,D0	*Sporca registro D0 per simularne l'utilizzo
+	PEA	STR1
+	PEA 	STR2
+	PEA	CAR_UG
+	JSR	CONTAUG
+	ADDA	#12,SP
+	STOP	#$2000
+
+	ORG	$8400
+STR1		DC.B	'Oggi 27 Giugno 2002',0
+STR2		DC.B	'Ieri 26 Giugno 2002',0
+CAR_UG	DS.W	1
+
+
+OFF_STR1	EQU	16
+OFF_STR2	EQU	12
+OFF_CAR_UG	EQU 	8
+
+	ORG	$8600
+CONTAUG	LINK	A6,#0
+
+		MOVEM.L	A0-A2/D0-D1,-(SP)
+		MOVEA.L	OFF_STR1(A6),A0	
+		MOVEA.L	OFF_STR2(A6),A1
+		MOVEA.L	OFF_CAR_UG(A6),A2
+		CLR.L  D0
+CICLO		TST.B 	(A0) 
+		BEQ	FINE
+		MOVE.B (A0)+,D1 
+		CMP.B	(A1)+,D1
+		BNE CICLO
+		ADDQ	#1,D0
+		BRA CICLO
+FINE		MOVE.W	D0,(A2)
+		MOVEM.L	(SP)+,A0-A2/D0-D1
+		UNLK	A6
+		RTS
+	
+	END	MAIN
+
+
+
+
+
+
+
+
+
+
+

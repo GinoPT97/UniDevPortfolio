@@ -1,0 +1,89 @@
+* Programma ASM 68k
+* CE1 - Esercitazione 08.06.2016
+* COGNOME:
+* NOME:	
+* MATRICOLA:
+*
+* Esercizio
+* Dato un  array T di interi unsigned (WORD) memorizzato a partire dall'indirizzo $8200 e un valore intero OFFSET, 
+* scrivere un programma che generi un nuovo vettore di interi S a partire dall'array T tale che:
+*   - l'array S contenga lo stesso numero di elementi del vettore T
+*   - l'array S sia costruito in base alla seguente regola:
+*          -  S[i] = T[i]  + OFFSET 
+*       
+*
+* Si realizzi il programma utilizzando le subroutine e un meccanismo di passaggio dei parametri 
+* basato sullo stack.
+*
+* La subroutine riceve in ingresso:
+*	1.  l'indirizzo di partenza dell'array T
+*	2.  l'indirizzo di partenza dell'array di uscita S
+*     	3.  il numero R di elementi del vettore T
+*	4.  il valore del parametro OFFSET
+*
+* Al termine dell'esecuzione della subroutine, l'array S deve risultare
+* correttamente memorizzato in memoria a partire dalla locazione di memoria $8300. 
+*
+* Ad es. se l'array T contiene i valori [30 10 5 35 20 30] e  OFFSET è 5 il programma dovrà restituire
+* l'array S [35 15 10 40 25 35]
+*
+*
+
+*Area Main
+		ORG	$8000
+START		MOVE.L	#$FFFF,A0		*Sporco il registro A0 
+		MOVE.L	#$1111,D1		*Sporco il registro D1
+		MOVE.L	#T,-(SP)
+		MOVE.L	#S,-(SP)
+		MOVE.W	#R,-(SP)
+		MOVE.W	#OFFSET,-(SP)
+		JSR		INCREM
+		ADDA.L	#12,SP
+		STOP		#$2700
+			
+*Area dati
+		ORG	$8200
+T		DC.W	30,10,5,35,20,30
+OFFSET	EQU	5
+R		EQU	6			*Noto dalla traccia
+
+		ORG	$8300			*Richiesto dalla traccia: rispettare questo vincolo
+S		DS.W	6
+
+*Area subroutine
+		ORG	$8400
+OFF_T		EQU	16
+OFF_S		EQU	12
+OFF_R		EQU	10
+OFF_DISPL	EQU	8
+
+INCREM	LINK	A6,#0
+		MOVE.L	A0,-(SP)
+		MOVE.L	A1,-(SP)
+		MOVE.L	D0,-(SP)
+		MOVE.L	D1,-(SP)
+		MOVEA.L	OFF_T(A6),A0
+		MOVEA.L	OFF_S(A6),A1
+		MOVE.W	OFF_R(A6),D0
+		BEQ		FINE				*Salto se il vettore ha riempimento nullo
+		
+		SUBI	#1,D0					*Soluzione con DBRA
+LOOP		MOVE.W	(A0)+,D1			*Il valore dell'elemento corrente del vettore T e' spostato in D1
+		ADD.W		OFF_DISPL(A6),D1		*Somma 5 a D1
+		MOVE.W	D1,(A1)+			*Colloca il dato incrementato in S
+		DBRA		D0,LOOP
+
+FINE		MOVE.L	(SP)+,D1
+		MOVE.L	(SP)+,D0
+		MOVE.L	(SP)+,A1
+		MOVE.L	(SP)+,A0
+		UNLK	A6
+		RTS
+		END	START
+
+
+
+
+
+
+

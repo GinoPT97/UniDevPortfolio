@@ -1,0 +1,11 @@
+Installare Flutter :
+
+sudo snap install flutter --classic
+
+Poi impostalo :
+
+sudo snap refresh snap-store --channel=preview/edge
+
+Per invertire fai questo :
+
+sudo snap refresh snap-store --channel=latest/stable

@@ -1,0 +1,22 @@
+* Programma per sommare i primi 17 interi
+*
+*D0 contiene la somma parziale
+*D1 contiene l'elemento corrente da sommare
+
+		ORG		$8000
+START		CLR.W		D0
+		MOVE.W	N,D1
+LOOP		ADD.W		D1,D0
+		ADD.W		#-1,D1  *notare l'effetto sui bit X,C
+		BNE		LOOP
+DONE		MOVE.W	D0,SUM
+		STOP		#$2700
+*
+		ORG		$8200
+N		DC.W		17
+SUM		DS.W		1
+		END		START
+
+
+
+

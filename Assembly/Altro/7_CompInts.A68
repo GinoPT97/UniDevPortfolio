@@ -1,0 +1,51 @@
+*
+*Esercizio 7 
+*
+* Scrivere un programma che, dati due valori A e B, realizzi due diversi confronti, per valutare
+* se B >= A. Nel primo confronto considerare A e B rappresentativi di numeri interi senza
+* segno (istruzione BHS). Nel secondo, considerare A e B rappresentativi di numeri interi
+* con segno (istruzione BGE).
+*A seconda che i confronti abbiano dato esito negativo o positivo, le aree di memoria RES_U e RES_S 
+*vengano riempite rispettivamente con i codici ASCII dei caratteri 'N' (0x4E) oppure 'S' (0x53). 
+
+*Nota:
+*	le due istruzioni BHS e BGE valutano differenti condizioni sui flags dello status register. BHS
+*	realizza il salto se il bit di riporto è zero. BGE realizza il salto se i bit Negative e oVerflow
+*	sono uguali, cioè se (N AND V) OR (NOT N AND NOT V)=1, che è come dire (N EQ V)=1.
+
+* Area Istruzioni
+		ORG		$8000
+START		MOVE.W	A,D0	 Primo valore in D0
+		MOVE.W	B,D1	 Secondo valore in D1
+
+CMP_U	CMP.W	D0,D1	 	Comparazione: realizza D1 - D0 per impostare i flag
+		BHS     	MAG_U	 Confronto interpretandoli come Unsigned: B >= A?
+		MOVE.W	#'N',RES_U	 Falso
+		BRA		CMP_S
+MAG_U	MOVE.W	#'S',RES_U	 Vero
+
+CMP_S		CMP.W	D0,D1		 Comparazione: realizza D1 - D0 per impostare i flag
+		BGE		MAG_S		 Confronto interpretandoli come Signed: B >= A?
+		MOVE.W	#'N',RES_S	 Falso
+		BRA		FINE
+MAG_S		MOVE.W	#'S',RES_S	 Vero
+
+FINE		STOP		#$2000
+
+* Area Dati
+		ORG		$8800
+A		DC.W		$000A
+B		DC.W		$F001		Attenzione al valore di B nei due casi
+RES_U		DS.W		1
+RES_S		DS.W		1
+		END		START
+
+
+
+
+
+
+
+
+
+

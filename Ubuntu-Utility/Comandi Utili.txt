@@ -1,0 +1,147 @@
+# Ubuntu Terminale
+
+## Pulizia della cache dei pacchetti ##
+sudo apt-get clean
+- Ripulisce la cache locale dei pacchetti.
+
+## Aggiornamento dei pacchetti ##
+sudo apt-get update
+- Scarica la lista aggiornata dei pacchetti e delle nuove versioni disponibili nei repository.
+
+## Aggiornamento dei pacchetti e delle dipendenze ##
+sudo apt-get dist-upgrade -y
+- Scarica ed installa le ultime versioni dei pacchetti, delle dipendenze ed, eventualmente, il kernel più recente.
+
+## Aggiornamento di Ubuntu alla versione successiva ##
+sudo do-release-upgrade
+- Esegue l'avanzamento di versione, passando alla release di Ubuntu successiva.
+
+## Rimozione dei pacchetti obsoleti ##
+sudo apt-get autoremove -y
+- Rimuove tutti i pacchetti obsoleti e non più necessari.
+
+## Riparazione problematiche grub
+sudo apt-get install --reinstall grub-pc
+-Reinstalla grub
+
+## Esecuzione automatica del trim ##
+sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt autoclean -y
+sudo fstrim --all --verbose
+- Abilita il timer di sistema per eseguire fstrim automaticamente e esegue manualmente il trim su tutti i dispositivi.
+
+## Aggiornamento dello snap-store ##
+sudo killall snap-store
+sudo snap refresh
+- Aggiorna lo snap-store, l'applicazione di gestione degli snap.
+
+## Installazione di nuovo software tramite il Software Center ##
+sudo apt install gnome-software
+- Installa il software "gnome-software" che permette di installare nuove applicazioni tramite il Software Center.
+
+## Installazione di pacchetti aggiuntivi tramite Synaptic ##
+sudo apt install synaptic
+- Installa Synaptic, un gestore dei pacchetti con un'interfaccia grafica.
+
+## Rimozione del Software Center ##
+sudo apt remove gnome-software
+- Rimuove il Software Center dal sistema.
+
+## Comandi per il servizio Tor ##
+
+### Verifica la versione di Tor in uso ###
+tor --version
+
+### Avvia il servizio Tor ###
+sudo systemctl start tor.service
+
+### Fornisce informazioni sullo stato del servizio Tor ###
+systemctl status tor
+
+### Riavvia il servizio Tor ###
+sudo systemctl restart tor.service
+
+### Arresta il servizio Tor ###
+sudo systemctl stop tor.service
+
+### Aggiunge il servizio Tor all'avvio del sistema ###
+sudo systemctl enable tor
+
+### Rimuove il servizio Tor dall'avvio del sistema ###
+sudo systemctl disable tor
+
+
+# Soluzione dei problemi di connessione
+
+## Caso 1: Connessione Wi-Fi non funzionante ##
+
+### Abilita il Wi-Fi ###
+sudo nmcli radio wifi on
+
+### Connessione alla rete Wi-Fi ###
+nmcli dev wifi list
+nmcli dev wifi connect <nome_rete> password <password_rete>
+
+### Verifica lo stato della connessione Wi-Fi ###
+nmcli dev status
+
+
+## Caso 2: Connessione Ethernet non funzionante ##
+
+### Verifica il collegamento del cavo Ethernet ###
+- Assicurati che il cavo Ethernet sia correttamente collegato al dispositivo e al router.
+
+### Verifica la configurazione della connessione Ethernet ###
+nmcli dev status
+nmcli connection show
+
+### Creazione di una nuova connessione Ethernet ###
+sudo nmcli connection add con-name <nome_connessione> ifname <nome_interfaccia> type ethernet
+
+### Attivazione della connessione Ethernet ###
+sudo nmcli connection up <nome_connessione>
+
+### Verifica lo stato della connessione Ethernet ###
+nmcli dev status
+
+
+## Caso 3: Connessione Internet non funzionante in generale ##
+
+### Verifica lo stato del network manager ###
+sudo systemctl status NetworkManager
+
+### Riavvio del network manager ###
+sudo systemctl restart NetworkManager
+
+### Verifica lo stato della connessione Internet ###
+ping -c 5 google.com
+
+### Verifica lo stato del firewall UFW ###
+sudo ufw status
+
+### Configurazione del firewall UFW ###
+sudo ufw allow <nome_servizio>
+
+
+# Casi limite
+
+### Ripristino delle impostazioni predefinite del firewall UFW ###
+sudo ufw reset
+
+### Riavvio del network manager ###
+sudo service network-manager stop
+sudo service network-manager start
+
+### Verifica delle informazioni sulla scheda di rete ###
+sudo lshw -C network
+
+### Riavvio dei servizi di rete ###
+sudo service network-manager restart
+sudo systemctl restart NetworkManager.service
+sudo systemctl restart networking.service
+
+### Elenco delle reti Wi-Fi disponibili ###
+nmcli device wifi list
+
+### Abilitazione del firewall UFW ###
+sudo ufw enable
+

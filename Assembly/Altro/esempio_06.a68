@@ -1,0 +1,57 @@
+
+* Questo programma verifica se due vettori sono uguali. 
+* Il programma contiene un sottoprogramma (subroutine) che viene chiamato ed a sua volta 
+* effettua il confronto vero e proprio. 
+* Il sottoprogramma riceve come parametri gli indirizzi dei due vettori ed il numero di elementi
+* e fornisce in uscita l'esito del confronto (=1 se i vettori confrontati sono risultati uguali).
+*
+* Il passaggio  dei parametri in questa versione dell'esercizio avviene tramite registri.
+* Anche l'output del sottoprogramma (esito del confronto) è passato tramite registro.
+*
+* Perché ciò sia possibile, è necessario stabilire una convenzione tra programma chiamante
+* e sottoprogramma chiamato riguardante l'uso dei registri usati per scambiare dati di ingresso
+* e di uscita.
+*
+* In questo programma si è adottata la seguente convenzione:
+*    registro A0: usato per passare l'indirizzo del primo vettore 
+*    registro A1: usato per passare l'indirizzo del secondo vettore
+*    registro D0: usato per passare la dimensione dei due vettori
+*    registro D7: usato per passare l'esito del confronto al programma chiamante (=1 se uguali)
+*
+* Si ammette inoltre che i registri usati per fornire i parametri di ingesso al sottoprogramma
+* (A0, A1 e D0) possano essere modificati dal sottoprogramma stesso, e quindi che i valori memorizzati
+* dal programma chiamante in tali registri possano essere persi durante la chiamata.
+
+
+* programma chiamante
+*
+	ORG $8000
+INIZIO	LEA V1,A0			carica l'indirizzo del primo vettore nel relativo registro scelto per lo scambio di parametri
+	LEA V2,A1			carica l'indirizzo del secondo vettore nel relativo registro scelto per lo scambio di parametri
+	MOVE DIM,D0			carica la dimensione dei vettori nel relativo registro scelto per lo scambio di parametri
+	JSR CFRT			dopo aver riempito i registri con i parametri, chiama il sottoprogramma per il confronto
+	MOVE D7,RES			legge il risultato dal registro di output e lo copia nella locazione RES
+FINE	JMP FINE			ciclo infinito che sospende il programma
+
+
+* sottoprogramma di confronto: è identificato dall'etichetta CFRT
+*
+CFRT	MOVE #1,D7			suppone i vettori uguali, alla prima differenza porrà #0 in D7
+CICLO	MOVE.B (A0)+,D1		copia il byte corrente del primo vettore in D1 e post-incrementa A0
+	CMP.B (A1)+,D1		confronta il byte corrente del secondo vettore con D1 e post-incrementa A1
+	BEQ UGL			non alterare D7 se sono uguali e salta direttamente a UGL
+	MOVE #0,D7			se invece è stata trovata una differenza poni #0 in D7 
+	RTS				se è stata trovata una differenza si può direttamente uscire dalla subroutine con RTS
+UGL	SUB #1,D0			decrementa il contatore di ciclo
+	BNE CICLO			itera il ciclo se il contatore non è arrivato a zero
+	RTS				ritorna dal sottoprogramma: esegue l'istruzione successiva alla JSR nel programma chiamante
+
+
+	ORG $8100
+V1	DC.B  21,-34,56,13		primo vettore
+V2	DC.B  21,-34,56,13		secondo vettore
+DIM	DC.W  4			dimensione dei due vettori
+RES	DS.B  1			locazione che conterrà il risultato del confronto (=1 se uguali)
+
+	END INIZIO
+

@@ -1,0 +1,42 @@
+*  Esercizio 5
+*
+*  Scrivere un programma che converta una stringa in maiuscolo, sottraendo 32 al codice ASCII delle lettere 
+*  minuscole.
+*  La stringa sia terminata da uno zero.
+*
+*  Si provi il programma con la stringa 'Oggi, 6 Maggio'
+*
+
+
+
+		ORG		$8000
+INIZIO		MOVE.L	#STRINGA,A0		Mette l'indirizzo della stringa in A0
+CICLO		TST.B		(A0)			Legge il carattere corrente
+		BEQ		FINECICLO		Se e' il terminatore esce dal ciclo
+		CMP.B		#'a',(A0)		Se e' minore 'a', non convertire
+		BLO		NONCONV
+		CMP.B		#'z',(A0)		Se e' maggiore di 'z', non convertire
+		BHI		NONCONV	
+		SUB.B		#32,(A0)		Converte il valore
+NONCONV	ADDA		#1,A0			Incrementa il puntatore
+		BRA		CICLO			   e ricomincia il ciclo
+FINECICLO	STOP		#$2000		Termina l'esecuzione
+
+
+*
+* Dichiarazione delle variabili
+*
+		ORG		$8800
+STRINGA	DC.B		'Oggi, 6 Maggio'
+
+
+
+		END		INIZIO
+
+
+
+
+
+
+
+

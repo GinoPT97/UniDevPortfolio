@@ -1,0 +1,67 @@
+* Esercizio 12 
+* Realizzare un programma per la ricerca di un elemento in un vettore di interi. Si utilizzi una subroutine. 
+* Alla subroutine si passi l'indirizzo di partenza del vettore, il suo numero di elementi ed il valore che si intende ricercare all'interno di esso. 
+* La subroutine restituisca l'indirizzo dell'elemento se esistente, 0 altrimenti. Il passaggio dei parametri avvenga attraverso lo stack. 
+
+
+
+* Area Istruzioni
+	ORG		$8000
+START	SUBQ		#4,SP			Alloca una long per il parametro di uscita dalla subroutine
+	MOVE.L	#VETT,-(SP)		Push sullo stack dell'indirizzo del vettore
+	MOVE.W	RIEMP,-(SP)		Push sullo stack del riempimento del vettore
+	MOVE.W	#ELEM,-(SP)		Push sullo stack dell'elemento da ricercare
+	JSR		SEARCH		Salta alla subroutine: al ritorno mi aspetto di trovare nello stack l'indirizzo desiderato
+	MOVE.L	8(SP),ADDR		Sposta l'indirizzo nella locazione ADDR
+	ADDA.L	#12,SP			Dealloca lo spazio occupato sullo stack
+	STOP		#$2000		Termina
+
+* Area Dati
+	ORG	$8400
+VETT	DC.B	20,15,12,10,8,13,23		Vettore di interi
+RIEMP	DC.W	7				Numero di elementi del vettore
+ELEM	EQU	8				Elemento da ricercare
+ADDR	DS.L	1				Area per contenere l'indirizzo dell'elemento trovato
+
+* Subroutine
+	ORG	$8800
+OFF_ELEM	EQU	8			Offset rispetto al frame-pointer dell'elemento da cercare
+OFF_RIEMP	EQU	10			Offset rispetto al frame-pointer del riempimento del vettore
+OFF_VETT	EQU	12			Offset rispetto al frame-pointer dell'indirizzo del vettore
+OFF_RES	EQU	16			Offset rispetto al frame-pointer dell'area di memoria destinata a contenere il risultato
+
+SEARCH	LINK		A6,#0		Imposta su A6 il frame pointer
+		MOVE.L	A0,-(SP)	Salva su stack (push) il registro A0
+		MOVE.L	D0,-(SP)	Salva su stack (push) il registro D0
+		MOVE.L	D1,-(SP)	Salva su stack (push) il registro D1
+
+		MOVE.L	#0,OFF_RES(A6)	Inizializza a zero l'area di memoria contenente il risultato
+		MOVE.L	OFF_VETT(A6),A0	Sposta in A0 l'indirizzo di partenza del vettore
+		MOVE.W	OFF_ELEM(A6),D1	Sposta in D1 l'elemento da ricercare
+		MOVE.W	OFF_RIEMP(A6),D0	Sposta	in D0 il numero di elementi del vettore...
+		BEQ		EXIT			...e subito controlla se e' zero. In questo caso salta alla fine.
+
+		SUBQ.W		#1,D0		La subroutine utilizza DBRA quindi come prima cosa decrementa di 1 il riempimento del vettore
+LOOP		CMP.B		(A0)+,D1		Confronta l'elemento del vettore puntato da A0 con il contenuto di D1
+		BEQ		FOUND		Se sono uguali salta a FOUND
+		DBRA		D0,LOOP		Decrementa e salta eventualmente a LOOP
+		BRA		EXIT			L'elemento non e' stato trovato: salta alla fine.
+
+FOUND	SUBQ		#1,A0			Decrementa A0
+		MOVE.L	A0,OFF_RES(A6)	Salva il risultato nell'apposita area
+
+EXIT		MOVE.L	(SP)+,D1	Ripristina dallo stack (pop) il registro D1
+		MOVE.L	(SP)+,D0	Ripristina dallo stack (pop) il registro D0
+		MOVE.L	(SP)+,A0	Ripristina dallo stack (pop) il registro A0
+		UNLK		A6		Ripristina il vecchio frame-pointer
+		RTS				Ritorna il controllo al chiamante
+
+		END		START
+
+
+
+
+
+
+
+

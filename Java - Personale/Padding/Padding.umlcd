@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.yattasolutions.uml.diagrams.classifier:ClassDiagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:com.yattasolutions.uml.diagrams.classifier="http://ns.yatta-solutions.com/umllab/diagrams/classifier/1.1.0" xmi:id="_z1TiQKxfEeyZvr3XTS9xSg">
+  <modelElement href="Padding.uml#_z9vskKxfEeyZvr3XTS9xSg"/>
+  <edges xsi:type="com.yattasolutions.uml.diagrams.classifier:AssociationVisual" xmi:id="_z-48EKxfEeyZvr3XTS9xSg" source="_z-5jIKxfEeyZvr3XTS9xSg">
+    <modelElement href="Padding.uml#_z-HgAKxfEeyZvr3XTS9xSg"/>
+    <stereotypes xmi:id="_z-48EaxfEeyZvr3XTS9xSg" name="Reference">
+      <modelElement href="Padding.uml#_z-IHEKxfEeyZvr3XTS9xSg"/>
+    </stereotypes>
+    <nameVisual xmi:id="_z-48EqxfEeyZvr3XTS9xSg" text=""/>
+    <sourceRole xmi:id="_z-48E6xfEeyZvr3XTS9xSg" aggregationKind="NONE" name="">
+      <modelElement href="Padding.uml#_z-HgAaxfEeyZvr3XTS9xSg"/>
+      <visibility xmi:id="_z-48FKxfEeyZvr3XTS9xSg" label="+"/>
+      <cardinality xmi:id="_z-48FaxfEeyZvr3XTS9xSg" label="1" max="1" min="1"/>
+    </sourceRole>
+    <targetRole xmi:id="_z-48FqxfEeyZvr3XTS9xSg" aggregationKind="NONE" name="contentPane" navigable="true">
+      <modelElement href="Padding.uml#_z-GR4KxfEeyZvr3XTS9xSg"/>
+      <visibility xmi:id="_z-48F6xfEeyZvr3XTS9xSg" label="-"/>
+      <cardinality xmi:id="_z-48GKxfEeyZvr3XTS9xSg" label="1" max="1" min="1"/>
+    </targetRole>
+  </edges>
+  <edges xsi:type="com.yattasolutions.uml.diagrams.classifier:AssociationVisual" xmi:id="_z-48GaxfEeyZvr3XTS9xSg" source="_z-5jIKxfEeyZvr3XTS9xSg">
+    <modelElement href="Padding.uml#_z-IHEaxfEeyZvr3XTS9xSg"/>
+    <stereotypes xmi:id="_z-48GqxfEeyZvr3XTS9xSg" name="Reference">
+      <modelElement href="Padding.uml#_z-IuIKxfEeyZvr3XTS9xSg"/>
+    </stereotypes>
+    <nameVisual xmi:id="_z-48G6xfEeyZvr3XTS9xSg" text=""/>
+    <sourceRole xmi:id="_z-48HKxfEeyZvr3XTS9xSg" aggregationKind="NONE" name="">
+      <modelElement href="Padding.uml#_z-IHEqxfEeyZvr3XTS9xSg"/>
+      <visibility xmi:id="_z-48HaxfEeyZvr3XTS9xSg" label="+"/>
+      <cardinality xmi:id="_z-48HqxfEeyZvr3XTS9xSg" label="1" max="1" min="1"/>
+    </sourceRole>
+    <targetRole xmi:id="_z-48H6xfEeyZvr3XTS9xSg" aggregationKind="NONE" name="dimension" navigable="true">
+      <modelElement href="Padding.uml#_z-GR4qxfEeyZvr3XTS9xSg"/>
+      <visibility xmi:id="_z-48IKxfEeyZvr3XTS9xSg" label="-"/>
+      <cardinality xmi:id="_z-48IaxfEeyZvr3XTS9xSg" label="1" max="1" min="1"/>
+    </targetRole>
+  </edges>
+  <nodes xsi:type="com.yattasolutions.uml.diagrams.classifier:ClassifierVisual" xmi:id="_z-5jIKxfEeyZvr3XTS9xSg" name="Main" associationsOut="_z-48EKxfEeyZvr3XTS9xSg _z-48GaxfEeyZvr3XTS9xSg">
+    <modelElement href="Padding.uml#_z9wToKxfEeyZvr3XTS9xSg"/>
+    <visualProperties xmi:id="_z-5jIaxfEeyZvr3XTS9xSg" position="30.0,30.0"/>
+    <visibility xmi:id="_z-5jIqxfEeyZvr3XTS9xSg" label="+"/>
+    <attributes xmi:id="_z-5jI6xfEeyZvr3XTS9xSg" name="contentPane">
+      <modelElement href="Padding.uml#_z-GR4KxfEeyZvr3XTS9xSg"/>
+      <stereotypes xmi:id="_z-5jJKxfEeyZvr3XTS9xSg" name="LegacyStyledElement">
+        <modelElement href="Padding.uml#_z-GR4axfEeyZvr3XTS9xSg"/>
+      </stereotypes>
+      <visibility xmi:id="_z-5jJaxfEeyZvr3XTS9xSg" label="-"/>
+      <cardinality xmi:id="_z-5jJqxfEeyZvr3XTS9xSg" label="1" max="1" min="1"/>
+      <type xmi:id="_z-5jJ6xfEeyZvr3XTS9xSg" name="JPanel">
+        <modelElement href="Padding.uml#_z-AyUaxfEeyZvr3XTS9xSg"/>
+      </type>
+    </attributes>
+    <attributes xmi:id="_z-5jKKxfEeyZvr3XTS9xSg" name="dimension">
+      <modelElement href="Padding.uml#_z-GR4qxfEeyZvr3XTS9xSg"/>
+      <stereotypes xmi:id="_z-5jKaxfEeyZvr3XTS9xSg" name="LegacyStyledElement">
+        <modelElement href="Padding.uml#_z-GR46xfEeyZvr3XTS9xSg"/>
+      </stereotypes>
+      <visibility xmi:id="_z-5jKqxfEeyZvr3XTS9xSg" label="-"/>
+      <cardinality xmi:id="_z-5jK6xfEeyZvr3XTS9xSg" label="1" max="1" min="1"/>
+      <type xmi:id="_z-5jLKxfEeyZvr3XTS9xSg" name="JTextField">
+        <modelElement href="Padding.uml#_z-CAcqxfEeyZvr3XTS9xSg"/>
+      </type>
+    </attributes>
+    <operations xmi:id="_z-5jLaxfEeyZvr3XTS9xSg" name="main" staticOperation="true">
+      <modelElement href="Padding.uml#_z9w6sKxfEeyZvr3XTS9xSg"/>
+      <visibility xmi:id="_z-5jLqxfEeyZvr3XTS9xSg" label="+"/>
+      <cardinality xmi:id="_z-5jL6xfEeyZvr3XTS9xSg" label="1" max="1" min="1"/>
+      <parameters xmi:id="_z-5jMKxfEeyZvr3XTS9xSg" name="args">
+        <modelElement href="Padding.uml#_z9w6saxfEeyZvr3XTS9xSg"/>
+        <cardinality xmi:id="_z-5jMaxfEeyZvr3XTS9xSg" label="1..*" max="-1" min="1"/>
+        <type xmi:id="_z-5jMqxfEeyZvr3XTS9xSg" name="String">
+          <modelElement href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </type>
+      </parameters>
+    </operations>
+    <operations xmi:id="_z-5jM6xfEeyZvr3XTS9xSg" name="Main">
+      <modelElement href="Padding.uml#_z9xhwaxfEeyZvr3XTS9xSg"/>
+      <keywords xmi:id="_z-5jNKxfEeyZvr3XTS9xSg" keyword="create"/>
+      <visibility xmi:id="_z-5jNaxfEeyZvr3XTS9xSg" label="+"/>
+      <cardinality xmi:id="_z-5jNqxfEeyZvr3XTS9xSg" label="1" max="1" min="1"/>
+      <outParameters xmi:id="_z-5jN6xfEeyZvr3XTS9xSg">
+        <modelElement href="Padding.uml#_z9xhxKxfEeyZvr3XTS9xSg"/>
+        <type xmi:id="_z-5jOKxfEeyZvr3XTS9xSg" name="Main">
+          <modelElement href="Padding.uml#_z9wToKxfEeyZvr3XTS9xSg"/>
+        </type>
+      </outParameters>
+    </operations>
+  </nodes>
+</com.yattasolutions.uml.diagrams.classifier:ClassDiagram>

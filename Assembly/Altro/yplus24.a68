@@ -1,0 +1,14 @@
+      ORG     $8000   	Inizio del codice     
+START	MOVE.B  Y,D0
+	ADD     #24,D0
+	MOVE.B  D0,Z
+	
+	ORG     $8600   	Inizio dell’area dati
+Y	DC.B    27       	Memorizza la costante 27 in memoria 
+Z	DS.B     1        Riserva un byte per Z
+            END START
+
+
+
+
+
