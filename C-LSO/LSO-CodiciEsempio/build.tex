@@ -1,0 +1,597 @@
+%% build.tex
+%%
+%% Copyright (C) 1999-2018 Simone Piccardi.  Permission is granted to copy,
+%% distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.1 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+
+\chapter{Gli strumenti di ausilio per la programmazione}
+\label{cha:build_manage}
+
+Tratteremo in questa appendice in maniera superficiale i principali strumenti
+che vengono utilizzati per programmare in ambito Linux, ed in particolare gli
+strumenti per la compilazione e la costruzione di programmi e librerie, e gli
+strumenti di gestione dei sorgenti e di controllo di versione.
+
+Questo materiale è ripreso da un vecchio articolo, ed al momento è molto
+obsoleto.
+
+
+\section{L'uso di \texttt{make} per l'automazione della compilazione}
+\label{sec:build_make}
+
+Il comando \texttt{make} serve per automatizzare il processo di costruzione di
+un programma ed effettuare una compilazione intelligente di tutti i file
+relativi ad un progetto software, ricompilando solo i file necessari ed
+eseguendo automaticamente tutte le operazioni che possono essere necessarie
+alla produzione del risultato finale.\footnote{in realtà \texttt{make} non si
+  applica solo ai programmi, ma in generale alla automazione di processi di
+  costruzione, ad esempio anche la creazione dei file di questa guida viene
+  fatta con \texttt{make}.}
+
+
+\subsection {Introduzione a \texttt{make}}
+\label{sec:make_intro}
+
+Con \texttt{make} si possono definire i simboli del preprocessore C che
+consentono la compilazione condizionale dei programmi (anche in Fortran); è
+pertanto possibile gestire la ricompilazione dei programmi con diverse
+configurazioni con la modifica di un unico file.
+
+La sintassi normale del comando (quella che si usa quasi sempre, per le
+opzioni vedere la pagina di manuale) è semplicemente \texttt{make}. Questo
+comando esegue le istruzioni contenute in un file standard (usualmente
+\texttt{Makefile}, o \texttt{makefile} nella directory corrente).
+
+Il formato normale dei comandi contenuti in un \texttt{Makefile} è:
+\begin{verbatim}
+bersaglio: dipendenza1 dipendenza2 ...
+        regola1
+        regola2
+        ...
+\end{verbatim}
+dove lo spazio all'inizio deve essere un tabulatore (metterci degli spazi è un
+errore comune, fortunatamente ben segnalato dalle ultime versioni del
+programma), il bersaglio e le dipendenze nomi di file e le regole comandi di
+shell.
+
+Il concetto di base è che se uno dei file di dipendenza è più recente (nel
+senso di tempo di ultima modifica) del file bersaglio quest'ultimo viene
+ricostruito di nuovo usando le regole elencate nelle righe successive.
+
+Il comando \texttt{make} ricostruisce di default il primo bersaglio che viene
+trovato nella scansione del \texttt{Makefile}, se in un \texttt{Makefile} sono
+contenuti più bersagli indipendenti, si può farne ricostruire un altro che non
+sia il primo passandolo esplicitamente al comando come argomento, con qualcosa
+del tipo di: \texttt{make altrobersaglio}.
+
+Si tenga presente che le dipendenze stesse possono essere dichiarate come 
+bersagli dipendenti da altri file; in questo modo è possibile creare una 
+catena di ricostruzioni. 
+
+In esempio comune di quello che si fa è mettere come primo bersaglio il
+programma principale che si vuole usare, e come dipendenze tutte gli oggetti
+delle funzioni subordinate che utilizza, con i quali deve essere collegato; a
+loro volta questi oggetti sono bersagli che hanno come dipendenza i relativi
+sorgenti. In questo modo il cambiamento di una delle funzioni subordinate
+comporta solo la ricompilazione della medesima e del programma finale.
+
+
+\subsection{Utilizzo di \texttt{make}}
+
+Il comando \texttt{make} mette a disposizione una serie molto complesse di
+opzioni e di regole standard predefinite e sottintese, che permettono una
+gestione estremamente rapida e concisa di progetti anche molto complessi; per
+questo piuttosto che fare una replica del manuale preferisco commentare un
+esempio di \texttt{makefile}, quello usato per ricompilare i programmi di
+analisi dei dati dei test su fascio del tracciatore di Pamela.
+
+\small
+\begin{verbatim}
+#----------------------------------------------------------------------
+#
+# Makefile for a Linux System:
+# use GNU FORTRAN compiler g77
+# Makefile done for tracker test data
+#
+#----------------------------------------------------------------------
+# Fortran flags
+FC=g77
+FFLAGS= -fvxt -fno-automatic -Wall -O6 -DPC # -DDEBUG
+CC=gcc
+CFLAGS= -Wall -O6
+CFLADJ=-c #-DDEBUG
+#
+# FC            Fortran compiler for standard rules
+# FFLAGS        Fortran flags for standard rules
+# CC            C Compiler for standard rules
+# CFLAGS        C compiler flags for standard rules 
+LIBS=  -L/cern/pro/lib -lkernlib -lpacklib -lgraflib -lmathlib
+OBJ=cnoise.o fit2.o pedsig.o loop.o badstrp.o cutcn.o readevnt.o \
+erasepedvar.o readinit.o dumpval.o writeinit.o
+
+riduzione: riduzione.F $(OBJ) commondef.f readfile.o
+        $(FC) $(FFLAGS) -o riduzione riduzione.F readfile.o $(OBJ) $(LIBS) 
+
+readfile.o: readfile.c
+        $(CC) $(CFLAGS) -o readfile.o readfile.c
+
+$(OBJ): commondef.f
+
+.PHONY : clean
+clean:
+        rm -f *.o 
+        rm -f *~
+        rm -f riduzione
+        rm -f *.rz
+        rm -f output
+\end{verbatim}
+\normalsize
+
+Anzitutto i commenti, ogni linea che inizia con un \texttt{\#} è un
+commento e non viene presa in considerazione.
+
+Con \texttt{make} possono essere definite delle variabili, da potersi riusare
+a piacimento, per leggibilità si tende a definirle tutte maiuscole,
+nell'esempio ne sono definite varie: \small
+\begin{verbatim}
+FC=g77
+FFLAGS= -fvxt -fno-automatic -Wall -O6 -DPC # -DDEBUG
+CC=gcc
+CFLAGS= -Wall -O6
+CFLADJ=-c #-DDEBUG
+...
+LIBS=  -L/cern/pro/lib -lkernlib -lpacklib -lgraflib -lmathlib
+OBJ=cnoise.o fit2.o pedsig.o loop.o badstrp.o cutcn.o readevnt.o \
+\end{verbatim}
+\normalsize
+
+La sintassi è \texttt{NOME=}, alcuni nomi però hanno un significato speciale
+(nel caso \texttt{FC}, \texttt{FLAGS}, \texttt{CC}, \texttt{CFLAGS}) in quanto
+sono usati da \texttt{make} nelle cosiddette \textsl{regole implicite} (su cui
+torneremo dopo).
+
+Nel caso specifico, vedi anche i commenti, abbiamo definito i comandi di 
+compilazione da usare per il C e il Fortran, e i rispettivi flag, una variabile
+che contiene il pathname e la lista delle librerie del CERN e una variabile con una
+lista di file oggetto.
+
+Per richiamare una variabile si usa la sintassi \texttt{\$(NOME)}, ad esempio
+nel makefile abbiamo usato:
+\begin{verbatim}
+        $(FC) $(FFLAGS) -o riduzione riduzione.F readfile.o $(OBJ) $(LIBS) 
+\end{verbatim}
+e questo significa che la regola verrà trattata come se avessimo scritto 
+esplicitamente i valori delle variabili.
+
+Veniamo ora alla parte principale del makefile che esegue la costruzione del
+programma:
+\begin{verbatim}
+riduzione: riduzione.F $(OBJ) commondef.f readfile.o
+        $(FC) $(FFLAGS) -o riduzione riduzione.F readfile.o $(OBJ) $(LIBS) 
+readfile.o: readfile.c
+        $(CC) $(CFLAGS) -o readfile.o readfile.c
+$(OBJ): commondef.f
+\end{verbatim}
+
+Il primo bersaglio del makefile, che definisce il bersaglio di default, è il
+programma di riduzione dei dati; esso dipende dal suo sorgente da tutti gli
+oggetti definiti dalla variabile \texttt{OBJ}, dal file di definizioni
+\texttt{commondef.f} e dalla routine C \texttt{readfile.o}; si noti il
+\texttt{.F} del sorgente, che significa che il file prima di essere compilato
+viene fatto passare attraverso il preprocessore C (cosa che non avviene per i
+\texttt{.f}) che permette di usare i comandi di compilazione condizionale del
+preprocessore C con la relativa sintassi. Sotto segue il comando di
+compilazione che sfrutta le variabili definite in precedenza per specificare
+quale compilatore e opzioni usare e specifica di nuovo gli oggetti e le
+librerie.
+
+Il secondo bersaglio definisce le regole per la compilazione della routine
+in C; essa dipende solo dal suo sorgente. Si noti che per la compilazione
+vengono usate le variabili relative al compilatore C. Si noti anche che se
+questa regola viene usata, allora lo sarà anche la precedente, dato che
+\texttt{riduzione} dipende da \texttt{readfile.o}.
+
+Il terzo bersaglio è apparentemente incomprensibile dato che vi compare
+solo il riferimento alla variabile \texttt{OBJ} con una sola dipendenza e
+nessuna regola, essa però mostra le possibilità (oltre che la
+complessità) di \texttt{make} connesse alla presenza di quelle regole
+implicite a cui avevamo accennato.
+
+Anzitutto una peculiarità di \texttt{make} è che si possono anche usare più
+bersagli per una stessa regola (nell'esempio quelli contenuti nella variabile
+\texttt{OBJ} che viene espansa in una lista); in questo caso la regola di
+costruzione sarà applicata a ciascuno che si potrà citare nella regola stessa
+facendo riferimento con la variabile automatica: \texttt{\$@}.  L'esempio
+usato per la nostra costruzione però sembra non avere neanche la regola di
+costruzione.
+
+Questa mancanza sia di regola che di dipendenze (ad esempio dai vari sorgenti) 
+illustra le capacità di funzionamento automatico di \texttt{make}.
+Infatti è facile immaginarsi che un oggetto dipenda da un sorgente, e che 
+per ottenere l'oggetto si debba compilare quest'ultimo.
+
+Il comando \texttt{make} sa tutto questo per cui quando un bersaglio è un
+oggetto (cioè ha un nome tipo \texttt{qualcosa.o}) non è necessario
+specificare il sorgente, ma il programma lo va a cercare nella directory
+corrente (ma è possibile pure dirgli di cercarlo altrove, il caso è trattato
+nel manuale).  Nel caso specifico allora si è messo come dipendenza solo il
+file delle definizioni che viene incluso in ogni subroutine.
+
+Inoltre come dicevamo in genere per costruire un oggetto si deve compilarne il
+sorgente; \texttt{make} sa anche questo e sulla base dell'estensione del
+sorgente trovato (che nel caso sarà un \texttt{qualcosa.f}) applica la regola
+implicita.  In questo caso la regola è quella di chiamare il compilatore
+fortran applicato al file oggetto e al relativo sorgente, questo viene fatto
+usando la variabile \texttt{FC} che è una delle variabili standard usata dalle
+regole implicite (come \texttt{CC} nel caso di file \texttt{.c}); per una
+maggiore flessibilità poi la regola standard usa anche la variabile
+\texttt{FFLAGS} per specificare, a scelta dell'utente che non ha che da
+definirla, quali flag di compilazione usare (nella documentazione sono
+riportate tutte le regole implicite e le relative variabili usate).
+
+In questo modo è stato possibile usare una sola riga per indicare la serie di
+dipendenze e relative compilazioni delle singole subroutine; inoltre con l'uso
+della variabile \texttt{OBJ} l'aggiunta di una nuova eventuale routine
+\texttt{nuova.f} comporta solo l'aggiunta di \texttt{nuova.o} alla definizione
+di \texttt{OBJ}.
+
+
+\section{Source Control Management}
+\label{sec:build_scm}
+
+Uno dei problemi più comuni che si hanno nella programmazione è quella di
+poter disporre di un sistema che consenta di tenere conto del lavoro
+effettuato, di tracciare l'evoluzione del codice, e, soprattutto nel caso di
+progetti portati avanti da più persone, consentire un accesso opportunamente
+coordinato fra i vari partecipanti alla base comune dei sorgenti dello
+sviluppo.
+
+I programmi che servono a questo scopo vanno sotto il nome comune di SCM
+(\textit{Source Control Manager}), e ne esistono di diversi tipi con diverse
+filosofie progettuali, in particolare nelle modalità con cui gestiscono
+l'accesso alla base di codice comune da parte dei singoli programmatori che vi
+accedono.
+
+Fra questi uno dei più usati, nonostante la sua architettura sia considerata
+superata, è Subversion, un sistema di archiviazione centralizzata del codice
+che consente di tenere traccia di tutte le modifiche e di condividere un
+archivio comune per progetti portati avanti da diverse persone.
+
+\subsection{Introduzione a Subversion}
+\label{sec:build_subversion}
+
+Subversion è basato sul concetto di \textit{repository}, un archivio
+centralizzato in cui vengono riposti e da cui vengono presi i sorgenti dei
+programmi. L'archivio tiene traccia delle diverse versioni registrate; i
+programmatori inviano le modifiche usando una copia locale che hanno nella
+loro directory di lavoro.
+
+Subversion può gestire più di un progetto all'interno di un singolo server,
+ciascuno dei quali viene associato ad un \textit{repository} distinto, ma si
+possono anche creare sotto-progetti suddividendo un \textit{repository} in
+diverse directory; ma ciascun progetto avrà meccanismi di controllo (ad 
+esempio quelli che consentono di inviare email all'inserimento di nuovo
+codice) comuni.
+
+Una delle caratteristiche che contraddistinguono Subversion dal suo
+predecessore CVS è quella di essere gestibile in maniera molto flessibile
+l'accesso al repository, che può avvenire sia in maniera diretta facendo
+riferimento alla directory in cui questo è stato installato che via rete,
+tramite diversi protocolli. L'accesso più comune è fatto direttamente via
+HTTP, utilizzando opportune estensioni del protocollo DAV, ma è possibile
+passare attraverso SSH o fornire un servizio di rete dedicato.\footnote{esiste
+  all'uopo il programma \texttt{svnserve}, ma il suo uso è sconsigliato per le
+  scarse prestazioni e le difficoltà riscontrate a gestire accessi di utenti
+  diversi; la modalità di accesso preferita resta quella tramite le estensioni
+  al protocollo DAV.}
+
+In generale è comunque necessario preoccuparsi delle modalità di accesso al
+codice soltanto in fase di primo accesso al \textit{repository}, che occorrerà
+identificare o con il pathname alla directory dove questo si trova o con una
+opportuna URL (con il comune accesso via web del tutto analoga a quella che si
+usa in un browser), dopo di che detto indirizzo sarà salvato nella propria
+copia locale dei dati ed il riferimento diventerà implicito.
+
+Il programma prevede infatti che in ogni directory che si è ottenuta come
+copia locale sia presente una directory \texttt{.svn} contenente tutti i dati
+necessari al programma. Inoltre il programma usa la directory
+\texttt{.subversion} nella home dell'utente per mantenere le configurazioni
+generali del client e le eventuali informazioni di autenticazione. 
+
+Tutte le operazioni di lavoro sul \textit{repository} vengono effettuate lato
+client tramite il comando \texttt{svn} che vedremo in
+sez.~\ref{sec:build_subversion} ma la creazione e la inizializzazione dello
+stesso (così come la gestione lato server) devono essere fatte tramite il
+comando \texttt{svnadmin} eseguito sulla macchina che lo ospita. In generale
+infatti il comando \texttt{svn} richiede che si faccia riferimento ad un
+\textit{repository} (al limite anche vuoto) esistente e questo deve essere
+opportunamente creato.
+
+Il comando \texttt{svnadmin} utilizza una sintassi che richiede sempre
+l'ulteriore specificazione di un sotto-comando, seguito da eventuali altri
+argomenti. L'inizializzazione di un \textit{repository} (che sarà creato
+sempre vuoto) viene eseguita con il comando:
+\begin{verbatim}
+svnadmin create /path/to/repository
+\end{verbatim}
+dove \texttt{/path/to/repository} è la directory dove verranno creati e
+mantenuti tutti i file, una volta creato il \textit{repository} si potrà
+iniziare ad utilizzarlo ed inserirvi i contenuti con il comando \texttt{svn}. 
+
+Non essendo questo un testo di amministrazione di sistema non tratteremo qui i
+dettagli della configurazione del server per l'accesso via rete al
+\textit{repository}, per i quali si rimanda alla documentazione del progetto
+ed alla documentazione sistemistica scritta per Truelite
+Srl.\footnote{rispettivamente disponibili su \url{svn.tigris.org} e
+  \url{labs.truelite.it/truedoc}.}
+
+\subsection{Utilizzo di \texttt{svn}}
+\label{sec:build_svn_use}
+
+Una volta che si abbia a disposizione un \textit{repository} si potrà creare
+un nuovo progetto sottoposto a controllo di versione importando al suo interno
+i dati disponibili. In genere è pratica comune suddividere il contenuto di un
+repository in tre directory secondo il seguente schema:
+\begin{basedescript}{\desclabelwidth{2.7cm}\desclabelstyle{\nextlinelabel}}
+\item[\texttt{trunk}] contiene la versione corrente i sviluppo, su cui vengono
+  effettuate normalmente le modifiche e gli aggiornamenti;
+\item[\texttt{tags}] contiene le diverse versioni \textsl{fotografate} ad un
+  certo istante del processo di sviluppo, ad esempio in occasione del rilascio
+  di una versione stabile, così che sia possibile identificarle facilmente;
+\item[\texttt{branches}] contiene \textsl{rami} alternativi di sviluppo, ad
+  esempio quello delle correzioni eseguite ad una versione stabile, che
+  vengono portati avanti in maniera indipendente dalla versione principale.
+\end{basedescript}
+
+Questa suddivisione consente di sfruttare la capacità di Subversion di creare
+senza spesa copie diverse del proprio contenuto, pertanto in genere si pone il
+proprio progetto di sviluppo sotto \texttt{trunk}, e si copia quest'ultima in
+occasione delle varie versioni di rilascio in altrettante sottocartelle di
+\texttt{tags} e qualora si voglia aprire un ramo alternativo di sviluppo
+basterà copiarsi il punto di partenza del ramo sotto \texttt{branches} e
+iniziare ad eseguire le modifiche su di esso.
+
+Le operazioni di gestione di un progetto con Subversion vengono eseguite con
+il comando \texttt{svn}, che analogamente al precedente \texttt{svnadmin}
+utilizza una sintassi basata sulla specificazione degli opportuni
+sotto-comandi. Si sono riportati quelli più importanti in
+tab.~\ref{tab:svn_mainsubcommands}. 
+
+\begin{table}[htb]
+  \centering
+  \footnotesize
+  \begin{tabular}[c]{|l|l|p{8cm}|}
+    \hline
+     \multicolumn{2}{|c|}{\textbf{Sotto-comando}}& \textbf{Significato} \\
+    \hline
+    \hline
+    \texttt{import}  &  --       & Importa i file della directory corrente sul
+                                   \textit{repository}.\\ 
+    \texttt{checkout}&\texttt{co}& Scarica una versione del progetto dal
+                                   \textit{repository}.\\
+    \texttt{commit}  &\texttt{ci}& Invia le modifiche effettuate localmente al 
+                                   \textit{repository}.\\
+    \texttt{add}     &  --       & Richiede l'aggiunta un file o una directory
+                                   al \textit{repository}.\\
+    \texttt{remove}  &\texttt{rm}& Richiede la rimozione un file o una 
+                                   directory dal \textit{repository}.\\
+    \texttt{copy}    &\texttt{cp}& Richiede la copia un file o una cartella del
+                                   progetto (mantenendone la storia).\\
+    \texttt{move}    &\texttt{mv}& Richiede lo spostamento un file o una 
+                                   directory (equivalente ad un \texttt{cp}
+                                   seguito da un \texttt{rm}).\\
+    \texttt{update}  &  --       & Aggiorna la copia locale.\\
+    \texttt{resolved}&  --       & Rimuove una situazione di conflitto presente
+                                   su un file.\\ 
+    \hline
+  \end{tabular}
+  \caption{Tabella riassuntiva dei principali sotto-comandi di \texttt{svn}.}
+  \label{tab:svn_mainsubcommands}
+\end{table}
+
+In genere però è piuttosto raro iniziare un progetto totalmente da zero, è
+molto più comune avere una qualche versione iniziale dei propri file
+all'interno di una cartella. In questo caso il primo passo è quello di
+eseguire una inizializzazione del \textit{repository} importando al suo
+interno quanto già esistente.  Per far questo occorre eseguire il comando:
+\begin{verbatim}
+svn import [/pathname] URL
+\end{verbatim}
+questo può essere eseguito direttamente nella directory contenente la versione
+iniziale dei propri sorgenti nel qual caso il comando richiede come ulteriore
+argomento la directory o la URL con la quale indicare il \textit{repository}
+da usare. Alternativamente si può passare come primo argomento il pathname
+della directory da importare, seguito dall'indicazione della URL del
+\textit{repository}.
+
+Si tenga presente che l'operazione di importazione inserisce sul
+\textit{repository} il contenuto completo della directory indicata, compresi
+eventuali file nascosti e sotto-directory. È anche possibile eseguire
+l'importazione di più directory da inserire in diverse sezioni del
+\textit{repository}, ma un tal caso ciascuna importazione sarà vista con una
+diversa \textit{release}. Ad ogni operazione di modifica del
+\textit{repository} viene infatti assegnato un numero progressivo che consente
+di identificarne la storia delle modifiche e riportarsi ad un dato punto della
+stessa in ogni momento successivo.\footnote{a differenza di CVS Subversion non
+  assegna un numero di versione progressivo distinto ad ogni file, ma un
+  numero di \textit{release} progressivo ad ogni cambiamento globale del
+  repository, pertanto non esiste il concetto di versione di un singolo file,
+  quanto di stato di tutto il \textit{repository} ad un dato momento, è
+  comunque possibile richiedere in maniera indipendente la versione di ogni
+  singolo file a qualunque \textit{release} si desideri.}
+
+Una volta eseguita l'importazione di una versione iniziale è d'uopo cancellare
+la directory originale e ripartire dal progetto appena creato. L'operazione di
+recuperare ex-novo di tutti i file che fanno parte di un progetto, chiamata
+usualmente \textit{checkout}, viene eseguita con il
+comando:\footnote{alternativamente si può usare l'abbreviazione \texttt{svn
+    co}.}
+\begin{verbatim}
+svn checkout URL [/pathname]
+\end{verbatim}
+che creerà nella directory corrente una directory corrispondente al nome
+specificato in coda alla URL passata come argomento, scaricando l'ultima
+versione dei file archiviati sul repository; alternativamente si può
+specificare come ulteriore argomento la directory su cui scaricare i file.
+
+Sia in caso di \texttt{import} che di \texttt{checkout} è sempre possibile
+operare su una qualunque sotto cartella contenuta all'interno di un
+\textit{repository}, ignorando totalmente quello che sta al di sopra, basterà
+indicare in sede di importazione o di estrazione iniziale un pathname o una
+URL che identifichi quella parte del progetto.
+
+Se quando si effettua lo scaricamento non si vuole usare la versione più
+aggiornata, ma una versione precedente si può usare l'opzione \texttt{-r}
+seguita da un numero che scaricherà esattamente quella \textit{release},
+alternativamente al posto del numero si può indicare una data, e verrà presa
+la \textit{release} più prossima a quella data. 
+
+A differenza di CVS Subversion non supporta l'uso di \textsl{etichette}
+associate ad una certa versione del proprio progetto, per questo è invalso
+l'uso di strutturare il repository secondo lo schema illustrato inizialmente;
+è infatti molto semplice (e non comporta nessun tipo di aggravio) creare delle
+copie complete di una qualunque parte del \textit{repository} su un'altra
+parte dello stesso, per cui se si è eseguito lo sviluppo sulla cartella
+\texttt{trunk} sarà possibile creare banalmente una versione con etichetta
+\texttt{label} (o quel che si preferisce) semplicemente con una copia eseguita
+con:
+\begin{verbatim}
+svn cp trunk tags/label
+\end{verbatim}
+
+Il risultato di questo comando è la creazione della nuova cartella
+\texttt{label} sotto \texttt{tags}, che sarà assolutamente identica, nel
+contenuto (e nella sua storia) a quanto presente in \texttt{trunk} al momento
+dell'esecuzione del comando. In questo modo, una volta salvate le
+modifiche,\footnote{la copia viene eseguita localmente verrà creata anche sul
+  \textit{repository} solo dopo un \textit{commit}.} si potrà ottenere la
+versione \texttt{label} del proprio progetto semplicemente eseguendo un
+\textit{checkout} di \texttt{tags/label} in un'altra
+directory.\footnote{ovviamente una volta presa la suddetta versione si deve
+  aver cura di non eseguire nessuna modifica a partire dalla stessa, per
+  questo se si deve modificare una versione etichettata si usa
+  \texttt{branches}.}
+
+Una volta creata la propria copia locale dei programmi, è possibile lavorare
+su di essi ponendosi nella relativa directory, e apportare tutte le modifiche
+che si vogliono ai file ivi presenti; due comandi permettono inoltre di
+schedulare la rimozione o l'aggiunta di file al
+\textit{repository}:\footnote{a differenza di CVS si possono aggiungere e
+  rimuovere, ed anche spostare con \texttt{svn mv}, sia file che directory.}
+\begin{verbatim}
+svn add file1.c
+svn remove file2.c
+\end{verbatim}
+ma niente viene modificato sul \textit{repository} fintanto che non viene
+eseguito il cosiddetto \textit{commit} delle modifiche, vale a dire fintanto
+che non viene dato il comando:\footnote{in genere anche questo viene
+  abbreviato, con \texttt{svn ci}.}
+\begin{verbatim}
+svn commit [file]
+\end{verbatim}
+ed è possibile eseguire il \textit{commit} delle modifiche per un singolo
+file, indicandolo come ulteriore argomento, mentre se non si indica nulla
+verranno inviate tutte le modifiche presenti.
+
+Si tenga presente però che il \textit{commit} non verrà eseguito se nel
+frattempo i file del \textit{repository} sono stati modificati; in questo caso
+\texttt{svn} rileverà la presenza di differenze fra la propria
+\textit{release} e quella del \textit{repository} e chiederà che si effettui
+preventivamente un aggiornamento. Questa è una delle operazioni di base di
+Subversion, che in genere si compie tutte le volte che si inizia a lavorare,
+il comando che la esegue è:
+\begin{verbatim}
+svn update
+\end{verbatim}
+
+Questo comando opera a partire dalla directory in cui viene eseguito e ne
+aggiorna il contenuto (compreso quello di eventuali sotto-directory) alla
+versione presente, scaricando le ultime versioni dei file esistenti o nuovi
+file o directory aggiunte, cancellando eventuali file e directory rimossi dal
+\textit{repository}.  Esso inoltre esso cerca, in caso di presenza di
+modifiche eseguite in maniera indipendente sulla propria copia locale, di
+eseguire un \textsl{raccordo} (il cosiddetto \textit{merging}) delle stesse
+con quelle presenti sulla versione del \textit{repository}.
+
+Fintanto che sono state modificate parti indipendenti di un file di testo in
+genere il processo di \textit{merging} ha successo e le modifiche vengono
+incorporate automaticamente in conseguenza dell'aggiornamento, ma quando le
+modifiche attengono alla stessa parte di un file nel ci si troverà di fronte
+ad un conflitto ed a quel punto sarà richiesto al ``committente'' di
+intervenire manualmente sui file per i quali sono stati rilevati i conflitti
+per risolverli.
+
+Per aiutare il committente nel suo compito quando l'operazione di
+aggiornamento fallisce nel raccordo delle modifiche lascia sezioni di codice
+in conflitto opportunamente marcate e separate fra loro come nell'esempio
+seguente:
+\begin{verbatim}
+<<<<<<< .mine
+        $(CC) $(CFLAGS) -o pamacq pamacq.c -lm
+=======
+        $(CC) $(CFLAGS) -o pamacq pamacq.c
+
+>>>>>>> r.122
+\end{verbatim}
+
+In questo caso si c'è stata una modifica sul file (mostrata nella parte
+superiore) incompatibile con quella fatta nel \textit{repository} (mostrata
+nella parte inferiore). Prima di eseguire un \textit{commit} occorrerà
+pertanto integrare le modifiche e salvare nuovamente il file rimuovendo i
+marcatori, inoltre prima che il \textit{commit} ritorni possibile si dovrà
+esplicitare la risoluzione del conflitto con il comando:
+\begin{verbatim}
+svn resolved file
+\end{verbatim}
+
+\begin{table}[htb]
+  \centering
+  \footnotesize
+  \begin{tabular}[c]{|c|l|}
+    \hline
+    \textbf{Flag} & \textbf{Significato} \\
+    \hline
+    \hline
+    \texttt{?}& File sconosciuto.\\
+    \texttt{M}& File modificato localmente.\\
+    \texttt{A}& File aggiunto.\\
+    \texttt{C}& File con conflitto.\\
+%    \const{G}& File con modifiche integrate.\\
+%    \const{}& .\\
+    \hline
+  \end{tabular}
+  \caption{Caratteri associati ai vari stati dei file.}
+  \label{tab:svn_status}
+\end{table}
+
+
+Infine per capire la situazione della propria copia locale si può utilizzare
+il comando \texttt{svn status} che confronta i file presenti nella directory
+locale rispetto alla ultima versione scaricata dal \textit{repository} e per
+tutti quelli che non corrispondono stampa a schermo delle informazioni di
+stato nella forma di un carattere seguito dal nome del file, secondo quanto
+illustrato in tab.~\ref{tab:svn_status}.
+
+
+
+
+% LocalWords:  make Makefile makefile shell FC FLAGS CFLAGS pathname CERN SCM
+% LocalWords:  OBJ commondef readfile FFLAGS Cuncurrent Version System CVS home
+% LocalWords:  adidsp geometry muonacq andaranno CVSROOT startup cvs ssh rsh to
+% LocalWords:  project tag Root commit update merging Locally Modified Added co
+% LocalWords:  Needs Patch Merge log rtag checkout module altrobersaglio Source
+% LocalWords:   Control Subversion repository DAV svnserve URL svn subversion
+% LocalWords:  client sez svnadmin Truelite Srl trunk tags branches tab add rm
+% LocalWords:  remove copy cp move resolved label
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End: 

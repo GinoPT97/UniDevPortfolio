@@ -1,0 +1,2555 @@
+%% session.tex
+%%
+%% Copyright (C) 2000-2018 Simone Piccardi.  Permission is granted to
+%% copy, distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.1 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+
+\chapter{Terminali e sessioni di lavoro}
+\label{cha:session}
+
+
+A lungo l'unico modo per interagire con sistema di tipo Unix è stato tramite
+l'interfaccia dei terminali, ma anche oggi, nonostante la presenza di diverse
+interfacce grafiche, essi continuano ad essere estensivamente usati per il
+loro stretto legame la linea di comando.
+
+Nella prima parte esamineremo i concetti base in cui si articola l'interfaccia
+dei terminali, a partire dal sistema del \textit{job control} e delle sessioni
+di lavoro, toccando infine anche le problematiche dell'interazione con
+programmi non interattivi. Nella seconda parte tratteremo il funzionamento
+dell'I/O su terminale, e delle varie peculiarità che esso viene ad assumere
+nell'uso come interfaccia di accesso al sistema da parte degli utenti. La
+terza parte coprirà le tematiche relative alla creazione e gestione dei
+terminali virtuali, che consentono di replicare via software l'interfaccia dei
+terminali.
+
+
+
+\section{L'interazione con i terminali}
+\label{sec:sess_job_control}
+
+I terminali sono l'interfaccia con cui fin dalla loro nascita i sistemi
+unix-like hanno gestito l'interazione con gli utenti, tramite quella riga di
+comando che li caratterizza da sempre. Ma essi hanno anche una rilevanza
+particolare perché quella dei terminali è l'unica interfaccia hardware usata
+dal kernel per comunicare direttamente con gli utenti, con la cosiddetta
+\textit{console} di sistema, senza dover passare per un programma.
+
+Originariamente si trattava di dispositivi specifici (i terminali seriali, se
+non addirittura le telescriventi). Oggi questa interfaccia viene in genere
+emulata o tramite programmi o con le cosiddette console virtuali associate a
+monitor e tastiera, ma esiste sempre la possibilità di associarla direttamente
+ad alcuni dispositivi, come eventuali linee seriali, ed in certi casi, come
+buona parte dei dispositivi embedded su cui gira Linux (come router, access
+point, ecc.) questa resta anche l'unica opzione per una \textit{console} di
+sistema.
+
+
+\subsection{Il \textit{job control}}
+\label{sec:sess_job_control_overview}
+
+Viene comunemente chiamato \textit{job control} quell'insieme di funzionalità
+il cui scopo è quello di permettere ad un utente di poter sfruttare le
+capacità multitasking di un sistema Unix per eseguire in contemporanea più
+processi, pur potendo accedere, di solito, ad un solo terminale, avendo cioè
+un solo punto in cui si può avere accesso all'input ed all'output degli
+stessi. Con le interfacce grafiche di \textit{X Window} e con i terminali
+virtuali via rete oggi tutto questo non è più vero, dato che si può accedere a
+molti terminali in contemporanea da una singola postazione di lavoro, ma il
+sistema è nato prima dell'esistenza di tutto ciò.
+
+Il \textit{job control} è una caratteristica opzionale, introdotta in BSD
+negli anni '80, e successivamente standardizzata da POSIX.1. La sua
+disponibilità nel sistema è verificabile attraverso il controllo della macro
+\macro{\_POSIX\_JOB\_CONTROL}. In generale il \textit{job control} richiede il
+supporto sia da parte della shell (quasi tutte ormai lo hanno), che da parte
+del kernel. In particolare il kernel deve assicurare sia la presenza di un
+driver per i terminali abilitato al \textit{job control} che quella dei
+relativi segnali illustrati in sez.~\ref{sec:sig_job_control}. 
+
+In un sistema che supporta il \textit{job control}, una volta completato il
+login, l'utente avrà a disposizione una shell dalla quale eseguire i comandi e
+potrà iniziare quella che viene chiamata una \textsl{sessione di lavoro}, che
+riunisce (vedi sez.~\ref{sec:sess_proc_group}) tutti i processi eseguiti
+all'interno dello stesso login (esamineremo tutto il processo in dettaglio in
+sez.~\ref{sec:sess_login}).
+
+Siccome la shell è collegata ad un solo terminale, che viene usualmente
+chiamato \textsl{terminale di controllo}, (vedi sez.~\ref{sec:sess_ctrl_term})
+un solo comando alla volta, quello che viene detto in \textit{foreground} o in
+\textsl{primo piano}, potrà scrivere e leggere dal terminale. La shell però
+può eseguire, aggiungendo una ``\cmd{\&}'' alla fine del comando, più
+programmi in contemporanea, mandandoli come si dice, ``in
+\textit{background}'' (letteralmente ``\textsl{sullo sfondo}''), nel qual caso
+essi saranno eseguiti senza essere collegati al terminale.
+
+Si noti come si sia parlato di comandi e non di programmi o processi. Fra le
+funzionalità della shell infatti c'è anche quella di consentire di concatenare
+più comandi in una sola riga con il \textit{pipelining}, ed in tal caso
+verranno eseguiti più programmi. Inoltre, anche quando si invoca un singolo
+programma, questo potrà sempre lanciare eventuali sotto-processi per eseguire
+dei compiti specifici.
+
+Per questo l'esecuzione di una riga di comando può originare più di un
+processo, quindi nella gestione del \textit{job control} non si può far
+riferimento ai singoli processi.  Per questo il kernel prevede la possibilità
+di raggruppare più processi in un cosiddetto \textit{process group} (detto
+anche \textsl{raggruppamento di processi}, vedi
+sez.~\ref{sec:sess_proc_group}). Deve essere cura della shell far sì che tutti
+i processi che originano da una stessa riga di comando appartengano allo
+stesso raggruppamento di processi, in modo che le varie funzioni di controllo,
+ed i segnali inviati dal terminale, possano fare riferimento ad esso.
+
+In generale all'interno di una sessione avremo un eventuale (può non esserci)
+\textit{process group} in \textit{foreground}, che riunisce i processi che
+possono accedere al terminale, e più \textit{process group} in
+\textit{background}, che non possono accedervi. Il \textit{job control}
+prevede che quando un processo appartenente ad un raggruppamento in
+\textit{background} cerca di accedere al terminale, venga inviato un segnale a
+tutti i processi del raggruppamento, in modo da bloccarli (vedi
+sez.~\ref{sec:sess_ctrl_term}).
+
+Un comportamento analogo si ha anche per i segnali generati dai comandi di
+tastiera inviati dal terminale, che vengono inviati a tutti i processi del
+raggruppamento in \textit{foreground}. In particolare \cmd{C-z} interrompe
+l'esecuzione del comando, che può poi essere mandato in \textit{background}
+con il comando \cmd{bg}. Il comando \cmd{fg} consente invece di mettere in
+\textit{foreground} un comando precedentemente lanciato in
+\textit{background}. Si tenga presente che \cmd{bg} e \cmd{fg} sono comandi
+interni alla shell, che non comportano l'esecuzione di un programma esterno,
+ma operazioni di gestione compiute direttamente dalla shell stessa.
+
+Di norma la shell si cura anche di notificare all'utente, di solito prima
+della stampa a video del prompt, lo stato dei vari processi. Essa infatti sarà
+in grado, grazie all'uso della funzione di sistema \func{waitpid} (vedi
+sez.~\ref{sec:proc_wait}), di rilevare sia i processi che sono terminati, sia
+i raggruppamenti che sono bloccati, in quest'ultimo caso si dovrà usare la
+specifica opzione \const{WUNTRACED}, secondo quanto già illustrato in
+sez.~\ref{sec:proc_wait}.
+
+
+\subsection{I \textit{process group} e le \textsl{sessioni}}
+\label{sec:sess_proc_group}
+
+\itindbeg{process~group}
+
+Come accennato in sez.~\ref{sec:sess_job_control_overview} nel job control i
+processi vengono raggruppati in \textit{process group} e \textsl{sessioni};
+per far questo vengono utilizzati due ulteriori identificatori (oltre quelli
+visti in sez.~\ref{sec:proc_pid}) che il kernel associa a ciascun
+processo:\footnote{in Linux questi identificatori sono mantenuti nei campi
+  \var{pgrp} e \var{session} della struttura \kstruct{task\_struct} definita
+  in \file{include/linux/sched.h}.}  l'identificatore del \textit{process
+  group} e l'identificatore della \textsl{sessione}, che vengono indicati
+rispettivamente con le sigle \ids{PGID} e \ids{SID}, e sono mantenuti in
+variabili di tipo \type{pid\_t}. I valori di questi identificatori possono
+essere visualizzati dal comando \cmd{ps} usando l'opzione \cmd{-j}.
+
+Un \textit{process group} è pertanto definito da tutti i processi che hanno lo
+stesso \ids{PGID}; è possibile leggere il valore di questo identificatore con
+le funzioni di sistema \funcd{getpgid} e \funcd{getpgrp}, i cui prototipi
+sono:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fdecl{pid\_t getpgid(pid\_t pid)} 
+\fdesc{Legge il \ids{PGID} di un processo.} 
+\fdecl{pid\_t getpgrp(void)}
+\fdesc{Legge il \ids{PGID} del processo corrente.} 
+}
+
+{Le funzioni ritornano il \ids{PGID} richiesto in caso di successo,
+  \func{getpgrp} ha sempre successo mentre \func{getpgid} restituisce $-1$ per
+  un errore, nel qual caso \var{errno} potrà assumere solo il valore
+  \errval{ESRCH} se il processo indicato non esiste.
+}
+\end{funcproto}
+
+Le due funzioni sono definite nello standard POSIX.1-2001, ma la prima deriva
+da SVr4 e la seconda da BSD4.2 dove però è previsto possa prendere un
+argomento per indicare il \ids{PID} di un altro processo. Si può riottenere
+questo comportamento se di definisce la macro \macro{\_BSD\_SOURCE} e non sono
+definite le altre macro che richiedono la conformità a POSIX, X/Open o SysV
+(vedi sez.~\ref{sec:intro_standard}).
+
+La funzione \func{getpgid} permette di specificare il \ids{PID} del processo
+di cui si vuole sapere il \ids{PGID}. Un valore nullo per \param{pid}
+restituisce il \ids{PGID} del processo corrente, che è il comportamento
+ordinario di \func{getpgrp}, che di norma equivalente a \code{getpgid(0)}.
+
+In maniera analoga l'identificatore della sessione di un processo (il
+\ids{SID}) può essere letto dalla funzione di sistema \funcd{getsid}, il cui
+prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fdecl{pid\_t getsid(pid\_t pid)}
+\fdesc{Legge il \ids{SID} di un processo.} 
+}
+
+{La funzione ritorna l'identificatore (un numero positivo) in caso di successo
+  e $-1$ per un errore, nel qual caso \var{errno} assumerà uno dei valori:
+  \begin{errlist}
+    \item[\errcode{EPERM}] il processo selezionato non fa parte della stessa
+      sessione del processo corrente (solo in alcune implementazioni).
+    \item[\errcode{ESRCH}] il processo selezionato non esiste.
+  \end{errlist}
+}
+\end{funcproto}
+
+La funzione è stata introdotta in Linux a partire dal kernel 1.3.44, il
+supporto nelle librerie del C è iniziato dalla versione 5.2.19. La funzione
+non era prevista originariamente da POSIX.1, che parla solo di processi leader
+di sessione, e non di identificatori di sessione, ma è prevista da SVr4 e fa
+parte di POSIX.1-2001.  Per poterla utilizzare occorre definire la macro
+\macro{\_XOPEN\_SOURCE} ad un valore maggiore o uguale di 500. Su Linux
+l'errore \errval{EPERM} non viene mai restituito.
+
+Entrambi gli identificatori, \ids{SID} e \ids{PGID}, vengono inizializzati
+nella creazione di ciascun processo con lo stesso valore che hanno nel
+processo padre, per cui un processo appena creato appartiene sempre allo
+stesso raggruppamento e alla stessa sessione del padre. Vedremo a breve come
+sia possibile creare più \textit{process group} all'interno della stessa
+sessione, e spostare i processi dall'uno all'altro, ma sempre all'interno di
+una stessa sessione.
+
+Ciascun raggruppamento di processi ha sempre un processo principale, il
+cosiddetto \itindex{process~group~leader} \textit{process group leader} o più
+brevemente \textit{group leader}, che è identificato dall'avere un \ids{PGID}
+uguale al suo \ids{PID}. In genere questo è il primo processo del
+raggruppamento, che si incarica di lanciare tutti gli altri. Un nuovo
+raggruppamento si crea con la funzione di sistema \funcd{setpgrp}, il cui
+prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fdecl{int setpgrp(void)}
+\fdesc{Rende un processo \textit{group leader} di un nuovo gruppo.} 
+}
+
+{La funzione ritorna il valore del nuovo \textit{process group} e non sono
+  previsti errori.}
+\end{funcproto}
+
+La funzione assegna al \ids{PGID} il valore del \ids{PID} del processo
+corrente, rendendolo in tal modo \textit{group leader} di un nuovo
+raggruppamento. Tutti i successivi processi da esso creati apparterranno (a
+meno di non cambiare di nuovo il \ids{PGID}) al nuovo raggruppamento.
+
+La versione illustrata è quella usata nella definizione di POSIX.1, in BSD
+viene usata una funzione con questo nome, che però è identica a
+\func{setpgid}, che vedremo a breve, negli argomenti e negli effetti. Nella
+\acr{glibc} viene sempre usata sempre questa definizione, a meno di non
+richiedere esplicitamente la compatibilità all'indietro con BSD, definendo la
+macro \macro{\_BSD\_SOURCE} ed evitando di definire le macro che richiedono
+gli altri standard, come per \func{getpgrp}.
+
+È inoltre possibile spostare un processo da un raggruppamento di processi ad
+un altro cambiandone il \ids{PGID} con la funzione di sistema \funcd{setpgid},
+il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fdecl{int setpgid(pid\_t pid, pid\_t pgid)}
+\fdesc{Modifica il \ids{PGID} di un processo.} 
+}
+
+{La funzione ritorna il valore del nuovo \textit{process group}  in caso di
+  successo e $-1$ per un errore, nel qual caso \var{errno} assumerà uno dei
+  valori:
+  \begin{errlist}
+    \item[\errcode{EACCES}] il processo di cui si vuole cambiare il \ids{PGID}
+      ha già eseguito una \func{exec}.
+    \item[\errcode{EINVAL}] il valore di \param{pgid} è negativo.
+    \item[\errcode{EPERM}] il cambiamento non è consentito.
+    \item[\errcode{ESRCH}] il processo selezionato non esiste.
+  \end{errlist}
+}
+\end{funcproto}
+
+
+La funzione permette di cambiare il \ids{PGID} del processo indicato
+dall'argomento \param{pid}, ma il cambiamento può essere effettuato solo se
+l'argomento \param{pgid} indica un \textit{process group} che è nella stessa
+sessione del processo chiamante.  Inoltre la funzione può essere usata
+soltanto sul processo corrente o su uno dei suoi figli, ed in quest'ultimo
+caso ha successo soltanto se questo non ha ancora eseguito una
+\func{exec}.\footnote{questa caratteristica è implementata dal kernel che
+  mantiene allo scopo un altro campo, \var{did\_exec}, nella struttura
+  \kstruct{task\_struct}.}  Specificando un valore nullo per \param{pid} si
+indica il processo corrente, mentre specificando un valore nullo
+per \param{pgid} si imposta il \textit{process group} al valore del \ids{PID}
+del processo selezionato, questo significa che \func{setpgrp} è equivalente a
+\code{setpgid(0, 0)}.
+
+Di norma questa funzione viene usata dalla shell quando si usano delle
+pipeline, per mettere nello stesso \textit{process group} tutti i programmi
+lanciati su ogni linea di comando; essa viene chiamata dopo una \func{fork}
+sia dal processo padre, per impostare il valore nel figlio, che da
+quest'ultimo, per sé stesso, in modo che il cambiamento di \textit{process
+  group} sia immediato per entrambi; una delle due chiamate sarà ridondante,
+ma non potendo determinare quale dei due processi viene eseguito per primo,
+occorre eseguirle comunque entrambe per evitare di esporsi ad una \textit{race
+  condition}.
+
+Si noti come nessuna delle funzioni esaminate finora permetta di spostare un
+processo da una sessione ad un altra; infatti l'unico modo di far cambiare
+sessione ad un processo è quello di crearne una nuova con l'uso della funzione
+di sistema \funcd{setsid}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fdecl{pid\_t setsid(void)}
+\fdesc{Crea una nuova sessione sul processo corrente.} 
+}
+
+{La funzione ritorna il valore del nuovo \ids{SID} in caso di successo e $-1$
+  per un errore, nel qual caso \var{errno} assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EPERM}] il \ids{PGID} e \ids{PID} del processo coincidono.
+  \end{errlist}
+}
+\end{funcproto}
+
+
+La funzione imposta il \ids{PGID} ed il \ids{SID} del processo corrente al
+valore del suo \ids{PID}, creando così una nuova sessione ed un nuovo
+\textit{process group} di cui esso diventa leader (come per i \textit{process
+  group} un processo si dice \textsl{leader di sessione} se il suo \ids{SID} è
+uguale al suo \ids{PID}) ed unico componente.\footnote{in Linux la proprietà è
+  mantenuta in maniera indipendente con un apposito campo \var{leader} in
+  \kstruct{task\_struct}.} Inoltre la funzione distacca il processo da ogni
+terminale di controllo (torneremo sull'argomento in
+sez.~\ref{sec:sess_ctrl_term}) cui fosse in precedenza associato.
+
+La funzione ha successo soltanto se il processo non è già leader di un
+\textit{process group}, per cui per usarla di norma si esegue una \func{fork}
+e si esce, per poi chiamare \func{setsid} nel processo figlio, in modo che,
+avendo questo lo stesso \ids{PGID} del padre ma un \ids{PID} diverso, non ci
+siano possibilità di errore.
+
+Potrebbe sorgere il dubbio che, per il riutilizzo dei valori dei \ids{PID}
+fatto nella creazione dei nuovi processi (vedi sez.~\ref{sec:proc_pid}), il
+figlio venga ad assumere un valore corrispondente ad un \textit{process group}
+esistente; questo viene evitato dal kernel che considera come disponibili per
+un nuovo \ids{PID} solo valori che non corrispondono ad altri \ids{PID},
+\ids{PGID} o \ids{SID} in uso nel sistema. Questa funzione viene usata di
+solito nel processo di login (per i dettagli vedi sez.~\ref{sec:sess_login})
+per raggruppare in una sessione tutti i comandi eseguiti da un utente dalla
+sua shell.
+
+\itindend{process~group}
+
+\subsection{Il terminale di controllo e il controllo di sessione}
+\label{sec:sess_ctrl_term}
+
+Come accennato in sez.~\ref{sec:sess_job_control_overview}, nel sistema del
+\textit{job control} i processi all'interno di una sessione fanno riferimento
+ad un terminale di controllo (ad esempio quello su cui si è effettuato il
+login), sul quale effettuano le operazioni di lettura e scrittura, e dal quale
+ricevono gli eventuali segnali da tastiera. Nel caso di login grafico la cosa
+può essere più complessa, e di norma l'I/O è effettuato tramite il server X,
+ma ad esempio per i programmi, anche grafici, lanciati da un qualunque
+emulatore di terminale, sarà quest'ultimo a fare da terminale (virtuale) di
+controllo.
+
+Per realizzare questa funzionalità lo standard POSIX.1 prevede che ad ogni
+sessione possa essere associato un terminale di controllo; in Linux questo
+viene realizzato mantenendo fra gli attributi di ciascun processo anche qual'è
+il suo terminale di controllo.\footnote{lo standard POSIX.1 non specifica
+  nulla riguardo l'implementazione; in Linux anch'esso viene mantenuto nella
+  solita struttura \kstruct{task\_struct}, nel campo \var{tty}.}  In generale
+ogni processo eredita dal padre, insieme al \ids{PGID} e al \ids{SID} anche il
+terminale di controllo (vedi sez.~\ref{sec:proc_fork}). In questo modo tutti
+processi originati dallo stesso leader di sessione mantengono lo stesso
+terminale di controllo.
+
+Alla creazione di una nuova sessione con \func{setsid} ogni associazione con
+il precedente terminale di controllo viene cancellata, ed il processo che è
+divenuto un nuovo leader di sessione dovrà essere associato ad un nuovo
+terminale di controllo.\footnote{questo però solo quando necessario, cosa che,
+  come vedremo in sez.~\ref{sec:sess_daemon}, non è sempre vera.} Questo viene
+fatto dal kernel la prima volta che il processo apre un terminale (cioè uno
+dei vari file di dispositivo \file{/dev/tty*}). In tal caso questo diventa
+automaticamente il terminale di controllo, ed il processo diventa il
+\textsl{processo di controllo} di quella sessione. Questo avviene
+automaticamente a meno di non avere richiesto esplicitamente il contrario
+aprendo il terminale di controllo con il flag \const{O\_NOCTTY} (vedi
+sez.~\ref{sec:file_open_close}). In questo Linux segue la semantica di SVr4;
+BSD invece richiede che il terminale venga allocato esplicitamente con una
+\func{ioctl} con il comando \constd{TIOCSCTTY}.
+
+In genere, a meno di redirezioni, nelle sessioni di lavoro il terminale di
+controllo è associato ai file standard (input, output ed error) dei processi
+nella sessione, ma solo quelli che fanno parte del cosiddetto raggruppamento
+di \textit{foreground}, possono leggere e scrivere in certo istante. Per
+impostare il raggruppamento di \textit{foreground} di un terminale si usa la
+funzione \funcd{tcsetpgrp}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fhead{termios.h}
+\fdecl{int tcsetpgrp(int fd, pid\_t pgrpid)}
+\fdesc{Imposta il \textit{process group} di \textit{foreground}.}
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} assumerà uno dei valori: 
+  \begin{errlist}
+    \item[\errcode{ENOSYS}] il sistema non supporta il \textit{job control}.
+    \item[\errcode{ENOTTY}] il file \param{fd} non corrisponde al terminale di
+      controllo del processo chiamante.
+    \item[\errcode{EPERM}] il \textit{process group} specificato non è nella
+    stessa sessione del processo chiamante.
+  \end{errlist}
+  ed inoltre \errval{EBADF} ed \errval{EINVAL} nel loro significato generico.}
+\end{funcproto}
+
+La funzione imposta a \param{pgrpid} il \textit{process group} di
+\textit{foreground} del terminale associato al file descriptor \param{fd}. La
+funzione può essere eseguita con successo solo da un processo che
+ha \param{fd} come terminale di controllo della propria sessione;
+inoltre \param{pgrpid} deve essere un \textit{process group} (non vuoto)
+appartenente alla stessa sessione del processo chiamante.
+
+Come accennato in sez.~\ref{sec:sess_job_control_overview}, tutti i processi
+(e relativi raggruppamenti) che non fanno parte del gruppo di
+\textit{foreground} sono detti in \textit{background}; se uno si essi cerca di
+accedere al terminale di controllo provocherà l'invio da parte del kernel di
+uno dei due segnali \signal{SIGTTIN} o \signal{SIGTTOU} (a seconda che
+l'accesso sia stato in lettura o scrittura) a tutto il suo \textit{process
+  group}; dato che il comportamento di default di questi segnali (si riveda
+quanto esposto in sez.~\ref{sec:sig_job_control}) è di fermare il processo, di
+norma questo comporta che tutti i membri del gruppo verranno fermati, ma non
+si avranno condizioni di errore.\footnote{la shell in genere notifica comunque
+  un avvertimento, avvertendo la presenza di processi bloccati grazie all'uso
+  di \func{waitpid}.} Se però si bloccano o ignorano i due segnali citati, le
+funzioni di lettura e scrittura falliranno con un errore di \errcode{EIO}.
+
+In genere la funzione viene chiamata da un processo che è gruppo di
+\textit{foreground} per passare l'accesso al terminale ad altri processi,
+quando viene chiamata da un processo che non è nel gruppo di
+\textit{foreground}, a meno che questi non stia bloccando o ignorando il
+segnale \signal{SIGTTOU}, detto segnale verrà inviato a tutti i processi del
+gruppo di cui il chiamante fa parte.
+
+Un processo può controllare qual è il gruppo di \textit{foreground} associato
+ad un terminale con la funzione \funcd{tcgetpgrp}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fhead{termios.h}
+\fdecl{pid\_t tcgetpgrp(int fd)}
+\fdesc{Legge il \textit{process group} di \textit{foreground}.} 
+}
+
+{La funzione ritorna il \ids{PGID} del gruppo di \textit{foreground} in caso
+  di successo e $-1$ per un errore, nel qual caso \var{errno} assumerà uno dei
+  valori:
+  \begin{errlist}
+    \item[\errcode{ENOTTY}] non c'è un terminale di controllo o \param{fd} non
+      corrisponde al terminale di controllo del processo chiamante.
+  \end{errlist}
+  ed inoltre \errval{EBADF} nel suo significato generico.}
+\end{funcproto}
+
+La funzione legge il \textit{process group} di \textit{foreground} associato
+al file descriptor \param{fd}, che deve essere un terminale, restituendolo
+come risultato. Sia questa funzione che la precedente sono state introdotte
+con lo standard POSIX.1-2001, ma su Linux sono realizzate utilizzando le
+operazioni di \func{ioctl} con i comandi \constd{TIOCGPGRP} e
+\constd{TIOCSPGRP}.
+
+Si noti come entrambe le funzioni usino come argomento il valore di un file
+descriptor, il risultato comunque non dipende dal file descriptor che si usa
+ma solo dal terminale cui fa riferimento. Il kernel inoltre permette a ciascun
+processo di accedere direttamente al suo terminale di controllo attraverso il
+file speciale \file{/dev/tty}, che per ogni processo è un sinonimo per il
+proprio terminale di controllo. Questo consente anche a processi che possono
+aver rediretto l'output di accedere al terminale di controllo, pur non
+disponendo più del file descriptor originario; un caso tipico è il programma
+\cmd{crypt} che accetta la redirezione sullo \textit{standard input} di un
+file da decifrare, ma deve poi leggere la password dal terminale.
+
+Un'altra caratteristica del terminale di controllo usata nel \textit{job
+  control} è che utilizzando su di esso le combinazioni di tasti speciali
+(\texttt{C-z}, \texttt{C-c}, \texttt{C-y} e \texttt{C-|}) si farà sì che il
+kernel invii i corrispondenti segnali (rispettivamente \signal{SIGTSTP},
+\signal{SIGINT}, \signal{SIGQUIT} e \signal{SIGTERM}, trattati in
+sez.~\ref{sec:sig_job_control}) a tutti i processi del raggruppamento di
+\textit{foreground}; in questo modo la shell può gestire il blocco e
+l'interruzione dei vari comandi.
+
+Per completare la trattazione delle caratteristiche del \textit{job control}
+legate al terminale di controllo, occorre prendere in considerazione i vari
+casi legati alla terminazione anomala dei processi, che sono di norma gestite
+attraverso il segnale \signal{SIGHUP}. Il nome del segnale deriva da
+\textit{hungup}, termine che viene usato per indicare la condizione in cui il
+terminale diventa inutilizzabile, (letteralmente sarebbe
+\textsl{impiccagione}).
+
+Quando si verifica questa condizione, ad esempio se si interrompe la linea, o
+va giù la rete o più semplicemente si chiude forzatamente la finestra di
+terminale su cui si stava lavorando, il kernel provvederà ad inviare il
+segnale di \signal{SIGHUP} al processo di controllo. L'azione preimpostata in
+questo caso è la terminazione del processo, il problema che si pone è cosa
+accade agli altri processi nella sessione, che non han più un processo di
+controllo che possa gestire l'accesso al terminale, che potrebbe essere
+riutilizzato per qualche altra sessione.
+
+Lo standard POSIX.1 prevede che quando il processo di controllo termina, che
+ciò avvenga o meno per un \textit{hungup} del terminale (ad esempio si
+potrebbe terminare direttamente la shell con \cmd{kill}) venga inviato un
+segnale di \signal{SIGHUP} ai processi del raggruppamento di
+\textit{foreground}. In questo modo essi potranno essere avvisati che non
+esiste più un processo in grado di gestire il terminale (di norma tutto ciò
+comporta la terminazione anche di questi ultimi).
+
+Restano però gli eventuali processi in \textit{background}, che non ricevono
+il segnale; in effetti se il terminale non dovesse più servire essi potrebbero
+proseguire fino al completamento della loro esecuzione; ma si pone il problema
+di come gestire quelli che sono bloccati, o che si bloccano nell'accesso al
+terminale, in assenza di un processo che sia in grado di effettuare il
+controllo dello stesso.
+
+Questa è la situazione in cui si ha quello che viene chiamato un
+\itindex{process~group~orphaned} \textit{orphaned process group}. Lo standard
+POSIX.1 lo definisce come un \textit{process group} i cui processi hanno come
+padri esclusivamente o altri processi nel raggruppamento, o processi fuori
+della sessione.  Lo standard prevede inoltre che se la terminazione di un
+processo fa sì che un raggruppamento di processi diventi orfano e se i suoi
+membri sono bloccati, ad essi vengano inviati in sequenza i segnali di
+\signal{SIGHUP} e \signal{SIGCONT}.
+
+La definizione può sembrare complicata, e a prima vista non è chiaro cosa
+tutto ciò abbia a che fare con il problema della terminazione del processo di
+controllo.  Consideriamo allora cosa avviene di norma nel \textit{job
+  control}: una sessione viene creata con \func{setsid} che crea anche un
+nuovo \textit{process group}. Per definizione quest'ultimo è sempre
+\textsl{orfano}, dato che il padre del leader di sessione è fuori dalla stessa
+e il nuovo \textit{process group} contiene solo il leader di sessione. Questo
+è un caso limite, e non viene emesso nessun segnale perché quanto previsto
+dallo standard riguarda solo i raggruppamenti che diventano orfani in seguito
+alla terminazione di un processo.\footnote{l'emissione dei segnali infatti
+  avviene solo nella fase di uscita del processo, come una delle operazioni
+  legate all'esecuzione di \func{\_exit}, secondo quanto illustrato in
+  sez.~\ref{sec:proc_termination}.}
+
+Il leader di sessione provvederà a creare nuovi raggruppamenti che a questo
+punto non sono orfani in quanto esso resta padre per almeno uno dei processi
+del gruppo (gli altri possono derivare dal primo). Alla terminazione del
+leader di sessione però avremo che, come visto in
+sez.~\ref{sec:proc_termination}, tutti i suoi figli vengono adottati da
+\cmd{init}, che è fuori dalla sessione. Questo renderà orfani tutti i
+\textit{process group} creati direttamente dal leader di sessione a meno di
+non aver spostato con \func{setpgid} un processo da un gruppo ad un altro,
+(cosa che di norma non viene fatta) i quali riceveranno, nel caso siano
+bloccati, i due segnali; \signal{SIGCONT} ne farà proseguire l'esecuzione, ed
+essendo stato nel frattempo inviato anche \signal{SIGHUP}, se non c'è un
+gestore per quest'ultimo, i processi bloccati verranno automaticamente
+terminati.
+
+
+
+\subsection{Dal login alla shell}
+\label{sec:sess_login}
+
+L'organizzazione del sistema del job control è strettamente connessa alle
+modalità con cui un utente accede al sistema per dare comandi, collegandosi ad
+esso con un terminale, che sia questo realmente tale, come un VT100 collegato
+ad una seriale o virtuale, come quelli associati a schermo e tastiera o ad una
+connessione di rete. Dato che i concetti base sono gli stessi, e dato che alla
+fine le differenze sono nel dispositivo cui il kernel associa i file standard
+(vedi tab.~\ref{tab:file_std_files}) per l'I/O, tratteremo solo il caso
+classico del terminale, in generale nel caso di login via rete o di terminali
+lanciati dall'interfaccia grafica cambia anche il processo da cui ha origine
+l'esecuzione della shell.
+
+Abbiamo già brevemente illustrato in sez.~\ref{sec:intro_kern_and_sys} le
+modalità con cui il sistema si avvia, e di come, a partire da \cmd{init},
+vengano lanciati tutti gli altri processi. Adesso vedremo in maniera più
+dettagliata le modalità con cui il sistema arriva a fornire ad un utente la
+shell che gli permette di lanciare i suoi comandi su un terminale.
+
+Nella maggior parte delle distribuzioni di GNU/Linux viene usata la procedura
+di avvio di System V;\footnote{in realtà negli ultimi tempi questa situazione
+  sta cambiando, e sono state proposte diversi possibili rimpiazzi per il
+  tradizionale \texttt{init} di System V, come \texttt{upstart} o
+  \texttt{systemd}, ma per quanto trattato in questa sezione il risultato
+  finale non cambia, si avrà comunque il lancio di un programma che consenta
+  l'accesso al terminale.}  questa prevede che \cmd{init} legga dal file di
+configurazione \conffiled{/etc/inittab} quali programmi devono essere lanciati,
+ed in quali modalità, a seconda del cosiddetto \textit{run level}, anch'esso
+definito nello stesso file.
+
+Tralasciando la descrizione del sistema dei \textit{run level}, (per il quale
+si rimanda alla lettura delle pagine di manuale di \cmd{init} e di
+\file{inittab} o alla trattazione in sez.~5.3 di \cite{AGL}) quello che
+comunque viene sempre fatto è di eseguire almeno una istanza di un programma
+che permetta l'accesso ad un terminale. Uno schema di massima della procedura
+è riportato in fig.~\ref{fig:sess_term_login}.
+
+\begin{figure}[!htb]
+  \centering \includegraphics[width=13cm]{img/tty_login}
+  \caption{Schema della procedura di login su un terminale.}
+  \label{fig:sess_term_login}
+\end{figure}
+
+Un terminale, che esso sia un terminale effettivo, attaccato ad una seriale o
+ad un altro tipo di porta di comunicazione, o una delle console virtuali
+associate allo schermo, o un terminale virtuale ad uso degli emulatori o delle
+sessioni di rete, viene sempre visto attraverso un apposito file di
+dispositivo che presenta una serie di caratteristiche comuni che vanno a
+costituire l'interfaccia generica di accesso ai terminali.
+
+Per controllare un terminale fisico come la seriale o le console virtuali
+dello schermo si usa di solito il programma \cmd{getty} (o una delle sue
+varianti). Alla radice della catena che porta ad una shell per i comandi
+perciò c'è sempre \cmd{init} che esegue prima una \func{fork} e poi una
+\func{exec} per lanciare una istanza di questo programma, il tutto ripetuto
+per ciascuno dei terminali che si vogliono attivare, secondo quanto indicato
+dall'amministratore nel file di configurazione del programma,
+\conffile{/etc/inittab}.
+
+Quando viene lanciato da \cmd{init} il programma parte con i privilegi di
+amministratore e con un ambiente vuoto; \cmd{getty} si cura di chiamare
+\func{setsid} per creare una nuova sessione ed un nuovo \textit{process
+  group}, e di aprire il terminale (che così diventa il terminale di controllo
+della sessione) in lettura sullo \textit{standard input} ed in scrittura sullo
+\textit{standard output} e sullo \textit{standard error}; inoltre effettuerà,
+qualora servano, ulteriori impostazioni.\footnote{ad esempio, come qualcuno si
+  sarà accorto scrivendo un nome di login in maiuscolo, può effettuare la
+  conversione automatica dell'input in minuscolo, ponendosi in una modalità
+  speciale che non distingue fra i due tipi di caratteri (a beneficio di
+  alcuni vecchi terminali che non supportavano le minuscole).}  Alla fine il
+programma stamperà un messaggio di benvenuto per poi porsi in attesa
+dell'immissione del nome di un utente.
+
+Una volta che si sia immesso il nome di login \cmd{getty} esegue direttamente
+il programma \cmd{login} con una \func{execle}, passando come argomento la
+stringa con il nome, ed un ambiente opportunamente costruito che contenga
+quanto necessario; ad esempio di solito viene opportunamente inizializzata la
+variabile di ambiente \envvar{TERM} per identificare il terminale su cui si
+sta operando, a beneficio dei programmi che verranno lanciati in seguito.
+
+A sua volta \cmd{login}, che mantiene i privilegi di amministratore, usa il
+nome dell'utente per effettuare una ricerca nel database degli utenti (in
+genere viene chiamata \func{getpwnam}, che abbiamo visto in
+sez.~\ref{sec:sys_user_group}, per leggere la password e gli altri dati dal
+database degli utenti) e richiede una password. Se l'utente non esiste o se la
+password non corrisponde\footnote{il confronto non viene effettuato con un
+  valore in chiaro; quanto immesso da terminale viene invece a sua volta
+  criptato, ed è il risultato che viene confrontato con il valore che viene
+  mantenuto nel database degli utenti.} la richiesta viene ripetuta un certo
+numero di volte dopo di che \cmd{login} esce ed \cmd{init} provvede a
+rilanciare un'altra istanza di \cmd{getty}.
+
+Se invece la password corrisponde \cmd{login} esegue \func{chdir} per
+impostare come directory di lavoro la \textit{home directory} dell'utente,
+cambia i diritti di accesso al terminale (con \func{chown} e \func{chmod}) per
+assegnarne la titolarità all'utente ed al suo gruppo principale, assegnandogli
+al contempo i diritti di lettura e scrittura.\footnote{oggi queste operazioni,
+  insieme ad altre relative alla contabilità ed alla tracciatura degli
+  accessi, vengono gestite dalle distribuzioni più recenti in una maniera
+  generica appoggiandosi a servizi di sistema come \textit{ConsoleKit}, ma il
+  concetto generale resta sostanzialmente lo stesso.}  Inoltre il programma
+provvede a costruire gli opportuni valori per le variabili di ambiente, come
+\envvar{HOME}, \envvar{SHELL}, ecc.  Infine attraverso l'uso di \func{setuid},
+\func{setgid} e \func{initgroups} verrà cambiata l'identità del proprietario
+del processo, infatti, come spiegato in sez.~\ref{sec:proc_setuid}, avendo
+invocato tali funzioni con i privilegi di amministratore, tutti gli \ids{UID}
+ed i \ids{GID} (reali, effettivi e salvati) saranno impostati a quelli
+dell'utente.
+
+A questo punto \cmd{login} provvederà (fatte salve eventuali altre azioni
+iniziali, come la stampa di messaggi di benvenuto o il controllo della posta)
+ad eseguire con un'altra \func{exec} la shell, che si troverà con un ambiente
+già pronto con i file standard di tab.~\ref{tab:file_std_files} impostati sul
+terminale, e pronta, nel ruolo di leader di sessione e di processo di
+controllo per il terminale, a gestire l'esecuzione dei comandi come illustrato
+in sez.~\ref{sec:sess_job_control_overview}.
+
+Dato che il processo padre resta sempre \cmd{init} quest'ultimo potrà
+provvedere, ricevendo un \signal{SIGCHLD} all'uscita della shell quando la
+sessione di lavoro è terminata, a rilanciare \cmd{getty} sul terminale per
+ripetere da capo tutto il procedimento.
+
+
+
+\subsection{Interazione senza terminale: i \textsl{demoni} ed il
+  \textit{syslog}}
+\label{sec:sess_daemon}
+
+Come sottolineato fin da sez.~\ref{sec:intro_base_concept}, in un sistema
+unix-like tutte le operazioni sono eseguite tramite processi, comprese quelle
+operazioni di sistema (come l'esecuzione dei comandi periodici, o la consegna
+della posta, ed in generale tutti i programmi di servizio) che non hanno
+niente a che fare con la gestione diretta dei comandi dell'utente.
+
+Questi programmi, che devono essere eseguiti in modalità non interattiva e
+senza nessun intervento dell'utente, sono normalmente chiamati
+\textsl{demoni}, (o \textit{daemons}), nome ispirato dagli omonimi spiritelli
+della mitologia greca che svolgevano compiti che gli dei trovavano noiosi, di
+cui parla anche Socrate (che sosteneva di averne uno al suo servizio).
+
+%TODO ricontrollare, i miei ricordi di filosofia sono piuttosto datati.
+
+Se però si lancia un programma demone dalla riga di comando in un sistema che
+supporta, come Linux, il \textit{job control} esso verrà comunque associato ad
+un terminale di controllo e mantenuto all'interno di una sessione, e anche se
+può essere mandato in background e non eseguire più nessun I/O su terminale,
+si avranno comunque tutte le conseguenze che abbiamo trattato in
+sez.~\ref{sec:sess_ctrl_term}, in particolare l'invio dei segnali in
+corrispondenza dell'uscita del leader di sessione.
+
+Per questo motivo un programma che deve funzionare come demone deve sempre
+prendere autonomamente i provvedimenti opportuni (come distaccarsi dal
+terminale e dalla sessione) ad impedire eventuali interferenze da parte del
+sistema del \textit{job control}; questi sono riassunti in una lista di
+prescrizioni\footnote{ad esempio sia Stevens in \cite{APUE}, che la
+  \textit{Unix Programming FAQ} \cite{UnixFAQ} ne riportano di sostanzialmente
+  identiche.} da seguire quando si scrive un demone.
+
+Pertanto, quando si lancia un programma che deve essere eseguito come demone
+occorrerà predisporlo in modo che esso compia le seguenti azioni:
+\begin{enumerate*}
+\item Eseguire una \func{fork} e terminare immediatamente il processo padre
+  proseguendo l'esecuzione nel figlio.  In questo modo si ha la certezza che
+  il figlio non è un \textit{process group leader}, (avrà il \ids{PGID} del
+  padre, ma un \ids{PID} diverso) e si può chiamare \func{setsid} con
+  successo. Inoltre la shell considererà terminato il comando all'uscita del
+  padre.
+\item Eseguire \func{setsid} per creare una nuova sessione ed un nuovo
+  raggruppamento di cui il processo diventa automaticamente il leader, che
+  però non ha associato nessun terminale di controllo.
+\item Assicurarsi che al processo non venga associato in seguito nessun nuovo
+  terminale di controllo; questo può essere fatto sia avendo cura di usare
+  sempre l'opzione \const{O\_NOCTTY} nell'aprire i file di terminale, che
+  eseguendo una ulteriore \func{fork} uscendo nel padre e proseguendo nel
+  figlio. In questo caso, non essendo più quest'ultimo un leader di sessione
+  non potrà ottenere automaticamente un terminale di controllo.
+\item Eseguire una \func{chdir} per impostare la directory di lavoro del
+  processo (su \file{/} o su una directory che contenga dei file necessari per
+  il programma), per evitare che la directory da cui si è lanciato il processo
+  resti in uso e non sia possibile rimuoverla o smontare il filesystem che la
+  contiene.
+\item Impostare la maschera dei permessi (di solito con \code{umask(0)}) in
+  modo da non essere dipendenti dal valore ereditato da chi ha lanciato
+  originariamente il processo.
+\item Chiudere tutti i file aperti che non servono più (in generale tutti); in
+  particolare vanno chiusi i file standard che di norma sono ancora associati
+  al terminale (un'altra opzione è quella di redirigerli verso
+  \file{/dev/null}).
+\end{enumerate*}
+
+
+In Linux buona parte di queste azioni possono venire eseguite invocando la
+funzione \funcd{daemon} (fornita dalla \acr{glibc}), introdotta per la prima
+volta in BSD4.4; il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fdecl{int daemon(int nochdir, int noclose)}
+\fdesc{Rende il processo un demone.} 
+}
+
+{La funzione ritorna (nel nuovo processo) $0$ in caso di successo e $-1$ per
+  un errore, nel qual caso \var{errno} assumerà uno dei valori i
+    valori impostati dalle sottostanti \func{fork} e \func{setsid}.}
+\end{funcproto}
+
+La funzione esegue una \func{fork}, per uscire subito, con \func{\_exit}, nel
+padre, mentre l'esecuzione prosegue nel figlio che esegue subito una
+\func{setsid}. In questo modo si compiono automaticamente i passi 1 e 2 della
+precedente lista. Se \param{nochdir} è nullo la funzione imposta anche la
+directory di lavoro su \file{/}, se \param{noclose} è nullo i file standard
+vengono rediretti su \file{/dev/null} (corrispondenti ai passi 4 e 6); in caso
+di valori non nulli non viene eseguita nessuna altra azione.
+
+Dato che un programma demone non può più accedere al terminale, si pone il
+problema di come fare per la notifica di eventuali errori, non potendosi più
+utilizzare lo \textit{standard error}. Per il normale I/O infatti ciascun
+demone avrà le sue modalità di interazione col sistema e gli utenti a seconda
+dei compiti e delle funzionalità che sono previste; ma gli errori devono
+normalmente essere notificati all'amministratore del sistema.
+
+\itindbeg{syslog}
+
+Una soluzione può essere quella di scrivere gli eventuali messaggi su uno
+specifico file (cosa che a volte viene fatta comunque) ma questo comporta il
+grande svantaggio che l'amministratore dovrà tenere sotto controllo un file
+diverso per ciascun demone, e che possono anche generarsi conflitti di nomi.
+Per questo in BSD4.2 venne introdotto un servizio di sistema, il
+\textit{syslog}, che oggi si trova su tutti i sistemi Unix, e che permette ai
+demoni di inviare messaggi all'amministratore in una maniera standardizzata.
+
+Il servizio prevede vari meccanismi di notifica, e, come ogni altro servizio
+in un sistema unix-like, viene gestito attraverso un apposito programma, che è
+anch'esso un \textsl{demone}. In generale i messaggi di errore vengono
+raccolti dal file speciale \file{/dev/log}, un socket locale (vedi
+sez.~\ref{sec:sock_sa_local}) dedicato a questo scopo, o via rete, con un
+socket UDP e trattati dal demone che gestisce il servizio. Il più comune di
+questi è \texttt{syslogd}, che consente un semplice smistamento dei messaggi
+sui file in base alle informazioni in esse presenti; oggi però
+\texttt{syslogd} è in sostanziale disuso, sostituito da programmi più
+sofisticati come \texttt{rsyslog} o \texttt{syslog-ng}.
+
+Il servizio del \textit{syslog} permette infatti di trattare i vari messaggi
+classificandoli attraverso due indici: il primo, chiamato \textit{facility},
+suddivide in diverse categorie i messaggi in modo di raggruppare quelli
+provenienti da operazioni che hanno attinenza fra loro, ed è organizzato in
+sottosistemi (kernel, posta elettronica, demoni di stampa, ecc.). Il secondo,
+chiamato \textit{priority}, identifica l'importanza dei vari messaggi, e
+permette di classificarli e differenziare le modalità di notifica degli
+stessi.
+
+Il sistema del \textit{syslog} attraverso il proprio demone di gestione
+provvede poi a riportare i messaggi all'amministratore attraverso una serie
+differenti meccanismi come:
+\begin{itemize*}
+\item scriverli su un file (comunemente detto \textit{log file}, o giornale),
+\item scriverli sulla console,
+\item scriverli sui terminali degli utenti connessi,
+\item inviarli via mail ad uno specifico utente,
+\item inviarli ad un altro programma,
+\item inviarli via rete ad una macchina di raccolta,
+\item ignorarli completamente;
+\end{itemize*}
+le modalità con cui queste azioni vengono realizzate dipendono ovviamente dal
+demone che si usa, per la gestione del quale si rimanda ad un testo di
+amministrazione di sistema.\footnote{l'argomento è ad esempio coperto dal
+  capitolo 3.2.3 si \cite{AGL}.}
+
+La \acr{glibc} definisce una serie di funzioni standard con cui un processo
+può accedere in maniera generica al servizio di \textit{syslog}, che però
+funzionano solo localmente; se si vogliono inviare i messaggi ad un altro
+sistema occorre farlo esplicitamente con un socket UDP, o utilizzare le
+capacità di reinvio del servizio.
+
+La prima funzione definita dall'interfaccia è \funcd{openlog}, che inizializza
+una connessione al servizio di \textit{syslog}. Essa in generale non è
+necessaria per l'uso del servizio, ma permette di impostare alcuni valori che
+controllano gli effetti delle chiamate successive; il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{syslog.h}
+\fdecl{void openlog(const char *ident, int option, int facility)}
+\fdesc{Inizializza una connessione al sistema del \textit{syslog}.} 
+}
+
+{La funzione non restituisce nulla.}
+\end{funcproto}
+
+La funzione permette di specificare, tramite \param{ident}, l'identità di chi
+ha inviato il messaggio (di norma si passa il nome del programma, come
+specificato da \code{argv[0]}), e la stringa verrà preposta all'inizio di ogni
+messaggio. Si tenga presente che il valore di \param{ident} che si passa alla
+funzione è un puntatore, se la stringa cui punta viene cambiata lo sarà pure
+nei successivi messaggi, e se viene cancellata i risultati potranno essere
+impredicibili, per questo è sempre opportuno usare una stringa costante.
+
+L'argomento \param{facility} permette invece di preimpostare per le successive
+chiamate l'omonimo indice che classifica la categoria del messaggio.
+L'argomento è interpretato come una maschera binaria, e pertanto è possibile
+inviare i messaggi su più categorie alla volta. I valori delle costanti che
+identificano ciascuna categoria sono riportati in
+tab.~\ref{tab:sess_syslog_facility}, il valore di \param{facility} deve essere
+specificato con un OR aritmetico.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{8cm}|}
+    \hline
+    \textbf{Valore}& \textbf{Significato}\\
+    \hline
+    \hline
+    \constd{LOG\_AUTH}     & Messaggi relativi ad autenticazione e sicurezza,
+                             obsoleto, è sostituito da \const{LOG\_AUTHPRIV}.\\
+    \constd{LOG\_AUTHPRIV} & Sostituisce \const{LOG\_AUTH}.\\
+    \constd{LOG\_CRON}     & Messaggi dei demoni di gestione dei comandi
+                             programmati (\cmd{cron} e \cmd{at}).\\
+    \constd{LOG\_DAEMON}   & Demoni di sistema.\\
+    \constd{LOG\_FTP}      & Servizio FTP.\\
+    \constd{LOG\_KERN}     & Messaggi del kernel.\\
+    \constd{LOG\_LOCAL0}   & Riservato all'amministratore per uso locale.\\
+    \hspace{.5cm}$\vdots$ &   \hspace{3cm}$\vdots$\\
+    \constd{LOG\_LOCAL7}   & Riservato all'amministratore per uso locale.\\
+    \constd{LOG\_LPR}      & Messaggi del sistema di gestione delle stampanti.\\
+    \constd{LOG\_MAIL}     & Messaggi del sistema di posta elettronica.\\
+    \constd{LOG\_NEWS}     & Messaggi del sistema di gestione delle news 
+                            (USENET).\\
+    \constd{LOG\_SYSLOG}   & Messaggi generati dal demone di gestione del
+                            \textit{syslog}.\\
+    \constd{LOG\_USER}     & Messaggi generici a livello utente.\\
+    \constd{LOG\_UUCP}     & Messaggi del sistema UUCP (\textit{Unix to Unix
+                             CoPy}), ormai in disuso.\\
+\hline
+\end{tabular}
+\caption{Valori possibili per l'argomento \param{facility} di \func{openlog}.}
+\label{tab:sess_syslog_facility}
+\end{table}
+
+L'argomento \param{option} serve invece per controllare il comportamento della
+funzione \func{openlog} e delle modalità con cui le successive chiamate
+scriveranno i messaggi, esso viene specificato come maschera binaria composta
+con un OR aritmetico di una qualunque delle costanti riportate in
+tab.~\ref{tab:sess_openlog_option}.
+
+\begin{table}[htb]
+  \footnotesize
+\centering
+\begin{tabular}[c]{|l|p{8cm}|}
+\hline
+\textbf{Valore}& \textbf{Significato}\\
+\hline
+\hline
+  \constd{LOG\_CONS}   & Scrive sulla console in caso di errore nell'invio del
+                         messaggio al sistema del \textit{syslog}. \\
+  \constd{LOG\_NDELAY} & Apre la connessione al sistema del \textit{syslog}
+                         subito invece di attendere l'invio del primo
+                         messaggio.\\ 
+  \constd{LOG\_NOWAIT} & Non usato su Linux, su altre piattaforme non attende i
+                         processi figli creati per inviare il messaggio.\\
+  \constd{LOG\_ODELAY} & Attende il primo messaggio per aprire la connessione al
+                         sistema del \textit{syslog}.\\ 
+  \constd{LOG\_PERROR} & Stampa anche su \file{stderr} (non previsto in
+                         POSIX.1-2001).\\ 
+  \constd{LOG\_PID}    & Inserisce nei messaggi il \ids{PID} del processo
+                         chiamante.\\
+\hline
+\end{tabular}
+\caption{Valori possibili per l'argomento \param{option} di \func{openlog}.}
+\label{tab:sess_openlog_option}
+\end{table}
+
+La funzione che si usa per generare un messaggio è \funcd{syslog}, dato che
+l'uso di \func{openlog} è opzionale, sarà quest'ultima a provvede a chiamare la
+prima qualora ciò non sia stato fatto (nel qual caso il valore di
+\param{ident} è \val{NULL}). Il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{syslog.h}
+\fdecl{void syslog(int priority, const char *format, ...)}
+\fdesc{Genera un messaggio per il \textit{syslog}.} 
+}
+
+{La funzione non restituisce nulla.}
+\end{funcproto}
+
+La funzione genera un messaggio le cui caratteristiche sono indicate
+da \param{priority}. Per i restanti argomenti il suo comportamento è analogo a
+quello di \func{printf}, e il valore dell'argomento \param{format} è identico
+a quello descritto nella pagina di manuale di quest'ultima (per i valori
+principali si può vedere la trattazione sommaria che se ne è fatto in
+sez.~\ref{sec:file_formatted_io}).  L'unica differenza è che la sequenza
+\val{\%m} viene rimpiazzata dalla stringa restituita da
+\code{strerror(errno)}. Gli argomenti seguenti i primi due devono essere
+forniti secondo quanto richiesto da \param{format}.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{8cm}|}
+    \hline
+    \textbf{Valore}& \textbf{Significato}\\
+    \hline
+    \hline
+    \constd{LOG\_EMERG}   & Il sistema è inutilizzabile.\\
+    \constd{LOG\_ALERT}   & C'è una emergenza che richiede intervento
+                            immediato.\\
+    \constd{LOG\_CRIT}    & Si è in una condizione critica.\\
+    \constd{LOG\_ERR}     & Si è in una condizione di errore.\\
+    \constd{LOG\_WARNING} & Messaggio di avvertimento.\\
+    \constd{LOG\_NOTICE}  & Notizia significativa relativa al comportamento.\\
+    \constd{LOG\_INFO}    & Messaggio informativo.\\
+    \constd{LOG\_DEBUG}   & Messaggio di debug.\\
+    \hline
+  \end{tabular}
+  \caption{Valori possibili per l'indice di importanza del messaggio da
+    specificare nell'argomento \param{priority} di \func{syslog}.}
+  \label{tab:sess_syslog_priority}
+\end{table}
+
+L'argomento \param{priority} permette di impostare sia la \textit{facility}
+che la \textit{priority} del messaggio. In realtà viene prevalentemente usato
+per specificare solo quest'ultima in quanto la prima viene di norma
+preimpostata con \func{openlog}. La priorità è indicata con un valore numerico
+specificabile attraverso le costanti riportate in
+tab.~\ref{tab:sess_syslog_priority}.  
+
+La \acr{glibc}, seguendo POSIX.1-2001, prevede otto diverse priorità
+ordinate da 0 a 7, in ordine di importanza decrescente; questo comporta che i
+tre bit meno significativi dell'argomento \param{priority} sono occupati da
+questo valore, mentre i restanti bit più significativi vengono usati per
+specificare la \textit{facility}.  Nel caso si voglia specificare anche la
+\textit{facility} basta eseguire un OR aritmetico del valore della priorità
+con la maschera binaria delle costanti di tab.~\ref{tab:sess_syslog_facility}.
+
+Una funzione sostanzialmente identica a \func{syslog} è \funcd{vsyslog}. La
+funzione è originaria di BSD e per utilizzarla deve essere definito
+\macro{\_BSD\_SOURCE}; il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{syslog.h}
+\fdecl{void vsyslog(int priority, const char *format, va\_list src)}
+\fdesc{Genera un messaggio per il \textit{syslog}.} 
+}
+
+{La funzione non restituisce nulla.}
+\end{funcproto}
+
+La sola differenza con \func{syslog} è quella di prendere invece di una lista
+di argomenti esplicita un unico argomento finale passato nella forma di una
+\macro{va\_list}; la funzione risulta utile qualora si ottengano gli argomenti
+dalla invocazione di un'altra funzione \textit{variadic} (si ricordi quanto
+visto in sez.~\ref{sec:proc_variadic}).
+
+Per semplificare la gestione della scelta del livello di priorità a partire
+dal quale si vogliono registrare i messaggi, le funzioni di gestione
+mantengono per ogni processo una maschera che determina quale delle chiamate
+effettuate a \func{syslog} verrà effettivamente registrata.  In questo modo
+sarà possibile escludere i livelli di priorità che non interessa registrare,
+impostando opportunamente la maschera una volta per tutte.
+
+Questo significa che in genere nei programmi vengono comunque previste le
+chiamate a \func{syslog} per tutti i livelli di priorità, ma poi si imposta
+questa maschera per registrare solo quello che effettivamente interessa. La
+funzione che consente di fare questo è \funcd{setlogmask}, ed il suo prototipo
+è:
+
+\begin{funcproto}{
+\fhead{syslog.h}
+\fdecl{int setlogmask(int mask)}
+\fdesc{Imposta la maschera dei messaggi del \textit{syslog}.} 
+}
+
+{La funzione ritorna il precedente valore della maschera dei messaggi e non
+  prevede errori.}
+\end{funcproto}
+
+La funzione restituisce il valore della maschera corrente, e se si passa un
+valore nullo per \param{mask} la maschera corrente non viene modificata; in
+questo modo si può leggere il valore della maschera corrente. Indicando un
+valore non nullo per \param{mask} la registrazione dei messaggi viene
+disabilitata per tutte quelle priorità che non rientrano nella maschera.
+
+In genere il valore viene impostato usando la macro
+\macrod{LOG\_MASK}\texttt{(p)} dove \code{p} è una delle costanti di
+tab.~\ref{tab:sess_syslog_priority}. É inoltre disponibile anche la macro
+\macrod{LOG\_UPTO}\texttt{(p)} che permette di specificare automaticamente
+tutte le priorità fino a quella indicata da \code{p}.
+
+Una volta che si sia certi che non si intende registrare più nessun messaggio
+si può chiudere esplicitamente la connessione al \textit{syslog} (l'uso di
+questa funzione è comunque completamente opzionale) con la funzione
+\funcd{closelog}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{syslog.h}
+\fdecl{void closelog(void)}
+\fdesc{Chiude la connessione al \textit{syslog}.} 
+}
+
+{La funzione non ritorna nulla.}
+\end{funcproto}
+
+
+Come si evince anche dalla presenza della facility \const{LOG\_KERN} in
+tab.~\ref{tab:sess_syslog_facility}, uno dei possibili utenti del servizio del
+\textit{syslog} è anche il kernel, che a sua volta può avere necessità di
+inviare messaggi verso l'\textit{user space}. I messaggi del kernel sono
+mantenuti in un apposito buffer circolare e generati all'interno del kernel
+tramite la funzione \texttt{printk}, analoga alla \func{printf} usata in
+\textit{user space}.\footnote{una trattazione eccellente dell'argomento si
+  trova nel quarto capitolo di \cite{LinDevDri}.}
+
+Come per i messaggi ordinari anche i messaggi del kernel hanno una priorità ma
+in questo caso non si può contare sulla coincidenza con le costanti di
+tab.~\ref{tab:sess_syslog_priority} dato che il codice del kernel viene
+mantenuto in maniera indipendente dalle librerie del C. Per questo motivo le
+varie priorità usate dal kernel sono associate ad un valore numerico che viene
+tradotto in una stringa preposta ad ogni messaggio, secondo i valori che si
+sono riportati in fig.~\ref{fig:printk_priority}
+
+\begin{figure}[!htb]
+  \footnotesize \centering
+  \begin{minipage}[c]{0.80\textwidth}
+    \includestruct{listati/printk_prio.c}
+  \end{minipage} 
+  \normalsize 
+  \caption{Definizione delle stringhe coi relativi valori numerici che
+    indicano le priorità dei messaggi del kernel (ripresa da
+    \file{include/linux/kernel.h}).}
+  \label{fig:printk_priority}
+\end{figure}
+
+Dato che i messaggi generati da \texttt{printk} hanno un loro specifico
+formato tradizionalmente si usava un demone ausiliario, \cmd{klogd}, per
+leggerli, rimappare le loro priorità sui valori di
+tab.~\ref{tab:sess_syslog_priority} ed inviarli al sistema del \textit{syslog}
+nella facility \const{LOG\_KERN}.  Oggi i nuovi demoni più avanzati che
+realizzano il servizio (come \texttt{rsyslog} o \texttt{syslog-ng}) sono in
+grado di fare tutto questo da soli leggendoli direttamente senza necessità di
+un intermediario.
+
+Ma i messaggi del kernel non sono necessariamente connessi al sistema del
+\textit{syslog}; ad esempio possono anche essere letti direttamente dal buffer
+circolare con il comando \texttt{dmesg}. Inoltre è previsto che se superano
+una certa priorità essi vengano stampati direttamente sul terminale indicato
+come \textit{console} di sistema,\footnote{quello che viene indicato con il
+  parametro di avvio \texttt{console} del kernel, si consulti al riguardo
+  sez.~5.3.1 di \cite{AGL}.}  in modo che sia possibile vederli anche in caso
+di blocco totale del sistema (nell'assunzione che la console sia collegata).
+
+In particolare la stampa dei messaggi sulla console è controllata dal
+contenuto del file \sysctlfiled{kernel/printk} (o con l'equivalente parametro
+di \func{sysctl}) che prevede quattro valori numerici interi: il primo,
+\textit{console\_loglevel}, indica la priorità corrente oltre la quale vengono
+stampati i messaggi sulla console, il secondo,
+\textit{default\_message\_loglevel}, la priorità di default assegnata ai
+messaggi che non ne hanno impostata una, il terzo,
+\textit{minimum\_console\_level}, il valore minimo che si può assegnare al
+primo valore,\footnote{che può essere usato con una delle operazioni di
+  gestione che vedremo a breve per ``\textsl{silenziare}'' il kernel.} ed il
+quarto, \textit{default\_console\_loglevel}, il valore di
+default.\footnote{anch'esso viene usato nelle operazioni di controllo per
+  tornare ad un valore predefinito.}
+
+Per la lettura dei messaggi del kernel e la gestione del relativo buffer
+circolare esiste una apposita \textit{system call} chiamata anch'essa
+ \texttt{syslog}, ma dato il conflitto di nomi questa viene rimappata su
+ un'altra funzione di libreria, in particolare nella \acr{glibc} essa viene
+ invocata tramite la funzione \funcd{klogctl},\footnote{nella \acr{libc4} e
+   nella \acr{libc5} la funzione invece era \code{SYS\_klog}.} il cui prototipo
+ è:
+
+\begin{funcproto}{
+\fhead{sys/klog.h}
+\fdecl{int klogctl(int op, char *buffer, int len)}
+\fdesc{Gestisce i messaggi di log del kernel.} 
+}
+
+{La funzione ritorna un intero positivo o nullo dipendente dall'operazione
+  scelta in caso di successo e $-1$ per un errore, nel qual caso \var{errno}
+  assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EINVAL}] l'argomento \param{op} non ha un valore valido, o si
+    sono specificati valori non validi per gli altri argomenti quando questi
+    sono richiesti.
+  \item[\errcode{ENOSYS}] il supporto per \texttt{printk} non è stato compilato
+    nel kernel.
+  \item[\errcode{EPERM}] non si hanno i privilegi richiesti per l'operazione
+    richiesta.
+  \item[\errcode{ERESTARTSYS}] l'operazione è stata interrotta da un segnale.
+   \end{errlist}
+}
+\end{funcproto}
+
+La funzione prevede che si passi come primo argomento \param{op} un codice
+numerico che indica l'operazione richiesta, il secondo argomento deve essere,
+per le operazioni che compiono una lettura di dati, l'indirizzo del buffer su
+cui copiarli, ed il terzo quanti byte leggere. L'effettivo uso di questi due
+argomenti dipende comunque dall'operazione richiesta, ma essi devono essere
+comunque specificati, anche quando non servono, nel qual caso verranno
+semplicemente ignorati.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{10cm}|}
+    \hline
+    \textbf{Valore}& \textbf{Significato}\\
+    \hline
+    \hline
+    \texttt{0} & apre il log (attualmente non fa niente), \param{buffer}
+                 e \param{len} sono ignorati.\\
+    \texttt{1} & chiude il log (attualmente non fa niente), \param{buffer}
+                 e \param{len} sono ignorati.\\
+    \texttt{2} & legge \param{len} byte nel buffer \param{buffer} dal log dei
+                 messaggi.\\   
+    \texttt{3} & legge \param{len} byte nel buffer \param{buffer} dal buffer
+                 circolare dei messaggi.\\
+    \texttt{4} & legge \param{len} byte nel buffer \param{buffer} dal buffer
+                 circolare dei messaggi e lo svuota.\\
+    \texttt{5} & svuota il buffer circolare dei messaggi, \param{buffer}
+                 e \param{len} sono ignorati.\\
+    \texttt{6} & disabilita la stampa dei messaggi sulla console, \param{buffer}
+                 e \param{len} sono ignorati.\\
+    \texttt{7} & abilita la stampa dei messaggi sulla console, \param{buffer}
+                 e \param{len} sono ignorati.\\
+    \texttt{8} & imposta a \param{len} il livello dei messaggi stampati sulla
+                 console, \param{buffer} è ignorato.\\ 
+    \texttt{9} & ritorna il numero di byte da leggere presenti sul buffer di
+                 log, \param{buffer} e \param{len} sono ignorati (dal kernel
+                 2.4.10).\\ 
+    \texttt{10}& ritorna la dimensione del buffer di log, \param{buffer}
+                 e \param{len} sono ignorati (dal kernel 2.6.6).\\
+\hline
+\end{tabular}
+\caption{Valori possibili per l'argomento \param{op} di \func{klogctl}.}
+\label{tab:klogctl_operation}
+\end{table}
+
+Si sono riportati in tab.~\ref{tab:klogctl_operation} i valori utilizzabili
+per \param{op}, con una breve spiegazione della relativa operazione e di come
+vengono usati gli altri due argomenti. Come si può notare la funzione è una
+sorta di interfaccia comune usata per eseguire operazioni completamente
+diverse fra loro.
+
+L'operazione corrispondente al valore 2 di \param{op} consente di leggere un
+messaggio dal cosiddetto \textit{log} del kernel. Eseguire questa operazione è
+equivalente ad eseguire una lettura dal file
+\procfile{/proc/kmsg},\footnote{in realtà è vero l'opposto, è questa funzione
+  che viene eseguita quando si legge da questo file.} se non vi sono messaggi
+la funzione si blocca in attesa di dati e ritorna soltanto quando questi
+diventano disponibili. In tal caso verranno letti ed
+estratti\footnote{estratti in quanti i dati del \textit{log} del kernel si
+  possono leggere una volta sola, se più processi eseguono l'operazione di
+  lettura soltanto uno riceverà i dati, a meno che completata la propria
+  operazione di lettura non restino altri messaggi pendenti che a questo punto
+  potrebbero essere letti da un altro processo in attesa.} dal log \param{len}
+byte che verranno scritti su \param{buffer}; in questo caso il valore di
+ritorno di \func{klogctl} corrisponderà al numero di byte ottenuti.
+
+Se invece si usa l'operazione 3 i dati vengono letti dal buffer circolare
+usato da \texttt{printk}, che mantiene tutti i messaggi stampati dal kernel
+fino al limite delle sue dimensioni, in questo caso i messaggi possono essere
+letti più volte. Usando invece l'operazione 4 si richiede di cancellare il
+buffer dopo la lettura, che così risulterà vuoto ad una lettura
+successiva. Anche con queste operazioni \param{len} indica il numero di byte
+da leggere e \param{buffer} l'indirizzo dove leggerli, e la funzione ritorna
+il numero di byte effettivamente letti. L'operazione 5 esegue soltanto la
+cancellazione del buffer circolare, \param{len} e \param{buffer} sono ignorati
+e la funzione ritorna un valore nullo.
+
+Le operazioni corrispondenti ai valori 6, 7 ed 8 consentono di modificare la
+priorità oltre la quale i messaggi vengono stampati direttamente sulla
+\textit{console} e fanno riferimento ai parametri del kernel gestiti con le
+variabili contenute in \sysctlfile{kernel/printk} di cui abbiamo
+parlato prima, ed in particolare con 6 si imposta come corrente il valore
+minimo della terza variabile (\textit{minimum\_console\_level}), ottenendo
+l'effetto di ridurre al minimo i messaggi che arrivano in console, mentre con
+7 si ripristina il valore di default.\footnote{secondo la documentazione
+  questo sarebbe quello indicato della quarta variabile,
+  \textit{default\_console\_loglevel} in genere pari a 7, ma alcune prove con
+  il programma \texttt{mydmesg} che si trova nei sorgenti allegati alla guida
+  rivelano che l'unico effetto di questa operazione è riportare il valore a
+  quello precedente se lo si è ridotto al minimo con l'operazione 6.}  Per
+impostare direttamente un valore specifico infine si può usare 8, nel qual
+caso il valore numerico del livello da impostare deve essere specificato
+con \param{len}, che può assumere solo un valore fra 1 e 8.
+
+Infine le due operazioni 9 e 10 consentono di ottenere rispettivamente il
+numero di byte ancora non letti dal log del kernel, e la dimensione totale di
+questo. Per entrambe i dati sono restituiti come valore di ritorno, e gli
+argomento \param{buffer} e \param{len} sono ignorati.
+
+Si tenga presente che la modifica del livello minimo per cui i messaggi
+vengono stampati sulla console (operazioni 6, 7 e 8) e la cancellazione del
+buffer circolare di \texttt{printk} (operazioni 4 e 5) sono privilegiate; fino
+al kernel 2.6.30 era richiesta la capacità \const{CAP\_SYS\_ADMIN}, a partire
+dal 2.6.38 detto privilegio è stato assegnato ad una capacità aggiuntiva,
+\const{CAP\_SYSLOG}. Tutto questo è stato fatto per evitare che processi
+eseguiti all'interno di un sistema di virtualizzazione ``\textsl{leggera}''
+(come i \textit{Linux Container} di LXC) che necessitano di
+\const{CAP\_SYS\_ADMIN} per operare all'interno del proprio ambiente
+ristretto, potessero anche avere la capacità di influire sui log del kernel
+al di fuori di questo.
+
+\itindend{syslog}
+
+
+
+\section{L'I/O su terminale}
+\label{sec:sess_terminal_io}
+
+Benché come ogni altro dispositivo i terminali siano accessibili come file,
+essi hanno assunto storicamente, essendo stati a lungo l'unico modo di
+accedere al sistema, una loro rilevanza specifica, che abbiamo già avuto modo
+di incontrare nella precedente sezione.
+
+Esamineremo qui le peculiarità dell'I/O eseguito sui terminali, che per la
+loro particolare natura presenta delle differenze rispetto ai normali file su
+disco e agli altri dispositivi.
+
+
+
+\subsection{L'architettura dell'I/O su terminale}
+\label{sec:term_io_design}
+
+I terminali sono una classe speciale di dispositivi a caratteri (si ricordi la
+classificazione di sez.~\ref{sec:file_file_types}). Un terminale ha infatti
+una caratteristica che lo contraddistingue da un qualunque altro dispositivo,
+è infatti destinato a gestire l'interazione con un utente e deve perciò essere
+in grado di fare da terminale di controllo per una sessione; tutto questo
+comporta la presenza di una serie di capacità specifiche.
+
+L'interfaccia per i terminali è una delle più oscure e complesse, essendosi
+stratificata dagli inizi dei sistemi Unix fino ad oggi. Questo comporta una
+grande quantità di opzioni e controlli relativi ad un insieme di
+caratteristiche (come ad esempio la velocità della linea) necessarie per
+dispositivi, come i terminali seriali, che al giorno d'oggi sono praticamente
+in disuso.
+
+Storicamente i primi terminali erano appunto terminali di telescriventi
+(\textit{teletype}), da cui deriva sia il nome dell'interfaccia, \textit{TTY},
+che quello dei relativi file di dispositivo, che sono sempre della forma
+\texttt{/dev/tty*}.\footnote{ciò vale solo in parte per i terminali virtuali,
+  essi infatti hanno due lati, un \textit{master}, che può assumere i nomi
+  \file{/dev/pty[p-za-e][0-9a-f]} ed un corrispondente \textit{slave} con nome
+  \file{/dev/tty[p-za-e][0-9a-f]}.}  Oggi essi includono le porte seriali, le
+console virtuali dello schermo, i terminali virtuali che vengono creati come
+canali di comunicazione dal kernel e che di solito vengono associati alle
+connessioni di rete (ad esempio per trattare i dati inviati con \cmd{telnet} o
+\cmd{ssh}).
+
+L'I/O sui terminali si effettua con le stesse modalità dei file normali: si
+apre il relativo file di dispositivo, e si leggono e scrivono i dati con le
+usuali funzioni di lettura e scrittura. Così se apriamo una console virtuale
+avremo che \func{read} leggerà quanto immesso dalla tastiera, mentre
+\func{write} scriverà sullo schermo.  In realtà questo è vero solo a grandi
+linee, perché non tiene conto delle caratteristiche specifiche dei terminali;
+una delle principali infatti è che essi prevedono due modalità di operazione,
+dette rispettivamente ``\textsl{modo canonico}'' e ``\textsl{modo non
+  canonico}'', che hanno dei comportamenti nettamente
+diversi. \index{modo~canonico}\index{modo~non~canonico}
+
+% TODO: inserire qui il comportamento di read relativo all'errore EIO sulla
+% lettura in background???
+
+La modalità preimpostata all'apertura del terminale è quella canonica, in cui
+le operazioni di lettura vengono sempre effettuate assemblando i dati in una
+linea. Questo significa che eseguendo una \func{read} su un terminale in modo
+canonico la funzione si bloccherà, anche se si sono scritti dei caratteri,
+fintanto che non si preme il tasto di ritorno a capo: a questo punto la linea
+sarà completata e la funzione ritornerà leggendola per intero.
+
+Inoltre in modalità canonica alcuni dei caratteri che si scrivono sul
+terminale vengono interpretati direttamente dal kernel per compiere operazioni
+(come la generazione dei segnali associati al \textit{job control} illustrata
+in sez.~\ref{sec:sig_job_control}), e non saranno mai letti dal
+dispositivo. Quella canonica è di norma la modalità in cui opera la shell.
+
+Un terminale in modo non canonico invece non effettua nessun accorpamento dei
+dati in linee né li interpreta; esso viene di solito usato da quei programmi,
+come ad esempio gli editor, che necessitano di poter leggere un carattere alla
+volta e che gestiscono al loro interno l'interpretazione dei caratteri
+ricevuti impiegandoli opportunamente come comandi o come dati.
+
+\begin{figure}[!htb]
+  \centering \includegraphics[width=12cm]{img/term_struct}
+  \caption{Struttura interna generica del kernel per l'accesso ai dati di un
+    terminale.}
+  \label{fig:term_struct}
+\end{figure}
+
+Per capire le caratteristiche dell'I/O sui terminali occorre esaminare le
+modalità con cui esso viene effettuato. L'accesso, come per tutti i
+dispositivi, viene gestito dal kernel, ma per tutti i terminali viene
+utilizzata una architettura generica che si è schematizzata in
+fig.~\ref{fig:term_struct}.  
+
+Ad ogni terminale sono sempre associate due code
+per gestire l'input e l'output, che ne implementano una bufferizzazione
+all'interno del kernel che è completamente indipendente dalla eventuale
+ulteriore bufferizzazione fornita dall'interfaccia standard dei file.
+
+La coda di ingresso mantiene i caratteri che sono stati letti dal terminale ma
+non ancora letti da un processo, la sua dimensione è definita dal parametro di
+sistema \const{MAX\_INPUT} (si veda sez.~\ref{sec:sys_file_limits}), che ne
+specifica il limite minimo, in realtà la coda può essere più grande e cambiare
+dimensione dinamicamente. 
+
+Se è stato abilitato il controllo di flusso in ingresso il kernel emette i
+caratteri di STOP e START per bloccare e sbloccare l'ingresso dei dati;
+altrimenti i caratteri immessi oltre le dimensioni massime vengono persi; in
+alcuni casi il kernel provvede ad inviare automaticamente un avviso (un
+carattere di BELL, che provoca un beep) sull'output quando si eccedono le
+dimensioni della coda.  
+
+Se è abilitato la modalità canonica i caratteri in ingresso restano nella coda
+fintanto che non viene ricevuto un a capo; un altro parametro del sistema,
+\const{MAX\_CANON}, specifica la dimensione massima di una riga in modalità
+canonica.
+
+La coda di uscita è analoga a quella di ingresso e contiene i caratteri
+scritti dai processi ma non ancora inviati al terminale. Se è abilitato il
+controllo di flusso in uscita il kernel risponde ai caratteri di START e STOP
+inviati dal terminale. Le dimensioni della coda non sono specificate, ma non
+hanno molta importanza, in quanto qualora esse vengano eccedute il driver
+provvede automaticamente a bloccare la funzione chiamante.
+
+
+
+\subsection{La gestione delle caratteristiche di un terminale}
+\label{sec:term_attr}
+
+Data le loro peculiarità, fin dalla realizzazione dei primi sistemi unix-like
+si è posto il problema di come gestire le caratteristiche specifiche dei
+terminali. Storicamente i vari dialetti di Unix hanno utilizzato delle
+funzioni specifiche diverse fra loro, ma con la realizzazione dello standard
+POSIX.1-2001 è stata effettuata opportuna unificazione delle funzioni
+attinenti i terminali, sintetizzando le differenze fra BSD e System V in una
+unica interfaccia, che è quella adottata da Linux.
+
+Molte delle funzioni previste dallo standard POSIX.1-2001 prevedono come
+argomento un file descriptor, dato che in origine le relative operazioni
+venivano effettuate con delle opportune chiamate a \func{ioctl}.  Ovviamente
+dette funzioni potranno essere usate correttamente soltanto con dei file
+descriptor che corrispondono ad un terminale, in caso contrario lo standard
+richiede che venga restituito un errore di \errcode{ENOTTY}.
+
+Per evitare l'errore, ed anche semplicemente per verificare se un file
+descriptor corrisponde ad un terminale, è disponibile la funzione
+\funcd{isatty}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fdecl{int isatty(int fd)}
+\fdesc{Controlla se un file è un terminale.} 
+}
+
+{La funzione ritorna $1$ se \param{fd} è connesso ad un terminale e $0$
+  altrimenti, nel qual caso \var{errno} assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EBADF}] \param{fd} non è un file descriptor valido.
+  \item[\errcode{EINVAL}] \param{fd} non è associato a un terminale (non
+    ottempera a POSIX.1-2001 che richiederebbe \errcode{ENOTTY}).
+  \end{errlist}
+}
+\end{funcproto}
+
+Un'altra funzione per avere informazioni su un terminale è \funcd{ttyname},
+che permette di ottenere il nome del file di dispositivo del terminale
+associato ad un file descriptor; il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fdecl{char *ttyname(int fd)}
+\fdesc{Restituisce il nome del terminale associato ad un file descriptor.} 
+}
+
+{La funzione ritorna il puntatore alla stringa contenente il nome del
+  terminale in caso di successo e \val{NULL} per un errore, nel qual caso
+  \var{errno} assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EBADF}] \param{fd} non è un file descriptor valido.
+  \item[\errcode{ENOTTY}] \param{fd} non è associato a un terminale.
+  \end{errlist}
+}
+\end{funcproto}
+
+La funzione restituisce il puntatore alla stringa contenente il nome del file
+di dispositivo del terminale associato a \param{fd}, che però è allocata
+staticamente e può essere sovrascritta da successive chiamate. Per questo
+della funzione esiste anche una versione rientrante, \funcd{ttyname\_r}, che
+non presenta il problema dell'uso di una zona di memoria statica; il suo
+prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fdecl{int ttyname\_r(int fd, char *buff, size\_t len)}
+\fdesc{Restituisce il nome del terminale associato ad un file descriptor.} 
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} assumerà uno dei valori: 
+  \begin{errlist}
+    \item[\errcode{ERANGE}] la lunghezza del buffer \param{len} non è
+      sufficiente per contenere la stringa restituita.
+  \end{errlist}
+  ed inoltre \errval{EBADF} ed \errval{ENOTTY} con lo stesso significato di
+  \func{ttyname}.}
+\end{funcproto}
+
+La funzione prende due argomenti in più, il puntatore \param{buff} alla zona
+di memoria in cui l'utente vuole che il risultato venga scritto, che dovrà
+essere allocata in precedenza, e la relativa dimensione, \param{len}. Se la
+stringa che deve essere restituita, compreso lo zero di terminazione finale,
+eccede questa dimensione si avrà un errore.
+
+Una funzione analoga alle precedenti prevista da POSIX.1, che restituisce il
+nome di un file di dispositivo, è \funcd{ctermid}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{stdio.h}
+\fdecl{char *ctermid(char *s)}
+\fdesc{Restituisce il nome del terminale di controllo del processo.} 
+}
+
+{La funzione ritorna il puntatore alla stringa contenente il \textit{pathname}
+  del terminale o \val{NULL} se non riesce ad eseguire l'operazione, non sono
+  previsti errori.}
+\end{funcproto}
+
+La funzione restituisce un puntatore al \textit{pathname} del file di
+dispositivo del terminale di controllo del processo chiamante.  Se si passa
+come argomento \val{NULL} la funzione restituisce il puntatore ad una stringa
+statica che può essere sovrascritta da chiamate successive, e non è
+rientrante. Indicando invece un puntatore ad una zona di memoria già allocata
+la stringa sarà scritta su di essa, ma in questo caso il buffer preallocato
+deve avere una dimensione di almeno \constd{L\_ctermid}
+caratteri.\footnote{\const{L\_ctermid} è una delle varie costanti del sistema,
+  non trattata esplicitamente in sez.~\ref{sec:sys_characteristics}, che
+  indica la dimensione che deve avere una stringa per poter contenere il nome
+  di un terminale.}
+
+Si tenga presente che il \textit{pathname} restituito dalla funzione potrebbe
+non identificare univocamente il terminale (ad esempio potrebbe essere
+\file{/dev/tty}), inoltre non è detto che il processo possa effettivamente
+essere in grado di aprire il terminale.
+
+I vari attributi associati ad un terminale vengono mantenuti per ciascuno di
+essi in una struttura \struct{termios} che viene usata dalle varie funzioni
+dell'interfaccia. In fig.~\ref{fig:term_termios} si sono riportati tutti i
+campi della definizione di questa struttura usata in Linux; di questi solo i
+primi cinque sono previsti dallo standard POSIX.1, ma le varie implementazioni
+ne aggiungono degli altri per mantenere ulteriori informazioni.\footnote{la
+  definizione della struttura si trova in \file{bits/termios.h}, da non
+  includere mai direttamente; Linux, seguendo l'esempio di BSD, aggiunge i due
+  campi \var{c\_ispeed} e \var{c\_ospeed} per mantenere le velocità delle
+  linee seriali, ed un campo ulteriore, \var{c\_line} per indicare la
+  disciplina di linea.}
+
+\begin{figure}[!htb] 
+  \footnotesize \centering
+  \begin{minipage}[c]{0.80\textwidth}
+    \includestruct{listati/termios.h}
+  \end{minipage} 
+  \normalsize 
+  \caption{La struttura \structd{termios}, che identifica le proprietà di un
+    terminale.}
+  \label{fig:term_termios}
+\end{figure}
+
+% per le definizioni dei dati vedi anche:
+% http://www.lafn.org/~dave/linux/termios.txt 
+
+I primi quattro campi sono quattro flag che controllano il comportamento del
+terminale; essi sono realizzati come maschera binaria, pertanto il tipo
+\typed{tcflag\_t} è di norma realizzato con un intero senza segno di lunghezza
+opportuna. I valori devono essere specificati bit per bit, avendo cura di non
+modificare i bit su cui non si interviene.
+
+\begin{table}[b!ht]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{10cm}|}
+    \hline
+    \textbf{Valore}& \textbf{Significato}\\
+    \hline
+    \hline
+    \constd{IGNBRK} & Ignora le condizioni di BREAK sull'input. Una
+                      \textit{condizione di BREAK} è definita nel contesto di
+                      una trasmissione seriale asincrona come una sequenza di
+                      bit nulli più lunga di un byte.\\
+    \constd{BRKINT} & Controlla la reazione ad un BREAK quando
+                      \const{IGNBRK} non è impostato. Se \const{BRKINT} è
+                      impostato il BREAK causa lo scarico delle code, 
+                      e se il terminale è il terminale di controllo per un 
+                      gruppo in foreground anche l'invio di \signal{SIGINT} ai
+                      processi di quest'ultimo. Se invece \const{BRKINT} non è
+                      impostato un BREAK viene letto come un carattere
+                      NUL, a meno che non sia impostato \const{PARMRK}
+                      nel qual caso viene letto come la sequenza di caratteri
+                      \texttt{0xFF 0x00 0x00}.\\
+    \constd{IGNPAR} & Ignora gli errori di parità, il carattere viene passato
+                      come ricevuto. Ha senso solo se si è impostato 
+                      \const{INPCK}.\\
+    \constd{PARMRK} & Controlla come vengono riportati gli errori di parità. Ha 
+                      senso solo se \const{INPCK} è impostato e \const{IGNPAR}
+                      no. Se impostato inserisce una sequenza \texttt{0xFF
+                      0x00} prima di ogni carattere che presenta errori di
+                      parità, se non impostato un carattere con errori di
+                      parità viene letto come uno \texttt{0x00}. Se un
+                      carattere ha il valore \texttt{0xFF} e \const{ISTRIP} 
+                      non è impostato, per evitare ambiguità esso viene sempre
+                      riportato come \texttt{0xFF 0xFF}.\\
+    \constd{INPCK}  & Abilita il controllo di parità in ingresso. Se non viene
+                      impostato non viene fatto nessun controllo ed i caratteri
+                      vengono passati in input direttamente.\\
+    \constd{ISTRIP} & Se impostato i caratteri in input sono tagliati a sette
+                      bit mettendo a zero il bit più significativo, altrimenti 
+                      vengono passati tutti gli otto bit.\\
+    \constd{INLCR}  & Se impostato in ingresso il carattere di a capo
+                      (\verb|'\n'|) viene automaticamente trasformato in un
+                      ritorno carrello (\verb|'\r'|).\\
+    \constd{IGNCR}  & Se impostato il carattere di ritorno carrello 
+                      (\textit{carriage return}, \verb|'\r'|) viene scartato 
+                      dall'input. Può essere utile per i terminali che inviano 
+                      entrambi i caratteri di ritorno carrello e a capo 
+                      (\textit{newline}, \verb|'\n'|).\\
+    \constd{ICRNL}  & Se impostato un carattere di ritorno carrello  
+                      (\verb|'\r'|) sul terminale viene automaticamente 
+                      trasformato in un a capo (\verb|'\n'|) sulla coda di
+                      input.\\
+    \constd{IUCLC}  & Se impostato trasforma i caratteri maiuscoli dal
+                      terminale in minuscoli sull'ingresso (opzione non 
+                      POSIX).\\
+    \constd{IXON}   & Se impostato attiva il controllo di flusso in uscita con i
+                      caratteri di START e STOP. se si riceve
+                      uno STOP l'output viene bloccato, e viene fatto
+                      ripartire solo da uno START, e questi due
+                      caratteri non vengono passati alla coda di input. Se non
+                      impostato i due caratteri sono passati alla coda di input
+                      insieme agli altri.\\
+    \constd{IXANY}  & Se impostato con il controllo di flusso permette a
+                      qualunque carattere di far ripartire l'output bloccato da
+                      un carattere di STOP.\\
+    \constd{IXOFF}  & Se impostato abilita il controllo di flusso in
+                      ingresso. Il computer emette un carattere di STOP per
+                      bloccare l'input dal terminale e lo sblocca con il
+                      carattere START.\\
+    \constd{IMAXBEL}& Se impostato fa suonare il cicalino se si riempie la cosa
+                      di ingresso; in Linux non è implementato e il kernel si
+                      comporta cose se fosse sempre impostato (è una estensione
+                      BSD).\\
+    \constd{IUTF8}  & Indica che l'input è in UTF-8, cosa che consente di
+                      utilizzare la cancellazione dei caratteri in maniera
+                      corretta (dal kernel 2.6.4 e non previsto in POSIX).\\
+    \hline
+  \end{tabular}
+  \caption{Costanti identificative dei vari bit del flag di controllo
+    \var{c\_iflag} delle modalità di input di un terminale.}
+  \label{tab:sess_termios_iflag}
+\end{table}
+
+Il primo flag, mantenuto nel campo \var{c\_iflag}, è detto \textsl{flag di
+  input} e controlla le modalità di funzionamento dell'input dei caratteri sul
+terminale, come il controllo di parità, il controllo di flusso, la gestione
+dei caratteri speciali; un elenco dei vari bit, del loro significato e delle
+costanti utilizzate per identificarli è riportato in
+tab.~\ref{tab:sess_termios_iflag}.
+
+Si noti come alcuni di questi flag (come quelli per la gestione del flusso)
+fanno riferimento a delle caratteristiche che ormai sono completamente
+obsolete; la maggior parte inoltre è tipica di terminali seriali, e non ha
+alcun effetto su dispositivi diversi come le console virtuali o gli
+pseudo-terminali usati nelle connessioni di rete.
+
+Il secondo flag, mantenuto nel campo \var{c\_oflag}, è detto \textsl{flag di
+  output} e controlla le modalità di funzionamento dell'output dei caratteri,
+come l'impacchettamento dei caratteri sullo schermo, la traslazione degli a
+capo, la conversione dei caratteri speciali; un elenco dei vari bit, del loro
+significato e delle costanti utilizzate per identificarli è riportato in
+tab.~\ref{tab:sess_termios_oflag}, di questi solo \const{OPOST} era previsto
+da POSIX.1, buona parte degli altri sono stati aggiunti in POSIX.1-2001,
+quelli ancora assenti sono stati indicati esplicitamente.
+
+\begin{table}[!htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{10cm}|}
+    \hline
+    \textbf{Valore}& \textbf{Significato}\\
+    \hline
+    \hline
+    \constd{OPOST} & Se impostato i caratteri vengono convertiti opportunamente
+                    (in maniera dipendente dall'implementazione) per la 
+                    visualizzazione sul terminale, ad esempio al
+                    carattere di a capo (NL) può venire aggiunto un ritorno
+                    carrello (CR).\\
+    \constd{OLCUC} & Se impostato trasforma i caratteri minuscoli in ingresso 
+                    in caratteri maiuscoli sull'uscita (non previsto da
+                    POSIX).\\
+    \constd{ONLCR} & Se impostato converte automaticamente il carattere di a 
+                    capo (NL) in un carattere di ritorno carrello (CR).\\
+    \constd{OCRNL} & Se impostato converte automaticamente il carattere di a
+                    capo (NL) nella coppia di caratteri ritorno carrello, a 
+                    capo (CR-NL).\\
+    \constd{ONOCR} & Se impostato converte il carattere di ritorno carrello
+                    (CR) nella coppia di caratteri CR-NL.\\
+    \constd{ONLRET}& Se impostato rimuove dall'output il carattere di ritorno
+                    carrello (CR).\\
+    \constd{OFILL} & Se impostato in caso di ritardo sulla linea invia dei
+                    caratteri di riempimento invece di attendere.\\
+    \constd{OFDEL} & Se impostato il carattere di riempimento è DEL
+                    (\texttt{0x3F}), invece che NUL (\texttt{0x00}), (non
+                    previsto da POSIX e non implementato su Linux).\\
+    \constd{NLDLY} & Maschera per i bit che indicano il ritardo per il
+                    carattere di a capo (NL), i valori possibili sono 
+                    \val{NL0} o \val{NL1}.\\
+    \constd{CRDLY} & Maschera per i bit che indicano il ritardo per il
+                    carattere ritorno carrello (CR), i valori possibili sono
+                    \val{CR0}, \val{CR1}, \val{CR2} o \val{CR3}.\\
+    \constd{TABDLY}& Maschera per i bit che indicano il ritardo per il
+                    carattere di tabulazione, i valori possibili sono
+                    \val{TAB0}, \val{TAB1}, \val{TAB2} o \val{TAB3}.\\
+    \constd{BSDLY} & Maschera per i bit che indicano il ritardo per il
+                    carattere di ritorno indietro (\textit{backspace}), i
+                    valori possibili sono \val{BS0} o \val{BS1}.\\
+    \constd{VTDLY} & Maschera per i bit che indicano il ritardo per il
+                    carattere di tabulazione verticale, i valori possibili sono
+                    \val{VT0} o \val{VT1}.\\
+    \constd{FFDLY} & Maschera per i bit che indicano il ritardo per il
+                    carattere di pagina nuova (\textit{form feed}), i valori
+                    possibili sono \val{FF0} o \val{FF1}.\\
+    \hline
+  \end{tabular}
+  \caption{Costanti identificative dei vari bit del flag di controllo
+    \var{c\_oflag} delle modalità di output di un terminale.}
+  \label{tab:sess_termios_oflag}
+\end{table}
+
+Si noti come alcuni dei valori riportati in tab.~\ref{tab:sess_termios_oflag}
+fanno riferimento a delle maschere di bit; essi infatti vengono utilizzati per
+impostare alcuni valori numerici relativi ai ritardi nell'output di alcuni
+caratteri: una caratteristica originaria dei primi terminali su telescrivente,
+che avevano bisogno di tempistiche diverse per spostare il carrello in
+risposta ai caratteri speciali, e che oggi sono completamente in disuso.
+
+Si tenga presente inoltre che nel caso delle maschere il valore da inserire in
+\var{c\_oflag} deve essere fornito avendo cura di cancellare prima tutti i bit
+della maschera, i valori da immettere infatti (quelli riportati nella
+spiegazione corrispondente) sono numerici e non per bit, per cui possono
+sovrapporsi fra di loro. Occorrerà perciò utilizzare un codice del tipo:
+
+\includecodesnip{listati/oflag.c}
+
+\noindent che prima cancella i bit della maschera in questione e poi imposta
+il valore.
+
+
+\begin{table}[!htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{10cm}|}
+    \hline
+    \textbf{Valore}& \textbf{Significato}\\
+    \hline
+    \hline
+    \constd{CBAUD}  & Maschera dei bit (4+1) usati per impostare della velocità
+                      della linea (il \textit{baud rate}) in ingresso; non è
+                      presente in POSIX ed in Linux non è implementato in
+                      quanto viene usato un apposito campo di
+                      \struct{termios}.\\ 
+    \constd{CBAUDEX}& Bit aggiuntivo per l'impostazione della velocità della
+                      linea, non è presente in POSIX e per le stesse
+                      motivazioni del precedente non è implementato in Linux.\\
+    \constd{CSIZE}  & Maschera per i bit usati per specificare la dimensione 
+                      del carattere inviato lungo la linea di trasmissione, i
+                      valore ne indica la lunghezza (in bit), ed i valori   
+                      possibili sono \val{CS5}, \val{CS6}, \val{CS7} e \val{CS8}
+                      corrispondenti ad un analogo numero di bit.\\
+    \constd{CSTOPB} & Se impostato vengono usati due bit di stop sulla linea
+                      seriale, se non impostato ne viene usato soltanto uno.\\
+    \constd{CREAD}  & Se è impostato si può leggere l'input del terminale,
+                      altrimenti i caratteri in ingresso vengono scartati
+                      quando arrivano.\\
+    \constd{PARENB} & Se impostato abilita la generazione il controllo di
+                      parità. La reazione in caso di errori dipende dai
+                      relativi valori per \var{c\_iflag}, riportati in 
+                      tab.~\ref{tab:sess_termios_iflag}. Se non è impostato i
+                      bit di parità non vengono generati e i caratteri non
+                      vengono controllati.\\
+    \constd{PARODD} & Ha senso solo se è attivo anche \const{PARENB}. Se 
+                      impostato viene usata una parità è dispari, altrimenti 
+                      viene usata una parità pari.\\
+    \constd{HUPCL}  & Se è impostato viene distaccata la connessione del
+                      modem quando l'ultimo dei processi che ha ancora un file
+                      aperto sul terminale lo chiude o esce.\\
+    \constd{LOBLK}  & Se impostato blocca l'output su un strato di shell non
+                      corrente, non è presente in POSIX e non è implementato
+                      da Linux.\\
+    \constd{CLOCAL} & Se impostato indica che il terminale è connesso in locale
+                      e che le linee di controllo del modem devono essere
+                      ignorate. Se non impostato effettuando una chiamata ad
+                      \func{open} senza aver specificato il flag di
+                      \const{O\_NONBLOCK} si bloccherà il processo finché 
+                      non si è stabilita una connessione con il modem; inoltre 
+                      se viene rilevata una disconnessione viene inviato un
+                      segnale di \signal{SIGHUP} al processo di controllo del
+                      terminale. La lettura su un terminale sconnesso comporta
+                      una condizione di \textit{end of file} e la scrittura un
+                      errore di \errcode{EIO}.\\
+    \constd{CIBAUD} & Maschera dei bit della velocità della linea in
+                      ingresso; analogo a \const{CBAUD}, non è previsto da
+                      POSIX e non è implementato in Linux dato che è
+                      mantenuto in un apposito campo di \struct{termios}.\\
+    \constd{CMSPAR} & imposta un bit di parità costante: se \const{PARODD} è
+                      impostato la parità è sempre 1 (\textit{MARK}) se non è
+                      impostato la parità è sempre 0 (\textit{SPACE}), non è
+                      previsto da POSIX.\\ 
+% vedi: http://www.lothosoft.ch/thomas/libmip/markspaceparity.php
+    \constd{CRTSCTS}& Abilita il controllo di flusso hardware sulla seriale,
+                      attraverso l'utilizzo delle dei due fili di RTS e CTS.\\
+    \hline
+  \end{tabular}
+  \caption{Costanti identificative dei vari bit del flag di controllo
+    \var{c\_cflag} delle modalità di controllo di un terminale.}
+  \label{tab:sess_termios_cflag}
+\end{table}
+
+Il terzo flag, mantenuto nel campo \var{c\_cflag}, è detto \textsl{flag di
+  controllo} ed è legato al funzionamento delle linee seriali, permettendo di
+impostarne varie caratteristiche, come il numero di bit di stop, le
+impostazioni della parità, il funzionamento del controllo di flusso; esso ha
+senso solo per i terminali connessi a linee seriali. Un elenco dei vari bit,
+del loro significato e delle costanti utilizzate per identificarli è riportato
+in tab.~\ref{tab:sess_termios_cflag}.
+
+I valori previsti per questo flag sono molto specifici, e completamente
+attinenti al controllo delle modalità operative di un terminale che opera
+attraverso una linea seriale; essi pertanto non hanno nessuna rilevanza per i
+terminali che usano un'altra interfaccia fisica, come le console virtuali e
+gli pseudo-terminali usati dalle connessioni di rete.
+
+Inoltre alcuni valori di questi flag sono previsti solo per quelle
+implementazioni (lo standard POSIX non specifica nulla riguardo
+l'implementazione, ma solo delle funzioni di lettura e scrittura) che
+mantengono le velocità delle linee seriali all'interno dei flag; come
+accennato in Linux questo viene fatto (seguendo l'esempio di BSD) attraverso
+due campi aggiuntivi, \var{c\_ispeed} e \var{c\_ospeed}, nella struttura
+\struct{termios} (mostrati in fig.~\ref{fig:term_termios}).
+
+\begin{table}[b!ht]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{10cm}|}
+    \hline
+    \textbf{Valore}& \textbf{Significato}\\
+    \hline
+    \hline
+    \constd{ISIG}   & Se impostato abilita il riconoscimento dei caratteri
+                      INTR, QUIT, e SUSP generando il relativo segnale.\\
+    \constd{ICANON} & Se impostato il terminale opera in modalità canonica,
+                      altrimenti opera in modalità non canonica.\\
+    \constd{XCASE}  & Se impostato il terminale funziona solo con le
+                      maiuscole. L'input è convertito in minuscole tranne per i
+                      caratteri preceduti da una ``\texttt{\bslash}''. In output
+                      le maiuscole sono precedute da una ``\texttt{\bslash}'' e 
+                      le minuscole convertite in maiuscole. Non è presente in
+                      POSIX.\\
+    \constd{ECHO}   & Se è impostato viene attivato l'eco dei caratteri in
+                      input sull'output del terminale.\\
+    \constd{ECHOE}  & Se è impostato l'eco mostra la cancellazione di un
+                      carattere in input (in reazione al carattere ERASE)
+                      cancellando l'ultimo carattere della riga corrente dallo
+                      schermo; altrimenti il carattere è rimandato in eco per
+                      mostrare quanto accaduto (usato per i terminali con
+                      l'uscita su una stampante).\\
+    \constd{ECHOK}  & Se impostato abilita il trattamento della visualizzazione
+                      del carattere KILL, andando a capo dopo aver visualizzato
+                      lo stesso, altrimenti viene solo mostrato il carattere e
+                      sta all'utente ricordare che l'input precedente è stato
+                      cancellato.\\
+    \constd{ECHONL} & Se impostato viene effettuato l'eco di un a
+                      capo (\verb|\n|) anche se non è stato impostato
+                      \const{ECHO}.\\
+    \constd{ECHOCTL}& Se impostato insieme ad \const{ECHO} i caratteri di
+                      controllo ASCII (tranne TAB, NL, START, e STOP) sono
+                      mostrati nella forma che prepone un ``\texttt{\circonf}'' 
+                      alla lettera ottenuta sommando \texttt{0x40} al valore del
+                      carattere (di solito questi si possono ottenere anche
+                      direttamente premendo il tasto \texttt{ctrl} più la
+                      relativa lettera). Non è presente in POSIX.\\
+    \constd{ECHOPRT}& Se impostato abilita la visualizzazione del carattere di
+                      cancellazione in una modalità adatta ai terminali con
+                      l'uscita su stampante; l'invio del carattere di ERASE
+                      comporta la stampa di un ``\texttt{|}'' seguito dal
+                      carattere cancellato, e così via in caso di successive
+                      cancellazioni, quando si riprende ad immettere carattere 
+                      normali prima verrà stampata una ``\texttt{/}''. Non è
+                      presente in POSIX.\\
+    \constd{ECHOKE} & Se impostato abilita il trattamento della visualizzazione
+                      del carattere KILL cancellando i caratteri precedenti
+                      nella linea secondo le modalità specificate dai valori di
+                      \const{ECHOE} e \const{ECHOPRT}. Non è presente in
+                      POSIX.\\ 
+    \constd{DEFECHO}& Se impostato effettua l'eco solo se c'è un processo in
+                      lettura. Non è presente in POSIX e non è supportato da
+                      Linux.\\
+    \constd{FLUSHO} & Effettua la cancellazione della coda di uscita. Viene
+                      attivato dal carattere DISCARD. Non è presente in POSIX e
+                      non è supportato da Linux.\\
+    \constd{NOFLSH} & Se impostato disabilita lo scarico delle code di ingresso
+                      e uscita quando vengono emessi i segnali \signal{SIGINT}, 
+                      \signal{SIGQUIT} e \signal{SIGSUSP}.\\
+    \constd{TOSTOP} & Se abilitato, con il supporto per il job control presente,
+                      genera il segnale \signal{SIGTTOU} per un processo in
+                      background che cerca di scrivere sul terminale.\\
+    \constd{PENDIN} & Indica che la linea deve essere ristampata, viene
+                      attivato dal carattere REPRINT e resta attivo fino alla
+                      fine della ristampa. Non è presente in POSIX e
+                      non è supportato in Linux.\\
+    \constd{IEXTEN} & Abilita alcune estensioni previste dalla
+                      implementazione. Deve essere impostato perché caratteri
+                      speciali come EOL2, LNEXT, REPRINT e WERASE possano
+                      essere interpretati.\\
+    \hline
+  \end{tabular}
+  \caption{Costanti identificative dei vari bit del flag di controllo
+    \var{c\_lflag} delle modalità locali di un terminale.}
+  \label{tab:sess_termios_lflag}
+\end{table}
+
+Il quarto flag, mantenuto nel campo \var{c\_lflag}, è detto \textsl{flag
+  locale}, e serve per controllare il funzionamento dell'interfaccia fra il
+driver e l'utente, come abilitare l'eco, gestire i caratteri di controllo e
+l'emissione dei segnali, impostare modo canonico o non canonico. Un elenco dei
+vari bit, del loro significato e delle costanti utilizzate per identificarli è
+riportato in tab.~\ref{tab:sess_termios_lflag}. Con i terminali odierni
+l'unico flag con cui probabilmente si può avere a che fare è questo, in quanto
+è con questo che si impostano le caratteristiche generiche comuni a tutti i
+terminali.
+
+Si tenga presente che i flag che riguardano le modalità di eco dei caratteri
+(\const{ECHOE}, \const{ECHOPRT}, \const{ECHOK}, \const{ECHOKE},
+\const{ECHONL}) controllano solo il comportamento della visualizzazione, il
+riconoscimento dei vari caratteri dipende dalla modalità di operazione, ed
+avviene solo in modo canonico, pertanto questi flag non hanno significato se
+non è impostato \const{ICANON}.
+
+Oltre ai vari flag per gestire le varie caratteristiche dei terminali,
+\struct{termios} contiene pure il campo \var{c\_cc} che viene usato per
+impostare i caratteri speciali associati alle varie funzioni di controllo. Il
+numero di questi caratteri speciali è indicato dalla costante \constd{NCCS},
+POSIX ne specifica almeno 11, ma molte implementazioni ne definiscono molti
+altri.\footnote{in Linux il valore della costante è 32, anche se i caratteri
+  effettivamente definiti sono solo 17.}
+
+\begin{table}[!htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|c|c|p{9cm}|}
+    \hline
+    \textbf{Indice} & \textbf{Valore}&\textbf{Codice} & \textbf{Funzione}\\
+    \hline
+    \hline
+    \constd{VINTR} &\texttt{0x03}&(\texttt{C-c})& Carattere di interrupt, 
+                                                  provoca l'emissione di 
+                                                  \signal{SIGINT}.\\
+    \constd{VQUIT} &\texttt{0x1C}&(\texttt{C-\bslash})& Carattere di uscita,  
+                                                        provoca l'emissione di 
+                                                        \signal{SIGQUIT}.\\
+    \constd{VERASE}&\texttt{0x7f}&DEL,\texttt{C-?}& Carattere di ERASE, cancella
+                                                    l'ultimo carattere
+                                                    precedente nella linea.\\
+    \constd{VKILL} &\texttt{0x15}&(\texttt{C-u})& Carattere di KILL, cancella
+                                                  l'intera riga.\\
+    \constd{VEOF}  &\texttt{0x04}&(\texttt{C-d})& Carattere di
+                                                  \textit{end-of-file}. Causa
+                                                  l'invio del contenuto del
+                                                  buffer di ingresso al
+                                                  processo in lettura anche se
+                                                  non è ancora stato ricevuto
+                                                  un a capo. Se è il primo
+                                                  carattere immesso comporta il
+                                                  ritorno di \func{read} con
+                                                  zero caratteri, cioè la
+                                                  condizione di
+                                                  \textit{end-of-file}.\\
+    \constd{VMIN}  &     ---     &  ---   & Numero minimo di caratteri per una 
+                                            lettura in modo non canonico.\\
+    \constd{VEOL}  &\texttt{0x00}& NUL &    Carattere di fine riga. Agisce come
+                                         un a capo, ma non viene scartato ed
+                                         è letto come l'ultimo carattere
+                                         nella riga.\\
+    \constd{VTIME} &     ---     &  ---   & Timeout, in decimi di secondo, per
+                                            una lettura in modo non canonico.\\
+    \constd{VEOL2} &\texttt{0x00}&   NUL  & Ulteriore carattere di fine
+                                            riga. Ha lo stesso effetto di
+                                            \const{VEOL} ma può essere un
+                                            carattere diverso. \\
+    \constd{VSWTC} &\texttt{0x00}&   NUL  & Carattere di switch. Non supportato
+                                            in Linux.\\
+    \constd{VSTART}&\texttt{0x17}&(\texttt{C-q})& Carattere di START. Riavvia un
+                                                 output bloccato da uno STOP.\\
+    \constd{VSTOP} &\texttt{0x19}&(\texttt{C-s})& Carattere di STOP. Blocca
+                                                 l'output fintanto che non
+                                                 viene premuto un carattere di
+                                                 START.\\
+    \constd{VSUSP} &\texttt{0x1A}&(\texttt{C-z})& Carattere di
+                                                 sospensione. Invia il segnale
+                                                 \signal{SIGTSTP}.\\
+    \constd{VDSUSP}&\texttt{0x19}&(\texttt{C-y})& Carattere di sospensione
+                                                 ritardata. Invia il segnale 
+                                                 \signal{SIGTSTP} quando il
+                                                 carattere viene letto dal
+                                                 programma, (non presente in
+                                                 POSIX e non riconosciuto in
+                                                 Linux).\\ 
+    \constd{VLNEXT}&\texttt{0x16}&(\texttt{C-v})& Carattere di escape, serve a
+                                                 quotare il carattere
+                                                 successivo che non viene
+                                                 interpretato ma passato
+                                                 direttamente all'output.\\
+    \constd{VWERASE}&\texttt{0x17}&(\texttt{C-w})&Cancellazione di una
+                                                 parola.\\
+    \constd{VREPRINT}&\texttt{0x12}&(\texttt{C-r})& Ristampa i caratteri non
+                                                 ancora letti (non presente in
+                                                 POSIX).\\
+    \constd{VDISCARD}&\texttt{0x0F}&(\texttt{C-o})& Non riconosciuto in Linux.\\
+    \constd{VSTATUS} &\texttt{0x13}&(\texttt{C-t})& Non riconosciuto in Linux.\\
+    \hline
+  \end{tabular}
+  \caption{Valori dei caratteri di controllo mantenuti nel campo \var{c\_cc}
+    della struttura \struct{termios}.} 
+  \label{tab:sess_termios_cc}
+\end{table}
+
+
+A ciascuna di queste funzioni di controllo corrisponde un elemento del vettore
+\var{c\_cc} che specifica quale è il carattere speciale associato; per
+portabilità invece di essere indicati con la loro posizione numerica nel
+vettore, i vari elementi vengono indicizzati attraverso delle opportune
+costanti, il cui nome corrisponde all'azione ad essi associata. Un elenco
+completo dei caratteri di controllo, con le costanti e delle funzionalità
+associate è riportato in tab.~\ref{tab:sess_termios_cc}, usando quelle
+definizioni diventa possibile assegnare un nuovo carattere di controllo con un
+codice del tipo:
+\includecodesnip{listati/value_c_cc.c}
+
+La maggior parte di questi caratteri (tutti tranne \const{VTIME} e
+\const{VMIN}) hanno effetto solo quando il terminale viene utilizzato in modo
+canonico; per alcuni devono essere soddisfatte ulteriori richieste, ad esempio
+\const{VINTR}, \const{VSUSP}, e \const{VQUIT} richiedono sia impostato
+\const{ISIG}; \const{VSTART} e \const{VSTOP} richiedono sia impostato
+\const{IXON}; \const{VLNEXT}, \const{VWERASE}, \const{VREPRINT} richiedono sia
+impostato \const{IEXTEN}.  In ogni caso quando vengono attivati i caratteri
+vengono interpretati e non sono passati sulla coda di ingresso.
+
+Per leggere ed scrivere tutte le varie impostazioni dei terminali viste finora
+lo standard POSIX prevede due funzioni che utilizzano come argomento un
+puntatore ad una struttura \struct{termios} che sarà quella in cui andranno
+immagazzinate le impostazioni.  Le funzioni sono \funcd{tcgetattr} e
+\funcd{tcsetattr} ed il loro prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fhead{termios.h}
+
+\fdecl{int tcgetattr(int fd, struct termios *termios\_p)} 
+\fdesc{Legge il valore delle impostazioni di un terminale.} 
+\fdecl{int tcsetattr(int fd, int optional\_actions, struct termios *termios\_p)}
+\fdesc{Scrive le impostazioni di un terminale.}
+}
+
+{Le funzioni ritornano $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} assumerà uno dei valori: 
+  \begin{errlist}
+    \item[\errcode{EINTR}] la funzione è stata interrotta. 
+  \end{errlist}
+  ed inoltre \errval{EBADF}, \errval{ENOTTY} ed \errval{EINVAL} nel loro
+  significato generico.}
+\end{funcproto}
+
+
+Le funzioni operano sul terminale cui fa riferimento il file descriptor
+\param{fd} utilizzando la struttura indicata dal puntatore \param{termios\_p}
+per lo scambio dei dati. Si tenga presente che le impostazioni sono associate
+al terminale e non al file descriptor; questo significa che se si è cambiata
+una impostazione un qualunque altro processo che apra lo stesso terminale, od
+un qualunque altro file descriptor che vi faccia riferimento, vedrà le nuove
+impostazioni pur non avendo nulla a che fare con il file descriptor che si è
+usato per effettuare i cambiamenti.
+
+Questo significa che non è possibile usare file descriptor diversi per
+utilizzare automaticamente il terminale in modalità diverse, se esiste una
+necessità di accesso differenziato di questo tipo occorrerà cambiare
+esplicitamente la modalità tutte le volte che si passa da un file descriptor
+ad un altro.
+
+La funzione \func{tcgetattr} legge i valori correnti delle impostazioni di un
+terminale qualunque nella struttura puntata da \param{termios\_p};
+\func{tcsetattr} invece effettua la scrittura delle impostazioni e quando
+viene invocata sul proprio terminale di controllo può essere eseguita con
+successo solo da un processo in foreground.  Se invocata da un processo in
+background infatti tutto il gruppo riceverà un segnale di \signal{SIGTTOU} come
+se si fosse tentata una scrittura, a meno che il processo chiamante non abbia
+\signal{SIGTTOU} ignorato o bloccato, nel qual caso l'operazione sarà eseguita.
+
+La funzione \func{tcsetattr} prevede tre diverse modalità di funzionamento,
+specificabili attraverso l'argomento \param{optional\_actions}, che permette
+di stabilire come viene eseguito il cambiamento delle impostazioni del
+terminale, i valori possibili sono riportati in
+tab.~\ref{tab:sess_tcsetattr_option}; di norma (come fatto per le due funzioni
+di esempio) si usa sempre \const{TCSANOW}, le altre opzioni possono essere
+utili qualora si cambino i parametri di output.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{8cm}|}
+    \hline
+    \textbf{Valore}& \textbf{Significato}\\
+    \hline
+    \hline
+    \constd{TCSANOW}  & Esegue i cambiamenti in maniera immediata.\\
+    \constd{TCSADRAIN}& I cambiamenti vengono eseguiti dopo aver atteso che
+                        tutto l'output presente sulle code è stato scritto.\\
+    \constd{TCSAFLUSH}& È identico a \const{TCSADRAIN}, ma in più scarta
+                        tutti i dati presenti sulla coda di input.\\
+    \hline
+  \end{tabular}
+  \caption{Possibili valori per l'argomento \param{optional\_actions} della
+    funzione \func{tcsetattr}.} 
+  \label{tab:sess_tcsetattr_option}
+\end{table}
+
+Occorre infine tenere presente che \func{tcsetattr} ritorna con successo anche
+se soltanto uno dei cambiamenti richiesti è stato eseguito. Pertanto se si
+effettuano più cambiamenti è buona norma controllare con una ulteriore
+chiamata a \func{tcgetattr} che essi siano stati eseguiti tutti quanti.
+
+\begin{figure}[!htbp]
+  \footnotesize \centering
+  \begin{minipage}[c]{\codesamplewidth}
+    \includecodesample{listati/SetTermAttr.c}
+  \end{minipage} 
+  \normalsize 
+  \caption{Codice della funzione \func{SetTermAttr} che permette di
+    impostare uno dei flag di controllo locale del terminale.}
+  \label{fig:term_set_attr}
+\end{figure}
+
+Come già accennato per i cambiamenti effettuati ai vari flag di controllo
+occorre che i valori di ciascun bit siano specificati avendo cura di mantenere
+intatti gli altri; per questo motivo in generale si deve prima leggere il
+valore corrente delle impostazioni con \func{tcgetattr} per poi modificare i
+valori impostati.
+
+In fig.~\ref{fig:term_set_attr} e fig.~\ref{fig:term_unset_attr} si è
+riportato rispettivamente il codice delle due funzioni \func{SetTermAttr} e
+\func{UnSetTermAttr}, che possono essere usate per impostare o rimuovere, con
+le dovute precauzioni, un qualunque bit di \var{c\_lflag}. Il codice completo
+di entrambe le funzioni può essere trovato nel file \file{SetTermAttr.c} dei
+sorgenti allegati alla guida.
+
+La funzione \func{SetTermAttr} provvede ad impostare il bit specificato
+dall'argomento \param{flag}; prima si leggono i valori correnti
+(\texttt{\small 8}) con \func{tcgetattr}, uscendo con un messaggio in caso di
+errore (\texttt{\small 9--10}), poi si provvede a impostare solo i bit
+richiesti (possono essere più di uno) con un OR binario (\texttt{\small 12});
+infine si scrive il nuovo valore modificato con \func{tcsetattr}
+(\texttt{\small 13}), notificando un eventuale errore (\texttt{\small 14--15})
+o uscendo normalmente.
+
+\begin{figure}[!htbp]
+  \footnotesize \centering
+  \begin{minipage}[c]{\codesamplewidth}
+    \includecodesample{listati/UnSetTermAttr.c}
+  \end{minipage} 
+  \normalsize 
+  \caption{Codice della funzione \func{UnSetTermAttr} che permette di
+    rimuovere uno dei flag di controllo locale del terminale.} 
+  \label{fig:term_unset_attr}
+\end{figure}
+
+La seconda funzione, \func{UnSetTermAttr}, è assolutamente identica alla
+prima, solo che in questo caso (\texttt{\small 9}) si rimuovono i bit
+specificati dall'argomento \param{flag} usando un AND binario del valore
+negato.
+
+Al contrario di tutte le altre caratteristiche dei terminali, che possono
+essere impostate esplicitamente utilizzando gli opportuni campi di
+\struct{termios}, per le velocità della linea (il cosiddetto \textit{baud
+  rate}) non è prevista una implementazione standardizzata, per cui anche se
+in Linux sono mantenute in due campi dedicati nella struttura, questi non
+devono essere acceduti direttamente ma solo attraverso le apposite funzioni di
+interfaccia provviste da POSIX.1.
+
+Lo standard prevede due funzioni per scrivere la velocità delle linee seriali,
+\funcd{cfsetispeed} per la velocità della linea di ingresso e
+\funcd{cfsetospeed} per la velocità della linea di uscita; i loro prototipi
+sono:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fhead{termios.h}
+\fdecl{int cfsetispeed(struct termios *termios\_p, speed\_t speed)}
+\fdesc{Imposta la velocità delle linee seriali in ingresso.}
+\fdecl{int cfsetospeed(struct termios *termios\_p, speed\_t speed)} 
+\fdesc{Imposta la velocità delle linee seriali in uscita.} 
+}
+
+{Le funzioni ritornano $0$ in caso di successo e $-1$ per un errore, che
+  avviene solo quando il valore specificato non è valido.}
+\end{funcproto}
+
+Si noti che le funzioni si limitano a scrivere opportunamente il valore della
+velocità prescelta \param{speed} all'interno della struttura puntata da
+\param{termios\_p}; per effettuare l'impostazione effettiva occorrerà poi
+chiamare \func{tcsetattr}.
+
+Si tenga presente che per le linee seriali solo alcuni valori di velocità sono
+validi; questi possono essere specificati direttamente (la \acr{glibc}
+prevede che i valori siano indicati in bit per secondo), ma in generale
+altre versioni di libreria possono utilizzare dei valori diversi. Per questo
+POSIX.1 prevede una serie di costanti che però servono solo per specificare le
+velocità tipiche delle linee seriali:
+\begin{verbatim}
+     B0       B50      B75      B110     B134     B150     B200     
+     B300     B600     B1200    B1800    B2400    B4800    B9600    
+     B19200   B38400   B57600   B115200  B230400  B460800
+\end{verbatim}
+
+Un terminale può utilizzare solo alcune delle velocità possibili, le funzioni
+però non controllano se il valore specificato è valido, dato che non possono
+sapere a quale terminale le velocità saranno applicate; sarà l'esecuzione di
+\func{tcsetattr} a fallire quando si cercherà di eseguire l'impostazione.
+
+Di norma il valore ha senso solo per i terminali seriali dove indica appunto
+la velocità della linea di trasmissione; se questa non corrisponde a quella
+del terminale quest'ultimo non potrà funzionare: quando il terminale non è
+seriale il valore non influisce sulla velocità di trasmissione dei dati. 
+
+In generale impostare un valore nullo (\val{B0}) sulla linea di output fa sì
+che il modem non asserisca più le linee di controllo, interrompendo di fatto
+la connessione, qualora invece si utilizzi questo valore per la linea di input
+l'effetto sarà quello di rendere la sua velocità identica a quella della linea
+di output.
+
+Dato che in genere si imposta sempre la stessa velocità sulle linee di uscita
+e di ingresso è supportata anche la funzione \funcd{cfsetspeed}, una
+estensione di BSD (la funzione origina da 4.4BSD e richiede sia definita la
+macro \macro{\_BSD\_SOURCE}) il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h} 
+\fhead{termios.h}
+\fdecl{int cfsetspeed(struct termios *termios\_p, speed\_t speed)}
+\fdesc{Imposta la velocità delle linee seriali.} 
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, che avviene
+  solo quando il valore specificato non è valido.}
+\end{funcproto}
+
+\noindent la funzione è identica alle due precedenti ma imposta la stessa
+velocità sia per la linea di ingresso che per quella di uscita.
+
+Analogamente a quanto avviene per l'impostazione, le velocità possono essere
+lette da una struttura \struct{termios} utilizzando altre due funzioni,
+\funcd{cfgetispeed} e \funcd{cfgetospeed}, i cui prototipi sono:
+
+\begin{funcproto}{
+\fhead{unistd.h} 
+\fhead{termios.h}
+\fdecl{speed\_t cfgetispeed(struct termios *termios\_p)} 
+\fdesc{Legge la velocità delle linee seriali in ingresso.}
+\fdecl{speed\_t cfgetospeed(struct termios *termios\_p)} 
+\fdesc{Legge la velocità delle linee seriali in uscita.}
+}
+
+{Le funzioni ritornano la velocità della linea, non sono previste condizioni
+  di errore.}
+\end{funcproto}
+
+Anche in questo caso le due funzioni estraggono i valori della velocità della
+linea da una struttura, il cui indirizzo è specificato dall'argomento
+\param{termios\_p} che deve essere stata letta in precedenza con
+\func{tcgetattr}.
+
+Infine sempre da BSD è stata ripresa una funzione che consente di impostare il
+terminale in una modalità analoga alla cosiddetta modalità ``\textit{raw}'' di
+System V, in cui i dati in input vengono resi disponibili un carattere alla
+volta, e l'eco e tutte le interpretazioni dei caratteri in entrata e uscita
+sono disabilitate. La funzione è \funcd{cfmakeraw} ed il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h} 
+\fhead{termios.h}
+\fdecl{void cfmakeraw(struct termios *termios\_p)} 
+\fdesc{Imposta il terminale in  modalità ``\textit{raw}''.}
+}
+
+{La funzione imposta solo i valori in \param{termios\_p}, e non
+    sono previste condizioni di errore.}
+\end{funcproto}
+
+Anche in questo caso la funzione si limita a preparare i valori che poi
+saranno impostato con una successiva chiamata a \func{tcsetattr}, in sostanza
+la funzione è equivalente a:
+\includecodesnip{listati/cfmakeraw.c}
+
+
+\subsection{La gestione della disciplina di linea.}
+\label{sec:term_line_discipline}
+
+Come illustrato dalla struttura riportata in fig.~\ref{fig:term_struct} tutti
+i terminali hanno un insieme di funzionalità comuni, che prevedono la presenza
+di code di ingresso ed uscita; in generale si fa riferimento a queste
+funzionalità con il nome di \textsl{disciplina di
+  linea}.\index{disciplina~di~linea} Lo standard POSIX prevede alcune funzioni
+che permettono di intervenire direttamente sulla gestione della disciplina di
+linea e sull'interazione fra i dati in ingresso ed uscita e le relative code.
+
+In generale tutte queste funzioni vengono considerate, dal punto di vista
+dell'accesso al terminale, come delle funzioni di scrittura, pertanto se usate
+da processi in background sul loro terminale di controllo provocano
+l'emissione di \signal{SIGTTOU}, come illustrato in
+sez.~\ref{sec:sess_ctrl_term}, con la stessa eccezione, già vista per
+\func{tcsetattr}, che quest'ultimo sia bloccato o ignorato dal processo
+chiamante.
+
+Una prima funzione, che è efficace solo in caso di terminali seriali
+asincroni, e non fa niente per tutti gli altri terminali, è
+\funcd{tcsendbreak}; il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h} 
+\fhead{termios.h}
+\fdecl{int tcsendbreak(int fd, int duration)}
+\fdesc{Genera una condizione di \textit{break}.}  
+
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} assumerà uno dei valori \errval{EBADF} o \errval{ENOTTY}
+  nel loro significato generico.}
+\end{funcproto}
+
+La funzione invia un flusso di bit nulli, che genera una condizione di
+\textit{break}, sul terminale associato a \param{fd}. Un valore nullo
+di \param{duration} implica una durata del flusso fra 0.25 e 0.5 secondi, un
+valore diverso da zero implica una durata pari a \code{duration*T} dove
+\code{T} è un valore compreso fra 0.25 e 0.5 secondi. Lo standard POSIX
+specifica il comportamento solo nel caso si sia impostato un valore nullo
+per \param{duration}, il comportamento negli altri casi può dipendere
+dall'implementazione.
+
+Le altre funzioni previste dallo standard POSIX servono a controllare il
+comportamento dell'interazione fra le code associate al terminale e l'utente;
+la prima di queste è \funcd{tcdrain}, il cui prototipo è:
+
+
+\begin{funcproto}{
+\fhead{unistd.h} 
+\fhead{termios.h}
+\fdecl{int tcdrain(int fd)}
+\fdesc{Attende lo svuotamento della coda di uscita.} 
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} assumerà i valori \errval{EBADF} o \errval{ENOTTY}.}
+\end{funcproto}
+
+La funzione blocca il processo fino a che tutto l'output presente sulla coda
+di uscita non è stato trasmesso al terminale associato ad \param{fd}. % La
+                                % funzione è  un punto di cancellazione per i
+                                % programmi multi-thread, in tal caso le
+                                % chiamate devono essere protette con dei
+                                % gestori di cancellazione. 
+
+Una seconda funzione, \funcd{tcflush}, permette svuotare immediatamente le code
+di cancellando tutti i dati presenti al loro interno; il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fhead{termios.h}
+\fdecl{int tcflush(int fd, int queue)}
+\fdesc{Cancella i dati presenti nelle code di ingresso o di uscita.}  }
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} assumerà i valori \errval{EBADF} o \errval{ENOTTY}.}
+\end{funcproto}
+
+La funzione agisce sul terminale associato a \param{fd}, l'argomento
+\param{queue} permette di specificare su quale coda (ingresso, uscita o
+entrambe), operare. Esso può prendere i valori riportati in
+tab.~\ref{tab:sess_tcflush_queue}, nel caso si specifichi la coda di ingresso
+cancellerà i dati ricevuti ma non ancora letti, nel caso si specifichi la coda
+di uscita cancellerà i dati scritti ma non ancora trasmessi.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|l|}
+    \hline
+    \textbf{Valore}& \textbf{Significato}\\
+    \hline
+    \hline
+    \constd{TCIFLUSH} & Cancella i dati sulla coda di ingresso.\\
+    \constd{TCOFLUSH} & Cancella i dati sulla coda di uscita. \\
+    \constd{TCIOFLUSH}& Cancella i dati su entrambe le code.\\
+    \hline
+  \end{tabular}
+  \caption{Possibili valori per l'argomento \param{queue} della
+    funzione \func{tcflush}.} 
+  \label{tab:sess_tcflush_queue}
+\end{table}
+
+
+L'ultima funzione dell'interfaccia che interviene sulla disciplina di linea è
+\funcd{tcflow}, che viene usata per sospendere la trasmissione e la ricezione
+dei dati sul terminale; il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fhead{termios.h}
+\fdecl{int tcflow(int fd, int action)}
+\fdesc{Sospende e riavvia il flusso dei dati sul terminale.} 
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} assumerà i valori \errval{EBADF} o \errval{ENOTTY}.}
+\end{funcproto}
+
+La funzione permette di controllare (interrompendo e facendo riprendere) il
+flusso dei dati fra il terminale ed il sistema sia in ingresso che in uscita.
+Il comportamento della funzione è regolato dall'argomento \param{action}, i
+cui possibili valori, e relativa azione eseguita dalla funzione, sono
+riportati in tab.~\ref{tab:sess_tcflow_action}.
+
+\begin{table}[htb]
+   \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{8cm}|}
+    \hline
+    \textbf{Valore}& \textbf{Azione}\\
+    \hline
+    \hline
+    \constd{TCOOFF}& Sospende l'output.\\
+    \constd{TCOON} & Riprende un output precedentemente sospeso.\\
+    \constd{TCIOFF}& Il sistema trasmette un carattere di STOP, che 
+                     fa interrompere la trasmissione dei dati dal terminale.\\
+    \constd{TCION} & Il sistema trasmette un carattere di START, che 
+                     fa riprendere la trasmissione dei dati dal terminale.\\
+    \hline
+  \end{tabular}
+  \caption{Possibili valori per l'argomento \param{action} della
+    funzione \func{tcflow}.} 
+  \label{tab:sess_tcflow_action}
+\end{table}
+
+
+
+\subsection{Operare in \textsl{modo non canonico}}
+\label{sec:term_non_canonical}
+
+Operare con un terminale in modo canonico è relativamente semplice; basta
+eseguire una lettura e la funzione ritornerà quando il terminale avrà
+completato una linea di input. Non è detto che la linea sia letta interamente
+(si può aver richiesto un numero inferiore di byte) ma in ogni caso nessun
+dato verrà perso, e il resto della linea sarà letto alla chiamata successiva.
+
+Inoltre in modo canonico la gestione dei dati in ingresso è di norma eseguita
+direttamente dal kernel, che si incarica (a seconda di quanto impostato con le
+funzioni viste nei paragrafi precedenti) di cancellare i caratteri, bloccare e
+riavviare il flusso dei dati, terminare la linea quando viene ricevuti uno dei
+vari caratteri di terminazione (NL, EOL, EOL2, EOF).
+
+In modo non canonico è invece compito del programma gestire tutto quanto, i
+caratteri NL, EOL, EOL2, EOF, ERASE, KILL, CR, REPRINT non vengono
+interpretati automaticamente ed inoltre, non dividendo più l'input in linee,
+il sistema non ha più un limite definito su quando ritornare i dati ad un
+processo. Per questo motivo abbiamo visto che in \var{c\_cc} sono previsti due
+caratteri speciali, MIN e TIME (specificati dagli indici \const{VMIN} e
+\const{VTIME} in \var{c\_cc}) che dicono al sistema di ritornare da una
+\func{read} quando è stata letta una determinata quantità di dati o è passato
+un certo tempo.
+
+Come accennato nella relativa spiegazione in tab.~\ref{tab:sess_termios_cc},
+TIME e MIN non sono in realtà caratteri ma valori numerici. Il comportamento
+del sistema per un terminale in modalità non canonica prevede quattro casi
+distinti:
+\begin{description}
+\item[MIN$>0$, TIME$>0$] In questo caso MIN stabilisce il numero minimo di
+  caratteri desiderati e TIME un tempo di attesa, in decimi di secondo, fra un
+  carattere e l'altro. Una \func{read} ritorna se vengono ricevuti almeno MIN
+  caratteri prima della scadenza di TIME (MIN è solo un limite inferiore, se
+  la funzione ha richiesto un numero maggiore di caratteri ne possono essere
+  restituiti di più); se invece TIME scade vengono restituiti i byte ricevuti
+  fino ad allora (un carattere viene sempre letto, dato che il timer inizia a
+  scorrere solo dopo la ricezione del primo carattere).
+\item[MIN$>0$, TIME$=0$] Una \func{read} ritorna solo dopo che sono stati
+  ricevuti almeno MIN caratteri. Questo significa che una \func{read} può
+  bloccarsi indefinitamente. 
+\item[MIN$=0$, TIME$>0$] In questo caso TIME indica un tempo di attesa dalla
+  chiamata di \func{read}, la funzione ritorna non appena viene ricevuto un
+  carattere o scade il tempo. Si noti che è possibile che \func{read} ritorni
+  con un valore nullo.
+\item[MIN$=0$, TIME$=0$] In questo caso una \func{read} ritorna immediatamente
+  restituendo tutti i caratteri ricevuti. Anche in questo caso può ritornare
+  con un valore nullo.
+\end{description}
+
+
+
+\section{La gestione dei terminali virtuali}
+\label{sec:sess_virtual_terminal}
+
+% 
+% TODO terminali virtuali 
+% Qui c'è da mettere tutta la parte sui terminali virtuali, e la gestione
+% degli stessi
+%
+
+Da fare.
+
+\subsection{I terminali virtuali}
+\label{sec:sess_pty}
+
+Qui vanno spiegati i terminali virtuali, \file{/dev/pty} e compagnia.
+% vedi man pts
+% vedi 
+
+
+\subsection{Allocazione dei terminali virtuali}
+\label{sec:sess_openpty}
+
+Qui vanno le cose su \func{openpty} e compagnia.
+
+% TODO le ioctl dei terminali (man tty_ioctl)
+% e http://www.net-security.org/article.php?id=83
+% TODO trattare \func{posix\_openpt}
+% vedi http://lwn.net/Articles/688809/,
+% http://man7.org/linux/man-pages/man3/ptsname.3.html
+
+
+% TODO materiale sulle seriali
+% vedi http://www.easysw.com/~mike/serial/serial.html
+% TODO materiale generico sul layer TTY
+% vedi http://www.linusakesson.net/programming/tty/index.php
+
+% LocalWords:  kernel multitasking job control BSD POSIX shell sez group
+% LocalWords:  foreground process bg fg waitpid WUNTRACED pgrp session sched
+% LocalWords:  struct pgid sid pid ps getpgid getpgrp unistd void errno int
+% LocalWords:  ESRCH getsid glibc system call XOPEN SOURCE EPERM setpgrp EACCES
+% LocalWords:  setpgid exec EINVAL did fork race condition setsid tty ioctl
+% LocalWords:  NOCTTY TIOCSCTTY error tcsetpgrp termios fd pgrpid descriptor VT
+% LocalWords:  ENOTTY ENOSYS EBADF SIGTTIN SIGTTOU EIO tcgetpgrp crypt SIGTSTP
+% LocalWords:  SIGINT SIGQUIT SIGTERM SIGHUP hungup kill orphaned SIGCONT exit
+% LocalWords:  init Slackware run level inittab fig device getty TERM at execle
+% LocalWords:  getpwnam chdir home chown chmod setuid setgid initgroups SIGCHLD
+% LocalWords:  daemon like daemons NdT Stevens Programming FAQ filesystem umask
+% LocalWords:  noclose syslog syslogd socket UDP klogd printk printf facility
+% LocalWords:  priority log openlog const char ident option argv tab AUTH CRON
+% LocalWords:  AUTHPRIV cron FTP KERN LOCAL LPR NEWS news USENET UUCP CONS CRIT
+% LocalWords:  NDELAY NOWAIT ODELAY PERROR stderr format strerror EMERG ALERT
+% LocalWords:  ERR WARNING NOTICE INFO DEBUG debug setlogmask mask UPTO za ssh
+% LocalWords:  teletype telnet read write BELL beep CANON isatty desc ttyname
+% LocalWords:  NULL ctermid stdio pathname buff size len ERANGE bits ispeed xFF
+% LocalWords:  ospeed line tcflag INPCK IGNPAR PARMRK ISTRIP IGNBRK BREAK NUL
+% LocalWords:  BRKINT IGNCR carriage return newline ICRNL INLCR IUCLC IXON NL
+% LocalWords:  IXANY IXOFF IMAXBEL iflag OPOST CR OCRNL OLCUC ONLCR ONOCR OFILL
+% LocalWords:  ONLRET OFDEL NLDLY CRDLY TABDLY BSDLY backspace BS VTDLY FFDLY
+% LocalWords:  form feed FF oflag CLOCAL of HUPCL CREAD CSTOPB PARENB TIOCGPGRP
+% LocalWords:  PARODD CSIZE CS CBAUD CBAUDEX CIBAUD CRTSCTS RTS CTS cflag ECHO
+% LocalWords:  ICANON ECHOE ERASE ECHOPRT ECHOK ECHOKE ECHONL ECHOCTL ctrl ISIG
+% LocalWords:  INTR QUIT SUSP IEXTEN EOL LNEXT REPRINT WERASE NOFLSH and TOSTOP
+% LocalWords:  SIGSUSP XCASE DEFECHO FLUSHO DISCARD PENDIN lflag NCCS VINTR EOF
+% LocalWords:  interrupt VQUIT VERASE VKILL VEOF VTIME VMIN VSWTC switch VSTART
+% LocalWords:  VSTOP VSUSP VEOL VREPRINT VDISCARD VWERASE VLNEXT escape actions
+% LocalWords:  tcgetattr tcsetattr EINTR TCSANOW TCSADRAIN TCSAFLUSH speed MIN
+% LocalWords:  SetTermAttr UnSetTermAttr cfsetispeed cfsetospeed cfgetispeed ng
+% LocalWords:  cfgetospeed quest'ultime tcsendbreak duration break tcdrain list
+% LocalWords:  tcflush queue TCIFLUSH TCOFLUSH TCIOFLUSH tcflow action TCOOFF
+% LocalWords:  TCOON TCIOFF TCION timer openpty Window nochdir embedded router
+% LocalWords:  access point upstart systemd rsyslog vsyslog variadic src linux
+% LocalWords:  closelog dmesg sysctl klogctl sys ERESTARTSYS ConsoleKit to CoPy
+% LocalWords:  loglevel message libc klog mydmesg CAP ADMIN LXC pipelining UID
+% LocalWords:  TIOCSPGRP GID IUTF UTF LOBLK NONBLOCK CMSPAR MARK VDSUSP VSTATUS
+% LocalWords:  cfsetspeed raw cfmakeraw
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End: 

@@ -1,0 +1,1532 @@
+%% intro.tex
+%%
+%% Copyright (C) 2000-2018 Simone Piccardi.  Permission is granted to
+%% copy, distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.1 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+
+\chapter{L'architettura del sistema}
+\label{cha:intro_unix}
+
+In questo primo capitolo sarà fatta un'introduzione ai concetti generali su
+cui è basato un sistema operativo di tipo Unix come GNU/Linux, in questo modo
+potremo fornire una base di comprensione mirata a sottolineare le peculiarità
+del sistema che sono più rilevanti per quello che riguarda la programmazione.
+
+Dopo un'introduzione sulle caratteristiche principali di un sistema di tipo
+Unix passeremo ad illustrare alcuni dei concetti base dell'architettura di
+GNU/Linux (che sono comunque comuni a tutti i sistemi \textit{unix-like}) ed
+introdurremo alcuni degli standard principali a cui viene fatto riferimento.
+
+
+\section{Una panoramica}
+\label{sec:intro_unix_struct}
+
+In questa prima sezione faremo una breve panoramica sull'architettura di un
+sistema operativo di tipo Unix, come GNU/Linux, e della relazione fra le varie
+parti che lo compongono. Chi avesse già una conoscenza di questa materia può
+tranquillamente saltare questa sezione.
+
+\subsection{Concetti base}
+\label{sec:intro_base_concept}
+
+Il concetto principale su cui è basata l'architettura di un sistema unix-like
+è quello di un nucleo del sistema, il cosiddetto \textit{kernel} (nel nostro
+caso Linux) a cui si demanda la gestione delle risorse della propria macchina
+(la CPU, la memoria, le periferiche) mentre tutto il resto, quindi anche la
+parte che prevede l'interazione con l'utente, dev'essere realizzato tramite
+programmi eseguiti dal kernel, che accedano alle risorse tramite opportune
+richieste a quest'ultimo.
+
+Fin dai suoi albori Unix nasce come sistema operativo \textit{multitasking},
+cioè in grado di eseguire contemporaneamente più programmi, e multiutente, in
+cui è possibile che più utenti siano connessi ad una macchina eseguendo più
+programmi ``\textsl{in contemporanea}''. In realtà, almeno per le macchine a
+processore singolo, i programmi vengono semplicemente eseguiti uno alla volta
+in una opportuna \textsl{rotazione}.\footnote{anche se oggi, con la presenza
+  di sistemi multiprocessore, si possono avere più processi eseguiti in
+  contemporanea, il concetto di ``\textsl{rotazione}'' resta comunque valido,
+  dato che in genere il numero di processi da eseguire eccede il numero dei
+  precessori disponibili. }
+
+% Questa e` una distinzione essenziale da capire,
+%specie nei confronti dei sistemi operativi successivi, nati per i personal
+%computer (e quindi per un uso personale), sui quali l'hardware (allora
+%limitato) non consentiva la realizzazione di un sistema evoluto come uno unix.
+
+I kernel Unix più recenti, come Linux, sono realizzati sfruttando alcune
+caratteristiche dei processori moderni come la gestione hardware della memoria
+e la modalità protetta. In sostanza con i processori moderni si può
+disabilitare temporaneamente l'uso di certe istruzioni e l'accesso a certe
+zone di memoria fisica.  Quello che succede è che il kernel è il solo
+programma ad essere eseguito in modalità privilegiata, con il completo accesso
+a tutte le risorse della macchina, mentre i programmi normali vengono eseguiti
+in modalità protetta senza accesso diretto alle risorse.  Uno schema
+elementare della struttura del sistema è riportato in
+fig.~\ref{fig:intro_sys_struct}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=11cm]{img/struct_sys}
+  % \begin{tikzpicture}
+  %   \filldraw[fill=black!20] (0,0) rectangle (7.5,1);
+  %   \draw (3.75,0.5) node {\textsl{System Call Interface}};
+  %   \filldraw[fill=black!35] (0,1) rectangle (7.5,4);
+  %   \draw (3.75,2.5) node {\huge{\textsf{kernel}}};
+  %   \filldraw[fill=black!20] (0,4) rectangle (2.5,5);
+  %   \draw (1.25,4.5) node {\textsf{scheduler}};
+  %   \filldraw[fill=black!20] (2.5,4) rectangle (5,5);
+  %   \draw (3.75,4.5) node {\textsf{VM}};
+  %   \filldraw[fill=black!20] (5,4) rectangle (7.5,5);
+  %   \draw (6.25,4.5) node {\textsf{driver}};
+
+  %   \draw (1.25,7) node(cpu) [ellipse,draw] {\textsf{CPU}};
+  %   \draw (3.75,7) node(mem) [ellipse,draw] {\textsf{memoria}};
+  %   \draw (6.25,7) node(disk) [ellipse,draw] {\textsf{disco}};
+
+  %   \draw[<->] (cpu) -- (1.25,5);
+  %   \draw[<->] (mem) -- (3.75,5);
+  %   \draw[<->] (disk) -- (6.25,5);
+
+  %   \draw (7.5,0) node [anchor=base west] {\textit{kernel space}};
+  %   \draw (7.5,-1) node [anchor=west] {\textit{user space}};
+
+  %   \draw (-1,-0.5) -- (8.5, -0.5);
+
+  %   \draw (0,-2) rectangle (7.5,-1);
+  %   \draw (3.75, -1.5) node {\textsl{GNU C Library}};
+  %   \draw[->] (1.25,-1) -- (1.25,0);
+  %   \draw[->] (3.75,-1) -- (3.75,0);
+  %   \draw[->] (6.25,-1) -- (6.25,0);
+
+  %   \draw (1.25,-3) node(proc1) [rectangle,draw] {\textsf{processo}};
+  %   \draw (3.75,-3) node(proc2) [rectangle,draw] {\textsf{processo}};
+  %   \draw (6.25,-3) node(proc3) [rectangle,draw] {\textsf{processo}};
+
+  %   \draw[->] (1.25,-2) -- (proc1);
+  %   \draw[->] (3.75,-2) -- (proc2);
+  %   \draw[->] (6.25,-2) -- (proc3);
+  % \end{tikzpicture}
+  \caption{Schema di massima della struttura di interazione fra processi,
+    kernel e dispositivi in Linux.}
+  \label{fig:intro_sys_struct}
+\end{figure}
+
+\itindbeg{scheduler}
+
+Una parte del kernel, lo \textit{scheduler}, si occupa di stabilire, sulla
+base di un opportuno calcolo delle priorità e con una suddivisione appropriata
+del tempo di processore, quali fra i vari ``\textsl{processi}'' presenti nel
+sistema deve essere eseguito, realizzando il cosiddetto
+\itindex{preemptive~multitasking} \textit{preemptive
+  multitasking}.\footnote{si chiama così quella gestione del
+  \textit{multitasking} in cui è il kernel a decidere a chi assegnare l'uso
+  della CPU, potendo interrompere l'esecuzione di un processo in qualunque
+  momento.}  Ogni processo verrà comunque eseguito in modalità protetta;
+quando necessario esso potrà accedere alle risorse della macchina soltanto
+attraverso delle ``\textsl{chiamate al sistema}'' (vedi
+sez.~\ref{sec:intro_syscall}) che restituiranno il controllo al kernel per
+eseguire le operazioni necessarie.
+
+\itindend{scheduler}
+
+La memoria viene sempre gestita dal kernel attraverso il meccanismo della
+\textsl{memoria virtuale}, che consente di assegnare a ciascun processo uno
+spazio di indirizzi ``\textsl{virtuale}'' (vedi sez.~\ref{sec:proc_memory})
+che il kernel stesso, con l'ausilio della unità di gestione della memoria, si
+incaricherà di rimappare automaticamente sulla memoria fisica disponibile, con
+la possibilità ulteriore di spostare temporaneamente su disco (nella
+cosiddetta area di \textit{swap}) parte di detta memoria qualora ci si trovi
+nella necessità di liberare risorse.
+
+Le periferiche infine vengono normalmente viste attraverso un'interfaccia
+astratta che permette di trattarle come se fossero dei file, secondo uno dei
+concetti base della architettura di Unix, per cui ``\textsl{tutto è in file}''
+(\textit{everything is a file}) su cui torneremo in
+sez.~\ref{sec:intro_file_dir}. In realtà questo non è sempre vero (ad esempio
+non lo è per le interfacce di rete) dato che ci sono periferiche che non
+rispondendo bene a questa astrazione richiedono un'interfaccia diversa.  Anche
+in questo caso però resta valido il concetto generale che tutto il lavoro di
+accesso e gestione delle periferiche a basso livello viene effettuato dal
+kernel tramite l'opportuno codice di gestione delle stesse, che in
+fig.~\ref{fig:intro_sys_struct} si è indicato come \textit{driver}.
+
+
+\subsection{Il kernel e il sistema}
+\label{sec:intro_kern_and_sys}
+
+Uno dei concetti fondamentali su cui si basa l'architettura dei sistemi Unix è
+quello della distinzione fra il cosiddetto \textit{user space}, che
+contraddistingue l'ambiente in cui vengono eseguiti i programmi, e il
+\textit{kernel space}, che è l'ambiente in cui viene eseguito il kernel. Ogni
+programma vede sé stesso come se avesse la piena disponibilità della CPU e
+della memoria ed è, salvo i meccanismi di comunicazione previsti dal sistema,
+completamente ignaro del fatto che altri programmi possono essere messi in
+esecuzione dal kernel.
+
+Per questa separazione non è possibile ad un singolo programma disturbare
+l'azione di un altro programma o del kernel stesso, e questo è il principale
+motivo della stabilità di un sistema unix-like nei confronti di altri sistemi
+in cui i processi non hanno di questi limiti o in cui essi vengono eseguiti
+allo stesso livello del kernel. Pertanto deve essere chiaro a chi programma in
+un sistema unix-like che l'accesso diretto all'hardware non può avvenire se
+non all'interno del kernel; al di fuori dal kernel il programmatore deve usare
+le opportune interfacce che quest'ultimo fornisce per i programmi in
+\textit{user space}.
+
+Per capire meglio la distinzione fra \textit{kernel space} e \textit{user
+  space} si può prendere in esame la procedura di avvio di un sistema
+unix-like. All'accensione il \textit{firmware} presente nella EPROM della
+propria macchina (per i PC compatibili il BIOS), eseguirà la procedura di
+avvio del sistema, il cosiddetto \textit{bootstrap},\footnote{il nome deriva
+  da un'espressione gergale che significa ``sollevarsi da terra tirandosi per
+  le stringhe delle scarpe'', per indicare il compito, almeno apparentemente
+  impossibile, di far eseguire un programma a partire da un computer appena
+  acceso che appunto non ne contiene nessuno; non è impossibile perché in
+  realtà c'è un programma iniziale, che è il BIOS.} incaricandosi di caricare
+il kernel in memoria e di farne partire l'esecuzione. 
+
+A questo punto il controllo passerà al kernel, il quale però da parte sua, una
+volta inizializzato opportunamente l'hardware, si limiterà a due sole
+operazioni, montare il filesystem radice (torneremo su questo in
+sez.~\ref{sec:file_arch_overview}) e lanciare il primo processo che eseguirà
+il programma di inizializzazione del sistema, che in genere, visto il suo
+scopo, si chiama \cmd{init}.
+
+Una volta lanciato \cmd{init} tutto il lavoro successivo verrà eseguito
+\textit{user space} da questo programma, che sua volta si incaricherà di
+lanciare tutti gli altri programmi, fra cui ci sarà quello che si occupa di
+dialogare con la tastiera e lo schermo della console, quello che mette a
+disposizione un terminale e la \textit{shell} da cui inviare i comandi
+all'utente che si vuole collegare, ed in generale tutto quanto necessario ad
+avere un sistema utilizzabile.
+
+E' da rimarcare come tutto ciò che riguarda l'interazione con l'utente, che
+usualmente viene visto come parte del sistema, non abbia in realtà niente a
+che fare con il kernel, ma sia effettuato da opportuni programmi che vengono
+eseguiti, allo stesso modo di un qualunque programma di scrittura o di disegno
+e della stessa interfaccia grafica, in \textit{user space}.
+
+Questo significa ad esempio che il sistema di per sé non dispone di primitive
+per tutta una serie di operazioni (ad esempio come la copia di un file) che
+altri sistemi (come Windows) hanno invece al loro interno. Questo perché tutte
+le operazioni di normale amministrazione di un sistema, sono effettuata
+attraverso dei normali programmi utilizzando le interfacce di programmazione
+che il kernel mette a disposizione.
+
+È per questo motivo che quando ci si riferisce al sistema nella sua interezza
+viene spesso sottolineato come sia corretto parlare di ``GNU/Linux'' e non di
+Linux; da solo infatti il kernel non è sufficiente, quello che costruisce un
+sistema operativo utilizzabile è la presenza di tutta una serie di librerie e
+programmi di utilità, ed i più comuni sono appunto quelli realizzati dal
+progetto GNU della Free Software Foundation, grazie ai quali si possono
+eseguire le normali operazioni che ci si aspetta da un sistema operativo.
+
+
+\subsection{\textit{System call} e funzioni di libreria}
+\label{sec:intro_syscall}
+
+Come illustrato in fig.~\ref{fig:intro_sys_struct} i programmi possono
+accedere ai servizi forniti dal kernel tramite opportune interfacce dette
+\textit{system call} (\textsl{chiamate al sistema}, appunto). Si tratta di un
+insieme di funzioni che un programma può invocare, per le quali viene generata
+un'interruzione nell'esecuzione del codice del processo, passando il controllo
+al kernel. Sarà quest'ultimo che eseguirà in le operazioni relative alla
+funzione richiesta in \textit{kernel space}, restituendo poi i risultati al
+chiamante.
+
+Ogni versione di Unix ha storicamente sempre avuto un certo numero di
+\textit{system call}, che sono documentate nella seconda sezione del
+\textsl{Manuale di programmazione di Unix}, quella cui si accede con il
+comando \cmd{man 2 <nome>}, ed anche Linux non fa eccezione. Queste
+\textit{system call} sono poi state codificate da vari standard, che
+esamineremo brevemente in sez.~\ref{sec:intro_standard}.
+
+Normalmente ciascuna \textit{system call} fornita dal kernel viene associata
+ad una funzione con lo stesso nome definita all'interno della libreria
+fondamentale del sistema, quella che viene chiamata \textsl{Libreria Standard
+  del C} (\textit{C Standard Library}) in ragione del fatto che il primo
+kernel Unix e tutti i programmi eseguiti su di esso vennero scritti in questo
+linguaggio, usando le sue librerie. In seguito faremo riferimento alle
+funzioni di questa libreria che si interfacciano alle \textit{system call}
+come ``\textsl{funzioni di sistema}''.
+
+Questa libreria infatti, oltre alle chiamate alle \textit{system call},
+contiene anche tutta una serie di ulteriori funzioni di utilità che vengono
+comunemente usate nella programmazione e sono definite nei vari standard che
+documentano le interfacce di programmazione di un sistema unix-like. Questo
+concetto è importante da tener presente perché programmare in Linux significa
+anche essere in grado di usare le funzioni fornite dalla libreria Standard del
+C, in quanto né il kernel né il linguaggio C implementano direttamente
+operazioni ordinarie come l'allocazione dinamica della memoria, l'input/output
+bufferizzato sui file, la manipolazione delle stringhe, la matematica in
+virgola mobile, che sono comunemente usate da qualunque programma.
+
+Tutto ciò mette nuovamente in evidenza il fatto che nella stragrande
+maggioranza dei casi si dovrebbe usare il nome GNU/Linux in quanto una parte
+essenziale del sistema, senza la quale niente funzionerebbe, è appunto la
+\textit{GNU Standard C Library} (a cui faremo da qui in avanti riferimento
+come \acr{glibc}), la libreria standard del C realizzata dalla Free Software
+Foundation nella quale sono state implementate tutte le funzioni essenziali
+definite negli standard POSIX e ANSI C (e molte altre), che vengono utilizzate
+da qualunque programma.
+
+Si tenga comunque presente che questo non è sempre vero, dato che esistono
+implementazioni alternative della libreria standard del C, come la
+\textit{libc5} o la \textit{uClib}, che non derivano dal progetto GNU. La
+\textit{libc5}, che era usata con le prime versioni del kernel Linux, è oggi
+ormai completamente soppiantata dalla \acr{glibc}. La \textit{uClib} invece,
+pur non essendo completa come la \acr{glibc}, resta molto diffusa nel mondo
+dei dispositivi \textit{embedded} per le sue dimensioni estremamente ridotte,
+e soprattutto per la possibilità di togliere le parti non necessarie. Pertanto
+costituisce un valido rimpiazzo della \acr{glibc} in tutti quei sistemi
+specializzati che richiedono una minima occupazione di memoria. Infine per lo
+sviluppo del sistema Android è stata realizzata da Google un'altra libreria
+standard del C, utilizzata principalmente per evitare l'uso della \acr{glibc}.
+
+Tradizionalmente le funzioni specifiche della libreria standard del C sono
+riportate nella terza sezione del \textsl{Manuale di Programmazione di Unix}
+(cioè accessibili con il comando \cmd{man 3 <nome>}) e come accennato non sono
+direttamente associate ad una \textit{system call} anche se, ad esempio per la
+gestione dei file o della allocazione dinamica della memoria, possono farne
+uso nella loro implementazione.  Nonostante questa distinzione, fondamentale
+per capire il funzionamento del sistema, l'uso da parte dei programmi di una
+di queste funzioni resta lo stesso, sia che si tratti di una funzione interna
+della libreria che di una \textit{system call}.
+
+
+\subsection{Un sistema multiutente}
+\label{sec:intro_multiuser}
+
+Linux, come gli altri kernel Unix, nasce fin dall'inizio come sistema
+multiutente, cioè in grado di fare lavorare più persone in contemporanea. Per
+questo esistono una serie di meccanismi di sicurezza, che non sono previsti in
+sistemi operativi monoutente, e che occorre tenere presenti. In questa sezione
+parleremo brevemente soltanto dei meccanismi di sicurezza tradizionali di un
+sistema unix-like, oggi molti di questi sono stati notevolmente estesi
+rispetto al modello tradizionale, ma per il momento ignoreremo queste
+estensioni.
+
+Il concetto base è quello di utente (\textit{user}) del sistema, le cui
+capacità sono sottoposte a limiti precisi.  Sono così previsti una serie di
+meccanismi per identificare i singoli utenti ed una serie di permessi e
+protezioni per impedire che utenti diversi possano danneggiarsi a vicenda o
+danneggiare il sistema. Questi meccanismi sono realizzati dal kernel stesso ed
+attengono alle operazioni più varie, e torneremo su di essi in dettaglio più
+avanti.
+
+Normalmente l'utente è identificato da un nome (il cosiddetto
+\textit{username}), che ad esempio è quello che viene richiesto all'ingresso
+nel sistema dalla procedura di \textit{login} (torneremo su questo in
+sez.~\ref{sec:sess_login}).  Questa procedura si incarica di verificare
+l'identità dell'utente, in genere attraverso la richiesta di una parola
+d'ordine (la \textit{password}), anche se sono possibili meccanismi
+diversi.\footnote{ad esempio usando la libreria PAM (\textit{Pluggable
+    Autentication Methods}) è possibile generalizzare i meccanismi di
+  autenticazione e sostituire ad esempio l'uso delle password con meccanismi
+  di identificazione biometrica; per un approfondimento dell'argomento si
+  rimanda alla sez.~4.3.7 di \cite{AGL}.} Eseguita la procedura di
+riconoscimento in genere il sistema manda in esecuzione un programma di
+interfaccia (che può essere la \textit{shell} su terminale o un'interfaccia
+grafica) che mette a disposizione dell'utente un meccanismo con cui questo può
+impartire comandi o eseguire altri programmi.
+
+Ogni utente appartiene anche ad almeno un gruppo (il cosiddetto
+\textit{default group}), ma può essere associato ad altri gruppi (i
+\textit{supplementary group}), questo permette di gestire i permessi di
+accesso ai file e quindi anche alle periferiche, in maniera più flessibile,
+definendo gruppi di lavoro, di accesso a determinate risorse, ecc. 
+
+L'utente e il gruppo sono identificati dal kernel un identificativo numerico,
+la cui corrispondenza ad un nome espresso in caratteri è inserita nei due file
+\conffile{/etc/passwd} e \conffile{/etc/group}.\footnote{in realtà negli
+  sistemi più moderni, come vedremo in sez.~\ref{sec:sys_user_group} queste
+  informazioni possono essere mantenute, con l'uso del \textit{Name Service
+    Switch}, su varie tipologie di supporti, compresi server centralizzati
+  come LDAP.}  Questi identificativi sono l'\textit{user identifier}, detto in
+breve \textsl{user-ID}, ed indicato dall'acronimo \ids{UID}, e il
+\textit{group identifier}, detto in breve \textsl{group-ID}, ed identificato
+dall'acronimo \ids{GID}, torneremo in dettaglio su questo argomento in
+sez.~\ref{sec:proc_perms}.  Il kernel conosce ed utilizza soltanto questi
+valori numerici, i nomi ad essi associati sono interamente gestiti in
+\textit{user space} con opportune funzioni di libreria, torneremo su questo
+argomento in sez.~\ref{sec:sys_user_group}.
+ 
+Grazie a questi identificativi il sistema è in grado di tenere traccia
+dell'utente a cui appartiene ciascun processo ed impedire ad altri utenti di
+interferire con quest'ultimo.  Inoltre con questo sistema viene anche
+garantita una forma base di sicurezza interna in quanto anche l'accesso ai
+file (vedi sez.~\ref{sec:file_access_control}) è regolato da questo meccanismo
+di identificazione.
+
+Infine in ogni sistema unix-like è presente uno speciale utente privilegiato,
+il cosiddetto \textit{superuser}, il cui username è di norma \textit{root}, ed
+il cui \ids{UID} è zero. Esso identifica l'amministratore del sistema, che
+deve essere in grado di fare qualunque operazione; per l'utente \textit{root}
+infatti i meccanismi di controllo cui si è accennato in precedenza sono
+disattivati.\footnote{i controlli infatti vengono eseguiti da uno pseudo-codice
+  del tipo: ``\code{if (uid) \{ \textellipsis\ \}}''.}
+
+
+\section{L'architettura di file e directory}
+\label{sec:intro_file_dir}
+
+Come accennato in sez.~\ref{sec:intro_base_concept} uno dei concetti
+fondamentali dell'architettura di un sistema Unix è il cosiddetto
+\textit{everything is a file} (\textsl{tutto è un file}), cioè il fatto che
+l'accesso ai vari dispositivi di input/output del computer viene effettuato
+attraverso un'interfaccia astratta che tratta le periferiche allo stesso modo
+dei normali file di dati.
+
+In questa sezione forniremo una descrizione a grandi linee dell'architettura
+della gestione dei file in Linux, partendo da una introduzione ai concetti di
+base, per poi illustrare la struttura dell'albero dei file ed il significato
+dei tipi di file, concludendo con una panoramica sulle caratteristiche
+principali delle due interfacce con cui i processi possono effettuare l'I/O su
+file.
+
+
+\subsection{Una panoramica generale}
+\label{sec:file_arch_overview}
+
+Per poter accedere ai file, il kernel deve mettere a disposizione dei
+programmi delle opportune \textit{system call} che consentano di leggere e
+scrivere il contenuto. Tutto ciò ha due aspetti: il primo è che il kernel, per
+il concetto dell'\textit{everything is a file}, deve fornire una interfaccia
+che consenta di operare sui file, sia che questi corrispondano ai normali file
+di dati, o ai cosiddetti ``\textsl{file speciali}'', come i file di
+dispositivo (o \textit{device file}) che permettono di accedere alle
+periferiche o le \textit{fifo} ed i socket che forniscono funzionalità di
+comunicazione fra processi (torneremo su questo in sez.~\ref{sec:file_mknod}).
+
+Il secondo aspetto è che per poter utilizzare dei normali file di dati il
+kernel deve provvedere ad organizzare e rendere accessibile in maniera
+opportuna l'informazione in essi contenuta memorizzandola sullo spazio grezzo
+disponibile sui dischi.  Questo viene fatto strutturando l'informazione sul
+disco attraverso quello che si chiama un
+``\textit{filesystem}''. L'informazione così strutturata poi viene resa
+disponibile ai processi attraverso quello che viene chiamato il
+``\textsl{montaggio}'' del filesystem nell'albero dei file, dove il contenuto
+sarà accessibile nella forma ordinaria di file e directory.
+
+\itindbeg{Virtual~File~System~(VFS)}
+
+In Linux il concetto di \textit{everything is a file} è stato implementato
+attraverso il cosiddetto \textit{Virtual File System} (da qui in avanti VFS)
+che è uno strato intermedio che il kernel usa per accedere ai più svariati
+filesystem mantenendo la stessa interfaccia per i programmi in \textit{user
+  space}.  Il VFS fornisce quel livello di astrazione che permette di
+collegare le operazioni interne del kernel per la manipolazione sui file con
+le \textit{system call} relative alle operazioni di I/O, e gestisce poi
+l'organizzazione di dette operazioni nei vari modi in cui i diversi filesystem
+le effettuano, permettendo la coesistenza di filesystem differenti all'interno
+dello stesso albero delle directory. Approfondiremo il funzionamento di
+interfaccia generica fornita dal VFS in sez.~\ref{sec:file_vfs_work}.
+
+In sostanza quello che accade è che quando un processo esegue una
+\textit{system call} che opera su un file, il kernel chiama sempre una
+funzione implementata nel VFS. La funzione eseguirà le manipolazioni sulle
+strutture generiche e utilizzerà poi delle chiamate alle opportune funzioni
+del filesystem specifico a cui si fa riferimento. Saranno queste infine a
+chiamare le funzioni di più basso livello che eseguono le operazioni di I/O
+sul dispositivo fisico, secondo lo schema riportato in
+fig.~\ref{fig:file_VFS_scheme}.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=8cm]{img/vfs}
+  \caption{Schema delle operazioni del VFS.}
+  \label{fig:file_VFS_scheme}
+\end{figure}
+
+Questa interfaccia resta la stessa anche quando, invece che a dei normali
+file, si accede alle periferiche coi citati file di dispositivo, solo che in
+questo caso invece di usare il codice del filesystem che accede al disco, il
+\textit{Virtual File System} eseguirà direttamente il codice del kernel che
+permette di accedere alla periferica.
+
+\itindend{Virtual~File~System~(VFS)}
+
+Come accennato in precedenza una delle funzioni essenziali per il
+funzionamento dell'interfaccia dei file è quella che consente di montare un
+filesystem nell'albero dei file, e rendere così visibili i suoi contenuti. In
+un sistema unix-like infatti, a differenza di quanto avviene in altri sistemi
+operativi, tutti i file vengono mantenuti all'interno di un unico albero la
+cui radice (quella che viene chiamata \textit{root directory}) viene montata
+all'avvio direttamente dal kernel.
+
+Come accennato in sez.~\ref{sec:intro_kern_and_sys}) montare la radice è,
+insieme al lancio di \cmd{init},\footnote{l'operazione è ovviamente anche
+  preliminare al lancio di \cmd{init}, dato il kernel deve poter accedere al
+  file che contiene detto programma.} l'unica operazione che viene effettuata
+direttamente dal kernel in fase di avvio. Il kernel infatti, completata la
+fase di inizializzazione, utilizza l'indicazione passatagli dal
+\textit{bootloader} su quale sia il dispositivo che contiene il filesystem da
+usare come punto di partenza, lo monta come radice dell'albero dei file.
+
+Tutti gli ulteriori filesystem che possono essere disponibili su altri
+dispositivi dovranno a loro volta essere inseriti nell'albero, montandoli in
+altrettante directory del filesystem radice, su quelli che vengono chiamati
+\textit{mount point}.  Questo comunque avverrà sempre in un secondo tempo, a
+cura dei programmi eseguiti nella procedura di inizializzazione del sistema,
+grazie alle funzioni che tratteremo in sez.~\ref{sec:filesystem_mounting}.
+
+
+\subsection{La risoluzione del nome di file e directory}
+\label{sec:file_pathname}
+
+\itindbeg{pathname}
+
+Come appena illustrato sez.~\ref{sec:file_arch_overview} una delle
+caratteristiche distintive di un sistema unix-like è quella di avere un unico
+albero dei file. Un file deve essere identificato dall'utente usando quello
+che viene chiamato il suo \textit{pathname},\footnote{il manuale della
+  \acr{glibc} depreca questa nomenclatura, che genererebbe confusione poiché
+  \textit{path} indica anche un insieme di directory su cui effettuare una
+  ricerca (come quello in cui la shell cerca i comandi). Al suo posto viene
+  proposto l'uso di \textit{filename} e di componente per il nome del file
+  all'interno della directory. Non seguiremo questa scelta dato che l'uso
+  della parola \textit{pathname} è ormai così comune che mantenerne l'uso è
+  senz'altro più chiaro dell'alternativa proposta.} vale a dire tramite il
+``\textsl{percorso}'' (nome che talvolta viene usato come traduzione di
+\textit{pathname}) che si deve fare per accedere al file a partire da una
+certa ``\textit{directory}''.
+
+Una directory in realtà è anch'essa un file, nel senso che è anch'essa un
+oggetto di un filesystem, solo che è un file particolare che il kernel
+riconosce appositamente come tale per poterlo utilizzare come directory. Il
+suo scopo è quello di contenere una lista di nomi di file e le informazioni
+che associano ciascuno di questi nomi al relativo contenuto (torneremo su
+questo in sez.~\ref{sec:file_arch_func}).
+
+Dato che questi nomi possono corrispondere ad un qualunque altro oggetto del
+filesystem, compresa un'altra directory, si ottiene naturalmente
+un'organizzazione ad albero inserendo nomi di directory dentro altre
+directory.  All'interno dello stesso albero si potranno poi inserire anche
+tutti gli altri oggetti previsti l'interfaccia del VFS (su cui torneremo in
+sez.~\ref{sec:file_file_types}), come le \textit{fifo}, i collegamenti
+simbolici, i socket e gli stessi file di dispositivo.
+
+La convenzione usata nei sistemi unix-like per indicare i \textit{pathname}
+dei file è quella di usare il carattere ``\texttt{/}'' come separatore fra i
+nomi che indicano le directory che lo compongono. Dato che la directory radice
+sta in cima all'albero, essa viene indicata semplicemente con il
+\textit{pathname} ``\file{/}''.
+
+\itindbeg{pathname~resolution}
+
+Un file può essere indicato rispetto ad una directory semplicemente
+specificandone il nome, il manuale della \acr{glibc} chiama i nomi contenuti
+nelle directory ``componenti'' (in inglese \textit{file name components}), noi
+li chiameremo più semplicemente \textsl{nomi} o \textsl{voci}, riservando la
+parola \textsl{componenti} ai nomi che, separati da una ``\texttt{/}'',
+costituiscono il \textit{pathname}. Questi poi dovranno corrispondere, perché
+il \textit{pathname} sia valido, a voci effettivamente presenti nelle
+directory, ma non è detto che un \textit{pathname} debba per forza risultare
+valido.  
+
+Il procedimento con cui dato un \textit{pathname} si individua il file a cui
+esso fa riferimento, è chiamato \textsl{risoluzione del percorso}
+(\textit{filename resolution} o \textit{pathname resolution}). Lo stesso
+procedimento ci può anche dire che il \textit{pathname} usato non è valido.
+La risoluzione viene eseguita esaminando il \textit{pathname} da sinistra a
+destra e localizzando ogni componente dello stesso come nome in una directory
+a partire dalla directory iniziale, usando il carattere ``\texttt{/}'' come
+separatore per scendere dall'una all'altra. Nel caso si indichi un componente
+vuoto il costrutto ``\texttt{//}'' viene considerato equivalente a
+``\texttt{/}''.
+
+Ovviamente perché la risoluzione abbia successo occorre che i componenti
+intermedi esistano e siano effettivamente directory, e che il file o la
+directory indicata dall'ultimo componente esista.  Inoltre i permessi relativi
+alle directory indicate nel \textit{pathname} (torneremo su questo
+sez.~\ref{sec:file_access_control}) dovranno consentire l'accesso all'intero
+\textit{pathname}.
+
+\itindsubbeg{pathname}{assoluto}
+\itindsubbeg{pathname}{relativo}
+
+Se il \textit{pathname} comincia con il carattere ``\texttt{/}'' la ricerca
+parte dalla directory radice del processo. Questa, a meno di non avere
+eseguito una \func{chroot} (funzione su cui torneremo in
+sez.~\ref{sec:file_chroot}) è la stessa per tutti i processi ed equivale alla
+directory radice dell'albero dei file montata dal kernel all'avvio del
+sistema; in questo caso si parla di un \textsl{pathname assoluto}. Altrimenti
+la ricerca parte dalla directory di lavoro corrente del processo (su cui
+torneremo in sez.~\ref{sec:file_work_dir}) ed il \textit{pathname} è detto
+\textsl{pathname relativo}.
+
+\itindsubend{pathname}{assoluto}
+\itindsubend{pathname}{relativo}
+
+Infine i nomi di directory ``\file{.}'' e ``\file{..}'' hanno un significato
+speciale e vengono inseriti in ogni directory quando questa viene creata (vedi
+sez.~\ref{sec:file_dir_creat_rem}). Il primo fa riferimento alla directory
+corrente e il secondo alla directory \textsl{genitrice} (o \textit{parent
+  directory}) cioè la directory che contiene il riferimento alla directory
+corrente.
+
+In questo modo con ``\file{..}'' si può usare un \textit{pathname} relativo
+per indicare un file posto al di sopra della directory corrente, tornando
+all'indietro nell'albero dei file.  Questa retromarcia però su fermerà una
+volta raggiunta la directory radice, perché non esistendo in questo caso una
+directory superiore, il nome ``\file{..}''  farà riferimento alla radice
+stessa.
+
+\itindend{pathname}
+\itindend{pathname~resolution}
+
+
+\subsection{I tipi di file}
+\label{sec:file_file_types}
+
+Parlare dei tipi di file su Linux, come per qualunque sistema unix-like,
+significa anzitutto chiarire il proprio vocabolario e sottolineare le
+differenze che ci sono rispetto ad altri sistemi operativi.
+
+\index{file!di~dispositivo|(}
+\index{file!speciali|(} 
+
+Come accennato in sez.~\ref{sec:file_arch_overview} su Linux l'uso del
+\textit{Virtual File System} consente di trattare come file oggetti molto
+diversi fra loro. Oltre ai normali file di dati abbiamo già accennato ad altri
+due di questi oggetti, i file di dispositivo e le directory, ma ne esistono
+altri. In genere quando si parla di tipo di file su Linux si fa riferimento a
+questi diversi tipi, di cui si riportato l'elenco completo in
+tab.~\ref{tab:file_file_types}.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+    \begin{tabular}[c]{|l|l|p{6cm}|}
+    \hline
+    \multicolumn{2}{|c|}{\textbf{Tipo di file}} & \textbf{Descrizione} \\
+    \hline
+    \hline
+      \textit{regular file}& \textsl{file regolare}
+                           & Un file che contiene dei dati (l'accezione
+                             normale di file).\\
+      \textit{directory}   &\textsl{cartella o direttorio}
+                           & Un file che contiene una lista di nomi associati
+                             a degli \textit{inode} (vedi
+                             sez.~\ref{sec:file_vfs_work}).\\   
+      \textit{symbolic link}&\textsl{collegamento simbolico}
+                           & Un file che contiene un riferimento ad un altro 
+                             file/directory.\\ 
+      \textit{char device} &\textsl{dispositivo a caratteri} 
+                           & Un file \textsl{speciale} che identifica una
+                             periferica ad accesso a caratteri.\\
+      \textit{block device}& \textsl{dispositivo a blocchi} 
+                           & Un file \textsl{speciale} che identifica una
+                             periferica ad accesso a blocchi.\\
+      \textit{fifo}        & ``\textsl{coda}'' 
+                           & Un file \textsl{speciale} che identifica una
+                             linea di comunicazione unidirezionale (vedi
+                             sez.~\ref{sec:ipc_named_pipe}).\\
+      \textit{socket}      & ``\textsl{presa}''
+                           & Un file \textsl{speciale} che identifica una
+                             linea di comunicazione bidirezionale (vedi
+                             cap.~\ref{cha:socket_intro}).\\
+    \hline
+    \end{tabular}
+    \caption{Tipologia dei file definiti nel VFS}
+    \label{tab:file_file_types}
+\end{table}
+
+Si tenga ben presente che questa classificazione non ha nulla a che fare con
+una classificazione dei file in base al loro contenuto, dato che in tal caso
+si avrebbe a che fare sempre e solo con dei file di dati. E non ha niente a
+che fare neanche con le eventuali diverse modalità con cui si possa accedere
+al contenuto dei file di dati.  La classificazione di
+tab.~\ref{tab:file_file_types} riguarda il tipo di oggetti gestiti dal
+\textit{Virtual File System}, ed è da notare la presenza dei cosiddetti file
+``\textsl{speciali}''.
+
+Alcuni di essi, come le \textit{fifo} (che tratteremo in
+sez.~\ref{sec:ipc_named_pipe}) ed i \textit{socket} (che tratteremo in
+cap.~\ref{cha:socket_intro}) non sono altro che dei riferimenti per utilizzare
+alcune funzionalità di comunicazione fornite dal kernel. Gli altri sono
+proprio quei \textsl{file di dispositivo} che costituiscono una interfaccia
+diretta per leggere e scrivere sui dispositivi fisici. Anche se finora li
+abbiamo chiamati genericamente così, essi sono tradizionalmente suddivisi in
+due grandi categorie, \textsl{a blocchi} e \textsl{a caratteri}, a seconda
+delle modalità in cui il dispositivo sottostante effettua le operazioni di
+I/O.
+
+I dispositivi a blocchi (ad esempio i dischi) sono quelli corrispondono a
+periferiche per le quali è richiesto che l'I/O venga effettuato per blocchi di
+dati di dimensioni fissate (nel caso dei dischi le dimensioni di un settore),
+mentre i dispositivi a caratteri sono quelli per cui l'I/O può essere
+effettuato senza nessuna particolare struttura, ed in generale anche un byte
+alla volta, da cui il nome.
+
+Una delle differenze principali con altri sistemi operativi come il VMS o
+Windows è che per Unix tutti i file di dati sono identici e contengono un
+flusso continuo di byte. Non esiste cioè differenza per come vengono visti dal
+sistema file di diverso contenuto o formato, come nel caso di quella fra file
+di testo e binari che c'è in Windows. Non c'è neanche una strutturazione a
+record per il cosiddetto ``\textsl{accesso diretto}'' come nel caso del
+VMS.\footnote{questo vale anche per i dispositivi a blocchi: la strutturazione
+  dell'I/O in blocchi di dimensione fissa avviene solo all'interno del kernel,
+  ed è completamente trasparente all'utente; inoltre talvolta si parla di
+  \textsl{accesso diretto} riferendosi alla capacità, che non ha niente a che
+  fare con tutto ciò, di effettuare attraverso degli appositi file di
+  dispositivo delle operazioni di I/O direttamente sui dischi senza passare
+  attraverso un filesystem, il cosiddetto \textit{raw access}, introdotto coi
+  kernel della serie 2.4.x ma ormai in sostanziale disuso.}
+
+\index{file!di~dispositivo|)}
+\index{file!speciali|)} 
+
+Una differenza che attiene ai contenuti di un file però esiste, ed è relativa
+al formato dei file di testo. Nei sistemi unix-like la fine riga è codificata
+in maniera diversa da Windows o dal vecchio MacOS, in particolare il fine riga
+è il carattere \texttt{LF} (\verb|\n|) al posto del \texttt{CR} (\verb|\r|)
+del vecchio MacOS e del \texttt{CR LF} (\verb|\r\n|) di Windows. Questo può
+causare alcuni problemi qualora nei programmi si facciano assunzioni sul
+terminatore della riga e per questo esistono dei programmi come \cmd{unix2dos}
+e \cmd{dos2unix} che effettuano una conversione fra questi due formati di
+testo.
+
+Si ricordi comunque che un kernel unix-like non fornisce nessun supporto per
+la tipizzazione dei file di dati in base al loro contenuto e che non c'è
+nessun supporto per una qualche interpretazione delle estensioni (nel nome del
+file) da parte del kernel,\footnote{non è così ad esempio nel filesystem HFS
+  dei Mac, che supporta delle risorse associate ad ogni file, che specificano
+  fra l'altro il contenuto ed il programma da usare per leggerlo; in realtà
+  per alcuni filesystem esiste la possibilità di associare delle risorse ai
+  file con gli \textit{extended attributes} (vedi sez.~\ref{sec:file_xattr}),
+  ma è una caratteristica tutt'ora poco utilizzata, dato che non corrisponde
+  al modello classico dei file in un sistema Unix.} ogni classificazione di
+questo tipo avviene sempre in \textit{user space}. Gli unici file di cui il
+kernel deve essere in grado di capire il contenuto sono i binari dei
+programmi, per i quali sono supportati solo alcuni formati, anche se oggi
+viene usato quasi esclusivamente
+\itindex{Executable~and~Linkable~Format~(ELF)} l'ELF.\footnote{il nome è
+  l'acronimo di \textit{Executable and Linkable Format}, un formato per
+  eseguibili binari molto flessibile ed estendibile definito nel 1995 dal
+  \textit{Tool Interface Standard} che per le sue caratteristiche di non
+  essere legato a nessun tipo di processore o architettura è stato adottato da
+  molti sistemi unix-like e non solo.}
+
+\itindbeg{magic~number}
+
+Nonostante l'assenza di supporto da parte del kernel per la classificazione
+del contenuto dei file di dati, molti programmi adottano comunque delle
+convenzioni per i nomi dei file, ad esempio il codice C normalmente si mette
+in file con l'estensione ``\file{.c}''. Inoltre una tecnica molto usata per
+classificare i contenuti da parte dei programmi è quella di utilizzare i primi
+byte del file per memorizzare un ``\textit{magic number}'' che ne classifichi
+il contenuto. Il concetto è quello di un numero intero, solitamente fra 2 e 10
+byte, che identifichi il contenuto seguente, dato che questi sono anche
+caratteri è comune trovare espresso tale numero con stringhe come
+``\texttt{\%PDF}'' per i PDF o ``\texttt{\#!}'' per gli script. Entrambe
+queste tecniche, per quanto usate ed accettate in maniera diffusa, restano
+solo delle convenzioni il cui rispetto è demandato alle applicazioni stesse.
+
+\itindend{magic~number}
+
+
+\subsection{Le due interfacce per l'accesso ai file}
+\label{sec:file_io_api}
+
+
+\itindbeg{file~descriptor}
+
+In Linux le interfacce di programmazione per l'I/O su file due.  La prima è
+l'interfaccia nativa del sistema, quella che il manuale della \textsl{glibc}
+chiama interfaccia dei ``\textit{file descriptor}'' (in italiano
+\textsl{descrittori di file}). Si tratta di un'interfaccia specifica dei
+sistemi unix-like che fornisce un accesso non bufferizzato.
+
+L'interfaccia è essenziale, l'accesso viene detto non bufferizzato in quanto
+la lettura e la scrittura vengono eseguite chiamando direttamente le
+\textit{system call} del kernel, anche se in realtà il kernel effettua al suo
+interno alcune bufferizzazioni per aumentare l'efficienza nell'accesso ai
+dispositivi. L'accesso viene gestito attraverso i \textit{file descriptor} che
+sono rappresentati da numeri interi (cioè semplici variabili di tipo
+\ctyp{int}).  L'interfaccia è definita nell'\textit{header file}
+\headfile{unistd.h} e la tratteremo in dettaglio in
+sez.~\ref{sec:file_unix_interface}.
+
+\itindbeg{file~stream}
+
+La seconda interfaccia è quella che il manuale della \acr{glibc} chiama dei
+\textit{file stream} o più semplicemente degli \textit{stream}.\footnote{in
+  realtà una interfaccia con lo stesso nome è stata introdotta a livello di
+  kernel negli Unix derivati da \textit{System V}, come strato di astrazione
+  per file e socket; in Linux questa interfaccia, che comunque ha avuto poco
+  successo, non esiste, per cui facendo riferimento agli \textit{stream}
+  useremo il significato adottato dal manuale della \acr{glibc}.} Essa
+fornisce funzioni più evolute e un accesso bufferizzato, controllato dalla
+implementazione fatta nella \acr{glibc}.  Questa è l'interfaccia specificata
+dallo standard ANSI C e perciò si trova anche su tutti i sistemi non Unix. Gli
+\textit{stream} sono oggetti complessi e sono rappresentati da puntatori ad un
+opportuna struttura definita dalle librerie del C, a cui si accede sempre in
+maniera indiretta utilizzando il tipo \code{FILE *}; l'interfaccia è definita
+nell'\textit{header file} \headfile{stdio.h} e la tratteremo in dettaglio in
+sez.~\ref{sec:files_std_interface}.
+
+Entrambe le interfacce possono essere usate per l'accesso ai file come agli
+altri oggetti del VFS, ma per poter accedere alle operazioni di controllo
+(descritte in sez.~\ref{sec:file_fcntl_ioctl}) su un qualunque tipo di oggetto
+del VFS occorre usare l'interfaccia standard di Unix con i file
+descriptor. Allo stesso modo devono essere usati i file descriptor se si vuole
+ricorrere a modalità speciali di I/O come il \textit{file locking} o l'I/O
+non-bloccante (vedi cap.~\ref{cha:file_advanced}).
+
+Gli \textit{stream} forniscono un'interfaccia di alto livello costruita sopra
+quella dei \textit{file descriptor}, che permette di poter scegliere tra
+diversi stili di bufferizzazione.  Il maggior vantaggio degli \textit{stream}
+è che l'interfaccia per le operazioni di input/output è molto più ricca di
+quella dei \textit{file descriptor}, che forniscono solo funzioni elementari
+per la lettura/scrittura diretta di blocchi di byte.  In particolare gli
+\textit{stream} dispongono di tutte le funzioni di formattazione per l'input e
+l'output adatte per manipolare anche i dati in forma di linee o singoli
+caratteri.
+
+In ogni caso, dato che gli \textit{stream} sono implementati sopra
+l'interfaccia standard di Unix, è sempre possibile estrarre il \textit{file
+  descriptor} da uno \textit{stream} ed eseguirvi sopra operazioni di basso
+livello, o associare in un secondo tempo uno \textit{stream} ad un
+\textit{file descriptor} per usare l'interfaccia più sofisticata.
+
+In generale, se non necessitano specificatamente le funzionalità di basso
+livello, è opportuno usare sempre gli \textit{stream} per la loro maggiore
+portabilità, essendo questi ultimi definiti nello standard ANSI C;
+l'interfaccia con i \textit{file descriptor} infatti segue solo lo standard
+POSIX.1 dei sistemi Unix, ed è pertanto di portabilità più limitata.
+
+\itindend{file~descriptor}
+\itindend{file~stream}
+
+\section{Gli standard}
+\label{sec:intro_standard}
+
+In questa sezione faremo una breve panoramica relativa ai vari standard che
+nel tempo sono stati formalizzati da enti, associazioni, consorzi e
+organizzazioni varie al riguardo ai sistemi operativi di tipo Unix o alle
+caratteristiche che si sono stabilite come standard di fatto in quanto facenti
+parte di alcune implementazioni molto diffuse come BSD o System V.
+
+Ovviamente prenderemo in considerazione solo gli standard riguardanti
+interfacce di programmazione e le altre caratteristiche di un sistema
+unix-like (alcuni standardizzano pure i comandi base del sistema e la shell)
+ed in particolare ci concentreremo sul come ed in che modo essi sono
+supportati sia per quanto riguarda il kernel che la libreria standard del C,
+con una particolare attenzione alla \acr{glibc}.
+
+
+\subsection{Lo standard ANSI C}
+\label{sec:intro_ansiC}
+
+\itindbeg{ANSI~C}
+Lo standard ANSI C è stato definito nel 1989 dall'\textit{American National
+  Standard Institute} come prima standardizzazione del linguaggio C e per
+questo si fa riferimento ad esso anche come C89. L'anno successivo è stato
+adottato dalla ISO (\textit{International Standard Organisation}) come
+standard internazionale con la sigla ISO/IEC 9899:1990, e per questo è noto
+anche sotto il nome di standard ISO C, o ISO C90.  Nel 1999 è stata pubblicata
+una revisione dello standard C89, che viene usualmente indicata come C99,
+anche questa è stata ratificata dalla ISO con la sigla ISO/IEC 9899:1990, per
+cui vi si fa riferimento anche come ISO C99.
+
+Scopo dello standard è quello di garantire la portabilità dei programmi C fra
+sistemi operativi diversi, ma oltre alla sintassi ed alla semantica del
+linguaggio C (operatori, parole chiave, tipi di dati) lo standard prevede
+anche una libreria di funzioni che devono poter essere implementate su
+qualunque sistema operativo.
+
+Per questo motivo, anche se lo standard non ha alcun riferimento ad un sistema
+di tipo Unix, GNU/Linux (per essere precisi la \acr{glibc}), come molti Unix
+moderni, provvede la compatibilità con questo standard, fornendo le funzioni
+di libreria da esso previste. Queste sono dichiarate in una serie di
+\textit{header file} anch'essi forniti dalla \acr{glibc} (tratteremo
+l'argomento in sez.~\ref{sec:proc_syscall}).
+
+In realtà la \acr{glibc} ed i relativi \textit{header file} definiscono un
+insieme di funzionalità in cui sono incluse come sottoinsieme anche quelle
+previste dallo standard ANSI C. È possibile ottenere una conformità stretta
+allo standard (scartando le funzionalità addizionali) usando il \cmd{gcc} con
+l'opzione \cmd{-ansi}. Questa opzione istruisce il compilatore a definire nei
+vari \textit{header file} soltanto le funzionalità previste dallo standard
+ANSI C e a non usare le varie estensioni al linguaggio e al preprocessore da
+esso supportate.
+\itindend{ANSI~C}
+
+
+\subsection{I tipi di dati primitivi}
+\label{sec:intro_data_types}
+
+Uno dei problemi di portabilità del codice più comune è quello dei tipi di
+dati utilizzati nei programmi, che spesso variano da sistema a sistema, o
+anche da una architettura ad un'altra (ad esempio passando da macchine con
+processori 32 bit a 64). In particolare questo è vero nell'uso dei cosiddetti
+\index{tipo!elementare} \textit{tipi elementari} del linguaggio C (come
+\ctyp{int}) la cui dimensione varia a seconda dell'architettura hardware.
+
+Storicamente alcuni tipi nativi dello standard ANSI C sono sempre stati
+associati ad alcune variabili nei sistemi Unix, dando per scontata la
+dimensione. Ad esempio la posizione corrente all'interno di un file è stata
+associata ad un intero a 32 bit, mentre il numero di dispositivo è stato
+associato ad un intero a 16 bit. Storicamente questi erano definiti
+rispettivamente come \ctyp{int} e \ctyp{short}, ma tutte le volte che, con
+l'evolversi ed il mutare delle piattaforme hardware, alcuni di questi tipi si
+sono rivelati inadeguati o sono cambiati, ci si è trovati di fronte ad una
+infinita serie di problemi di portabilità.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|l|}
+    \hline
+    \textbf{Tipo} & \textbf{Contenuto} \\
+    \hline
+    \hline
+    \typed{caddr\_t} & Core address.\\
+    \typed{clock\_t} & Contatore del \textit{process time} (vedi
+                      sez.~\ref{sec:sys_cpu_times}.\\ 
+    \typed{dev\_t}   & Numero di dispositivo (vedi sez.~\ref{sec:file_mknod}).\\
+    \typed{gid\_t}   & Identificatore di un gruppo (vedi
+                      sez.~\ref{sec:proc_access_id}).\\
+    \typed{ino\_t}   & Numero di \textit{inode} 
+                      (vedi sez.~\ref{sec:file_vfs_work}).\\ 
+    \typed{key\_t}   & Chiave per il System V IPC (vedi
+                      sez.~\ref{sec:ipc_sysv_generic}).\\
+    \typed{loff\_t}  & Posizione corrente in un file.\\
+    \typed{mode\_t}  & Attributi di un file.\\
+    \typed{nlink\_t} & Contatore dei collegamenti su un file.\\
+    \typed{off\_t}   & Posizione corrente in un file.\\
+    \typed{pid\_t}   & Identificatore di un processo (vedi
+                      sez.~\ref{sec:proc_pid}).\\
+    \typed{rlim\_t}  & Limite sulle risorse.\\
+    \typed{sigset\_t}& Insieme di segnali (vedi sez.~\ref{sec:sig_sigset}).\\
+    \typed{size\_t}  & Dimensione di un oggetto.\\
+    \typed{ssize\_t} & Dimensione in numero di byte ritornata dalle funzioni.\\
+    \typed{ptrdiff\_t}& Differenza fra due puntatori.\\
+    \typed{time\_t}  & Numero di secondi (in \textit{calendar time}, vedi 
+                      sez.~\ref{sec:sys_time}).\\
+    \typed{uid\_t}   & Identificatore di un utente (vedi
+                      sez.~\ref{sec:proc_access_id}).\\
+    \hline
+  \end{tabular}
+  \caption{Elenco dei tipi primitivi, definiti in \headfile{sys/types.h}.}
+  \label{tab:intro_primitive_types}
+\end{table}
+
+Per questo motivo tutte le funzioni di libreria di solito non fanno
+riferimento ai tipi elementari dello standard del linguaggio C, ma ad una
+serie di \index{tipo!primitivo} \textsl{tipi primitivi} del sistema, riportati
+in tab.~\ref{tab:intro_primitive_types}, e definiti nell'\textit{header file}
+\headfiled{sys/types.h}, in modo da mantenere completamente indipendenti i tipi
+utilizzati dalle funzioni di sistema dai tipi elementari supportati dal
+compilatore C.
+
+
+\subsection{Lo standard System V}
+\label{sec:intro_sysv}
+
+Come noto Unix nasce nei laboratori della AT\&T, che ne registrò il nome come
+marchio depositato, sviluppandone una serie di versioni diverse; nel 1983 la
+versione supportata ufficialmente venne rilasciata al pubblico con il nome di
+Unix System V, e si fa rifermento a questa implementazione con la sigla SysV o
+SV.
+
+Negli anni successivi l'AT\&T proseguì lo sviluppo del sistema rilasciando
+varie versioni con aggiunte e integrazioni, ed in particolare la
+\textit{release 2} nel 1985, a cui si fa riferimento con il nome SVr2 e la
+\textit{release 3} nel 1986 (denominata SVr3). Le interfacce di programmazione
+di queste due versioni vennero descritte formalmente in due documenti
+denominati \itindex{System~V~Interface~Definition~(SVID)} \textit{System V
+  Interface Definition} (o SVID), pertanto nel 1985 venne rilasciata la
+specifica SVID 1 e nel 1986 la specifica SVID 2.
+
+Nel 1989 un accordo fra vari venditori (AT\&T, Sun, HP, ed altri) portò ad una
+versione di System V che provvedeva un'unificazione delle interfacce
+comprendente anche Xenix e BSD, questa venne denominata \textit{release 4} o
+SVr4. Anche le relative interfacce vennero descritte in un documento dal
+titolo \textit{System V Interface Description}, venendo a costituire lo
+standard SVID 3, che viene considerato la specifica finale di System V, ed a
+cui spesso si fa riferimento semplicemente con SVID. Anche SVID costituisce un
+sovrainsieme delle interfacce definite dallo standard POSIX.  
+
+Nel 1992 venne rilasciata una seconda versione del sistema, la SVr4.2; l'anno
+successivo la divisione della AT\&T (già a suo tempo rinominata in Unix System
+Laboratories) venne acquistata dalla Novell, che poi trasferì il marchio Unix
+al consorzio X/Open. L'ultima versione di System V fu la SVr4.2MP rilasciata
+nel dicembre 1993. Infine nel 1995 è stata rilasciata da SCO, che aveva
+acquisito alcuni diritti sul codice di System V, una ulteriore versione delle
+\textit{System V Interface Description}, che va sotto la denominazione di SVID
+4.
+
+Linux e la \acr{glibc} implementano le principali funzionalità richieste dalle
+specifiche SVID che non sono già incluse negli standard POSIX ed ANSI C, per
+compatibilità con lo Unix System V e con altri Unix (come SunOS) che le
+includono. Tuttavia le funzionalità più oscure e meno utilizzate (che non sono
+presenti neanche in System V) sono state tralasciate.
+
+Le funzionalità implementate sono principalmente il meccanismo di
+intercomunicazione fra i processi e la memoria condivisa (il cosiddetto System
+V IPC, che vedremo in sez.~\ref{sec:ipc_sysv}) le funzioni della famiglia
+\funcm{hsearch} e \funcm{drand48}, \funcm{fmtmsg} e svariate funzioni
+matematiche.
+
+
+\subsection{Lo ``\textsl{standard}'' BSD}
+\label{sec:intro_bsd}
+
+Lo sviluppo di BSD iniziò quando la fine della collaborazione fra l'Università
+di Berkeley e la AT\&T generò una delle prime e più importanti fratture del
+mondo Unix.  L'università di Berkeley proseguì nello sviluppo della base di
+codice di cui disponeva, e che presentava parecchie migliorie rispetto alle
+versioni allora disponibili, fino ad arrivare al rilascio di una versione
+completa di Unix, chiamata appunto BSD, del tutto indipendente dal codice
+della AT\&T.
+
+Benché BSD non sia mai stato uno standard formalizzato, l'implementazione
+dello Unix dell'Università di Berkeley nella sua storia ha introdotto una
+serie di estensioni e interfacce di grandissima rilevanza, come i collegamenti
+simbolici, la funzione \code{select} ed i socket di rete. Per questo motivo si
+fa spesso riferimento esplicito alle interfacce presenti nelle varie versioni
+dello Unix di Berkeley con una apposita sigla.
+
+Nel 1983, con il rilascio della versione 4.2 di BSD, venne definita una
+implementazione delle funzioni di interfaccia a cui si fa riferimento con la
+sigla 4.2BSD. Per fare riferimento alle precedenti versioni si usano poi le
+sigle 3BSD e 4BSD (per le due versioni pubblicate nel 1980), e 4.1BSD per
+quella pubblicata nel 1981.
+
+Le varie estensioni ideate a Berkeley sono state via via aggiunte al sistema
+nelle varie versioni succedutesi negli anni, che vanno sotto il nome di
+4.3BSD, per la versione rilasciata nel 1986 e 4.4BSD, per la versione
+rilasciata nel 1993, che costituisce l'ultima release ufficiale
+dell'università di Berkeley. Si tenga presente che molte di queste interfacce
+sono presenti in derivati commerciali di BSD come SunOS. Il kernel Linux e la
+\acr{glibc} forniscono tutte queste estensioni che sono state in gran parte
+incorporate negli standard successivi.
+
+
+\subsection{Gli standard IEEE -- POSIX}
+\label{sec:intro_posix}
+
+Lo standard ufficiale creato da un organismo indipendente più attinente alle
+interfacce di un sistema unix-like nel suo complesso (e che concerne sia il
+kernel che le librerie che i comandi) è stato lo standard POSIX. Esso prende
+origine dallo standard ANSI C, che contiene come sottoinsieme, prevedendo
+ulteriori capacità per le funzioni in esso definite, ed aggiungendone di
+nuove.
+
+In realtà POSIX è una famiglia di standard diversi, il cui nome, suggerito da
+Richard Stallman, sta per \textit{Portable Operating System Interface}, ma la
+X finale denuncia la sua stretta relazione con i sistemi Unix. Esso nasce dal
+lavoro dell'IEEE (\textit{Institute of Electrical and Electronics Engeneers})
+che ne produsse una prima versione, nota come \textsl{IEEE 1003.1-1988},
+mirante a standardizzare l'interfaccia con il sistema operativo.
+
+Ma gli standard POSIX non si limitano alla standardizzazione delle funzioni di
+libreria, e in seguito sono stati prodotti anche altri standard per la shell e
+i comandi di sistema (1003.2), per le estensioni \textit{real-time} e per i
+\textit{thread} (rispettivamente 1003.1d e 1003.1c) per i socket (1003.1g) e
+vari altri.  In tab.~\ref{tab:intro_posix_std} è riportata una classificazione
+sommaria dei principali documenti prodotti, e di come sono identificati fra
+IEEE ed ISO; si tenga conto inoltre che molto spesso si usa l'estensione IEEE
+anche come aggiunta al nome POSIX; ad esempio è più comune parlare di POSIX.4
+come di POSIX.1b.
+
+Si tenga presente inoltre che nuove specifiche e proposte di standardizzazione
+si aggiungono continuamente, mentre le versioni precedenti vengono riviste;
+talvolta poi i riferimenti cambiano nome, per cui anche solo seguire le
+denominazioni usate diventa particolarmente faticoso.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|l|l|l|}
+    \hline
+    \textbf{Standard} & \textbf{IEEE} & \textbf{ISO} & \textbf{Contenuto} \\
+    \hline
+    \hline
+    POSIX.1 & 1003.1 & 9945-1& Interfacce di base.                          \\
+    POSIX.1a& 1003.1a& 9945-1& Estensioni a POSIX.1.                        \\
+    POSIX.2 & 1003.2 & 9945-2& Comandi.                                     \\
+    POSIX.3 & 2003   &TR13210& Metodi di test.                              \\
+    POSIX.4 & 1003.1b &  --- & Estensioni real-time.                        \\
+    POSIX.4a& 1003.1c &  --- & Thread.                                      \\
+    POSIX.4b& 1003.1d &9945-1& Ulteriori estensioni real-time.              \\
+    POSIX.5 & 1003.5  & 14519& Interfaccia per il linguaggio ADA.           \\
+    POSIX.6 & 1003.2c,1e& 9945-2& Sicurezza.                                \\
+    POSIX.8 & 1003.1f& 9945-1& Accesso ai file via rete.                    \\
+    POSIX.9 & 1003.9  &  --- & Interfaccia per il Fortran-77.               \\
+    POSIX.12& 1003.1g& 9945-1& Socket.                                      \\
+    \hline
+  \end{tabular}
+  \caption{Elenco dei vari standard POSIX e relative denominazioni.}
+  \label{tab:intro_posix_std}
+\end{table}
+
+Benché l'insieme degli standard POSIX siano basati sui sistemi Unix, essi
+definiscono comunque un'interfaccia di programmazione generica e non fanno
+riferimento ad una implementazione specifica (ad esempio esiste
+un'implementazione di POSIX.1 anche sotto Windows NT).  
+
+Linux e la \acr{glibc} implementano tutte le funzioni definite nello standard
+POSIX.1, queste ultime forniscono in più alcune ulteriori capacità (per
+funzioni di \textit{pattern matching} e per la manipolazione delle
+\textit{regular expression}), che vengono usate dalla shell e dai comandi di
+sistema e che sono definite nello standard POSIX.2.
+
+Nelle versioni più recenti del kernel e delle librerie sono inoltre supportate
+ulteriori funzionalità aggiunte dallo standard POSIX.1c per quanto riguarda i
+\textit{thread} (vedi cap.~\ref{cha:threads}), e dallo standard POSIX.1b per
+quanto riguarda i segnali e lo scheduling real-time
+(sez.~\ref{sec:sig_real_time} e sez.~\ref{sec:proc_real_time}), la misura del
+tempo, i meccanismi di intercomunicazione (sez.~\ref{sec:ipc_posix}) e l'I/O
+asincrono (sez.~\ref{sec:file_asyncronous_io}).
+
+Lo standard principale resta comunque POSIX.1, che continua ad evolversi; la
+versione più nota, cui gran parte delle implementazioni fanno riferimento, e
+che costituisce una base per molti altri tentativi di standardizzazione, è
+stata rilasciata anche come standard internazionale con la sigla
+\textsl{ISO/IEC 9945-1:1996} ed include i precedenti POSIX.1b e POSIX.1c. In
+genere si fa riferimento ad essa come POSIX.1-1996.
+
+Nel 2001 è stata poi eseguita una sintesi degli standard POSIX.1, POSIX.2 e
+SUSv3 (vedi sez.~\ref{sec:intro_xopen}) in un unico documento, redatto sotto
+gli auspici del cosiddetto gruppo Austin che va sotto il nome di POSIX.1-2001.
+Questo standard definisce due livelli di conformità, quello POSIX, in cui sono
+presenti solo le interfacce di base, e quello XSI che richiede la presenza di
+una serie di estensioni opzionali per lo standard POSIX, riprese da SUSv3.
+Inoltre lo standard è stato allineato allo standard C99, e segue lo stesso
+nella definizione delle interfacce.
+
+A questo standard sono stati aggiunti due documenti di correzione e
+perfezionamento denominati \textit{Technical Corrigenda}, il TC1 del 2003 ed
+il TC2 del 2004, e talvolta si fa riferimento agli stessi con le sigle
+POSIX.1-2003 e POSIX.1-2004. 
+
+Una ulteriore revisione degli standard POSIX e SUS è stata completata e
+ratificata nel 2008, cosa che ha portato al rilascio di una nuova versione
+sotto il nome di POSIX.1-2008 (e SUSv4), con l'incorporazione di alcune nuove
+interfacce, la obsolescenza di altre, la trasformazione da opzionali a
+richieste di alcune specifiche di base, oltre alle solite precisazioni ed
+aggiornamenti. Anche in questo caso è prevista la suddivisione in una
+conformità di base, e delle interfacce aggiuntive. Una ulteriore revisione è
+stata pubblicata nel 2017 come POSIX.1-2017.
+
+Le procedure di aggiornamento dello standard POSIX prevedono comunque un
+percorso continuo, che prevede la possibilità di introduzione di nuove
+interfacce e la definizione di precisazioni ed aggiornamenti, per questo in
+futuro verranno rilasciate nuove versioni. Alla stesura di queste note
+l'ultima revisione approvata resta POSIX.1-2017, uno stato della situazione
+corrente del supporto degli standard è allegato alla documentazione della
+\acr{glibc} e si può ottenere con il comando \texttt{man standards}.
+
+
+\subsection{Gli standard X/Open -- Opengroup -- Unix}
+\label{sec:intro_xopen}
+
+Il consorzio X/Open nacque nel 1984 come consorzio di venditori di sistemi
+Unix per giungere ad un'armonizzazione delle varie implementazioni.  Per far
+questo iniziò a pubblicare una serie di documentazioni e specifiche sotto il
+nome di \textit{X/Open Portability Guide} a cui di norma si fa riferimento con
+l'abbreviazione XPG$n$, con $n$ che indica la versione.
+
+Nel 1989 il consorzio produsse una terza versione di questa guida
+particolarmente voluminosa (la \textit{X/Open Portability Guide, Issue 3}),
+contenente una dettagliata standardizzazione dell'interfaccia di sistema di
+Unix, che venne presa come riferimento da vari produttori. Questo standard,
+detto anche XPG3 dal nome della suddetta guida, è sempre basato sullo standard
+POSIX.1, ma prevede una serie di funzionalità aggiuntive fra cui le specifiche
+delle API (sigla che sta per \textit{Application Programmable Interface}, in
+italiano interfaccia di programmazione) per l'interfaccia grafica (X11).
+
+Nel 1992 lo standard venne rivisto con una nuova versione della guida, la
+Issue 4, da cui la sigla XPG4, che aggiungeva l'interfaccia XTI (\textit{X
+  Transport Interface}) mirante a soppiantare (senza molto successo)
+l'interfaccia dei socket derivata da BSD. Una seconda versione della guida fu
+rilasciata nel 1994; questa è nota con il nome di Spec 1170 (dal numero delle
+interfacce, intestazioni e comandi definiti) ma si fa riferimento ad essa
+anche come XPG4v2.
+
+Nel 1993 il marchio Unix passò di proprietà dalla Novell (che a sua volta lo
+aveva comprato dalla AT\&T) al consorzio X/Open che iniziò a pubblicare le sue
+specifiche sotto il nome di \textit{Single UNIX Specification} o SUS, l'ultima
+versione di Spec 1170 diventò così la prima versione delle \textit{Single UNIX
+  Specification}, detta SUS o SUSv1, ma più comunemente nota anche come
+\textit{Unix 95}.
+
+Nel 1996 la fusione del consorzio X/Open con la Open Software Foundation (nata
+da un gruppo di aziende concorrenti rispetto ai fondatori di X/Open) portò
+alla costituzione dell'\textit{Open Group}, un consorzio internazionale che
+raccoglie produttori, utenti industriali, entità accademiche e governative.
+Attualmente il consorzio è detentore del marchio depositato Unix, e prosegue
+il lavoro di standardizzazione delle varie implementazioni, rilasciando
+periodicamente nuove specifiche e strumenti per la verifica della conformità
+alle stesse.
+
+Nel 1997 fu annunciata la seconda versione delle \textit{Single UNIX
+  Specification}, nota con la sigla SUSv2, in questa versione le interfacce
+specificate salgono a 1434, e addirittura a 3030 se si considerano le stazioni
+di lavoro grafiche, per le quali sono inserite pure le interfacce usate da CDE
+che richiede sia X11 che Motif. La conformità a questa versione permette l'uso
+del nome \textit{Unix 98}, usato spesso anche per riferirsi allo standard. Un
+altro nome alternativo di queste specifiche, date le origini, è XPG5.
+
+Come accennato nel 2001, con il rilascio dello standard POSIX.1-2001, è stato
+effettuato uno sforzo di sintesi in cui sono state comprese, nella parte di
+interfacce estese, anche le interfacce definite nelle \textit{Single UNIX
+  Specification}, pertanto si può fare riferimento a detto standard, quando
+comprensivo del rispetto delle estensioni XSI, come SUSv3, e fregiarsi del
+marchio UNIX 03 se conformi ad esso. 
+
+Infine, come avvenuto per POSIX.1-2001, anche con la successiva revisione
+dello standard POSIX.1 (la POSIX.1-2008) è stato stabilito che la conformità
+completa a tutte quelle che sono le nuove estensioni XSI previste
+dall'aggiornamento vada a definire la quarta versione delle \textit{Single
+  UNIX Specification}, chiamata appunto SUSv4.
+
+
+\subsection{Il controllo di aderenza agli standard}
+\label{sec:intro_gcc_glibc_std}
+
+In Linux, se si usa la \acr{glibc}, la conformità agli standard appena
+descritti può essere richiesta sia attraverso l'uso di alcune opzioni del
+compilatore (il \texttt{gcc}) che con la definizione di opportune costanti
+prima dell'inclusione dei file di intestazione (gli \textit{header file}, vedi
+sez.~\ref{sec:proc_syscall}) in cui le varie funzioni di libreria vengono
+definite.
+
+Ad esempio se si vuole che i programmi seguano una stretta attinenza allo
+standard ANSI C si può usare l'opzione \texttt{-ansi} del compilatore, e non
+potrà essere utilizzata nessuna funzione non riconosciuta dalle specifiche
+standard ISO per il C.  Il \texttt{gcc} possiede inoltre una specifica opzione
+per richiedere la conformità ad uno standard, nella forma \texttt{-std=nome},
+dove \texttt{nome} può essere \texttt{c89} per indicare lo standard ANSI C
+(vedi sez.~\ref{sec:intro_ansiC}) o \texttt{c99} per indicare la conformità
+allo standard C99 o \texttt{c11} per indicare la conformità allo standard C11
+(revisione del 2011).\footnote{esistono anche le possibilità di usare i valori
+  \texttt{gnu89}, che indica l'uso delle estensioni GNU al C89, riprese poi
+  dal C99, \texttt{gnu99} che indica il dialetto GNU del C99, o \texttt{gnu11}
+  che indica le estensioni GNU al C11, lo standard adottato di default dipende
+  dalla versione del \texttt{gcc}, ed all'agosto 2018 con la versione 8.2 è
+  \texttt{gnu11}.}
+
+Per attivare le varie opzioni di controllo di aderenza agli standard è poi
+possibile definire delle macro di preprocessore che controllano le
+funzionalità che la \acr{glibc} può mettere a disposizione:\footnote{le macro
+  sono definite nel file di dichiarazione \file{<features.h>}, ma non è
+  necessario includerlo nei propri programmi in quanto viene automaticamente
+  incluso da tutti gli altri file di dichiarazione che utilizzano le macro in
+  esso definite; si tenga conto inoltre che il file definisce anche delle
+  ulteriori macro interne, in genere con un doppio prefisso di \texttt{\_},
+  che non devono assolutamente mai essere usate direttamente. } questo può
+essere fatto attraverso l'opzione \texttt{-D} del compilatore, ma è buona
+norma farlo inserendo gli opportuni \code{\#define} prima della inclusione dei
+propri \textit{header file} (vedi sez.~\ref{sec:proc_syscall}).
+
+Le macro disponibili per controllare l'aderenza ai vari standard messi a
+disposizione della \acr{glibc}, che rendono disponibili soltanto le funzioni
+in essi definite, sono illustrate nel seguente elenco:
+\begin{basedescript}{\desclabelwidth{2.7cm}\desclabelstyle{\nextlinelabel}}
+\item[\macrod{\_\_STRICT\_ANSI\_\_}] richiede l'aderenza stretta allo standard
+  C ISO; viene automaticamente predefinita qualora si invochi il \texttt{gcc}
+  con le opzione \texttt{-ansi} o \texttt{-std=c99}.
+
+\item[\macrod{\_POSIX\_SOURCE}] definendo questa macro (considerata obsoleta)
+  si rendono disponibili tutte le funzionalità dello standard POSIX.1 (la
+  versione IEEE Standard 1003.1) insieme a tutte le funzionalità dello
+  standard ISO C. Se viene anche definita con un intero positivo la macro
+  \macro{\_POSIX\_C\_SOURCE} lo stato di questa non viene preso in
+  considerazione.
+
+\item[\macrod{\_POSIX\_C\_SOURCE}] definendo questa macro ad un valore intero
+  positivo si controlla quale livello delle funzionalità specificate da POSIX
+  viene messa a disposizione; più alto è il valore maggiori sono le
+  funzionalità:
+  \begin{itemize}
+  \item un valore uguale a ``\texttt{1}'' rende disponibili le funzionalità
+    specificate nella edizione del 1990 (IEEE Standard 1003.1-1990);
+  \item valori maggiori o uguali a ``\texttt{2}'' rendono disponibili le
+    funzionalità previste dallo standard POSIX.2 specificate nell'edizione del
+    1992 (IEEE Standard 1003.2-1992),
+  \item un valore maggiore o uguale a ``\texttt{199309L}'' rende disponibili
+    le funzionalità previste dallo standard POSIX.1b specificate nell'edizione
+    del 1993 (IEEE Standard 1003.1b-1993);
+  \item un valore maggiore o uguale a ``\texttt{199506L}'' rende disponibili
+    le funzionalità previste dallo standard POSIX.1 specificate nell'edizione
+    del 1996 (\textit{ISO/IEC 9945-1:1996}), ed in particolare le definizioni
+    dello standard POSIX.1c per i \textit{thread};
+  \item a partire dalla versione 2.3.3 della \acr{glibc} un valore maggiore o
+    uguale a ``\texttt{200112L}'' rende disponibili le funzionalità di base
+    previste dallo standard POSIX.1-2001, escludendo le estensioni XSI;
+  \item a partire dalla versione 2.10 della \acr{glibc} un valore maggiore o
+    uguale a ``\texttt{200809L}'' rende disponibili le funzionalità di base
+    previste dallo standard POSIX.1-2008, escludendo le estensioni XSI;
+  \item in futuro valori superiori potranno abilitare ulteriori estensioni.
+  \end{itemize}
+
+\item[\macrod{\_BSD\_SOURCE}] definendo questa macro si rendono disponibili le
+  funzionalità derivate da BSD4.3, insieme a quelle previste dagli standard
+  ISO C, POSIX.1 e POSIX.2; alcune delle funzionalità previste da BSD sono
+  però in conflitto con le corrispondenti definite nello standard POSIX.1, in
+  questo caso se la macro è definita le definizioni previste da BSD4.3 avranno
+  la precedenza rispetto a POSIX.
+
+  A causa della natura dei conflitti con POSIX per ottenere una piena
+  compatibilità con BSD4.3 può essere necessario anche usare una libreria di
+  compatibilità, dato che alcune funzioni sono definite in modo diverso. In
+  questo caso occorrerà anche usare l'opzione \cmd{-lbsd-compat} con il
+  compilatore per indicargli di utilizzare le versioni nella libreria di
+  compatibilità prima di quelle normali.
+
+  Si tenga inoltre presente che la preferenza verso le versioni delle funzioni
+  usate da BSD viene mantenuta soltanto se nessuna delle ulteriori macro di
+  specificazione di standard successivi (vale a dire una fra
+  \macro{\_POSIX\_C\_SOURCE}, \macro{\_POSIX\_SOURCE}, \macro{\_SVID\_SOURCE},
+  \macro{\_XOPEN\_SOURCE}, \macro{\_XOPEN\_SOURCE\_EXTENDED} o
+  \macro{\_GNU\_SOURCE}) è stata a sua volta attivata, nel qual caso queste
+  hanno la precedenza. Se però si definisce \macro{\_BSD\_SOURCE} dopo aver
+  definito una di queste macro, l'effetto sarà quello di dare la precedenza
+  alle funzioni in forma BSD. Questa macro, essendo ricompresa in
+  \macro{\_DEFAULT\_SOURCE} che è definita di default, è stata deprecata a
+  partire dalla \acr{glibc} 2.20.
+
+\item[\macrod{\_SVID\_SOURCE}] definendo questa macro si rendono disponibili le
+  funzionalità derivate da SVID. Esse comprendono anche quelle definite negli
+  standard ISO C, POSIX.1, POSIX.2, e X/Open (XPG$n$) illustrati in
+  precedenza. Questa macro, essendo ricompresa in \macro{\_DEFAULT\_SOURCE}
+  che è definita di default, è stata deprecata a partire dalla \acr{glibc}
+  2.20.
+
+\item[\macrod{\_DEFAULT\_SOURCE}] questa macro abilita le definizioni
+  considerate il \textit{default}, comprese quelle richieste dallo standard
+  POSIX.1-2008, ed è sostanzialmente equivalente all'insieme di
+  \macro{\_SVID\_SOURCE}, \macro{\_BSD\_SOURCE} e
+  \macro{\_POSIX\_C\_SOURCE}. Essendo predefinita non è necessario usarla a
+  meno di non aver richiesto delle definizioni più restrittive sia con altre
+  macro che con i flag del compilatore, nel qual caso abilita le funzioni che
+  altrimenti sarebbero disabilitate. Questa macro è stata introdotta a partire
+  dalla \acr{glibc} 2.19 e consente di deprecare \macro{\_SVID\_SOURCE} e
+  \macro{\_BSD\_SOURCE}.
+
+\item[\macrod{\_XOPEN\_SOURCE}] definendo questa macro si rendono disponibili
+  le funzionalità descritte nella \textit{X/Open Portability Guide}. Anche
+  queste sono un sovrainsieme di quelle definite negli standard POSIX.1 e
+  POSIX.2 ed in effetti sia \macro{\_POSIX\_SOURCE} che
+  \macro{\_POSIX\_C\_SOURCE} vengono automaticamente definite. Sono incluse
+  anche ulteriori funzionalità disponibili in BSD e SVID, più una serie di
+  estensioni a secondo dei seguenti valori:
+  \begin{itemize}
+  \item la definizione della macro ad un valore qualunque attiva le
+    funzionalità specificate negli standard POSIX.1, POSIX.2 e XPG4;
+  \item un valore di ``\texttt{500}'' o superiore rende disponibili anche le
+    funzionalità introdotte con SUSv2, vale a dire la conformità ad Unix98;
+  \item a partire dalla versione 2.2 della \acr{glibc} un valore uguale a
+    ``\texttt{600}'' o superiore rende disponibili anche le funzionalità
+    introdotte con SUSv3, corrispondenti allo standard POSIX.1-2001 più le
+    estensioni XSI.
+  \item a partire dalla versione 2.10 della \acr{glibc} un valore uguale a
+    ``\texttt{700}'' o superiore rende disponibili anche le funzionalità
+    introdotte con SUSv4, corrispondenti allo standard POSIX.1-2008 più le
+    estensioni XSI.
+  \end{itemize}
+
+\item[\macrod{\_XOPEN\_SOURCE\_EXTENDED}] definendo questa macro si rendono
+  disponibili le ulteriori funzionalità necessarie la conformità al
+  rilascio del marchio \textit{X/Open Unix} corrispondenti allo standard
+  Unix95, vale a dire quelle specificate da SUSv1/XPG4v2. Questa macro viene
+  definita implicitamente tutte le volte che si imposta
+  \macro{\_XOPEN\_SOURCE} ad un valore maggiore o uguale a 500.
+
+\item[\macrod{\_ISOC99\_SOURCE}] definendo questa macro si rendono disponibili
+  le funzionalità previste per la revisione delle librerie standard del C
+  introdotte con lo standard ISO C99. La macro è definita a partire dalla
+  versione 2.1.3 della \acr{glibc}. 
+
+  Le versioni precedenti la serie 2.1.x riconoscevano le stesse estensioni con
+  la macro \macro{\_ISOC9X\_SOURCE}, dato che lo standard non era stato
+  finalizzato, ma la \acr{glibc} aveva già un'implementazione completa che
+  poteva essere attivata definendo questa macro. Benché questa sia obsoleta
+  viene tuttora riconosciuta come equivalente di \macro{\_ISOC99\_SOURCE} per
+  compatibilità.
+
+\item[\macrod{\_ISOC11\_SOURCE}] definendo questa macro si rendono disponibili
+  le funzionalità previste per la revisione delle librerie standard del C
+  introdotte con lo standard ISO C11, e abilita anche quelle previste dagli
+  standard C99 e C95. La macro è definita a partire dalla versione 2.16 della
+  \acr{glibc}.
+
+\item[\macrod{\_GNU\_SOURCE}] definendo questa macro si rendono disponibili
+  tutte le funzionalità disponibili nei vari standard oltre a varie estensioni
+  specifiche presenti solo nella \acr{glibc} ed in Linux. Gli standard coperti
+  sono: ISO C89, ISO C99, POSIX.1, POSIX.2, BSD, SVID, X/Open, SUS.
+
+  L'uso di \macro{\_GNU\_SOURCE} è equivalente alla definizione contemporanea
+  delle macro: \macro{\_BSD\_SOURCE}, \macro{\_SVID\_SOURCE},
+  \macro{\_POSIX\_SOURCE}, \macro{\_ISOC99\_SOURCE}, e inoltre di
+  \macro{\_POSIX\_C\_SOURCE} con valore ``\texttt{200112L}'' (o
+  ``\texttt{199506L}'' per le versioni della \acr{glibc} precedenti la 2.5),
+  \macro{\_XOPEN\_SOURCE\_EXTENDED} e \macro{\_XOPEN\_SOURCE} con valore 600
+  (o 500 per le versioni della \acr{glibc} precedenti la 2.2); oltre a queste
+  vengono pure attivate le ulteriori due macro \macro{\_ATFILE\_SOURCE} e
+  \macrod{\_LARGEFILE64\_SOURCE} che definiscono funzioni previste
+  esclusivamente dalla \acr{glibc}.
+ 
+\end{basedescript}
+
+Benché Linux supporti in maniera estensiva gli standard più diffusi, esistono
+comunque delle estensioni e funzionalità specifiche, non presenti in altri
+standard e lo stesso vale per la \acr{glibc}, che definisce anche delle
+ulteriori funzioni di libreria. Ovviamente l'uso di queste funzionalità deve
+essere evitato se si ha a cuore la portabilità, ma qualora questo non sia un
+requisito esse possono rivelarsi molto utili.
+
+Come per l'aderenza ai vari standard, le funzionalità aggiuntive possono
+essere rese esplicitamente disponibili tramite la definizione di opportune
+macro di preprocessore, alcune di queste vengono attivate con la definizione
+di \macro{\_GNU\_SOURCE}, mentre altre devono essere attivate esplicitamente,
+inoltre alcune estensioni possono essere attivate indipendentemente tramite
+una opportuna macro; queste estensioni sono illustrate nel seguente elenco:
+
+\begin{basedescript}{\desclabelwidth{2.7cm}\desclabelstyle{\nextlinelabel}}
+
+\item[\macrod{\_LARGEFILE\_SOURCE}] definendo questa macro si rendono
+  disponibili alcune funzioni che consentono di superare una inconsistenza
+  presente negli standard con i file di grandi dimensioni, ed in particolare
+  definire le due funzioni \func{fseeko} e \func{ftello} che al contrario
+  delle corrispettive \func{fseek} e \func{ftell} usano il tipo di dato
+  specifico \type{off\_t} (vedi sez.~\ref{sec:file_io}).
+
+\item[\macrod{\_LARGEFILE64\_SOURCE}] definendo questa macro si rendono
+  disponibili le funzioni di una interfaccia alternativa al supporto di valori
+  a 64 bit nelle funzioni di gestione dei file (non supportati in certi
+  sistemi), caratterizzate dal suffisso \texttt{64} aggiunto ai vari nomi di
+  tipi di dato e funzioni (come \typed{off64\_t} al posto di \type{off\_t} o
+  \funcm{lseek64} al posto di \func{lseek}).
+
+  Le funzioni di questa interfaccia alternativa sono state proposte come una
+  estensione ad uso di transizione per le \textit{Single UNIX Specification},
+  per consentire la gestione di file di grandi dimensioni anche nei sistemi a
+  32 bit, in cui la dimensione massima, espressa con un intero, non poteva
+  superare i 2Gb.  Nei nuovi programmi queste funzioni devono essere evitate,
+  a favore dell'uso macro \macro{\_FILE\_OFFSET\_BITS}, che definita al valore
+  di \texttt{64} consente di usare in maniera trasparente le funzioni
+  dell'interfaccia classica.
+
+\item[\macrod{\_FILE\_OFFSET\_BITS}] la definizione di questa macro al valore
+  di \texttt{64} consente di attivare la conversione automatica di tutti i
+  riferimenti a dati e funzioni a 32 bit nelle funzioni di interfaccia ai file
+  con le equivalenti a 64 bit, senza dover utilizzare esplicitamente
+  l'interfaccia alternativa appena illustrata. In questo modo diventa
+  possibile usare le ordinarie funzioni per effettuare operazioni a 64 bit sui
+  file anche su sistemi a 32 bit.\footnote{basterà ricompilare il programma
+    dopo averla definita, e saranno usate in modo trasparente le funzioni a 64
+    bit.}
+
+  Se la macro non è definita o è definita con valore \texttt{32} questo
+  comportamento viene disabilitato, e sui sistemi a 32 bit verranno usate le
+  ordinarie funzioni a 32 bit, non avendo più il supporto per file di grandi
+  dimensioni. Su sistemi a 64 bit invece, dove il problema non sussiste, la
+  macro non ha nessun effetto.
+
+\item[\macrod{\_ATFILE\_SOURCE}] definendo questa macro si rendono disponibili
+  le estensioni delle funzioni di creazione, accesso e modifica di file e
+  directory che risolvono i problemi di sicurezza insiti nell'uso di
+  \textit{pathname} relativi con programmi \textit{multi-thread} illustrate in
+  sez.~\ref{sec:file_openat}. Dalla \acr{glibc} 2.10 questa macro viene
+  definita implicitamente se si definisce \macro{\_POSIX\_C\_SOURCE} ad un
+  valore maggiore o uguale di ``\texttt{200809L}''.
+
+\item[\macrod{\_REENTRANT}] definendo questa macro, o la equivalente
+  \macrod{\_THREAD\_SAFE} (fornita per compatibilità) si rendono disponibili
+  le versioni rientranti (vedi sez.~\ref{sec:proc_reentrant}) di alcune
+  funzioni, necessarie quando si usano i \textit{thread}.  Alcune di queste
+  funzioni sono anche previste nello standard POSIX.1c, ma ve ne sono altre
+  che sono disponibili soltanto su alcuni sistemi, o specifiche della
+  \acr{glibc}, e possono essere utilizzate una volta definita la macro. Oggi
+  la macro è obsoleta, già dalla \acr{glibc} 2.3 le funzioni erano già
+  completamente rientranti e dalla \acr{glibc} 2.25 la macro è equivalente ad
+  definire \macro{\_POSIX\_C\_SOURCE} con un valore di ``\texttt{199606L}''
+  mentre se una qualunque delle altre macro che richiede un valore di
+  conformità più alto è definita, la sua definizione non ha alcun effetto.
+
+\item[\macrod{\_FORTIFY\_SOURCE}] definendo questa macro viene abilitata
+  l'inserimento di alcuni controlli per alcune funzioni di allocazione e
+  manipolazione di memoria e stringhe che consentono di rilevare
+  automaticamente alcuni errori di \textit{buffer overflow} nell'uso delle
+  stesse. La funzionalità è stata introdotta a partire dalla versione 2.3.4
+  della \acr{glibc} e richiede anche il supporto da parte del compilatore, che
+  è disponibile solo a partire dalla versione 4.0 del \texttt{gcc}.
+
+  Le funzioni di libreria che vengono messe sotto controllo quando questa
+  funzionalità viene attivata sono, al momento della stesura di queste note,
+  le seguenti: \funcm{memcpy}, \funcm{mempcpy}, \funcm{memmove},
+  \funcm{memset}, \funcm{stpcpy}, \funcm{strcpy}, \funcm{strncpy},
+  \funcm{strcat}, \funcm{strncat}, \func{sprintf}, \func{snprintf},
+  \func{vsprintf}, \func{vsnprintf}, e \func{gets}.
+
+  La macro prevede due valori, con \texttt{1} vengono eseguiti dei controlli
+  di base che non cambiano il comportamento dei programmi se si richiede una
+  ottimizzazione di livello uno o superiore,\footnote{vale a dire se si usa
+    l'opzione \texttt{-O1} o superiore del \texttt{gcc}.}  mentre con il
+  valore \texttt{2} vengono aggiunti maggiori controlli. Dato che alcuni dei
+  controlli vengono effettuati in fase di compilazione l'uso di questa macro
+  richiede anche la collaborazione del compilatore, disponibile dalla
+  versione 4.0 del \texttt{gcc}.
+
+\end{basedescript}
+
+Se non è stata specificata esplicitamente nessuna di queste macro il default
+assunto è che siano definite \macro{\_BSD\_SOURCE}, \macro{\_SVID\_SOURCE},
+\macro{\_POSIX\_SOURCE} e, con le versioni della \acr{glibc} più recenti, che
+la macro \macro{\_POSIX\_C\_SOURCE} abbia il valore ``\texttt{200809L}'', per
+versioni precedenti della \acr{glibc} il valore assegnato a
+\macro{\_POSIX\_C\_SOURCE} era di ``\texttt{200112L}'' prima delle 2.10, di
+``\texttt{199506L}'' prima delle 2.4, di ``\texttt{199506L}'' prima delle
+2.1. Si ricordi infine che perché queste macro abbiano effetto devono essere
+sempre definite prima dell'inclusione dei file di dichiarazione.
+
+
+% vedi anche man feature_test_macros
+
+% TODO: forse può essere interessante trattare i tunables delle glibc, vedi:
+% https://siddhesh.in/posts/the-story-of-tunables.html e
+% https://sourceware.org/git/gitweb.cgi?p=glibc.git;a=blob;f=README.tunables;h=0e9b0d7a470aabc2344ad997fca03c7663de0419;hb=HEAD 
+
+
+% LocalWords:  like kernel multitasking scheduler preemptive sez swap is cap VM
+% LocalWords:  everything bootstrap init shell Windows Foundation system call
+% LocalWords:  fig libc uClib glibc embedded Library POSIX username PAM Methods
+% LocalWords:  Pluggable Autentication group supplementary Name Service Switch
+% LocalWords:  LDAP identifier uid gid superuser root if BSD SVr dall' American
+% LocalWords:  National Institute International Organisation IEC header tab gcc
+% LocalWords:  assert ctype dirent errno fcntl limits malloc setjmp signal utmp
+% LocalWords:  stdarg stdio stdlib string times unistd library int short caddr
+% LocalWords:  address clock dev ino inode key IPC loff nlink off pid rlim size
+% LocalWords:  sigset ssize ptrdiff sys IEEE Richard Portable of TR filesystem
+% LocalWords:  Operating Interface dell'IEEE Electrical and Electronics thread
+% LocalWords:  Engeneers Socket NT matching regular expression scheduling l'I
+% LocalWords:  XPG Portability Issue Application Programmable XTI Transport AT
+% LocalWords:  socket Spec Novell Specification SUSv CDE Motif Berkley select
+% LocalWords:  SunOS l'AT Sun HP Xenix Description SVID Laboratories MP hsearch
+% LocalWords:  drand fmtmsg define SOURCE lbsd compat XOPEN version ISOC Large
+% LocalWords:  LARGEFILE Support LFS dell' black rectangle node fill cpu draw
+% LocalWords:  ellipse mem anchor west proc SysV SV Definition SCO Austin XSI
+% LocalWords:  Technical TC SUS Opengroup features STRICT std ATFILE fseeko VFS
+% LocalWords:  ftello fseek ftell lseek FORTIFY REENTRANT SAFE overflow memcpy
+% LocalWords:  mempcpy memmove memset stpcpy strcpy strncpy strcat strncat gets
+% LocalWords:  sprintf snprintf vsprintf vsnprintf syscall number calendar BITS
+% LocalWords:  pathname Google Android standards device Virtual bootloader path
+% LocalWords:  filename fifo name components resolution chroot parent symbolic
+% LocalWords:  char block VMS raw access MacOS LF CR dos HFS Mac attributes
+% LocalWords:  Executable Linkable Format Tool magic descriptor stream locking
+% LocalWords:  process mount point ELF
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End: 

@@ -1,0 +1,879 @@
+%% network.tex
+%%
+%% Copyright (C) 2000-2018 Simone Piccardi.  Permission is granted to
+%% copy, distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.1 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+
+\chapter{Introduzione alla programmazione di rete}
+\label{cha:network}
+
+In questo capitolo sarà fatta un'introduzione ai concetti generali che servono
+come prerequisiti per capire la programmazione di rete, non tratteremo quindi
+aspetti specifici ma faremo una breve introduzione ai modelli più comuni usati
+nella programmazione di rete, per poi passare ad un esame a grandi linee dei
+protocolli di rete e di come questi sono organizzati e interagiscono.
+
+In particolare, avendo assunto l'ottica di un'introduzione mirata alla
+programmazione, ci concentreremo sul gruppo di protocolli più diffuso, il
+TCP/IP, che è quello che sta alla base di Internet, avendo cura di
+sottolineare i concetti più importanti da conoscere per la scrittura dei
+programmi.
+
+
+
+\section{Modelli di programmazione}
+\label{sec:net_prog_model}
+
+La differenza principale fra un'applicazione di rete e un programma normale è
+che quest'ultima per definizione concerne la comunicazione fra processi
+diversi, che in generale non girano neanche sulla stessa macchina. Questo già
+prefigura un cambiamento completo rispetto all'ottica del programma monolitico
+all'interno del quale vengono eseguite tutte le istruzioni, e chiaramente
+presuppone un sistema operativo multitasking in grado di eseguire più processi
+contemporaneamente.
+
+In questa prima sezione esamineremo brevemente i principali modelli di
+programmazione in uso. Ne daremo una descrizione assolutamente generica e
+superficiale, che ne illustri le caratteristiche principali, non essendo fra
+gli scopi del testo approfondire questi argomenti.
+
+\subsection{Il modello \textit{client-server}}
+\label{sec:net_cliserv}
+
+L'architettura fondamentale su cui si basa gran parte della programmazione di
+rete sotto Linux (e sotto Unix in generale) è il modello
+\textit{client-server} caratterizzato dalla presenza di due categorie di
+soggetti, i programmi di servizio, chiamati \textit{server}, che ricevono le
+richieste e forniscono le risposte, ed i programmi di utilizzo, detti
+\textit{client}.
+
+In generale un server può (di norma deve) essere in grado di rispondere a più
+di un client, per cui è possibile che molti programmi possano interagire
+contemporaneamente, quello che contraddistingue il modello però è che
+l'architettura dell'interazione è sempre nei termini di molti verso uno, il
+server, che viene ad assumere un ruolo privilegiato.
+
+Seguono questo modello tutti i servizi fondamentali di Internet, come le
+pagine web, la posta elettronica, ftp, telnet, ssh e praticamente ogni
+servizio che viene fornito tramite la rete, anche se, come abbiamo visto, il
+modello è utilizzato in generale anche per programmi che non fanno
+necessariamente uso della rete, come gli esempi che abbiamo usato in
+cap.~\ref{cha:IPC} a proposito della comunicazione fra processi nello stesso
+sistema.
+
+Normalmente si dividono i server in due categorie principali, e vengono detti
+\textsl{concorrenti} o \textsl{iterativi}, sulla base del loro comportamento.
+Un \textsl{server iterativo} risponde alla richiesta inviando i dati e resta
+occupato e non rispondendo ad ulteriori richieste fintanto che non ha fornito
+una risposta alla richiesta. Una volta completata la risposta il server
+diventa di nuovo disponibile.
+
+Un \textsl{server concorrente} al momento di trattare la richiesta crea un
+processo figlio (o un \textit{thread}) incaricato di fornire i servizi
+richiesti, per porsi immediatamente in attesa di ulteriori richieste. In
+questo modo, con sistemi multitasking, più richieste possono essere
+soddisfatte contemporaneamente. Una volta che il processo figlio ha concluso
+il suo lavoro esso di norma viene terminato, mentre il server originale resta
+sempre attivo.
+
+
+\subsection{Il modello \textit{peer-to-peer}}
+\label{sec:net_peertopeer}
+
+Come abbiamo visto il tratto saliente dell'architettura \textit{client-server}
+è quello della preminenza del server rispetto ai client, le architetture
+\textit{peer-to-peer} si basano su un approccio completamente opposto che è
+quello di non avere nessun programma che svolga un ruolo preminente.
+
+Questo vuol dire che in generale ciascun programma viene ad agire come un nodo
+in una rete potenzialmente paritetica; ciascun programma si trova pertanto a
+ricevere ed inviare richieste ed a ricevere ed inviare risposte, e non c'è più
+la separazione netta dei compiti che si ritrova nelle architetture
+\textit{client-server}.
+
+Le architetture \textit{peer-to-peer} sono salite alla ribalta con
+l'esplosione del fenomeno Napster, ma gli stessi protocolli di routing sono un
+buon esempio di architetture \textit{peer-to-peer}, in cui ciascun nodo,
+tramite il demone che gestisce il routing, richiede ed invia informazioni ad
+altri nodi.
+
+In realtà in molti casi di architetture classificate come
+\textit{peer-to-peer} non è detto che la struttura sia totalmente paritetica e
+ci sono parecchi esempi in cui alcuni servizi vengono centralizzati o
+distribuiti gerarchicamente, come avveniva per lo stesso Napster, in cui le
+ricerche erano effettuate su un server centrale.
+
+
+
+\subsection{Il modello \textit{three-tier}}
+\label{sec:net_three_tier}
+
+Benché qui sia trattato a parte, il modello \textit{three-tier} in realtà è
+una estensione del modello \textit{client-server}. Con il crescere della
+quantità dei servizi forniti in rete (in particolare su Internet) ed al numero
+di accessi richiesto. Si è così assistito anche ad una notevole crescita di
+complessità, in cui diversi servizi venivano ad essere integrati fra di loro.
+
+In particolare sempre più spesso si assiste ad una integrazione di servizi di
+database con servizi di web, in cui le pagine vengono costruite dinamicamente
+sulla base dei dati contenuti nel database. In tutti questi casi il problema
+fondamentale di una architettura \textit{client-server} è che la richiesta di
+un servizio da parte di un gran numero di client si scontra con il collo di
+bottiglia dell'accesso diretto ad un unico server, con gravi problemi di
+scalabilità.
+
+Rispondere a queste esigenze di scalabilità il modello più semplice (chiamato
+talvolta \textit{two-tier}) da adottare è stata quello di distribuire il
+carico delle richieste su più server identici, mantenendo quindi
+sostanzialmente inalterata l'architettura \textit{client-server} originale.
+
+Nel far questo ci si scontra però con gravi problemi di manutenibilità dei
+servizi, in particolare per quanto riguarda la sincronizzazione dei dati, e di
+inefficienza dell'uso delle risorse. Il problema è particolarmente grave ad
+esempio per i database che non possono essere replicati e sincronizzati
+facilmente, e che sono molto onerosi, la loro replicazione è costosa e
+complessa.
+
+È a partire da queste problematiche che nasce il modello \textit{three-tier},
+che si struttura, come dice il nome, su tre livelli. Il primo livello, quello
+dei client che eseguono le richieste e gestiscono l'interfaccia con l'utente,
+resta sostanzialmente lo stesso del modello \textit{client-server}, ma la
+parte server viene suddivisa in due livelli, introducendo un
+\textit{middle-tier}, su cui deve appoggiarsi tutta la logica di analisi delle
+richieste dei client per ottimizzare l'accesso al terzo livello, che è quello
+che si limita a fornire i dati dinamici che verranno usati dalla logica
+implementata nel \textit{middle-tier} per eseguire le operazioni richieste dai
+client.
+
+In questo modo si può disaccoppiare la logica dai dati, replicando la prima,
+che è molto meno soggetta a cambiamenti ed evoluzione, e non soffre di
+problemi di sincronizzazione, e centralizzando opportunamente i secondi. In
+questo modo si può distribuire il carico ed accedere in maniera efficiente i
+dati.
+
+
+\subsection{Il modello \textit{broadcast}}
+\label{sec:net_broadcast}
+
+Uno specifico modello relativo alla programmazione di rete è poi quello in cui
+è possibile, invece della classica comunicazione uno ad uno comunque usata in
+tutti i modelli precedenti (anche nel \textit{peer-to-peer} la comunicazione è
+comunque fra singoli ``\textit{peer}''), una comunicazione da uno a molti.
+
+\itindbeg{broadcast}
+
+Questo modello nasce dal fatto che molte tecnologie di rete (ed in particolare
+Ethernet, che è probabilmente la più diffusa) hanno il supporto per effettuare
+una comunicazione in cui un nodo qualunque della rete più inviare informazioni
+in contemporanea a tutti gli altri. In questo caso si parla di
+\textit{broadcast}, utilizzando la nomenclatura usata per le trasmissioni
+radio, anche se in realtà questo tipo di comunicazione è eseguibile da un nodo
+qualunque per cui tutti quanti possono ricoprire sia il ruolo di trasmettitore
+che quello di ricevitore.
+
+\itindbeg{multicast}
+
+In genere si parla di \textit{broadcast} quando la trasmissione uno a molti è
+possibile fra qualunque nodo di una rete e gli altri, ed è supportata
+direttamente dalla tecnologia di collegamento utilizzata. L'utilizzo di questa
+forma di comunicazione da uno a molti però può risultare molto utile anche
+quando questo tipo di supporto non è disponibile (come ad esempio su Internet,
+dove non si possono contattare tutti i nodi presenti). 
+
+\itindend{broadcast}
+
+In tal caso alcuni protocolli di rete (e quelli usati per Internet sono fra
+questi) supportano una variante del\textit{broadcast}, detta
+\textit{multicast}, in cui resta possibile fare una comunicazione uno a molti,
+in cui una applicazione invia i pacchetti a molte altre, in genere passando
+attraverso un opportuno supporto degli apparati ed una qualche forma di
+registrazione che consente la distribuzione della cominicazione ai nodi
+interessati. 
+
+\itindend{multicast}
+
+Ovviamente i programmi che devono realizzare un tipo di comunicazione di
+questo tipo (come ad esempio potrebbero essere quelli che effettuano uno
+\textit{streaming} di informazioni) devono rispondere a delle problematiche
+del tutto diverse da quelle classiche illustrate nei modelli precedenti, e
+costituiscono pertanto un'altra classe completamente a parte.
+
+
+\section{I protocolli di rete}
+\label{sec:net_protocols}
+
+Parlando di reti di computer si parla in genere di un insieme molto vasto ed
+eterogeneo di mezzi di comunicazione che vanno dal cavo telefonico, alla fibra
+ottica, alle comunicazioni via satellite o via radio; per rendere possibile la
+comunicazione attraverso un così variegato insieme di mezzi sono stati
+adottati molti protocolli, il più famoso dei quali, quello alla base del
+funzionamento di Internet, è il gruppo di protocolli comunemente chiamato
+TCP/IP.
+
+\subsection{Il modello ISO/OSI}
+\label{sec:net_iso_osi}
+
+Una caratteristica comune dei protocolli di rete è il loro essere strutturati
+in livelli sovrapposti; in questo modo ogni protocollo di un certo livello
+realizza le sue funzionalità basandosi su un protocollo del livello
+sottostante.  Questo modello di funzionamento è stato standardizzato dalla
+\textit{International Standards Organization} (ISO) che ha preparato fin dal
+1984 il Modello di Riferimento \textit{Open Systems Interconnection} (OSI),
+strutturato in sette livelli, secondo quanto riportato in
+tab.~\ref{tab:net_osilayers}.
+
+\begin{table}[htb]
+  \centering
+  \begin{tabular}{|l|c|c|} 
+    \hline
+    \textbf{Livello} & \multicolumn{2}{|c|}{\textbf{Nome}} \\
+    \hline
+    \hline
+    Livello 7&\textit{Application}  &\textsl{Applicazione}\\ 
+    Livello 6&\textit{Presentation} &\textsl{Presentazione} \\ 
+    Livello 5&\textit{Session}      &\textsl{Sessione} \\ 
+    Livello 4&\textit{Transport}    &\textsl{Trasporto} \\ 
+    Livello 3&\textit{Network}      &\textsl{Rete}\\ 
+    Livello 2&\textit{DataLink}     &\textsl{Collegamento Dati} \\
+    Livello 1&\textit{Physical}   &\textsl{Connessione Fisica} \\
+    \hline
+\end{tabular}
+\caption{I sette livelli del protocollo ISO/OSI.}
+\label{tab:net_osilayers}
+\end{table}
+
+Il modello ISO/OSI è stato sviluppato in corrispondenza alla definizione della
+serie di protocolli X.25 per la commutazione di pacchetto; come si vede è un
+modello abbastanza complesso\footnote{infatti per memorizzarne i vari livelli
+  è stata creata la frase \textit{All people seem to need data processing}, in
+  cui ciascuna parola corrisponde all'iniziale di uno dei livelli.}, tanto che
+usualmente si tende a suddividerlo in due parti, secondo lo schema mostrato in
+fig.~\ref{fig:net_osi_tcpip_comp}, con un \textit{upper layer} che riguarda
+solo le applicazioni, che viene realizzato in \textit{user space}, ed un
+\textit{lower layer} in cui si mescolano la gestione fatta dal kernel e le
+funzionalità fornite dall'hardware.
+
+Il modello ISO/OSI mira ad effettuare una classificazione completamente
+generale di ogni tipo di protocollo di rete; nel frattempo però era stato
+sviluppato anche un altro modello, relativo al protocollo TCP/IP, che è quello
+su cui è basata Internet, che è diventato uno standard de facto.  Questo
+modello viene talvolta chiamato anche modello \textit{DoD} (sigla che sta per
+\textit{Department of Defense}), dato che fu sviluppato dall'agenzia ARPA per
+il Dipartimento della Difesa Americano.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=12cm]{img/iso_tcp_comp}
+  \caption{Struttura a livelli dei protocolli OSI e TCP/IP, con la relative
+    corrispondenze e la divisione fra \textit{kernel space} e \textit{user
+      space}.}
+  \label{fig:net_osi_tcpip_comp}
+\end{figure}
+
+La scelta fra quale dei due modelli utilizzare dipende per lo più dai gusti
+personali. Come caratteristiche generali il modello ISO/OSI è più teorico e
+generico, basato separazioni funzionali, mentre il modello TCP/IP è più vicino
+alla separazione concreta dei vari strati del sistema operativo; useremo
+pertanto quest'ultimo, anche per la sua maggiore semplicità. Questa semplicità
+ha un costo quando si fa riferimento agli strati più bassi, che sono in
+effetti descritti meglio dal modello ISO/OSI, in quanto gran parte dei
+protocolli di trasmissione hardware sono appunto strutturati sui due livelli
+di \textit{Data Link} e \textit{Connection}.
+
+
+\subsection{Il modello TCP/IP (o DoD)}
+\label{sec:net_tcpip_overview}
+
+Così come ISO/OSI anche il modello del TCP/IP è stato strutturato in livelli
+(riassunti in tab.~\ref{tab:net_layers}); un confronto fra i due è riportato
+in fig.~\ref{fig:net_osi_tcpip_comp} dove viene evidenziata anche la
+corrispondenza fra i rispettivi livelli (che comunque è approssimativa) e su
+come essi vanno ad inserirsi all'interno del sistema rispetto alla divisione
+fra \textit{user space} e \textit{kernel space} spiegata in
+sez.~\ref{sec:intro_unix_struct}.\footnote{in realtà è sempre possibile
+  accedere dallo \textit{user space}, attraverso una opportuna interfaccia
+  (come vedremo in sez.~\ref{sec:sock_sa_packet}), ai livelli inferiori del
+  protocollo.}
+
+\begin{table}[htb]
+  \centering
+  \begin{tabular}{|l|c|c|l|} 
+    \hline
+    \textbf{Livello} & \multicolumn{2}{|c|}{\textbf{Nome}} & \textbf{Esempi} \\
+    \hline
+    \hline
+    Livello 4 & \textit{Application} & \textsl{Applicazione}& 
+                                       Telnet, FTP, ecc. \\ 
+    Livello 3 & \textit{Transport}   & \textsl{Trasporto} & TCP, UDP\\ 
+    Livello 2 & \textit{Network}     & \textsl{Rete}      & IP, (ICMP, IGMP)\\ 
+    Livello 1 & \textit{Link}        & \textsl{Collegamento}& 
+                                       Device driver \& scheda di interfaccia\\
+    \hline
+\end{tabular}
+\caption{I quattro livelli del protocollo TCP/IP.}
+\label{tab:net_layers}
+\end{table}
+
+Come si può notare come il modello TCP/IP è più semplice del modello ISO/OSI
+ed è strutturato in soli quattro livelli. Il suo nome deriva dai due
+principali protocolli che lo compongono, il TCP (\textit{Trasmission Control
+  Protocol}) che copre il livello 3 e l'IP (\textit{Internet Protocol}) che
+copre il livello 2. Le funzioni dei vari livelli sono le seguenti:
+
+\begin{basedescript}{\desclabelwidth{2.5cm}\desclabelstyle{\nextlinelabel}}
+\item[\textbf{Applicazione}] É relativo ai programmi di interfaccia con la
+  rete, in genere questi vengono realizzati secondo il modello client-server
+  (vedi sez.~\ref{sec:net_cliserv}), realizzando una comunicazione secondo un
+  protocollo che è specifico di ciascuna applicazione.
+\item[\textbf{Trasporto}] Fornisce la comunicazione tra le due stazioni
+  terminali su cui girano gli applicativi, regola il flusso delle
+  informazioni, può fornire un trasporto affidabile, cioè con recupero degli
+  errori o inaffidabile. I protocolli principali di questo livello sono il TCP
+  e l'UDP.
+\item[\textbf{Rete}] Si occupa dello smistamento dei singoli pacchetti su una
+  rete complessa e interconnessa, a questo stesso livello operano i protocolli
+  per il reperimento delle informazioni necessarie allo smistamento, per lo
+  scambio di messaggi di controllo e per il monitoraggio della rete. Il
+  protocollo su cui si basa questo livello è IP (sia nella attuale versione,
+  IPv4, che nella nuova versione, IPv6).
+\item[\textbf{Collegamento}] È responsabile per l'interfacciamento al
+  dispositivo elettronico che effettua la comunicazione fisica, gestendo
+  l'invio e la ricezione dei pacchetti da e verso l'hardware.
+\end{basedescript}
+
+La comunicazione fra due stazioni remote avviene secondo le modalità
+illustrate in fig.~\ref{fig:net_tcpip_data_flux}, dove si è riportato il flusso
+dei dati reali e i protocolli usati per lo scambio di informazione su ciascun
+livello. Si è genericamente indicato \textit{ethernet} per il livello 1, anche
+se in realtà i protocolli di trasmissione usati possono essere molti altri.
+
+\begin{figure}[!htb]
+  \centering \includegraphics[width=13cm]{img/tcp_data_flux}
+  \caption{Strutturazione del flusso dei dati nella comunicazione fra due
+    applicazioni attraverso i protocolli della suite TCP/IP.}
+  \label{fig:net_tcpip_data_flux}
+\end{figure}
+
+Per chiarire meglio la struttura della comunicazione attraverso i vari
+protocolli mostrata in fig.~\ref{fig:net_tcpip_data_flux}, conviene prendere in
+esame i singoli passaggi fatti per passare da un livello al sottostante,
+la procedura si può riassumere nei seguenti passi:
+\begin{itemize}
+\item Le singole applicazioni comunicano scambiandosi i dati ciascuna secondo
+  un suo specifico formato. Per applicazioni generiche, come la posta o le
+  pagine web, viene di solito definito ed implementato quello che viene
+  chiamato un protocollo di applicazione (esempi possono essere HTTP, POP,
+  SMTP, ecc.), ciascuno dei quali è descritto in un opportuno standard, di
+  solito attraverso un RFC (l'acronimo RFC sta per
+  \itindex{Request~For~Comment~(RFC)} \textit{Request For Comment} ed è la
+  procedura attraverso la quale vengono proposti gli standard per Internet).
+\item I dati delle applicazioni vengono inviati al livello di trasporto usando
+  un'interfaccia opportuna (i \textit{socket}, che esamineremo in dettaglio in
+  cap.~\ref{cha:socket_intro}). Qui verranno spezzati in pacchetti di
+  dimensione opportuna e inseriti nel protocollo di trasporto, aggiungendo ad
+  ogni pacchetto le informazioni necessarie per la sua gestione. Questo
+  processo viene svolto direttamente nel kernel, ad esempio dallo stack TCP,
+  nel caso il protocollo di trasporto usato sia questo.
+\item Una volta composto il pacchetto nel formato adatto al protocollo di
+  trasporto usato questo sarà passato al successivo livello, quello di rete,
+  che si occupa di inserire le opportune informazioni per poter effettuare
+  l'instradamento nella rete ed il recapito alla destinazione finale. In
+  genere questo è il livello di IP (Internet Protocol), a cui vengono inseriti
+  i numeri IP che identificano i computer su Internet.
+\item L'ultimo passo è il trasferimento del pacchetto al driver della
+  interfaccia di trasmissione, che si incarica di incapsularlo nel relativo
+  protocollo di trasmissione. Questo può avvenire sia in maniera diretta, come
+  nel caso di ethernet, in cui i pacchetti vengono inviati sulla linea
+  attraverso le schede di rete, che in maniera indiretta con protocolli come
+  PPP o SLIP, che vengono usati come interfaccia per far passare i dati su
+  altri dispositivi di comunicazione (come la seriale o la parallela).
+\end{itemize}
+
+
+\subsection{Criteri generali dell'architettura del TCP/IP}
+\label{sec:net_tcpip_design}
+
+La filosofia architetturale del TCP/IP è semplice: costruire una rete che
+possa sopportare il carico in transito, ma permettere ai singoli nodi di
+scartare pacchetti se il carico è temporaneamente eccessivo, o se risultano
+errati o non recapitabili.
+
+L'incarico di rendere il recapito pacchetti affidabile non spetta al livello
+di rete, ma ai livelli superiori. Pertanto il protocollo IP è per sua natura
+inaffidabile, in quanto non è assicurata né una percentuale di successo né un
+limite sui tempi di consegna dei pacchetti.
+
+È il livello di trasporto che si deve occupare (qualora necessiti) del
+controllo del flusso dei dati e del recupero degli errori; questo è realizzato
+dal protocollo TCP. La sede principale di "\textit{intelligenza}" della rete è
+pertanto al livello di trasporto o ai livelli superiori.
+
+Infine le singole stazioni collegate alla rete non fungono soltanto da punti
+terminali di comunicazione, ma possono anche assumere il ruolo di
+\textit{router} (\textsl{instradatori}), per l'interscambio di pacchetti da
+una rete ad un'altra. Questo rende possibile la flessibilità della rete che è
+in grado di adattarsi ai mutamenti delle interconnessioni.
+
+La caratteristica essenziale che rende tutto ciò possibile è la strutturazione
+a livelli tramite l'incapsulamento. Ogni pacchetto di dati viene incapsulato
+nel formato del livello successivo, fino al livello del collegamento fisico.
+In questo modo il pacchetto ricevuto ad un livello \textit{n} dalla stazione
+di destinazione è esattamente lo stesso spedito dal livello \textit{n} dalla
+sorgente.  Questo rende facile il progettare il software facendo riferimento
+unicamente a quanto necessario ad un singolo livello, con la confidenza che
+questo poi sarà trattato uniformemente da tutti i nodi della rete.
+
+
+\section{La struttura del TCP/IP}
+\label{sec:net_tpcip}
+
+Come accennato in sez.~\ref{sec:net_protocols} il TCP/IP è un insieme di
+protocolli diversi, che operano su 4 livelli diversi. Per gli interessi della
+programmazione di rete però sono importanti principalmente i due livelli
+centrali, e soprattutto quello di trasporto.
+
+La principale interfaccia usata nella programmazione di rete, quella dei
+socket (che vedremo in sez.~\ref{cha:socket_intro}), è infatti un'interfaccia
+nei confronti di quest'ultimo.  Questo avviene perché al di sopra del livello
+di trasporto i programmi hanno a che fare solo con dettagli specifici delle
+applicazioni, mentre al di sotto vengono curati tutti i dettagli relativi alla
+comunicazione. È pertanto naturale definire una interfaccia di programmazione
+su questo confine, tanto più che è proprio lì (come evidenziato in
+fig.~\ref{fig:net_osi_tcpip_comp}) che nei sistemi Unix (e non solo) viene
+inserita la divisione fra \textit{kernel space} e \textit{user space}.
+
+In realtà in un sistema Unix è possibile accedere anche agli altri livelli (e
+non solo a quello di trasporto) con opportune interfacce di programmazione
+(vedi sez.~\ref{sec:sock_sa_packet}), ma queste vengono usate solo quando si
+debbano fare applicazioni di sistema per il controllo della rete a basso
+livello, di uso quindi molto specialistico.
+
+In questa sezione daremo una descrizione sommaria dei vari protocolli del
+TCP/IP, concentrandoci, per le ragioni appena esposte, sul livello di
+trasporto.  All'interno di quest'ultimo privilegeremo poi il protocollo TCP,
+per il ruolo centrale che svolge nella maggior parte delle applicazioni.
+
+
+\subsection{Il quadro generale}
+\label{sec:net_tcpip_general}
+
+Benché si parli di TCP/IP questa famiglia di protocolli è composta anche da
+molti membri. In fig.~\ref{fig:net_tcpip_overview} si è riportato uno schema
+che mostra un panorama sui principali protocolli della famiglia, e delle loro
+relazioni reciproche e con alcune dalle principali applicazioni che li usano.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=13cm]{img/tcpip_overview}  
+  \caption{Panoramica sui vari protocolli che compongono la suite TCP/IP.}
+  \label{fig:net_tcpip_overview}
+\end{figure}
+
+I vari protocolli riportati in fig.~\ref{fig:net_tcpip_overview} sono i
+seguenti:
+\begin{basedescript}{\desclabelwidth{1.7cm}\desclabelstyle{\nextlinelabel}}
+\item[\textsl{IPv4}] \textit{Internet Protocol version 4}. È quello che
+  comunemente si chiama IP. Ha origine negli anni '80 e da allora è la base su
+  cui è costruita Internet. Usa indirizzi a 32 bit, e mantiene tutte le
+  informazioni di instradamento e controllo per la trasmissione dei pacchetti
+  sulla rete; tutti gli altri protocolli della suite (eccetto ARP e RARP, e
+  quelli specifici di IPv6) vengono trasmessi attraverso di esso.
+\item[\textsl{IPv6}] \textit{Internet Protocol version 6}. È stato progettato
+  a metà degli anni '90 per rimpiazzare IPv4. Ha uno spazio di indirizzi
+  ampliato 128 bit che consente più gerarchie di indirizzi,
+  l'auto-configurazione, ed un nuovo tipo di indirizzi, gli \textit{anycast},
+  che consentono di inviare un pacchetto ad una stazione su un certo gruppo.
+  Effettua lo stesso servizio di trasmissione dei pacchetti di IPv4 di cui
+  vuole essere un sostituto.
+\item[\textsl{TCP}] \textit{Trasmission Control Protocol}. È un protocollo
+  orientato alla connessione che provvede un trasporto affidabile per un
+  flusso di dati bidirezionale fra due stazioni remote. Il protocollo ha cura
+  di tutti gli aspetti del trasporto dei dati, come l'\textit{acknowledgment}
+  (il ricevuto), i timeout, la ritrasmissione, ecc. È usato dalla maggior
+  parte delle applicazioni.
+\item[\textsl{UDP}] \textit{User Datagram Protocol}. È un protocollo senza
+  connessione, per l'invio di dati a pacchetti. Contrariamente al TCP il
+  protocollo non è affidabile e non c'è garanzia che i pacchetti raggiungano
+  la loro destinazione, si perdano, vengano duplicati, o abbiano un
+  particolare ordine di arrivo.
+\item[\textsl{ICMP}] \textit{Internet Control Message Protocol}. È il
+  protocollo usato a livello 2 per gestire gli errori e trasportare le
+  informazioni di controllo fra stazioni remote e instradatori (cioè fra
+  \textit{host} e \textit{router}). I messaggi sono normalmente generati dal
+  software del kernel che gestisce la comunicazione TCP/IP, anche se ICMP può
+  venire usato direttamente da alcuni programmi come \cmd{ping}. A volte ci
+  si riferisce ad esso come ICPMv4 per distinguerlo da ICMPv6.
+\item[\textsl{IGMP}] \textit{Internet Group Management Protocol}. É un
+  protocollo di livello 2 usato per il \textit{multicast} (vedi
+  sez.~\ref{sec:xxx_multicast}).  Permette alle stazioni remote di notificare
+  ai router che supportano questa comunicazione a quale gruppo esse
+  appartengono.  Come ICMP viene implementato direttamente sopra IP.
+\item[\textsl{ARP}] \textit{Address Resolution Protocol}. È il protocollo che
+  mappa un indirizzo IP in un indirizzo hardware sulla rete locale. È usato in
+  reti di tipo \textit{broadcast} come Ethernet, Token Ring o FDDI che hanno
+  associato un indirizzo fisico (il \textit{MAC address}) alla interfaccia, ma
+  non serve in connessioni punto-punto.
+\item[\textsl{RARP}] \textit{Reverse Address Resolution Protocol}. È il
+  protocollo che esegue l'operazione inversa rispetto ad ARP (da cui il nome)
+  mappando un indirizzo hardware in un indirizzo IP. Viene usato a volte per
+  durante l'avvio per assegnare un indirizzo IP ad una macchina.
+\item[\textsl{ICMPv6}] \textit{Internet Control Message Protocol, version 6}.
+  Combina per IPv6 le funzionalità di ICMPv4, IGMP e ARP.
+\item[\textsl{EGP}] \textit{Exterior Gateway Protocol}. È un protocollo di
+  routing usato per comunicare lo stato fra gateway vicini a livello di
+  \textsl{sistemi autonomi} (vengono chiamati \textit{autonomous
+      systems} i raggruppamenti al livello più alto della rete), con
+  meccanismi che permettono di identificare i vicini, controllarne la
+  raggiungibilità e scambiare informazioni sullo stato della rete. Viene
+  implementato direttamente sopra IP. 
+\item[\textsl{OSPF}] \textit{Open Shortest Path First}. È in protocollo di
+  routing per router su reti interne, che permette a questi ultimi di
+  scambiarsi informazioni sullo stato delle connessioni e dei legami che
+  ciascuno ha con gli altri. Viene implementato direttamente sopra IP.
+\item[\textsl{GRE}] \textit{Generic Routing Encapsulation}. È un protocollo
+  generico di incapsulamento che permette di incapsulare un qualunque altro
+  protocollo all'interno di IP. 
+\item[\textsl{AH}] \textit{Authentication Header}. Provvede l'autenticazione
+  dell'integrità e dell'origine di un pacchetto. È una opzione nativa in IPv6
+  e viene implementato come protocollo a sé su IPv4. Fa parte della suite di
+  IPSEC che provvede la trasmissione cifrata ed autenticata a livello IP.
+\item[\textsl{ESP}] \textit{Encapsulating Security Payload}. Provvede la
+  cifratura insieme all'autenticazione dell'integrità e dell'origine di un
+  pacchetto. Come per AH è opzione nativa in IPv6 e viene implementato come
+  protocollo a sé su IPv4.
+\item[\textsl{PPP}] \textit{Point-to-Point Protocol}. È un protocollo a
+  livello 1 progettato per lo scambio di pacchetti su connessioni punto punto.
+  Viene usato per configurare i collegamenti, definire i protocolli di rete
+  usati ed incapsulare i pacchetti di dati. È un protocollo complesso con
+  varie componenti.
+\item[\textsl{SLIP}] \textit{Serial Line over IP}. È un protocollo di livello
+  1 che permette di trasmettere un pacchetto IP attraverso una linea seriale.
+\end{basedescript}
+
+Gran parte delle applicazioni comunicano usando TCP o UDP, solo alcune, e per
+scopi particolari si rifanno direttamente ad IP (ed i suoi correlati ICMP e
+IGMP); benché sia TCP che UDP siano basati su IP e sia possibile intervenire a
+questo livello con i \textit{raw socket} questa tecnica è molto meno diffusa e
+a parte applicazioni particolari si preferisce sempre usare i servizi messi a
+disposizione dai due protocolli precedenti.  Per questo, motivo a parte alcuni
+brevi accenni su IP in questa sezione, ci concentreremo sul livello di
+trasporto.
+
+\subsection{Internet Protocol (IP)}
+\label{sec:net_ip}
+
+Quando si parla di \textit{Internet Protocol} (IP) si fa in genere riferimento
+ad una versione (la quarta, da cui il nome IPv4) che è quella più usata
+comunemente, anche se ormai si sta diffondendo sempre di più la nuova versione
+IPv6. Il protocollo IPv4 venne standardizzato nel 1981
+dall'\href{http://www.ietf.org/rfc/rfc0719.txt}{RFC~719}.
+
+Il protocollo IP (indipendentemente dalla versione) nasce per disaccoppiare le
+applicazioni della struttura hardware delle reti di trasmissione, e creare una
+interfaccia di trasmissione dei dati indipendente dal sottostante substrato di
+interconnessione fisica, che può essere realizzato con le tecnologie più
+disparate (Ethernet, Token Ring, FDDI, ecc.).  Il compito di IP è pertanto
+quello di trasmettere i pacchetti da un computer all'altro della rete; le
+caratteristiche essenziali con cui questo viene realizzato in sono due:
+
+\begin{itemize}
+\item \textit{Universal addressing} la comunicazione avviene fra due stazioni
+  remote identificate univocamente con un indirizzo a 32 bit che può
+  appartenere ad una sola interfaccia di rete.
+\item \textit{Best effort} viene assicurato il massimo impegno nella
+  trasmissione, ma non c'è nessuna garanzia per i livelli superiori né sulla
+  percentuale di successo né sul tempo di consegna dei pacchetti di dati.
+\end{itemize}
+
+Negli anni '90 la crescita vertiginosa del numero di macchine connesse a
+Internet ha iniziato a far emergere i vari limiti di IPv4, per risolverne i
+problemi si è perciò definita una nuova versione del protocollo, che (saltando
+un numero) è diventata la versione 6. IPv6 nasce quindi come evoluzione di
+IPv4, mantenendone inalterate le funzioni che si sono dimostrate valide,
+eliminando quelle inutili e aggiungendone poche altre per mantenere il
+protocollo il più snello e veloce possibile.
+
+I cambiamenti apportati sono comunque notevoli e si possono essere riassunti a
+grandi linee nei seguenti punti:
+\begin{itemize}
+\item l'espansione delle capacità di indirizzamento e instradamento, per
+  supportare una gerarchia con più livelli di indirizzamento, un numero di
+  nodi indirizzabili molto maggiore e una auto-configurazione degli indirizzi.
+\item l'introduzione un nuovo tipo di indirizzamento, l'\textit{anycast} che
+  si aggiunge agli usuali \textit{unicast} e \textit{multicast}.
+\item la semplificazione del formato dell'intestazione (\textit{header}) dei
+  pacchetti, eliminando o rendendo opzionali alcuni dei campi di IPv4, per
+  eliminare la necessità di rielaborazione della stessa da parte dei router e
+  contenere l'aumento di dimensione dovuto all'ampliamento degli indirizzi.
+\item un supporto per le opzioni migliorato, per garantire una trasmissione
+  più efficiente del traffico normale, limiti meno stringenti sulle dimensioni
+  delle opzioni, e la flessibilità necessaria per introdurne di nuove in
+  futuro.
+\item il supporto per delle capacità di \textsl{qualità di servizio} (QoS) che
+  permettano di identificare gruppi di dati per i quali si può provvedere un
+  trattamento speciale (in vista dell'uso di Internet per applicazioni
+  multimediali e/o ``real-time'').
+\end{itemize}
+
+Maggiori dettagli riguardo a caratteristiche, notazioni e funzionamento del
+protocollo IP sono forniti nell'appendice sez.~\ref{sec:ip_protocol}.
+
+ 
+\subsection{User Datagram Protocol (UDP)}
+\label{sec:net_udp}
+
+Il protocollo UDP è un protocollo di trasporto molto semplice; la sua
+descrizione completa è contenuta
+dell'\href{http://www.ietf.org/rfc/rfc0768.txt}{RFC~768}, ma in sostanza esso
+è una semplice interfaccia al protocollo IP dal livello di trasporto. Quando
+un'applicazione usa UDP essa scrive un pacchetto di dati (il cosiddetto
+\textit{datagram} che da il nome al protocollo) su un socket, al pacchetto
+viene aggiunto un header molto semplice (per una descrizione più accurata vedi
+sez.~\ref{sec:udp_protocol}), e poi viene passato al livello superiore (IPv4 o
+IPv6 che sia) che lo spedisce verso la destinazione.  Dato che né IPv4 né IPv6
+garantiscono l'affidabilità niente assicura che il pacchetto arrivi a
+destinazione, né che più pacchetti arrivino nello stesso ordine in cui sono
+stati spediti.
+
+Pertanto il problema principale che si affronta quando si usa UDP è la
+mancanza di affidabilità, se si vuole essere sicuri che i pacchetti arrivino a
+destinazione occorrerà provvedere con l'applicazione, all'interno della quale
+si dovrà inserire tutto quanto necessario a gestire la notifica di
+ricevimento, la ritrasmissione, il timeout. 
+
+Si tenga conto poi che in UDP niente garantisce che i pacchetti arrivino nello
+stesso ordine in cui sono stati trasmessi, e può anche accadere che i
+pacchetti vengano duplicati nella trasmissione, e non solo perduti. Di tutto
+questo di nuovo deve tenere conto l'applicazione.
+
+Un altro aspetto di UDP è che se un pacchetto raggiunge correttamente la
+destinazione esso viene passato all'applicazione ricevente in tutta la sua
+lunghezza, la trasmissione avviene perciò per \textit{record} la cui lunghezza
+viene anche essa trasmessa all'applicazione all'atto del ricevimento.
+
+Infine UDP è un protocollo che opera senza connessione
+(\textit{connectionless}) in quanto non è necessario stabilire nessun tipo di
+relazione tra origine e destinazione dei pacchetti. Si hanno così situazioni
+in cui un client può scrivere su uno stesso socket pacchetti destinati a
+server diversi, o un server ricevere su un socket pacchetti provenienti da
+client diversi.  Il modo più semplice di immaginarsi il funzionamento di UDP è
+quello della radio, in cui si può \textsl{trasmettere} e \textsl{ricevere} da
+più stazioni usando la stessa frequenza.
+
+Nonostante gli evidenti svantaggi comportati dall'inaffidabilità UDP ha il
+grande pregio della velocità, che in certi casi è essenziale; inoltre si
+presta bene per le applicazioni in cui la connessione non è necessaria, e
+costituirebbe solo un peso in termini di prestazioni, mentre una perdita di
+pacchetti può essere tollerata: ad esempio le applicazioni di streaming e
+quelle che usano il \textit{multicast}.
+
+\subsection{Transport Control Protocol (TCP)}
+\label{sec:net_tcp}
+
+Il TCP è un protocollo molto complesso, definito
+nell'\href{http://www.ietf.org/rfc/rfc0739.txt}{RFC~739} e completamente
+diverso da UDP; alla base della sua progettazione infatti non stanno
+semplicità e velocità, ma la ricerca della massima affidabilità possibile
+nella trasmissione dei dati.
+
+La prima differenza con UDP è che TCP provvede sempre una connessione diretta
+fra un client e un server, attraverso la quale essi possono comunicare; per
+questo il paragone più appropriato per questo protocollo è quello del
+collegamento telefonico, in quanto prima viene stabilita una connessione fra
+due i due capi della comunicazione su cui poi effettuare quest'ultima.
+
+Caratteristica fondamentale di TCP è l'affidabilità; quando i dati vengono
+inviati attraverso una connessione ne viene richiesto un ``\textsl{ricevuto}''
+(il cosiddetto \textit{acknowlegment}), se questo non arriva essi verranno
+ritrasmessi per un determinato numero di tentativi, intervallati da un periodo
+di tempo crescente, fino a che sarà considerata fallita o caduta la
+connessione (e sarà generato un errore di \textit{timeout}); il periodo di
+tempo dipende dall'implementazione e può variare far i quattro e i dieci
+minuti.
+
+Inoltre, per tenere conto delle diverse condizioni in cui può trovarsi la
+linea di comunicazione, TCP comprende anche un algoritmo di calcolo dinamico
+del tempo di andata e ritorno dei pacchetti fra un client e un server (il
+cosiddetto RTT, \textit{Round Trip Time}), che lo rende in grado di adattarsi
+alle condizioni della rete per non generare inutili ritrasmissioni o cadere
+facilmente in timeout.
+
+Inoltre TCP è in grado di preservare l'ordine dei dati assegnando un numero di
+sequenza ad ogni byte che trasmette. Ad esempio se un'applicazione scrive 3000
+byte su un socket TCP, questi potranno essere spezzati dal protocollo in due
+segmenti (le unità di dati passate da TCP a IP vengono chiamate
+\textit{segment}) di 1500 byte, di cui il primo conterrà il numero di sequenza
+$1-1500$ e il secondo il numero $1501-3000$. In questo modo anche se i
+segmenti arrivano a destinazione in un ordine diverso, o se alcuni arrivano
+più volte a causa di ritrasmissioni dovute alla perdita degli
+\textit{acknowlegment}, all'arrivo sarà comunque possibile riordinare i dati e
+scartare i duplicati.
+
+\itindbeg{advertised~window}
+
+Il protocollo provvede anche un controllo di flusso (\textit{flow control}),
+cioè specifica sempre all'altro capo della trasmissione quanti dati può
+ricevere tramite una \textit{advertised window} (letteralmente
+``\textsl{finestra annunciata}''), che indica lo spazio disponibile nel buffer
+di ricezione, cosicché nella trasmissione non vengano inviati più dati di
+quelli che possono essere ricevuti.
+
+Questa finestra cambia dinamicamente diminuendo con la ricezione dei dati dal
+socket ed aumentando con la lettura di quest'ultimo da parte
+dell'applicazione, se diventa nulla il buffer di ricezione è pieno e non
+verranno accettati altri dati.  Si noti che UDP non provvede niente di tutto
+ciò per cui nulla impedisce che vengano trasmessi pacchetti ad un ritmo che il
+ricevente non può sostenere.
+
+\itindend{advertised~window}
+
+Infine attraverso TCP la trasmissione è sempre bidirezionale (in inglese si
+dice che è \textit{full-duplex}). È cioè possibile sia trasmettere che
+ricevere allo stesso tempo, il che comporta che quanto dicevamo a proposito
+del controllo di flusso e della gestione della sequenzialità dei dati viene
+effettuato per entrambe le direzioni di comunicazione.
+
+% TODO mettere riferimento alla appendice su TCP quando ci sarà
+%% Una descrizione più accurata del protocollo è fornita in appendice
+%% sez.~\ref{sec:tcp_protocol}.
+
+\subsection{Limiti e dimensioni riguardanti la trasmissione dei dati}
+\label{sec:net_lim_dim}
+
+Un aspetto di cui bisogna tenere conto nella programmazione di rete, e che
+ritornerà in seguito, quando tratteremo gli aspetti più avanzati, è che ci sono
+una serie di limiti a cui la trasmissione dei dati attraverso i vari livelli
+del protocollo deve sottostare; limiti che è opportuno tenere presente perché
+in certi casi si possono avere delle conseguenze sul comportamento delle
+applicazioni.
+
+Un elenco di questi limiti, insieme ad un breve accenno alle loro origini ed
+alle eventuali implicazioni che possono avere, è il seguente:
+\begin{itemize}
+\item La dimensione massima di un pacchetto IP è di 65535 byte, compresa
+  l'intestazione. Questo è dovuto al fatto che la dimensione è indicata da un
+  campo apposito nell'header di IP che è lungo 16 bit (vedi
+  fig.~\ref{fig:IP_ipv4_head}).
+\item La dimensione massima di un pacchetto normale di IPv6 è di 65575 byte;
+  il campo apposito nell'header infatti è sempre a 16 bit, ma la dimensione
+  dell'header è fissa e di 40 byte e non è compresa nel valore indicato dal
+  suddetto campo. Inoltre IPv6 ha la possibilità di estendere la dimensione di
+  un pacchetto usando la \textit{jumbo payload option}.
+\itindbeg{Maximum~Transfer~Unit~(MTU)}
+\item Molte reti fisiche hanno una MTU (\textit{Maximum Transfer Unit}) che
+  dipende dal protocollo specifico usato al livello di connessione fisica. Il
+  più comune è quello di ethernet che è pari a 1500 byte, una serie di altri
+  valori possibili sono riportati in tab.~\ref{tab:net_mtu_values}.
+\end{itemize}
+
+Quando un pacchetto IP viene inviato su una interfaccia di rete e le sue
+dimensioni eccedono la MTU viene eseguita la cosiddetta
+\textit{frammentazione}, i pacchetti cioè vengono suddivisi in blocchi più
+piccoli che possono essere trasmessi attraverso l'interfaccia.\footnote{questo
+  accade sia per IPv4 che per IPv6, anche se i pacchetti frammentati sono
+  gestiti con modalità diverse, IPv4 usa un flag nell'header, IPv6 una
+  opportuna opzione, si veda sez.~\ref{sec:ipv6_protocol}.}
+
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}[c]{|l|c|}
+    \hline
+    \textbf{Rete} & \textbf{MTU} \\
+    \hline
+    \hline
+    Hyperlink & 65535 \\
+    Token Ring IBM (16 Mbit/sec) & 17914 \\
+    Token Ring IEEE 802.5 (4 Mbit/sec) & 4464 \\
+    FDDI & 4532 \\
+    Ethernet & 1500 \\
+    X.25 & 576 \\
+    \hline
+  \end{tabular}
+  \caption{Valori della MTU (\textit{Maximum Transfer Unit}) per una serie di
+    diverse tecnologie di rete.} 
+  \label{tab:net_mtu_values}
+\end{table}
+
+%TODO aggiornare la tabella con dati più recenti
+
+\itindbeg{Path~MTU}
+
+La MTU più piccola fra due stazioni viene in genere chiamata \textit{path
+  MTU}, che dice qual è la lunghezza massima oltre la quale un pacchetto
+inviato da una stazione ad un'altra verrebbe senz'altro frammentato. Si tenga
+conto che non è affatto detto che la \textit{path MTU} sia la stessa in
+entrambe le direzioni, perché l'instradamento può essere diverso nei due
+sensi, con diverse tipologie di rete coinvolte.
+
+Una delle differenze fra IPv4 e IPv6 é che per IPv6 la frammentazione può
+essere eseguita solo alla sorgente, questo vuol dire che i router IPv6 non
+frammentano i pacchetti che ritrasmettono (anche se possono frammentare i
+pacchetti che generano loro stessi), al contrario di quanto fanno i router
+IPv4. In ogni caso una volta frammentati i pacchetti possono essere
+riassemblati solo alla destinazione.
+
+Nell'header di IPv4 è previsto il flag \texttt{DF} che specifica che il
+pacchetto non deve essere frammentato; un router che riceva un pacchetto le
+cui dimensioni eccedano quelle dell'MTU della rete di destinazione genererà un
+messaggio di errore ICMPv4 di tipo \textit{destination unreachable,
+  fragmentation needed but DF bit set}.  Dato che i router IPv6 non possono
+effettuare la frammentazione la ricezione di un pacchetto di dimensione
+eccessiva per la ritrasmissione genererà sempre un messaggio di errore ICMPv6
+di tipo \textit{packet too big}.
+
+Dato che il meccanismo di frammentazione e riassemblaggio dei pacchetti
+comporta inefficienza, normalmente viene utilizzato un procedimento, detto
+\textit{path MTU discovery} che permette di determinare il \textit{path MTU}
+fra due stazioni; per la realizzazione del procedimento si usa il flag
+\texttt{DF} di IPv4 e il comportamento normale di IPv6 inviando delle
+opportune serie di pacchetti (per i dettagli vedere
+l'\href{http://www.ietf.org/rfc/rfc1191.txt}{RFC~1191} per IPv4 e
+l'\href{http://www.ietf.org/rfc/rfc1981.txt}{RFC~1981} per IPv6) fintanto che
+non si hanno più errori.
+
+Il TCP usa sempre questo meccanismo, che per le implementazioni di IPv4 è
+opzionale, mentre diventa obbligatorio per IPv6.  Per IPv6 infatti, non
+potendo i router frammentare i pacchetti, è necessario, per poter comunicare,
+conoscere da subito il \textit{path MTU}.
+
+\itindend{Path~MTU}
+
+Infine il TCP definisce una \textit{Maximum Segment Size} o MSS (vedi
+sez.~\ref{sec:tcp_protocol}) che annuncia all'altro capo della connessione la
+dimensione massima del segmento di dati che può essere ricevuto, così da
+evitare la frammentazione. Di norma viene impostato alla dimensione della MTU
+dell'interfaccia meno la lunghezza delle intestazioni di IP e TCP, in Linux il
+default, mantenuto nella costante \constd{TCP\_MSS} è 512.
+
+\itindend{Maximum~Transfer~Unit~(MTU)}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End: 
+
+% LocalWords:  TCP multitasking client ftp telnet ssh cap thread peer to three
+% LocalWords:  Napster routing tier two middle International Standards Systems
+% LocalWords:  Organization Interconnection tab Application Presentation All of
+% LocalWords:  Session Transport DataLink Physical people seem need processing
+% LocalWords:  fig upper layer lower kernel DoD Department Defense Connection
+% LocalWords:  sez UDP ICMP IGMP device Trasmission Control Protocol l'IP l'UDP
+% LocalWords:  IPv ethernet SMTP RFC Request For Comment socket stack PPP ARP
+% LocalWords:  router instradatori version RARP anycast Di
+% LocalWords:  l'acknoweledgment Datagram Message host ping ICPMv ICMPv Group
+% LocalWords:  multicast Address Resolution broadcast Token FDDI MAC address DF
+% LocalWords:  Reverse EGP Exterior Gateway gateway autonomous systems OSPF GRE
+% LocalWords:  Shortest Path First Generic Encapsulation Authentication Header
+% LocalWords:  IPSEC ESP Encapsulating Security Payload Point Line over raw QoS
+% LocalWords:  dall' Universal addressing Best effort unicast header dell' RTT
+% LocalWords:  datagram connectionless streaming nell' acknowlegment trip flow
+% LocalWords:  segment control advertised window nell'header dell'header option
+% LocalWords:  payload MTU Transfer Unit Hyperlink IBM Mbit sec IEEE path but
+% LocalWords:  dell'MTU destination unreachable fragmentation needed packet too
+% LocalWords:  big discovery MSS Size
