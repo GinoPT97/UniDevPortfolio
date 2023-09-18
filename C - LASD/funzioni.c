@@ -450,7 +450,7 @@ void main062019() {
 
     PopolaLista(&l1, &l2);
 
-    SpostaPositivi(l1, l2);
+    l2 = SpostaPositivi(l1, l2);
     SpostaNegativi(l2, l1);
 
     printf("\n\nEcco la prima lista dopo le modifiche, L:");
