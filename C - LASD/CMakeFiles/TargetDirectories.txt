@@ -1,3 +1,0 @@
-/home/kenobi/Documenti/GitHub/CodicePersonale/C - LASD/CMakeFiles/C-LASD-Ubuntu.dir
-/home/kenobi/Documenti/GitHub/CodicePersonale/C - LASD/CMakeFiles/edit_cache.dir
-/home/kenobi/Documenti/GitHub/CodicePersonale/C - LASD/CMakeFiles/rebuild_cache.dir
