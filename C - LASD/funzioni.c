@@ -491,7 +491,7 @@ void main200606(){
     freeListD(l2);
 }
 
-ListDopp *rimuovi_ricorsiva(ListDopp *lista1, ListDopp *lista2) {
+ListDopp rimuovi_ricorsiva(ListDopp lista1, ListDopp lista2) {
     if (lista1 == NULL || lista2 == NULL) {
         return lista1;
     }
@@ -521,9 +521,6 @@ void main1181208(){
 
     printf("\n\nEcco la prima lista dopo le modifiche, L:");
     printListD(l1);
-
-    printf("\n\nEcco la seconda lista dopo le modifiche, L:");
-    printListD(l2);
 
     freeListD(l1);
     freeListD(l2);
