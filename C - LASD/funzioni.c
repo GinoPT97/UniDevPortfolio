@@ -491,23 +491,23 @@ void main200606(){
     freeListD(l2);
 }
 
-void elimina_ricorsiva(ListDopp top1, ListDopp top2) {
-    if (top1 == NULL || top2 == NULL) {
-        return;
+ListDopp *rimuovi_ricorsiva(ListDopp *lista1, ListDopp *lista2) {
+    if (lista1 == NULL || lista2 == NULL) {
+        return lista1;
     }
 
-    if (top1->info == top2->info) {
-        ListDopp *tmp = top1;
-        if (top1->next != NULL) {
-            top1->next->prev = tmp->prev;
+    if (lista1->info == lista2->info) {
+        // Trovato un elemento duplicato in Lista1.
+        lista1 = lista1->next;
+        if (lista1 != NULL) {
+            lista1->prev = NULL;
         }
-        if (top1->prev != NULL) {
-            top1->prev->next = tmp->next;
-        }
-        free(tmp);
+    } else {
+        // L'elemento in Lista1 non è duplicato.
+        lista1->next = rimuovi_ricorsiva(lista1->next, lista2);
     }
 
-    elimina_ricorsiva(top1->next, top2);
+    return lista1;
 }
 
 void main1181208(){
@@ -517,7 +517,7 @@ void main1181208(){
 
     PopolaLista(&l1, &l2);
     
-    elimina_ricorsiva(l1,l2);
+    l1 = rimuovi_ricorsiva(l1,l2);
 
     printf("\n\nEcco la prima lista dopo le modifiche, L:");
     printListD(l1);
