@@ -412,34 +412,37 @@ void mainesameinterleaving() {
 // esercizio 2 della traccia di giugno 2019
 
 ListDopp SpostaPositivi(ListDopp l1, ListDopp l2) {
-    if (l1 == NULL) {
-        return l2;
-    }
+  if (l1 == NULL) {
+    return l2;
+  }
 
-    if (l1->info >= 0) {
-        l2 = inTesta(l2, l1->info);
-        l1 = l1->next;
-    } else {
-        l1 = l1->next;
-    }
+  ListDopp temp = l1;
 
-    return SpostaPositivi(l1, l2);
+  if (temp->info >= 0) {
+    l2 = inTesta(l2, temp->info);
+  }
+
+  l1 = l1->next;
+
+  return SpostaPositivi(l1, l2);
 }
 
 ListDopp SpostaNegativi(ListDopp l1, ListDopp l2) {
-    if (l1 == NULL) {
-        return l2;
-    }
+  if (l1 == NULL) {
+    return l2;
+  }
 
-    if (l1->info < 0) {
-        l2 = inTesta(l2, l1->info);
-        l1 = l1->next;
-    } else {
-        l1 = l1->next;
-    }
+  ListDopp temp = l1;
 
-    return SpostaNegativi(l1, l2);
+  if (temp->info < 0) {
+    l2 = inTesta(l2, temp->info);
+  }
+  
+  l1 = l1->next;
+
+  return SpostaNegativi(l1, l2);
 }
+
 
 void main062019() {
     ListDopp l1 = NULL;
