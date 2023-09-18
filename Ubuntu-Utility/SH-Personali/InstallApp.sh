@@ -8,6 +8,10 @@ sudo apt install wget -y
 #Installazione di deborphan
 sudo apt install deborphan
 
+#Installazione di grub-Customizer
+sudo add-apt-repository ppa:danielrichter2007/grub-customizer --yes
+sudo apt-get install grub-customizer -y
+
 #Installazione di wine per giochi e cose varie Windows
 sudo apt-get install wine -y
 sudo apt-get install winetricks -y
