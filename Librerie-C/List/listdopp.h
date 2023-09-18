@@ -19,3 +19,4 @@ ListDopp inCoda (ListDopp lista, int el);
 ListDopp inTesta (ListDopp lista, int el);
 ListDopp newListD(int index);
 ListDopp initNodeListD(int info);
+ListDopp RimuoviNodo(ListDopp l1);

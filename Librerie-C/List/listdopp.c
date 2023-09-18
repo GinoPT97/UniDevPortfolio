@@ -16,6 +16,21 @@ ListDopp inCoda(ListDopp lista, int el) {
     return nodo;
 }
 
+ListDopp RimuoviNodo(ListDopp l1) {
+  if (l1->prev != NULL) {
+    l1->prev->next = l1->next;
+  }
+
+  if (l1->next != NULL) {
+    l1->next->prev = l1->prev;
+  }
+
+  l1->next = NULL;
+  l1->prev = NULL;
+
+  return l1->next;
+}
+
 ListDopp inTesta(ListDopp lista, int el) {
     ListDopp nodo = malloc(sizeof(struct TDList));
     nodo->info = el;
