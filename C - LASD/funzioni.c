@@ -418,9 +418,11 @@ ListDopp SpostaPositivi(ListDopp l1, ListDopp l2) {
 
     if (l1->info >= 0) {
         l2 = inTesta(l2, l1->info);
+        ListDopp nodoDaEliminare = l1;
         l1 = l1->next;
+        free(nodoDaEliminare);
     } else {
-        l1 = l1->next;
+        l1->next = SpostaPositivi(l1->next, l2);
     }
 
     return SpostaPositivi(l1, l2);
@@ -433,9 +435,11 @@ ListDopp SpostaNegativi(ListDopp l1, ListDopp l2) {
 
     if (l1->info < 0) {
         l2 = inTesta(l2, l1->info);
+        ListDopp nodoDaEliminare = l1;
         l1 = l1->next;
+        free(nodoDaEliminare);
     } else {
-        l1 = l1->next;
+        l1->next = SpostaNegativi(l1->next, l2);
     }
 
     return SpostaNegativi(l1, l2);
@@ -447,8 +451,8 @@ void main062019() {
 
     PopolaLista(&l1, &l2);
 
-    SpostaPositivi(l1, l2);
-    SpostaNegativi(l2, l1);
+    l2 = SpostaPositivi(l1, l2);
+    l1 = SpostaNegativi(l1, l2);
 
     printf("\n\nEcco la prima lista dopo le modifiche, L:");
     printListD(l1);
