@@ -522,6 +522,57 @@ void main1181208(){
     freeListD(l2);
 }
 
+//esercizio sulle occorrenze
+
+int contaOccorrenze(ListDopp L, int x) {
+  if (L == NULL) {
+    return 0;
+  } else if (L->info == x) {
+    return 1 + contaOccorrenze(L->next, x);
+  } else {
+    return contaOccorrenze(L->next, x);
+  }
+}
+
+void rimuoviOccorrenze(ListDopp *L, int x) {
+  if (*L == NULL) {
+    return;
+  } else if ((*L)->info == x) {
+    *L = EliminaDoppia(*L, x);
+    rimuoviOccorrenze(L, x);
+  } else {
+    rimuoviOccorrenze(&(*L)->next, x);
+  }
+}
+
+void inserisciN(ListDopp *L, int x, int n) {
+  if (n == 0) {
+    return;
+  } else {
+    *L = inTesta(*L, x);
+    inserisciN(L, x, n - 1);
+  }
+}
+
+void mainOccorrenza(){
+  ListDopp l1 = NULL;
+  ListDopp l2 = NULL;
+
+  PopolaLista(&l1, &l2);
+
+  int occorrenze = contaOccorrenze(l1, 2);
+
+  printf("Il numero di occorrenze del numero 2 nella prima lista e' %d\n", occorrenze);
+
+  rimuoviOccorrenze(&l1, 2);
+
+  printListD(l1);
+
+  inserisciN(&l2, occorrenze, 1);
+
+  printListD(l2);
+}
+
 // ESERCIZI SUGLI ALBERI
 
 // traccia 18/02/2017 esercizio 2
