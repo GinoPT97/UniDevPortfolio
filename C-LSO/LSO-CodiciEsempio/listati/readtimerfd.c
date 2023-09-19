@@ -1,3 +1,0 @@
-    uint64_t nexp;
-    ...
-    read(fd, &nexp, sizeof(uint64_t));
