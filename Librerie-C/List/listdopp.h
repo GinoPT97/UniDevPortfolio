@@ -4,8 +4,7 @@
 
 struct TDList {
     int info;
-    struct TDList* next;
-    struct TDList* prev;
+    struct TDList *next, *prev;
 };
 
 typedef struct TDList* ListDopp;

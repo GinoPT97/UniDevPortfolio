@@ -411,38 +411,31 @@ void mainesameinterleaving() {
 
 // esercizio 2 della traccia di giugno 2019
 
-ListDopp SpostaPositivi(ListDopp l1, ListDopp l2) {
-    if (l1 == NULL) {
-        return l2;
-    }
+void rimuoviNegativi(ListDopp *L1, ListDopp *L2) {
+  if (*L1 == NULL) return;
 
-    if (l1->info >= 0) {
-        l2 = inTesta(l2, l1->info);
-        ListDopp nodoDaEliminare = l1;
-        l1 = l1->next;
-        free(nodoDaEliminare);
-    } else {
-        l1->next = SpostaPositivi(l1->next, l2);
-    }
-
-    return SpostaPositivi(l1, l2);
+  if ((*L1)->info < 0) {
+    ListDopp tmp = *L1;
+    *L1 = (*L1)->next;
+    tmp->next = *L2;
+    *L2 = tmp;
+  } else rimuoviNegativi(&(*L1)->next, L2);
 }
 
-ListDopp SpostaNegativi(ListDopp l1, ListDopp l2) {
-    if (l1 == NULL) {
-        return l2;
-    }
+void rimuoviPositivi(ListDopp *L2, ListDopp *L1) {
+  if (*L2 == NULL) return;
+  
+  if ((*L2)->info >= 0) {
+    ListDopp tmp = *L2;
+    *L2 = (*L2)->next;
+    tmp->next = *L1;
+    *L1 = tmp;
+  } else rimuoviPositivi(&(*L2)->next, L1);
+}
 
-    if (l1->info < 0) {
-        l2 = inTesta(l2, l1->info);
-        ListDopp nodoDaEliminare = l1;
-        l1 = l1->next;
-        free(nodoDaEliminare);
-    } else {
-        l1->next = SpostaNegativi(l1->next, l2);
-    }
-
-    return SpostaNegativi(l1, l2);
+void modificaListe(ListDopp *L1, ListDopp *L2) {
+  rimuoviNegativi(L1, L2);
+  rimuoviPositivi(L2, L1);
 }
 
 void main062019() {
@@ -451,8 +444,7 @@ void main062019() {
 
     PopolaLista(&l1, &l2);
 
-    l2 = SpostaPositivi(l1, l2);
-    l1 = SpostaNegativi(l1, l2);
+    modificaListe(&l1,&l2);
 
     printf("\n\nEcco la prima lista dopo le modifiche, L:");
     printListD(l1);
