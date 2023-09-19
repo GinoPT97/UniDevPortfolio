@@ -20,9 +20,9 @@ int main(int argc, char *argv[]) {
 	//Liste
 	//mainesameinterleaving();
 	//main062019();
-	//main200606(); //da aggiustare, non funziona
+	main200606(); //da aggiustare, non funziona
 	//main1181208();
-	mainOccorrenza();
+	//mainOccorrenza();
 	
 	//Alberi
 	//main180217();
