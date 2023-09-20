@@ -489,26 +489,20 @@ void main200606(){
 
 // esercizio 1 della traccia 18/12/08
 
-ListDopp rimuovi_ricorsiva(ListDopp *lista1, ListDopp *lista2) {
-    if (*lista1 == NULL || *lista2 == NULL) {
-        return *lista1;
-    }
+ListDopp EliminaDuplicati(ListDopp l, ListDopp l2) {
+  // Se la lista è vuota, terminiamo la ricorsione.
+  if (l == NULL) {
+    return NULL;
+  }
 
-    if ((*lista1)->info == (*lista2)->info) {
-        // Trovato un elemento duplicato in Lista1.
-        *lista1 = (*lista1)->next;
-        if (*lista1 != NULL) {
-            (*lista1)->prev = NULL;
-        } else {
-            // Lista1 è l'ultimo elemento della lista.
-            (*lista2)->prev = NULL;
-        }
-    } else {
-        // L'elemento in Lista1 non è duplicato.
-        (*lista1)->next = rimuovi_ricorsiva(&(*lista1)->next, lista2);
-    }
+  // Se l'elemento in testa alla lista è duplicato, lo eliminiamo.
+  if (l->info == TrovaElemento(l2, l->info)) {
+    return EliminaDuplicati(l->next, l2);
+  }
 
-    return *lista1;
+  // Altrimenti, procediamo con il resto della lista.
+  l->next = EliminaDuplicati(l->next, l2);
+  return l;
 }
 
 void main1181208(){
@@ -517,7 +511,7 @@ void main1181208(){
 
     PopolaLista(&l1, &l2);
     
-    l1 = rimuovi_ricorsiva(&l1,&l2);
+    l1 = EliminaDuplicati(l1,l2);
 
     printf("\n\nEcco la prima lista dopo le modifiche, L:");
     printListD(l1);

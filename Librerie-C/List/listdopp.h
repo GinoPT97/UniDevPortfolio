@@ -10,6 +10,7 @@ struct TDList {
 typedef struct TDList* ListDopp;
 
 int CalcolaDim(ListDopp L);
+int TrovaElemento(ListDopp l, int x);
 void PopolaLista(ListDopp *l1,ListDopp *l2);
 void printListD(ListDopp L);
 void freeListD(ListDopp L);

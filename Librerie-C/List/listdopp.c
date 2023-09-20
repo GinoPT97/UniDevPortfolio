@@ -42,6 +42,22 @@ ListDopp inTesta(ListDopp lista, int el) {
     return nodo;
 }
 
+int TrovaElemento(ListDopp l, int x) {
+  // Se la lista è vuota, restituiamo -1.
+  if (l == NULL) {
+    return -1;
+  }
+
+  // Altrimenti, procediamo con la ricerca.
+  if (l->info == x) {
+    // L'elemento è stato trovato.
+    return l->info;
+  } else {
+    // L'elemento non è stato trovato.
+    return TrovaElemento(l->next, x);
+  }
+}
+
 ListDopp EliminaDoppia(ListDopp l, int x) {
     if (l) {
         l->next = EliminaDoppia(l->next,x);
