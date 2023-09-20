@@ -489,6 +489,23 @@ void main200606(){
 
 // esercizio 1 della traccia 18/12/08
 
+/* alternativa da aggiustare
+
+void rimuoviDuplicati(struct Node **cursore){
+    if((*cursore)->next==NULL){
+        return;
+    } else{
+        if((*cursore)->valore == (*cursore)->next->valore && (*cursore)->valore % 2 != 0){
+            struct Node *temp = (*cursore)->next;
+            (*cursore)->next= (*cursore)->next->next;
+            free(temp);
+        }
+        rimuoviDuplicati(&(*cursore)->next);
+    }
+}
+
+*/
+
 ListDopp EliminaDuplicati(ListDopp l, ListDopp l2) {
   // Se la lista è vuota, terminiamo la ricorsione.
   if (l == NULL) {
@@ -570,6 +587,25 @@ void mainOccorrenza(){
 
   printListD(l2);
 }
+/* Funzioni Giiuntive sparse
+
+void duplicaDispari(struct Node **cursore){
+    if(*cursore==NULL){
+        return;
+    } else{
+        if((*cursore)->valore%2!=0){
+            struct Node *new=newNode();
+            new->valore=(*cursore)->valore;
+            new->next=(*cursore)->next;
+            (*cursore)->next=new;
+            duplicaDispari(&new->next);
+        } else{
+            duplicaDispari(&(*cursore)->next);
+        }
+}
+}
+
+*/
 
 // ESERCIZI SUGLI ALBERI
 

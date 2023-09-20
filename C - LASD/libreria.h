@@ -12,7 +12,7 @@
 #include "../Librerie-C/Grafi/graph.h"
 #include "../Librerie-C/MatrixGraph/matrixgraph.h"
 #include "../Librerie-C/Stack/stack.h"
-#include "../Librerie-C/ListDopp/listdopp.h"
+#include "../Librerie-C/List/listdopp.h"
 #include "../Librerie-C/Heap/heap.h"
 //#include "../Librerie-C/ListeCircolari/listecircolari.h"
 
