@@ -23,7 +23,8 @@ sudo apt-get install clamtk -y
 
 #Installazione dello store basato su Flutter
 sudo snap install flutter --classic
-sudo snap refresh snap-store --channel=preview/edge
+sudo snap remove snap-store
+sudo snap install snap-store --channel=preview/edge
 
 #Installa cmake
 sudo snap install cmake --classic
@@ -67,12 +68,6 @@ sudo apt install postgresql-15 postgresql-client-15 postgresql-client-common pos
 
 # Configurazione della password dell'utente PostgreSQL
 sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'admin';"
-
-# Installazione di Rust
-sudo apt install curl build-essential -y
-curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | sh
-rustc --version
-rustup update
 
 # Installazione di Tor Browser
 sudo snap install tor
