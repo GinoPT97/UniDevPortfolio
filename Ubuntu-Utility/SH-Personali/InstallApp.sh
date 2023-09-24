@@ -82,6 +82,9 @@ sudo apt install preload -y
 # Installazione di Code::Blocks
 sudo apt install codeblocks -y
 
+#installazione di visual studio code
+sudo snap install --classic code
+
 # Installazione di gnome-boxes
 sudo apt install gnome-boxes -y
 
