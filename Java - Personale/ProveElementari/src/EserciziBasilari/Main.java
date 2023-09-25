@@ -1,4 +1,5 @@
 package EserciziBasilari;
+
 import java.util.Scanner;
 
 public class Main {
@@ -146,9 +147,9 @@ public class Main {
 		input.close();
 		
 		if(x==y && x==z) System.out.print("tutti uguali");
-		else if(y==x && (y > z || y < z)) System.out.print("uno diverso");
-		else if(y==z && (y > x || z < x)) System.out.print("uno diverso");
-		else if(x==z && (z > y || z < y)) System.out.print("uno diverso");
+		else if(y==x && (y > z || y < z)) System.out.print("z è diverso");
+		else if(y==z && (y > x || z < x)) System.out.print("x è diverso");
+		else if(x==z && (z > y || z < y)) System.out.print("y è diverso");
 		else System.out.print("tutti diversi");
 	}
 	
