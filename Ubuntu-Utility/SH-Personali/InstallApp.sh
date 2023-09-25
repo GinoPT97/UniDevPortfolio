@@ -8,6 +8,12 @@ sudo apt install wget -y
 #Installazione di deborphan
 sudo apt install deborphan -y
 
+# Installazione di Zram
+sudo apt install zram-config -y
+
+# Installazione di Preload
+sudo apt install preload -y
+
 #Installazione di grub-Customizer
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer --yes
 sudo apt-get install grub-customizer -y
@@ -81,11 +87,8 @@ sudo systemctl start tor.service
 sudo systemctl enable tor
 sudo apt-get install torbrowser-launcher
 
-# Installazione di Zram
-sudo apt install zram-config -y
-
-# Installazione di Preload
-sudo apt install preload -y
+# Installazione di swi-prolog con snap
+sudo snap install swi-prolog
 
 # Installazione di Code::Blocks
 sudo apt install codeblocks -y
