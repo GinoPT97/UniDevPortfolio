@@ -6,7 +6,7 @@ sudo apt upgrade -y
 sudo apt install wget -y
 
 #Installazione di deborphan
-sudo apt install deborphan
+sudo apt install deborphan -y
 
 #Installazione di grub-Customizer
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer --yes
@@ -69,8 +69,16 @@ sudo apt install postgresql-15 postgresql-client-15 postgresql-client-common pos
 # Configurazione della password dell'utente PostgreSQL
 sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'admin';"
 
+# Installazione di pgAdmin 4
+curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+sudo apt install pgadmin4 -y
+sudo /usr/pgadmin4/bin/setup-web.sh
+
 # Installazione di Tor Browser
 sudo snap install tor
+sudo systemctl start tor.service
+sudo systemctl enable tor
 sudo apt-get install torbrowser-launcher
 
 # Installazione di Zram
@@ -87,11 +95,5 @@ sudo snap install --classic code
 
 # Installazione di gnome-boxes
 sudo apt install gnome-boxes -y
-
-# Installazione di pgAdmin 4
-curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
-sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
-sudo apt install pgadmin4 -y
-sudo /usr/pgadmin4/bin/setup-web.sh
 
 echo "Installazione completata!"
