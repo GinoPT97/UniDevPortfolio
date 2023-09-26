@@ -1,0 +1,2301 @@
+\chapter{La gestione avanzata dei processi}
+\label{cha:proc_advanced}
+
+In questo capitolo affronteremo gli argomenti relativi alla gestione avanzata
+dei processi. Inizieremo con le funzioni che attengono alla gestione avanzata
+della sicurezza, passando poi a quelle relative all'analisi ed al controllo
+dell'esecuzione, e alle funzioni per le modalità avanzate di creazione dei
+processi e l'uso dei cosiddetti \textit{namespace}. Infine affronteremo le
+\textit{sytem call} attinenti ad una serie di funzionalità specialistiche come
+la gestione della virgola mobile, le porte di I/O ecc.
+
+\section{La gestione avanzata della sicurezza}
+\label{sec:process_security}
+
+Tratteremo in questa sezione le funzionalità più avanzate relative alla
+gestione della sicurezza ed il controllo degli accessi all'interno dei
+processi, a partire dalle \textit{capabilities} e dalle funzionalità del
+cosiddetto \textit{Secure Computing}. Esamineremo inoltre le altre
+funzionalità relative alla sicurezza come la gestione delle chiavi
+crittografiche e varie estensioni e funzionalità disponibili su questo
+argomento.
+
+
+\subsection{La gestione delle \textit{capabilities}}
+\label{sec:proc_capabilities}
+
+\itindbeg{capabilities} 
+
+Come accennato in sez.~\ref{sec:proc_access_id} l'architettura classica della
+gestione dei privilegi in un sistema unix-like ha il sostanziale problema di
+fornire all'amministratore dei poteri troppo ampi, il che comporta che anche
+quando si siano predisposte delle misure di protezione per in essere in grado
+di difendersi dagli effetti di una eventuale compromissione del sistema (come
+montare un filesystem in sola lettura per impedirne modifiche, o marcare un
+file come immutabile) una volta che questa sia stata effettuata e si siano
+ottenuti i privilegi di amministratore, queste misure potranno essere comunque
+rimosse (nei casi elencati nella precedente nota si potrà sempre rimontare il
+sistema in lettura-scrittura, o togliere l'attributo di immutabilità).
+
+Il problema consiste nel fatto che nell'architettura tradizionale di un
+sistema unix-like i controlli di accesso sono basati su un solo livello di
+separazione: per i processi normali essi sono posti in atto, mentre per i
+processi con i privilegi di amministratore essi non vengono neppure eseguiti.
+Per questo motivo non era previsto alcun modo per evitare che un processo con
+diritti di amministratore non potesse eseguire certe operazioni, o per cedere
+definitivamente alcuni privilegi da un certo momento in poi. 
+
+Per risolvere questo problema sono possibili varie soluzioni, ad esempio dai
+kernel della serie 2.5 è stata introdotta la struttura dei
+\itindex{Linux~Security~Modules~(LSM)} \textit{Linux Security Modules} che han
+permesso di aggiungere varie forme di \itindex{Mandatory~Access~Control~(DAC)}
+\textit{Mandatory Access Control} (MAC), in cui si potessero parcellizzare e
+controllare nei minimi dettagli tutti i privilegi e le modalità in cui questi
+possono essere usati dai programmi e trasferiti agli utenti, con la creazione
+di varie estensioni (come \textit{SELinux}, \textit{Smack}, \textit{Tomoyo},
+\textit{AppArmor}) che consentono di superare l'architettura tradizionale dei
+permessi basati sul modello classico del controllo di accesso chiamato
+\itindex{Discrectionary~Access~Control~(DAC)} \textit{Discrectionary Access
+  Control} (DAC).
+
+Ma già in precedenza, a partire dai kernel della serie 2.2, era stato
+introdotto un meccanismo, detto \textit{capabilities}, per consentire di
+suddividere i vari privilegi tradizionalmente associati all'amministratore in
+un insieme di \textsl{capacità} distinte.  L'idea era che queste capacità
+potessero essere abilitate e disabilitate in maniera indipendente per ciascun
+processo con privilegi di amministratore, permettendo così una granularità
+molto più fine nella distribuzione degli stessi, che evitasse la situazione
+originaria di ``\textsl{tutto o nulla}''.
+
+\itindbeg{file~capabilities}
+
+Il meccanismo completo delle \textit{capabilities} (l'implementazione si rifà
+ad una bozza di quello che doveva diventare lo standard POSIX.1e, poi
+abbandonato) prevede inoltre la possibilità di associare le stesse ai singoli
+file eseguibili, in modo da poter stabilire quali capacità possono essere
+utilizzate quando viene messo in esecuzione uno specifico programma; ma il
+supporto per questa funzionalità, chiamata \textit{file capabilities}, è stato
+introdotto soltanto a partire dal kernel 2.6.24. Fino ad allora doveva essere
+il programma stesso ad eseguire una riduzione esplicita delle sue capacità,
+cosa che ha reso l'uso di questa funzionalità poco diffuso, vista la presenza
+di meccanismi alternativi per ottenere limitazioni delle capacità
+dell'amministratore a livello di sistema operativo, come \textit{SELinux}.
+
+Con questo supporto e con le ulteriori modifiche introdotte con il kernel
+2.6.25 il meccanismo delle \textit{capabilities} è stato totalmente
+rivoluzionato, rendendolo più aderente alle intenzioni originali dello
+standard POSIX, rimuovendo il significato che fino ad allora aveva avuto la
+capacità \const{CAP\_SETPCAP}, e cambiando le modalità di funzionamento del
+cosiddetto \textit{capabilities bounding set}. Ulteriori modifiche sono state
+apportate con il kernel 2.6.26 per consentire la rimozione non ripristinabile
+dei privilegi di amministratore. Questo fa sì che il significato ed il
+comportamento del kernel finisca per dipendere dalla versione dello stesso e
+dal fatto che le nuove \textit{file capabilities} siano abilitate o meno. Per
+capire meglio la situazione e cosa è cambiato conviene allora spiegare con
+maggiori dettagli come funziona il meccanismo delle \textit{capabilities}.
+
+Il primo passo per frazionare i privilegi garantiti all'amministratore,
+supportato fin dalla introduzione iniziale del kernel 2.2, è stato quello in
+cui a ciascun processo sono stati associati tre distinti insiemi di
+\textit{capabilities}, denominati rispettivamente \textit{permitted},
+\textit{inheritable} ed \textit{effective}. Questi insiemi vengono mantenuti
+in forma di tre diverse maschere binarie,\footnote{il kernel li mantiene, come
+  i vari identificatori di sez.~\ref{sec:proc_setuid}, all'interno della
+  \texttt{task\_struct} di ciascun processo (vedi
+  fig.~\ref{fig:proc_task_struct}), nei tre campi \texttt{cap\_effective},
+  \texttt{cap\_inheritable}, \texttt{cap\_permitted} del tipo
+  \texttt{kernel\_cap\_t}; questo era, fino al kernel 2.6.25 definito come
+  intero a 32 bit per un massimo di 32 \textit{capabilities} distinte,
+  attualmente è stato aggiornato ad un vettore in grado di mantenerne fino a
+  64.} in cui ciascun bit corrisponde ad una capacità diversa.
+
+L'utilizzo di tre distinti insiemi serve a fornire una interfaccia flessibile
+per l'uso delle \textit{capabilities}, con scopi analoghi a quelli per cui
+sono mantenuti i diversi insiemi di identificatori di
+sez.~\ref{sec:proc_setuid}; il loro significato, che è rimasto sostanzialmente
+lo stesso anche dopo le modifiche seguite alla introduzione delle
+\textit{file capabilities} è il seguente:
+\begin{basedescript}{\desclabelwidth{2.1cm}\desclabelstyle{\nextlinelabel}}
+\item[\textit{permitted}] l'insieme delle \textit{capabilities}
+  ``\textsl{permesse}'', cioè l'insieme di quelle capacità che un processo
+  \textsl{può} impostare come \textsl{effettive} o come
+  \textsl{ereditabili}. Se un processo cancella una capacità da questo insieme
+  non potrà più riassumerla.\footnote{questo nei casi ordinari, sono
+    previste però una serie di eccezioni, dipendenti anche dal tipo di
+    supporto, che vedremo meglio in seguito dato il notevole intreccio nella
+    casistica.}
+\item[\textit{inheritable}] l'insieme delle \textit{capabilities}
+  ``\textsl{ereditabili}'', cioè di quelle che verranno trasmesse come insieme
+  delle \textsl{permesse} ad un nuovo programma eseguito attraverso una
+  chiamata ad \func{exec}.
+\item[\textit{effective}] l'insieme delle \textit{capabilities}
+  ``\textsl{effettive}'', cioè di quelle che vengono effettivamente usate dal
+  kernel quando deve eseguire il controllo di accesso per le varie operazioni
+  compiute dal processo.
+\label{sec:capabilities_set}
+\end{basedescript}
+
+Con l'introduzione delle \textit{file capabilities} sono stati introdotti
+altri tre insiemi associabili a ciascun file.\footnote{la realizzazione viene
+  eseguita con l'uso di uno specifico attributo esteso,
+  \texttt{security.capability}, la cui modifica è riservata, (come illustrato
+  in sez.~\ref{sec:file_xattr}) ai processi dotato della capacità
+  \const{CAP\_SYS\_ADMIN}.} Le \textit{file capabilities} hanno effetto
+soltanto quando il file che le porta viene eseguito come programma con una
+\func{exec}, e forniscono un meccanismo che consente l'esecuzione dello stesso
+con maggiori privilegi; in sostanza sono una sorta di estensione del
+\acr{suid} bit limitato ai privilegi di amministratore. Anche questi tre
+insiemi sono identificati con gli stessi nomi di quello dei processi, ma il
+loro significato è diverso:
+\begin{basedescript}{\desclabelwidth{2.1cm}\desclabelstyle{\nextlinelabel}}
+\item[\textit{permitted}] (chiamato originariamente \textit{forced}) l'insieme
+  delle capacità che con l'esecuzione del programma verranno aggiunte alle
+  capacità \textsl{permesse} del processo.
+\item[\textit{inheritable}] (chiamato originariamente \textit{allowed})
+  l'insieme delle capacità che con l'esecuzione del programma possono essere
+  ereditate dal processo originario (che cioè non vengono tolte
+  dall'\textit{inheritable set} del processo originale all'esecuzione di
+  \func{exec}).
+\item[\textit{effective}] in questo caso non si tratta di un insieme ma di un
+  unico valore logico; se attivo all'esecuzione del programma tutte le
+  capacità che risulterebbero \textsl{permesse} verranno pure attivate,
+  inserendole automaticamente nelle \textsl{effettive}, se disattivato nessuna
+  capacità verrà attivata (cioè l'\textit{effective set} resterà vuoto).
+\end{basedescript}
+
+\itindbeg{capabilities~bounding~set}
+
+Infine come accennato, esiste un ulteriore insieme, chiamato
+\textit{capabilities bounding set}, il cui scopo è quello di costituire un
+limite alle capacità che possono essere attivate per un programma. Il suo
+funzionamento però è stato notevolmente modificato con l'introduzione delle
+\textit{file capabilities} e si deve pertanto prendere in considerazione una
+casistica assai complessa.
+
+Per i kernel fino al 2.6.25, o se non si attiva il supporto per le
+\textit{file capabilities}, il \textit{capabilities bounding set} è un
+parametro generale di sistema, il cui valore viene riportato nel file
+\sysctlfiled{kernel/cap-bound}. Il suo valore iniziale è definito in sede di
+compilazione del kernel, e da sempre ha previsto come default la presenza di
+tutte le \textit{capabilities} eccetto \const{CAP\_SETPCAP}. In questa
+situazione solo il primo processo eseguito nel sistema (quello con
+\textsl{pid} 1, di norma \texttt{/sbin/init}) ha la possibilità di
+modificarlo; ogni processo eseguito successivamente, se dotato dei privilegi
+di amministratore, è in grado soltanto di rimuovere una delle
+\textit{capabilities} già presenti dell'insieme.\footnote{per essere precisi
+  occorre la capacità \const{CAP\_SYS\_MODULE}.}
+
+In questo caso l'effetto complessivo del \textit{capabilities bounding set} è
+che solo le capacità in esso presenti possono essere trasmesse ad un altro
+programma attraverso una \func{exec}. Questo in sostanza significa che se un
+qualunque programma elimina da esso una capacità, considerato che
+\texttt{init} (almeno nelle versioni ordinarie) non supporta la reimpostazione
+del \textit{bounding set}, questa non sarà più disponibile per nessun processo
+a meno di un riavvio, eliminando così in forma definitiva quella capacità per
+tutti, compreso l'amministratore.\footnote{la qual cosa, visto il default
+  usato per il \textit{capabilities bounding set}, significa anche che
+  \const{CAP\_SETPCAP} non è stata praticamente mai usata nella sua forma
+  originale.}
+
+Con il kernel 2.6.25 e le \textit{file capabilities} il \textit{bounding set}
+è diventato una proprietà di ciascun processo, che viene propagata invariata
+sia attraverso una \func{fork} che una \func{exec}. In questo caso il file
+\sysctlfile{kernel/cap-bound} non esiste e \texttt{init} non ha nessun
+ruolo speciale, inoltre in questo caso all'avvio il valore iniziale prevede la
+presenza di tutte le capacità (compresa \const{CAP\_SETPCAP}). 
+
+Con questo nuovo meccanismo il \textit{bounding set} continua a ricoprire un
+ruolo analogo al precedente nel passaggio attraverso una \func{exec}, come
+limite alle capacità che possono essere aggiunte al processo in quanto
+presenti nel \textit{permitted set} del programma messo in esecuzione, in
+sostanza il nuovo programma eseguito potrà ricevere una capacità presente nel
+suo \textit{permitted set} (quello del file) solo se questa è anche nel
+\textit{bounding set} (del processo). In questo modo si possono rimuovere
+definitivamente certe capacità da un processo, anche qualora questo dovesse
+eseguire un programma privilegiato che prevede di riassegnarle.
+
+Si tenga presente però che in questo caso il \textit{bounding set} blocca
+esclusivamente le capacità indicate nel \textit{permitted set} del programma
+che verrebbero attivate in caso di esecuzione, e non quelle eventualmente già
+presenti nell'\textit{inheritable set} del processo (ad esempio perché
+presenti prima di averle rimosse dal \textit{bounding set}). In questo caso
+eseguendo un programma che abbia anche lui dette capacità nel suo
+\textit{inheritable set} queste verrebbero assegnate.
+
+In questa seconda versione inoltre il \textit{bounding set} costituisce anche
+un limite per le capacità che possono essere aggiunte all'\textit{inheritable
+  set} del processo stesso con \func{capset}, sempre nel senso che queste
+devono essere presenti nel \textit{bounding set} oltre che nel
+\textit{permitted set} del processo. Questo limite vale anche per processi con
+i privilegi di amministratore,\footnote{si tratta sempre di avere la
+  \textit{capability} \const{CAP\_SETPCAP}.} per i quali invece non vale la
+condizione che le \textit{capabilities} da aggiungere nell'\textit{inheritable
+  set} debbano essere presenti nel proprio \textit{permitted set}.\footnote{lo
+  scopo anche in questo caso è ottenere una rimozione definitiva della
+  possibilità di passare una capacità rimossa dal \textit{bounding set}.}
+
+Come si può notare per fare ricorso alle \textit{capabilities} occorre
+comunque farsi carico di una notevole complessità di gestione, aggravata dalla
+presenza di una radicale modifica del loro funzionamento con l'introduzione
+delle \textit{file capabilities}. Considerato che il meccanismo originale era
+incompleto e decisamente problematico nel caso di programmi che non ne
+sapessero tener conto,\footnote{il problema di sicurezza originante da questa
+  caratteristica venne alla ribalta con \texttt{sendmail}, in cui, riuscendo a
+  rimuovere \const{CAP\_SETGID} dall'\textit{inheritable set} di un processo,
+  si ottenne di far fallire \func{setuid} in maniera inaspettata per il
+  programma (che aspettandosi sempre il successo della funzione non ne
+  controllava lo stato di uscita) con la conseguenza di fargli fare come
+  amministratore operazioni che altrimenti sarebbero state eseguite, senza
+  poter apportare danni, da utente normale.}  ci soffermeremo solo sulla
+implementazione completa presente a partire dal kernel 2.6.25, tralasciando
+ulteriori dettagli riguardo la versione precedente.
+
+Riassumendo le regole finora illustrate tutte le \textit{capabilities} vengono
+ereditate senza modifiche attraverso una \func{fork} mentre, indicati con
+\texttt{orig\_*} i valori degli insiemi del processo chiamante, con
+\texttt{file\_*} quelli del file eseguito e con \texttt{bound\_set} il
+\textit{capabilities bounding set}, dopo l'invocazione di \func{exec} il
+processo otterrà dei nuovi insiemi di capacità \texttt{new\_*} secondo la
+formula espressa dal seguente pseudo-codice C:
+
+\includecodesnip{listati/cap-results.c}
+
+% \begin{figure}[!htbp]
+%   \footnotesize \centering
+%   \begin{minipage}[c]{12cm}
+%     \includecodesnip{listati/cap-results.c}
+%   \end{minipage}
+%   \caption{Espressione della modifica delle \textit{capabilities} attraverso
+%     una \func{exec}.}
+%   \label{fig:cap_across_exec}
+% \end{figure}
+
+\noindent e si noti come in particolare il \textit{capabilities bounding set}
+non venga comunque modificato e resti lo stesso sia attraverso una \func{fork}
+che attraverso una \func{exec}.
+
+
+\itindend{capabilities~bounding~set}
+
+A queste regole se ne aggiungono delle altre che servono a riprodurre il
+comportamento tradizionale di un sistema unix-like in tutta una serie di
+circostanze. La prima di queste è relativa a quello che avviene quando si
+esegue un file senza \textit{capabilities}; se infatti si considerasse questo
+equivalente al non averne assegnata alcuna, non essendo presenti capacità né
+nel \textit{permitted set} né nell'\textit{inheritable set} del file,
+nell'esecuzione di un qualunque programma l'amministratore perderebbe tutti i
+privilegi originali dal processo.
+
+Per questo motivo se un programma senza \textit{capabilities} assegnate viene
+eseguito da un processo con \ids{UID} reale 0, esso verrà trattato come
+se tanto il \textit{permitted set} che l'\textit{inheritable set} fossero con
+tutte le \textit{capabilities} abilitate, con l'\textit{effective set} attivo,
+col risultato di fornire comunque al processo tutte le capacità presenti nel
+proprio \textit{bounding set}. Lo stesso avviene quando l'eseguibile ha attivo
+il \acr{suid} bit ed appartiene all'amministratore, in entrambi i casi si
+riesce così a riottenere il comportamento classico di un sistema unix-like.
+
+Una seconda circostanza è quella relativa a cosa succede alle
+\textit{capabilities} di un processo nelle possibili transizioni da \ids{UID}
+nullo a \ids{UID} non nullo o viceversa (corrispondenti rispettivamente a
+cedere o riottenere i privilegi di amministratore) che si possono effettuare
+con le varie funzioni viste in sez.~\ref{sec:proc_setuid}. In questo caso la
+casistica è di nuovo alquanto complessa, considerata anche la presenza dei
+diversi gruppi di identificatori illustrati in tab.~\ref{tab:proc_uid_gid}, si
+avrà allora che:
+\begin{enumerate*}
+\item se si passa da \ids{UID} effettivo nullo a non nullo
+  l'\textit{effective set} del processo viene totalmente azzerato, se
+  viceversa si passa da \ids{UID} effettivo non nullo a nullo il
+  \textit{permitted set} viene copiato nell'\textit{effective set};
+\item se si passa da \textit{file system} \ids{UID} nullo a non nullo verranno
+  cancellate dall'\textit{effective set} del processo tutte le capacità
+  attinenti i file, e cioè \const{CAP\_LINUX\_IMMUTABLE}, \const{CAP\_MKNOD},
+  \const{CAP\_DAC\_OVERRIDE}, \const{CAP\_DAC\_READ\_SEARCH},
+  \const{CAP\_MAC\_OVERRIDE}, \const{CAP\_CHOWN}, \const{CAP\_FSETID} e
+  \const{CAP\_FOWNER} (le prime due a partire dal kernel 2.2.30), nella
+  transizione inversa verranno invece inserite nell'\textit{effective set}
+  quelle capacità della precedente lista che sono presenti nel suo
+  \textit{permitted set}.
+\item se come risultato di una transizione riguardante gli identificativi dei
+  gruppi \textit{real}, \textit{saved} ed \textit{effective} in cui si passa
+  da una situazione in cui uno di questi era nullo ad una in cui sono tutti
+  non nulli,\footnote{in sostanza questo è il caso di quando si chiama
+    \func{setuid} per rimuovere definitivamente i privilegi di amministratore
+    da un processo.} verranno azzerati completamente sia il \textit{permitted
+    set} che l'\textit{effective set}.
+\end{enumerate*}
+\label{sec:capability-uid-transition}
+
+La combinazione di tutte queste regole consente di riprodurre il comportamento
+ordinario di un sistema di tipo Unix tradizionale, ma può risultare
+problematica qualora si voglia passare ad una configurazione di sistema
+totalmente basata sull'applicazione delle \textit{capabilities}; in tal caso
+infatti basta ad esempio eseguire un programma con \acr{suid} bit di proprietà
+dell'amministratore per far riottenere ad un processo tutte le capacità
+presenti nel suo \textit{bounding set}, anche se si era avuta la cura di
+cancellarle dal \textit{permitted set}.
+
+\itindbeg{securebits}
+
+Per questo motivo a partire dal kernel 2.6.26, se le \textit{file
+  capabilities} sono abilitate, ad ogni processo viene stata associata una
+ulteriore maschera binaria, chiamata \textit{securebits flags}, su cui sono
+mantenuti una serie di flag (vedi tab.~\ref{tab:securebits_values}) il cui
+valore consente di modificare queste regole speciali che si applicano ai
+processi con \ids{UID} nullo. La maschera viene sempre mantenuta
+attraverso una \func{fork}, mentre attraverso una \func{exec} viene sempre
+cancellato il flag \const{SECURE\_KEEP\_CAPS}.
+
+\begin{table}[htb]
+  \centering
+  \footnotesize
+  \begin{tabular}{|l|p{10cm}|}
+    \hline
+    \textbf{Flag} & \textbf{Descrizione} \\
+    \hline
+    \hline
+    \constd{SECURE\_KEEP\_CAPS}&Il processo non subisce la cancellazione delle
+                                sue \textit{capabilities} quando tutti i suoi
+                                \ids{UID} passano ad un valore non
+                                nullo (regola di compatibilità per il cambio
+                                di \ids{UID} n.~3 del precedente
+                                elenco), sostituisce il precedente uso
+                                dell'operazione \const{PR\_SET\_KEEPCAPS} di
+                                \func{prctl}.\\
+    \constd{SECURE\_NO\_SETUID\_FIXUP}&Il processo non subisce le modifiche
+                                delle sue \textit{capabilities} nel passaggio
+                                da nullo a non nullo degli \ids{UID}
+                                dei gruppi \textit{effective} e
+                                \textit{file system} (regole di compatibilità
+                                per il cambio di \ids{UID} nn.~1 e 2 del
+                                precedente elenco).\\
+    \constd{SECURE\_NOROOT}   & Il processo non assume nessuna capacità
+                                aggiuntiva quando esegue un programma, anche
+                                se ha \ids{UID} nullo o il programma ha
+                                il \acr{suid} bit attivo ed appartiene
+                                all'amministratore (regola di compatibilità
+                                per l'esecuzione di programmi senza
+                                \textit{capabilities}).\\
+    \hline
+  \end{tabular}
+  \caption{Costanti identificative dei flag che compongono la maschera dei
+    \textit{securebits}.}  
+  \label{tab:securebits_values}
+\end{table}
+
+A ciascuno dei flag di tab.~\ref{tab:securebits_values} è inoltre abbinato un
+corrispondente flag di blocco, identificato da una costante omonima con
+l'estensione \texttt{\_LOCKED}, la cui attivazione è irreversibile ed ha
+l'effetto di rendere permanente l'impostazione corrente del corrispondente
+flag ordinario; in sostanza con \constd{SECURE\_KEEP\_CAPS\_LOCKED} si rende
+non più modificabile \const{SECURE\_KEEP\_CAPS}, ed analogamente avviene con
+\constd{SECURE\_NO\_SETUID\_FIXUP\_LOCKED} per
+\const{SECURE\_NO\_SETUID\_FIXUP} e con \constd{SECURE\_NOROOT\_LOCKED} per
+\const{SECURE\_NOROOT}.
+
+Per l'impostazione di questi flag sono state predisposte due specifiche
+operazioni di \func{prctl} (vedi sez.~\ref{sec:process_prctl}),
+\const{PR\_GET\_SECUREBITS}, che consente di ottenerne il valore, e
+\const{PR\_SET\_SECUREBITS}, che consente di modificarne il valore; per
+quest'ultima sono comunque necessari i privilegi di amministratore ed in
+particolare la capacità \const{CAP\_SETPCAP}. Prima dell'introduzione dei
+\textit{securebits} era comunque possibile ottenere lo stesso effetto di
+\const{SECURE\_KEEP\_CAPS} attraverso l'uso di un'altra operazione di
+\func{prctl}, \const{PR\_SET\_KEEPCAPS}.
+
+\itindend{securebits}
+
+Oltre alla gestione dei \textit{securebits} la nuova versione delle
+\textit{file capabilities} prevede l'uso di \func{prctl} anche per la gestione
+del \textit{capabilities bounding set}, attraverso altre due operazioni
+dedicate, \const{PR\_CAPBSET\_READ} per controllarne il valore e
+\const{PR\_CAPBSET\_DROP} per modificarlo; quest'ultima di nuovo è una
+operazione privilegiata che richiede la capacità \const{CAP\_SETPCAP} e che,
+come indica chiaramente il nome, permette solo la rimozione di una
+\textit{capability} dall'insieme; per i dettagli sull'uso di tutte queste
+operazioni si rimanda alla rilettura di sez.~\ref{sec:process_prctl}.
+
+\itindend{file~capabilities}
+
+
+% NOTE per dati relativi al process capability bounding set, vedi:
+% http://git.kernel.org/git/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=3b7391de67da515c91f48aa371de77cb6cc5c07e
+
+% NOTE riferimenti ai vari cambiamenti vedi:
+% http://lwn.net/Articles/280279/  
+% http://lwn.net/Articles/256519/
+% http://lwn.net/Articles/211883/
+
+
+Un elenco delle \textit{capabilities} disponibili su Linux, con una breve
+descrizione ed il nome delle costanti che le identificano, è riportato in
+tab.~\ref{tab:proc_capabilities};\footnote{l'elenco presentato questa tabella,
+  ripreso dalla pagina di manuale (accessibile con \texttt{man capabilities})
+  e dalle definizioni in \texttt{include/linux/capabilities.h}, è aggiornato
+  al kernel 3.2.} la tabella è divisa in due parti, la prima riporta le
+\textit{capabilities} previste anche nella bozza dello standard POSIX1.e, la
+seconda quelle specifiche di Linux.  Come si può notare dalla tabella alcune
+\textit{capabilities} attengono a singole funzionalità e sono molto
+specializzate, mentre altre hanno un campo di applicazione molto vasto, che è
+opportuno dettagliare maggiormente.
+
+\begin{table}[!hbtp]
+  \centering
+  \footnotesize
+  \begin{tabular}{|l|p{10cm}|}
+    \hline
+    \textbf{Capacità}&\textbf{Descrizione}\\
+    \hline
+    \hline
+%
+% POSIX-draft defined capabilities.
+%
+    \constd{CAP\_AUDIT\_CONTROL}& Abilitare e disabilitare il
+                              controllo dell'auditing (dal kernel 2.6.11).\\ 
+    \constd{CAP\_AUDIT\_WRITE}&Scrivere dati nel giornale di
+                              auditing del kernel (dal kernel 2.6.11).\\ 
+    % TODO verificare questa roba dell'auditing
+    \constd{CAP\_BLOCK\_SUSPEND}&Utilizzare funzionalità che possono bloccare 
+                              la sospensione del sistema (dal kernel 3.5).\\ 
+    \constd{CAP\_CHOWN}     & Cambiare proprietario e gruppo
+                              proprietario di un file (vedi
+                              sez.~\ref{sec:file_ownership_management}).\\
+    \constd{CAP\_DAC\_OVERRIDE}& Evitare il controllo dei
+                               permessi di lettura, scrittura ed esecuzione dei
+                               file, (vedi sez.~\ref{sec:file_access_control}).\\ 
+    \constd{CAP\_DAC\_READ\_SEARCH}& Evitare il controllo dei
+                              permessi di lettura ed esecuzione per
+                              le directory (vedi
+                              sez.~\ref{sec:file_access_control}).\\
+    \const{CAP\_FOWNER}     & Evitare il controllo della proprietà di un file
+                              per tutte le operazioni privilegiate non coperte
+                              dalle precedenti \const{CAP\_DAC\_OVERRIDE} e
+                              \const{CAP\_DAC\_READ\_SEARCH}.\\
+    \constd{CAP\_FSETID}    & Evitare la cancellazione automatica dei bit
+                              \acr{suid} e \acr{sgid} quando un file
+                              per i quali sono impostati viene modificato da
+                              un processo senza questa capacità e la capacità
+                              di impostare il bit \acr{sgid} su un file anche
+                              quando questo è relativo ad un gruppo cui non si
+                              appartiene (vedi
+                              sez.~\ref{sec:file_perm_management}).\\ 
+    \constd{CAP\_KILL}      & Mandare segnali a qualunque
+                              processo (vedi sez.~\ref{sec:sig_kill_raise}).\\
+    \constd{CAP\_SETFCAP}   & Impostare le \textit{capabilities} di un file
+                              (dal kernel 2.6.24).\\ 
+    \constd{CAP\_SETGID}    & Manipolare i group ID dei
+                              processi, sia il principale che i supplementari,
+                              (vedi sez.~\ref{sec:proc_setgroups}) che quelli
+                              trasmessi tramite i socket \textit{unix domain}
+                              (vedi sez.~\ref{sec:unix_socket}).\\
+    \constd{CAP\_SETUID}    & Manipolare gli user ID del
+                              processo (vedi sez.~\ref{sec:proc_setuid}) e di
+                              trasmettere un user ID arbitrario nel passaggio
+                              delle credenziali coi socket \textit{unix
+                                domain} (vedi sez.~\ref{sec:unix_socket}).\\ 
+%
+% Linux specific capabilities
+%
+\hline
+    \constd{CAP\_IPC\_LOCK} & Effettuare il \textit{memory locking} con le
+                              funzioni \func{mlock}, \func{mlockall},
+                              \func{shmctl}, \func{mmap} (vedi
+                              sez.~\ref{sec:proc_mem_lock} e 
+                              sez.~\ref{sec:file_memory_map}). \\ 
+% TODO verificare l'interazione con SHM_HUGETLB
+    \constd{CAP\_IPC\_OWNER}& Evitare il controllo dei permessi
+                              per le operazioni sugli oggetti di
+                              intercomunicazione fra processi (vedi
+                              sez.~\ref{sec:ipc_sysv}).\\  
+    \constd{CAP\_LEASE}     & Creare dei \textit{file lease} (vedi
+                              sez.~\ref{sec:file_asyncronous_lease})
+                              pur non essendo proprietari del file (dal kernel
+                              2.4).\\ 
+    \constd{CAP\_LINUX\_IMMUTABLE}& Impostare sui file gli attributi 
+                             \textit{immutable} e \textit{append-only} (vedi
+                             sez.~\ref{sec:file_perm_overview}) se
+                             supportati.\\
+    \constd{CAP\_MAC\_ADMIN}& Amministrare il \textit{Mandatory
+                               Access Control} di \textit{Smack} (dal kernel
+                              2.6.25).\\
+    \constd{CAP\_MAC\_OVERRIDE}& Evitare il \textit{Mandatory
+                               Access Control} di \textit{Smack} (dal kernel
+                              2.6.25).\\   
+    \constd{CAP\_MKNOD}     & Creare file di dispositivo con \func{mknod} (vedi
+                              sez.~\ref{sec:file_mknod}) (dal kernel 2.4).\\ 
+    \const{CAP\_NET\_ADMIN} & Eseguire alcune operazioni
+                              privilegiate sulla rete.\\
+    \constd{CAP\_NET\_BIND\_SERVICE}& Porsi in ascolto su porte riservate (vedi 
+                              sez.~\ref{sec:TCP_func_bind}).\\ 
+    \constd{CAP\_NET\_BROADCAST}& Consentire l'uso di socket in
+                              \textit{broadcast} e \textit{multicast}.\\ 
+    \constd{CAP\_NET\_RAW}  & Usare socket \texttt{RAW} e \texttt{PACKET}
+                              (vedi sez.~\ref{sec:sock_type}).\\ 
+    \const{CAP\_SETPCAP}    & Effettuare modifiche privilegiate alle
+                              \textit{capabilities}.\\   
+    \const{CAP\_SYS\_ADMIN} & Eseguire una serie di compiti amministrativi.\\
+    \constd{CAP\_SYS\_BOOT} & Eseguire un riavvio del sistema (vedi
+                              sez.~\ref{sec:sys_reboot}).\\ 
+    \constd{CAP\_SYS\_CHROOT}& Eseguire la funzione \func{chroot} (vedi 
+                              sez.~\ref{sec:file_chroot}).\\
+    \constd{CAP\_SYS\_MODULE}& Caricare e rimuovere moduli del kernel.\\ 
+    \const{CAP\_SYS\_NICE}  & Modificare le varie priorità dei processi (vedi 
+                              sez.~\ref{sec:proc_priority}).\\
+    \constd{CAP\_SYS\_PACCT}& Usare le funzioni di \textit{accounting} dei 
+                              processi (vedi
+                              sez.~\ref{sec:sys_bsd_accounting}).\\  
+    \constd{CAP\_SYS\_PTRACE}& La capacità di tracciare qualunque processo con
+                              \func{ptrace} (vedi 
+                              sez.~\ref{sec:process_ptrace}).\\
+    \constd{CAP\_SYS\_RAWIO}& Operare sulle porte di I/O con \func{ioperm} e
+                               \func{iopl} (vedi
+                              sez.~\ref{sec:process_io_port}).\\
+    \const{CAP\_SYS\_RESOURCE}& Superare le varie limitazioni sulle risorse.\\ 
+    \constd{CAP\_SYS\_TIME} & Modificare il tempo di sistema (vedi 
+                              sez.~\ref{sec:sys_time}).\\ 
+    \constd{CAP\_SYS\_TTY\_CONFIG}&Simulare un \textit{hangup} della console,
+                              con la funzione \func{vhangup}.\\
+    \constd{CAP\_SYSLOG}    & Gestire il buffer dei messaggi
+                              del kernel, (vedi sez.~\ref{sec:sess_daemon}),
+                              introdotta dal kernel 2.6.38 come capacità
+                              separata da \const{CAP\_SYS\_ADMIN}.\\
+    \constd{CAP\_WAKE\_ALARM}&Usare i timer di tipo
+                              \const{CLOCK\_BOOTTIME\_ALARM} e
+                              \const{CLOCK\_REALTIME\_ALARM}, vedi
+                              sez.~\ref{sec:sig_timer_adv} (dal kernel 3.0).\\  
+    \hline
+  \end{tabular}
+  \caption{Le costanti che identificano le \textit{capabilities} presenti nel
+    kernel.}
+\label{tab:proc_capabilities}
+\end{table}
+
+\constbeg{CAP\_SETPCAP}
+
+Prima di dettagliare il significato della capacità più generiche, conviene
+però dedicare un discorso a parte a \const{CAP\_SETPCAP}, il cui significato è
+stato completamente cambiato con l'introduzione delle \textit{file
+  capabilities} nel kernel 2.6.24. In precedenza questa capacità era quella
+che permetteva al processo che la possedeva di impostare o rimuovere le
+\textit{capabilities} presenti nel suo \textit{permitted set} su un qualunque
+altro processo. In realtà questo non è mai stato l'uso inteso nelle bozze
+dallo standard POSIX, ed inoltre, come si è già accennato, dato che questa
+capacità è sempre stata assente (a meno di specifiche ricompilazioni del
+kernel) nel \textit{capabilities bounding set} usato di default, essa non è
+neanche mai stata realmente disponibile.
+
+Con l'introduzione \textit{file capabilities} e il cambiamento del significato
+del \textit{capabilities bounding set} la possibilità di modificare le
+capacità di altri processi è stata completamente rimossa, e
+\const{CAP\_SETPCAP} ha acquisito quello che avrebbe dovuto essere il suo
+significato originario, e cioè la capacità del processo di poter inserire nel
+suo \textit{inheritable set} qualunque capacità presente nel \textit{bounding
+  set}. Oltre a questo la disponibilità di \const{CAP\_SETPCAP} consente ad un
+processo di eliminare una capacità dal proprio \textit{bounding set} (con la
+conseguente impossibilità successiva di eseguire programmi con quella
+capacità), o di impostare i \textit{securebits} delle \textit{capabilities}.
+
+\constend{CAP\_SETPCAP}
+\constbeg{CAP\_FOWNER}
+
+La prima fra le capacità ``\textsl{ampie}'' che occorre dettagliare
+maggiormente è \const{CAP\_FOWNER}, che rimuove le restrizioni poste ad un
+processo che non ha la proprietà di un file in un vasto campo di
+operazioni;\footnote{vale a dire la richiesta che l'\ids{UID} effettivo del
+  processo (o meglio l'\ids{UID} di filesystem, vedi
+  sez.~\ref{sec:proc_setuid}) coincida con quello del proprietario.}  queste
+comprendono i cambiamenti dei permessi e dei tempi del file (vedi
+sez.~\ref{sec:file_perm_management} e sez.~\ref{sec:file_file_times}), le
+impostazioni degli attributi dei file e delle ACL (vedi
+sez.~\ref{sec:file_xattr} e \ref{sec:file_ACL}), poter ignorare lo
+\textit{sticky bit} nella cancellazione dei file (vedi
+sez.~\ref{sec:file_special_perm}), la possibilità di impostare il flag di
+\const{O\_NOATIME} con \func{open} e \func{fcntl} (vedi
+sez.~\ref{sec:file_open_close} e sez.~\ref{sec:file_fcntl_ioctl}) senza
+restrizioni.
+
+\constend{CAP\_FOWNER}
+\constbeg{CAP\_NET\_ADMIN}
+
+Una seconda capacità che copre diverse operazioni, in questo caso riguardanti
+la rete, è \const{CAP\_NET\_ADMIN}, che consente di impostare le opzioni
+privilegiate dei socket (vedi sez.~\ref{sec:sock_generic_options}), abilitare
+il \textit{multicasting} (vedi sez.\ref{sec:sock_ipv4_options}), eseguire la
+configurazione delle interfacce di rete (vedi
+sez.~\ref{sec:sock_ioctl_netdevice}) ed impostare la tabella di instradamento.
+
+\constend{CAP\_NET\_ADMIN}
+\constbeg{CAP\_SYS\_ADMIN}
+
+Una terza \textit{capability} con vasto campo di applicazione è
+\const{CAP\_SYS\_ADMIN}, che copre una serie di operazioni amministrative,
+come impostare le quote disco (vedi sez.\ref{sec:disk_quota}), attivare e
+disattivare la \textit{swap}, montare, rimontare e smontare filesystem (vedi
+sez.~\ref{sec:filesystem_mounting}), effettuare operazioni di controllo su
+qualunque oggetto dell'IPC di SysV (vedi sez.~\ref{sec:ipc_sysv}), operare
+sugli attributi estesi dei file di classe \texttt{security} o \texttt{trusted}
+(vedi sez.~\ref{sec:file_xattr}), specificare un \ids{UID} arbitrario nella
+trasmissione delle credenziali dei socket (vedi
+sez.~\ref{sec:socket_credential_xxx}), assegnare classi privilegiate
+(\const{IOPRIO\_CLASS\_RT} e prima del kernel 2.6.25 anche
+\const{IOPRIO\_CLASS\_IDLE}) per lo scheduling dell'I/O (vedi
+sez.~\ref{sec:io_priority}), superare il limite di sistema sul numero massimo
+di file aperti,\footnote{quello indicato da \sysctlfiled{fs/file-max}.}
+effettuare operazioni privilegiate sulle chiavi mantenute dal kernel (vedi
+sez.~\ref{sec:keyctl_management}), usare la funzione \func{lookup\_dcookie},
+usare \const{CLONE\_NEWNS} con \func{unshare} e \func{clone}, (vedi
+sez.~\ref{sec:process_clone}).
+
+\constend{CAP\_SYS\_ADMIN}
+\constbeg{CAP\_SYS\_NICE}
+
+Originariamente \const{CAP\_SYS\_NICE} riguardava soltanto la capacità di
+aumentare le priorità di esecuzione dei processi, come la diminuzione del
+valore di \textit{nice} (vedi sez.~\ref{sec:proc_sched_stand}), l'uso delle
+priorità \textit{real-time} (vedi sez.~\ref{sec:proc_real_time}), o
+l'impostazione delle affinità di processore (vedi
+sez.~\ref{sec:proc_sched_multiprocess}); ma con l'introduzione di priorità
+anche riguardo le operazioni di accesso al disco, e, nel caso di sistemi NUMA,
+alla memoria, essa viene a coprire anche la possibilità di assegnare priorità
+arbitrarie nell'accesso a disco (vedi sez.~\ref{sec:io_priority}) e nelle
+politiche di allocazione delle pagine di memoria ai nodi di un sistema NUMA.
+
+\constend{CAP\_SYS\_NICE}
+\constbeg{CAP\_SYS\_RESOURCE}
+
+Infine la \textit{capability} \const{CAP\_SYS\_RESOURCE} attiene alla
+possibilità di superare i limiti imposti sulle risorse di sistema, come usare
+lo spazio disco riservato all'amministratore sui filesystem che lo supportano,
+usare la funzione \func{ioctl} per controllare il \textit{journaling} sul
+filesystem \acr{ext3}, non subire le quote disco, aumentare i limiti sulle
+risorse di un processo (vedi sez.~\ref{sec:sys_resource_limit}) e quelle sul
+numero di processi, ed i limiti sulle dimensioni dei messaggi delle code del
+SysV IPC (vedi sez.~\ref{sec:ipc_sysv_mq}).
+
+\constend{CAP\_SYS\_RESOURCE}
+
+Per la gestione delle \textit{capabilities} il kernel mette a disposizione due
+funzioni che permettono rispettivamente di leggere ed impostare i valori dei
+tre insiemi illustrati in precedenza. Queste due funzioni di sistema sono
+\funcd{capget} e \funcd{capset} e costituiscono l'interfaccia di gestione
+basso livello; i loro rispettivi prototipi sono:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{int capget(cap\_user\_header\_t hdrp, cap\_user\_data\_t datap)}
+\fdesc{Legge le \textit{capabilities}.} 
+\fdecl{int capset(cap\_user\_header\_t hdrp, const cap\_user\_data\_t datap)} 
+\fdesc{Imposta le \textit{capabilities}.} 
+}
+
+{Le funzioni ritornano $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} assumerà uno dei valori: 
+  \begin{errlist}
+  \item[\errcode{EFAULT}] si è indicato un puntatore sbagliato o nullo
+    per \param{hdrp} o \param{datap} (quest'ultimo può essere nullo solo se si
+    usa \func{capget} per ottenere la versione delle \textit{capabilities}
+    usata dal kernel).
+  \item[\errcode{EINVAL}] si è specificato un valore non valido per uno dei
+    campi di \param{hdrp}, in particolare una versione non valida della
+    versione delle \textit{capabilities}.
+  \item[\errcode{EPERM}] si è tentato di aggiungere una capacità nell'insieme
+    delle \textit{capabilities} permesse, o di impostare una capacità non
+    presente nell'insieme di quelle permesse negli insieme delle effettive o
+    ereditate, o si è cercato di impostare una \textit{capability} di un altro
+    processo senza avare \const{CAP\_SETPCAP}.
+  \item[\errcode{ESRCH}] si è fatto riferimento ad un processo inesistente.
+  \end{errlist}
+}
+\end{funcproto}
+
+Queste due funzioni prendono come argomenti due tipi di dati dedicati,
+definiti come puntatori a due strutture specifiche di Linux, illustrate in
+fig.~\ref{fig:cap_kernel_struct}.  Per un certo periodo di tempo era anche
+indicato che per poterle utilizzare fosse necessario che la macro
+\macro{\_POSIX\_SOURCE} risultasse non definita (ed era richiesto di inserire
+una istruzione \texttt{\#undef \_POSIX\_SOURCE} prima di includere
+\headfiled{sys/capability.h}) requisito che non risulta più
+presente.\footnote{e non è chiaro neanche quanto sia mai stato davvero
+  necessario.}
+
+\begin{figure}[!htb]
+  \footnotesize
+  \centering
+  \begin{minipage}[c]{0.8\textwidth}
+    \includestruct{listati/cap_user_header_t.h}
+  \end{minipage}
+  \normalsize 
+  \caption{Definizione delle strutture a cui fanno riferimento i puntatori
+    \structd{cap\_user\_header\_t} e \structd{cap\_user\_data\_t} usati per
+    l'interfaccia di gestione di basso livello delle \textit{capabilities}.}
+  \label{fig:cap_kernel_struct}
+\end{figure}
+
+Si tenga presente che le strutture di fig.~\ref{fig:cap_kernel_struct}, come i
+prototipi delle due funzioni \func{capget} e \func{capset}, sono soggette ad
+essere modificate con il cambiamento del kernel (in particolare i tipi di dati
+delle strutture) ed anche se finora l'interfaccia è risultata stabile, non c'è
+nessuna assicurazione che questa venga mantenuta,\footnote{viene però
+  garantito che le vecchie funzioni continuino a funzionare.} Pertanto se si
+vogliono scrivere programmi portabili che possano essere eseguiti senza
+modifiche o adeguamenti su qualunque versione del kernel è opportuno
+utilizzare le interfacce di alto livello che vedremo più avanti.
+
+La struttura a cui deve puntare l'argomento \param{hdrp} serve ad indicare,
+tramite il campo \var{pid}, il \ids{PID} del processo del quale si vogliono
+leggere o modificare le \textit{capabilities}. Con \func{capset} questo, se si
+usano le \textit{file capabilities}, può essere solo 0 o il \ids{PID} del
+processo chiamante, che sono equivalenti. Non tratteremo, essendo comunque di
+uso irrilevante, il caso in cui, in mancanza di tale supporto, la funzione può
+essere usata per modificare le \textit{capabilities} di altri processi, per il
+quale si rimanda, se interessati, alla lettura della pagina di manuale.
+
+Il campo \var{version} deve essere impostato al valore della versione delle
+stesse usata dal kernel (quello indicato da una delle costanti
+\texttt{\_LINUX\_CAPABILITY\_VERSION\_n} di fig.~\ref{fig:cap_kernel_struct})
+altrimenti le funzioni ritorneranno con un errore di \errcode{EINVAL},
+restituendo nel campo stesso il valore corretto della versione in uso. La
+versione due è comunque deprecata e non deve essere usata, ed il kernel
+stamperà un avviso se lo si fa.
+
+I valori delle \textit{capabilities} devono essere passati come maschere
+binarie;\footnote{e si tenga presente che i valori di
+  tab.~\ref{tab:proc_capabilities} non possono essere combinati direttamente,
+  indicando il numero progressivo del bit associato alla relativa capacità.}
+con l'introduzione delle \textit{capabilities} a 64 bit inoltre il
+puntatore \param{datap} non può essere più considerato come relativo ad una
+singola struttura, ma ad un vettore di due strutture.\footnote{è questo cambio
+  di significato che ha portato a deprecare la versione 2, che con
+  \func{capget} poteva portare ad un buffer overflow per vecchie applicazioni
+  che continuavano a considerare \param{datap} come puntatore ad una singola
+  struttura.}
+
+Dato che le precedenti funzioni, oltre ad essere specifiche di Linux, non
+garantiscono la stabilità nell'interfaccia, è sempre opportuno effettuare la
+gestione delle \textit{capabilities} utilizzando le funzioni di libreria a
+questo dedicate. Queste funzioni, che seguono quanto previsto nelle bozze
+dello standard POSIX.1e, non fanno parte della \acr{glibc} e sono fornite in
+una libreria a parte,\footnote{la libreria è \texttt{libcap2}, nel caso di
+  Debian può essere installata con il pacchetto omonimo.} pertanto se un
+programma le utilizza si dovrà indicare esplicitamente al compilatore l'uso
+della suddetta libreria attraverso l'opzione \texttt{-lcap}.
+
+\itindbeg{capability~state}
+
+Le funzioni dell'interfaccia alle \textit{capabilities} definite nelle bozze
+dello standard POSIX.1e prevedono l'uso di un tipo di dato opaco,
+\typed{cap\_t}, come puntatore ai dati mantenuti nel cosiddetto
+\textit{capability state},\footnote{si tratta in sostanza di un puntatore ad
+  una struttura interna utilizzata dalle librerie, i cui campi non devono mai
+  essere acceduti direttamente.} in sono memorizzati tutti i dati delle
+\textit{capabilities}.
+
+In questo modo è possibile mascherare i dettagli della gestione di basso
+livello, che potranno essere modificati senza dover cambiare le funzioni
+dell'interfaccia, che fanno riferimento soltanto ad oggetti di questo tipo.
+L'interfaccia pertanto non soltanto fornisce le funzioni per modificare e
+leggere le \textit{capabilities}, ma anche quelle per gestire i dati
+attraverso i \textit{capability state}, che presentano notevoli affinità,
+essendo parte di bozze dello stesso standard, con quelle già viste per le ACL.
+
+La prima funzione dell'interfaccia è quella che permette di inizializzare un
+\textit{capability state}, allocando al contempo la memoria necessaria per i
+relativi dati. La funzione è \funcd{cap\_init} ed il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{cap\_t cap\_init(void)}
+\fdesc{Crea ed inizializza un \textit{capability state}.} 
+}
+
+{La funzione ritorna un \textit{capability state} in caso di successo e
+  \val{NULL} per un errore, nel qual caso \var{errno} potrà assumere solo il
+  valore \errval{ENOMEM}.  }
+\end{funcproto}
+
+La funzione restituisce il puntatore \type{cap\_t} ad uno stato inizializzato
+con tutte le \textit{capabilities} azzerate. In caso di errore (cioè quando
+non c'è memoria sufficiente ad allocare i dati) viene restituito \val{NULL}
+ed \var{errno} viene impostata a \errval{ENOMEM}.  
+
+La memoria necessaria a mantenere i dati viene automaticamente allocata da
+\func{cap\_init}, ma dovrà essere disallocata esplicitamente quando non è più
+necessaria utilizzando, per questo l'interfaccia fornisce una apposita
+funzione, \funcd{cap\_free}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{int cap\_free(void *obj\_d)}
+\fdesc{Disalloca la memoria allocata per i dati delle \textit{capabilities}..} 
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} potrà assumere solo il valore \errval{EINVAL}.
+}
+\end{funcproto}
+
+
+La funzione permette di liberare la memoria allocata dalle altre funzioni
+della libreria sia per un \textit{capability state}, nel qual caso l'argomento
+sarà un dato di tipo \type{cap\_t}, che per una descrizione testuale dello
+stesso,\footnote{cioè quanto ottenuto tramite la funzione
+  \func{cap\_to\_text}.} nel qual caso l'argomento sarà un dato di tipo
+\texttt{char *}. Per questo motivo l'argomento \param{obj\_d} è dichiarato
+come \texttt{void *}, per evitare la necessità di eseguire un \textit{cast},
+ma dovrà comunque corrispondere ad un puntatore ottenuto tramite le altre
+funzioni della libreria, altrimenti la funzione fallirà con un errore di
+\errval{EINVAL}.
+
+Infine si può creare una copia di un \textit{capability state} ottenuto in
+precedenza tramite la funzione \funcd{cap\_dup}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{cap\_t cap\_dup(cap\_t cap\_p)}
+\fdesc{Duplica un \textit{capability state} restituendone una copia.} 
+}
+
+{La funzione ritorna un \textit{capability state} in caso di successo e
+  \val{NULL} per un errore, nel qual caso \var{errno} assumerà i valori
+  \errval{ENOMEM} o \errval{EINVAL} nel loro significato generico.}
+\end{funcproto}
+
+
+La funzione crea una copia del \textit{capability state} posto all'indirizzo
+\param{cap\_p} che si è passato come argomento, restituendo il puntatore alla
+copia, che conterrà gli stessi valori delle \textit{capabilities} presenti
+nell'originale. La memoria necessaria viene allocata automaticamente dalla
+funzione. Una volta effettuata la copia i due \textit{capability state}
+potranno essere modificati in maniera completamente indipendente, ed alla fine
+delle operazioni si dovrà disallocare anche la copia, oltre all'originale.
+
+Una seconda classe di funzioni di servizio previste dall'interfaccia sono
+quelle per la gestione dei dati contenuti all'interno di un \textit{capability
+  state}; la prima di queste è \funcd{cap\_clear}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{int cap\_clear(cap\_t cap\_p)}
+\fdesc{Inizializza un \textit{capability state} cancellando tutte le
+  \textit{capabilities}.}
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} potrà assumere solo il valore \errval{EINVAL}.
+}
+\end{funcproto}
+
+La funzione si limita ad azzerare tutte le \textit{capabilities} presenti nel
+\textit{capability state} all'indirizzo \param{cap\_p} passato come argomento,
+restituendo uno stato \textsl{vuoto}, analogo a quello che si ottiene nella
+creazione con \func{cap\_init}.
+
+Una variante di \func{cap\_clear} è \funcd{cap\_clear\_flag} che cancella da
+un \textit{capability state} tutte le \textit{capabilities} di un certo
+insieme fra quelli elencati a pag.~\pageref{sec:capabilities_set}, il suo
+prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{int cap\_clear\_flag(cap\_t cap\_p, cap\_flag\_t flag)} 
+\fdesc{Cancella delle \textit{capabilities} da un \textit{capability state}.} 
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno}  potrà assumere solo il valore \errval{EINVAL}.
+}
+\end{funcproto}
+
+La funzione richiede che si indichi quale degli insiemi si intente cancellare
+da \param{cap\_p} con l'argomento \param{flag}. Questo deve essere specificato
+con una variabile di tipo \type{cap\_flag\_t} che può assumere
+esclusivamente\footnote{si tratta in effetti di un tipo enumerato, come si può
+  verificare dalla sua definizione che si trova in
+  \headfile{sys/capability.h}.} uno dei valori illustrati in
+tab.~\ref{tab:cap_set_identifier}.
+
+\begin{table}[htb]
+  \centering
+  \footnotesize
+  \begin{tabular}[c]{|l|l|}
+    \hline
+    \textbf{Valore} & \textbf{Significato} \\
+    \hline
+    \hline
+    \constd{CAP\_EFFECTIVE}  & Capacità dell'insieme \textsl{effettivo}.\\
+    \constd{CAP\_PERMITTED}  & Capacità dell'insieme \textsl{permesso}.\\ 
+    \constd{CAP\_INHERITABLE}& Capacità dell'insieme \textsl{ereditabile}.\\
+    \hline
+  \end{tabular}
+  \caption{Valori possibili per il tipo di dato \typed{cap\_flag\_t} che
+    identifica gli insiemi delle \textit{capabilities}.}
+  \label{tab:cap_set_identifier}
+\end{table}
+
+Si possono inoltre confrontare in maniera diretta due diversi
+\textit{capability state} con la funzione \funcd{cap\_compare}; il suo
+prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{int cap\_compare(cap\_t cap\_a, cap\_t cap\_b)}
+\fdesc{Confronta due \textit{capability state}.} 
+}
+
+{La funzione ritorna $0$ se i \textit{capability state} sono identici
+    ed un valore positivo se differiscono, non sono previsti errori.}
+\end{funcproto}
+
+
+La funzione esegue un confronto fra i due \textit{capability state} passati
+come argomenti e ritorna in un valore intero il risultato, questo è nullo se
+sono identici o positivo se vi sono delle differenze. Il valore di ritorno
+della funzione consente inoltre di per ottenere ulteriori informazioni su
+quali sono gli insiemi di \textit{capabilities} che risultano differenti.  Per
+questo si può infatti usare la apposita macro \macro{CAP\_DIFFERS}:
+
+{\centering
+\vspace{3pt}
+\begin{funcbox}{
+\fhead{sys/capability.h}
+\fdecl{int \macrod{CAP\_DIFFERS}(value, flag)}
+\fdesc{Controlla lo stato di eventuali differenze delle \textit{capabilities}
+  nell'insieme \texttt{flag}.}
+}
+\end{funcbox}
+}
+
+La macro richiede che si passi nell'argomento \texttt{value} il risultato
+della funzione \func{cap\_compare} e in \texttt{flag} l'indicazione (coi
+valori di tab.~\ref{tab:cap_set_identifier}) dell'insieme che si intende
+controllare; restituirà un valore diverso da zero se le differenze rilevate da
+\func{cap\_compare} sono presenti nell'insieme indicato.
+
+Per la gestione dei singoli valori delle \textit{capabilities} presenti in un
+\textit{capability state} l'interfaccia prevede due funzioni specifiche,
+\funcd{cap\_get\_flag} e \funcd{cap\_set\_flag}, che permettono
+rispettivamente di leggere o impostare il valore di una capacità all'interno
+in uno dei tre insiemi già citati; i rispettivi prototipi sono:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{int cap\_get\_flag(cap\_t cap\_p, cap\_value\_t cap, cap\_flag\_t 
+flag,\\
+\phantom{int cap\_get\_flag(}cap\_flag\_value\_t *value\_p)}
+\fdesc{Legge il valore di una \textit{capability}.}
+\fdecl{int cap\_set\_flag(cap\_t cap\_p, cap\_flag\_t flag, int ncap,
+  cap\_value\_t *caps, \\
+\phantom{int cap\_set\_flag(}cap\_flag\_value\_t value)} 
+\fdesc{Imposta il valore di una \textit{capability}.} 
+}
+
+{Le funzioni ritornano $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} potrà assumere solo il valore \errval{EINVAL}.  
+}
+\end{funcproto}
+
+In entrambe le funzioni l'argomento \param{cap\_p} indica il puntatore al
+\textit{capability state} su cui operare, mentre l'argomento \param{flag}
+indica su quale dei tre insiemi si intende operare, sempre con i valori di
+tab.~\ref{tab:cap_set_identifier}.  La capacità che si intende controllare o
+impostare invece deve essere specificata attraverso una variabile di tipo
+\typed{cap\_value\_t}, che può prendere come valore uno qualunque di quelli
+riportati in tab.~\ref{tab:proc_capabilities}, in questo caso però non è
+possibile combinare diversi valori in una maschera binaria, una variabile di
+tipo \type{cap\_value\_t} può indicare una sola capacità.\footnote{in
+  \headfile{sys/capability.h} il tipo \type{cap\_value\_t} è definito come
+  \ctyp{int}, ma i valori validi sono soltanto quelli di
+  tab.~\ref{tab:proc_capabilities}.}
+
+Infine lo stato di una capacità è descritto ad una variabile di tipo
+\type{cap\_flag\_value\_t}, che a sua volta può assumere soltanto
+uno\footnote{anche questo è un tipo enumerato.} dei valori di
+tab.~\ref{tab:cap_value_type}.
+
+\begin{table}[htb]
+  \centering
+  \footnotesize
+  \begin{tabular}[c]{|l|l|}
+    \hline
+    \textbf{Valore} & \textbf{Significato} \\
+    \hline
+    \hline
+    \constd{CAP\_CLEAR}& La capacità non è impostata.\\ 
+    \constd{CAP\_SET}  & La capacità è impostata.\\
+    \hline
+  \end{tabular}
+  \caption{Valori possibili per il tipo di dato \typed{cap\_flag\_value\_t} che
+    indica lo stato di una capacità.}
+  \label{tab:cap_value_type}
+\end{table}
+
+La funzione \func{cap\_get\_flag} legge lo stato della capacità indicata
+dall'argomento \param{cap} all'interno dell'insieme indicato dall'argomento
+\param{flag} e lo restituisce come \textit{value result argument} nella
+variabile puntata dall'argomento \param{value\_p}. Questa deve essere di tipo
+\type{cap\_flag\_value\_t} ed assumerà uno dei valori di
+tab.~\ref{tab:cap_value_type}. La funzione consente pertanto di leggere solo
+lo stato di una capacità alla volta.
+
+La funzione \func{cap\_set\_flag} può invece impostare in una sola chiamata
+più \textit{capabilities}, anche se solo all'interno dello stesso insieme ed
+allo stesso valore. Per questo motivo essa prende un vettore di valori di tipo
+\type{cap\_value\_t} nell'argomento \param{caps}, la cui dimensione viene
+specificata dall'argomento \param{ncap}. Il tipo di impostazione da eseguire
+(cancellazione o attivazione) per le capacità elencate in \param{caps} viene
+indicato dall'argomento \param{value} sempre con i valori di
+tab.~\ref{tab:cap_value_type}.
+
+Per semplificare la gestione delle \textit{capabilities} l'interfaccia prevede
+che sia possibile utilizzare anche una rappresentazione testuale del contenuto
+di un \textit{capability state} e fornisce le opportune funzioni di
+gestione;\footnote{entrambe erano previste dalla bozza dello standard
+  POSIX.1e.} la prima di queste, che consente di ottenere la rappresentazione
+testuale, è \funcd{cap\_to\_text}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{char *cap\_to\_text(cap\_t caps, ssize\_t *length\_p)}
+\fdesc{Genera una visualizzazione testuale delle \textit{capabilities}.} 
+}
+
+{La funzione ritorna un puntatore alla stringa con la descrizione delle
+  \textit{capabilities} in caso di successo e \val{NULL} per un errore, nel
+  qual caso \var{errno} assumerà i valori \errval{EINVAL} o \errval{ENOMEM}
+  nel loro significato generico.}
+\end{funcproto}
+
+La funzione ritorna l'indirizzo di una stringa contente la descrizione
+testuale del contenuto del \textit{capability state} \param{caps} passato come
+argomento, e, qualora l'argomento \param{length\_p} sia diverso da \val{NULL},
+restituisce come \textit{value result argument} nella variabile intera da
+questo puntata la lunghezza della stringa. La stringa restituita viene
+allocata automaticamente dalla funzione e pertanto dovrà essere liberata con
+\func{cap\_free}.
+
+La rappresentazione testuale, che viene usata anche dai programmi di gestione a
+riga di comando, prevede che lo stato venga rappresentato con una stringa di
+testo composta da una serie di proposizioni separate da spazi, ciascuna delle
+quali specifica una operazione da eseguire per creare lo stato finale. Nella
+rappresentazione si fa sempre conto di partire da uno stato in cui tutti gli
+insiemi sono vuoti e si provvede a impostarne i contenuti.
+
+Ciascuna proposizione è nella forma di un elenco di capacità, espresso con i
+nomi di tab.~\ref{tab:proc_capabilities} separati da virgole, seguito da un
+operatore, e dall'indicazione degli insiemi a cui l'operazione si applica. I
+nomi delle capacità possono essere scritti sia maiuscoli che minuscoli, viene
+inoltre riconosciuto il nome speciale \texttt{all} che è equivalente a
+scrivere la lista completa. Gli insiemi sono identificati dalle tre lettere
+iniziali: ``\texttt{p}'' per il \textit{permitted}, ``\texttt{i}'' per
+l'\textit{inheritable} ed ``\texttt{e}'' per l'\textit{effective} che devono
+essere sempre minuscole, e se ne può indicare più di uno.
+
+Gli operatori possibili sono solo tre: ``\texttt{+}'' che aggiunge le capacità
+elencate agli insiemi indicati, ``\texttt{-}'' che le toglie e ``\texttt{=}''
+che le assegna esattamente. I primi due richiedono che sia sempre indicato sia
+un elenco di capacità che gli insiemi a cui esse devono applicarsi, e
+rispettivamente attiveranno o disattiveranno le capacità elencate nell'insieme
+o negli insiemi specificati, ignorando tutto il resto. I due operatori possono
+anche essere combinati nella stessa proposizione, per aggiungere e togliere le
+capacità dell'elenco da insiemi diversi.
+
+L'assegnazione si applica invece su tutti gli insiemi allo stesso tempo,
+pertanto l'uso di ``\texttt{=}'' è equivalente alla cancellazione preventiva
+di tutte le capacità ed alla impostazione di quelle elencate negli insiemi
+specificati, questo significa che in genere lo si usa una sola volta
+all'inizio della stringa. In tal caso l'elenco delle capacità può non essere
+indicato e viene assunto che si stia facendo riferimento a tutte quante senza
+doverlo scrivere esplicitamente.
+
+Come esempi avremo allora che un processo non privilegiato di un utente, che
+non ha nessuna capacità attiva, avrà una rappresentazione nella forma
+``\texttt{=}'' che corrisponde al fatto che nessuna capacità viene assegnata a
+nessun insieme (vale la cancellazione preventiva), mentre un processo con
+privilegi di amministratore avrà una rappresentazione nella forma
+``\texttt{=ep}'' in cui tutte le capacità vengono assegnate agli insiemi
+\textit{permitted} ed \textit{effective} (e l'\textit{inheritable} è ignorato
+in quanto per le regole viste a pag.~\ref{sec:capability-uid-transition} le
+capacità verranno comunque attivate attraverso una \func{exec}). Infine, come
+esempio meno banale dei precedenti, otterremo per \texttt{init} una
+rappresentazione nella forma ``\texttt{=ep cap\_setpcap-e}'' dato che come
+accennato tradizionalmente \const{CAP\_SETPCAP} è sempre stata rimossa da
+detto processo.
+
+Viceversa per ottenere un \textit{capability state} dalla sua rappresentazione
+testuale si può usare la funzione \funcd{cap\_from\_text}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{cap\_t cap\_from\_text(const char *string)}
+\fdesc{Crea un \textit{capability state} dalla sua rappresentazione testuale.} 
+}
+
+{La funzione ritorna un \textit{capability state} in caso di successo e
+  \val{NULL} per un errore, nel qual caso \var{errno} assumerà i valori
+  \errval{EINVAL} o \errval{ENOMEM} nel loro significato generico.}
+\end{funcproto}
+
+
+La funzione restituisce il puntatore ad un \textit{capability state}
+inizializzato con i valori indicati nella stringa \param{string} che ne
+contiene la rappresentazione testuale. La memoria per il \textit{capability
+  state} viene allocata automaticamente dalla funzione e dovrà essere liberata
+con \func{cap\_free}.
+
+Alle due funzioni citate se ne aggiungono altre due che consentono di
+convertire i valori delle costanti di tab.~\ref{tab:proc_capabilities} nelle
+stringhe usate nelle rispettive rappresentazioni e viceversa. Le due funzioni,
+\funcd{cap\_to\_name} e \funcd{cap\_from\_name}, sono estensioni specifiche di
+Linux ed i rispettivi prototipi sono:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{char *cap\_to\_name(cap\_value\_t cap)}
+\fdesc{Converte il valore numerico di una \textit{capabilities} alla sua
+  rappresentazione testuale.} 
+\fdecl{int cap\_from\_name(const char *name, cap\_value\_t *cap\_p)}
+
+\fdesc{Converte la rappresentazione testuale di una \textit{capabilities} al
+  suo valore numerico.} 
+}
+
+{La funzione \func{cap\_to\_name} ritorna un puntatore ad una stringa in caso
+  di successo e \val{NULL} per un errore, mentre \func{cap\_to\_name} ritorna
+  $0$ in caso di successo e $-1$ per un errore, per entrambe in caso di errore
+  \var{errno} assumerà i valori \errval{EINVAL} o \errval{ENOMEM} nel loro
+  significato generico.  
+}
+\end{funcproto}
+
+La prima funzione restituisce la stringa (allocata automaticamente e che dovrà
+essere liberata con \func{cap\_free}) che corrisponde al valore della
+capacità \param{cap}, mentre la seconda restituisce nella variabile puntata
+da \param{cap\_p}, come \textit{value result argument}, il valore della
+capacità rappresentata dalla stringa \param{name}.
+
+Fin quei abbiamo trattato solo le funzioni di servizio relative alla
+manipolazione dei \textit{capability state} come strutture di dati;
+l'interfaccia di gestione prevede però anche le funzioni per trattare le
+\textit{capabilities} presenti nei processi. La prima di queste funzioni è
+\funcd{cap\_get\_proc} che consente la lettura delle \textit{capabilities} del
+processo corrente, il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{cap\_t cap\_get\_proc(void)}
+\fdesc{Legge le \textit{capabilities} del processo corrente.} 
+}
+
+{La funzione ritorna un \textit{capability state} in caso di successo e
+  \val{NULL} per un errore, nel qual caso \var{errno} assumerà i valori
+  \errval{EINVAL}, \errval{EPERM} o \errval{ENOMEM} nel loro significato
+  generico.}
+\end{funcproto}
+
+La funzione legge il valore delle \textit{capabilities} associate al processo
+da cui viene invocata, restituendo il risultato tramite il puntatore ad un
+\textit{capability state} contenente tutti i dati che provvede ad allocare
+autonomamente e che di nuovo occorrerà liberare con \func{cap\_free} quando
+non sarà più utilizzato.
+
+Se invece si vogliono leggere le \textit{capabilities} di un processo
+specifico occorre usare la funzione \funcd{cap\_get\_pid}, il cui
+prototipo\footnote{su alcune pagine di manuale la funzione è descritta con un
+  prototipo sbagliato, che prevede un valore di ritorno di tipo \type{cap\_t},
+  ma il valore di ritorno è intero, come si può verificare anche dalla
+  dichiarazione della stessa in \headfile{sys/capability.h}.} è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{cap\_t cap\_get\_pid(pid\_t pid)}
+\fdesc{Legge le \textit{capabilities} di un processo.} 
+}
+
+{La funzione ritorna un \textit{capability state} in caso di successo e
+  \val{NULL} per un errore, nel qual caso \var{errno} assumerà i valori
+  \errval{ESRCH} o \errval{ENOMEM} nel loro significato generico.  }
+\end{funcproto}
+
+La funzione legge il valore delle \textit{capabilities} del processo indicato
+con l'argomento \param{pid}, e restituisce il risultato tramite il puntatore
+ad un \textit{capability state} contenente tutti i dati che provvede ad
+allocare autonomamente e che al solito deve essere disallocato con
+\func{cap\_free}. Qualora il processo indicato non esista si avrà un errore di
+\errval{ESRCH}. Gli stessi valori possono essere letti direttamente nel
+filesystem \textit{proc}, nei file \texttt{/proc/<pid>/status}; ad esempio per
+\texttt{init} si otterrà qualcosa del tipo:
+\begin{Console}
+piccardi@hain:~/gapil$ \textbf{cat /proc/1/status}
+...
+CapInh: 0000000000000000
+CapPrm: 00000000fffffeff
+CapEff: 00000000fffffeff  
+...
+\end{Console}
+%$
+
+\itindend{capability~state}
+
+Infine per impostare le \textit{capabilities} del processo corrente (nella
+bozza dello standard POSIX.1e non esiste una funzione che permetta di cambiare
+le \textit{capabilities} di un altro processo) si deve usare la funzione
+\funcd{cap\_set\_proc}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/capability.h}
+\fdecl{int cap\_set\_proc(cap\_t cap\_p)}
+\fdesc{Imposta le \textit{capabilities} del processo corrente.} 
+}
+
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+  caso \var{errno} assumerà i valori:
+  \begin{errlist}
+  \item[\errcode{EPERM}] si è cercato di attivare una capacità non permessa.
+  \end{errlist} ed inoltre \errval{EINVAL} nel suo significato generico.}
+\end{funcproto}
+
+La funzione modifica le \textit{capabilities} del processo corrente secondo
+quanto specificato con l'argomento \param{cap\_p}, posto che questo sia
+possibile nei termini spiegati in precedenza (non sarà ad esempio possibile
+impostare capacità non presenti nell'insieme di quelle permesse). 
+
+In caso di successo i nuovi valori saranno effettivi al ritorno della
+funzione, in caso di fallimento invece lo stato delle capacità resterà
+invariato. Si tenga presente che \textsl{tutte} le capacità specificate
+tramite \param{cap\_p} devono essere permesse; se anche una sola non lo è la
+funzione fallirà, e per quanto appena detto, lo stato delle
+\textit{capabilities} non verrà modificato (neanche per le parti eventualmente
+permesse).
+
+Oltre a queste funzioni su Linux sono presenti due ulteriori funzioni,
+\funcm{capgetp} e \funcm{capsetp}, che svolgono un compito analogo. Queste
+funzioni risalgono alla implementazione iniziale delle \textit{capabilities}
+ed in particolare \funcm{capsetp} consentirebbe anche, come possibile in quel
+caso, di cambiare le capacità di un altro processo. Le due funzioni oggi sono
+deprecate e pertanto eviteremo di trattarle, per chi fosse interessato si
+rimanda alla lettura della loro pagina di manuale.
+
+Come esempio di utilizzo di queste funzioni nei sorgenti allegati alla guida
+si è distribuito il programma \texttt{getcap.c}, che consente di leggere le
+\textit{capabilities} del processo corrente\footnote{vale a dire di sé stesso,
+  quando lo si lancia, il che può sembrare inutile, ma serve a mostrarci quali
+  sono le \textit{capabilities} standard che ottiene un processo lanciato
+  dalla riga di comando.} o tramite l'opzione \texttt{-p}, quelle di un
+processo qualunque il cui \ids{PID} viene passato come parametro dell'opzione.
+
+\begin{figure}[!htbp]
+  \footnotesize \centering
+  \begin{minipage}[c]{\codesamplewidth}
+    \includecodesample{listati/getcap.c}
+  \end{minipage} 
+  \normalsize
+  \caption{Corpo principale del programma \texttt{getcap.c}.}
+  \label{fig:proc_getcap}
+\end{figure}
+
+La sezione principale del programma è riportata in fig.~\ref{fig:proc_getcap},
+e si basa su una condizione sulla variabile \var{pid} che se si è usato
+l'opzione \texttt{-p} è impostata (nella sezione di gestione delle opzioni,
+che si è tralasciata) al valore del \ids{PID} del processo di cui si vuole
+leggere le \textit{capabilities} e nulla altrimenti. Nel primo caso
+(\texttt{\small 1-6}) si utilizza (\texttt{\small 2}) \func{cap\_get\_proc}
+per ottenere lo stato delle capacità del processo, nel secondo (\texttt{\small
+  7-13}) si usa invece \func{cap\_get\_pid} (\texttt{\small 8}) per leggere
+il valore delle capacità del processo indicato.
+
+Il passo successivo è utilizzare (\texttt{\small 15}) \func{cap\_to\_text} per
+tradurre in una stringa lo stato, e poi (\texttt{\small 16}) stamparlo; infine
+(\texttt{\small 18-19}) si libera la memoria allocata dalle precedenti
+funzioni con \func{cap\_free} per poi ritornare dal ciclo principale della
+funzione.
+
+\itindend{capabilities}
+
+% TODO vedi http://lwn.net/Articles/198557/ e 
+% http://www.madore.org/~david/linux/newcaps/
+
+
+
+
+\subsection{La gestione del \textit{Secure Computing}.}
+\label{sec:procadv_seccomp}
+
+\itindbeg{secure~computing~mode}
+
+Il \textit{secure computing mode} è un meccanismo ideato per fornire un
+supporto per l'esecuzione di codice esterno non fidato e non verificabile a
+scopo di calcolo. L'idea era quella di disporre di una modalità di esecuzione
+dei programmi che permettesse di vendere la capacità di calcolo della propria
+macchina ad un qualche servizio di calcolo distribuito, senza comprometterne
+la sicurezza eseguendo codice non sotto il proprio controllo.
+
+La prima versione del meccanismo è stata introdotta con il kernel
+2.6.23,\footnote{e disponibile solo avendo abilitato il supporto nel kernel
+  con l'opzione di configurazione \texttt{CONFIG\_SECCOMP}.} è molto semplice,
+il \textit{secure computing mode} viene attivato con \func{prctl} usando
+l'opzione \const{PR\_SET\_SECCOMP}, ed indicando \const{SECCOMP\_MODE\_STRICT}
+come valore per \param{arg2} (all'epoca unico valore possibile).  Una volta
+abilitato in questa modalità (in seguito denominata \textit{strict mode}) il
+processo o il \textit{thread} chiamante potrà utilizzare soltanto un insieme
+estremamente limitato di \textit{system call}: \func{read}, \func{write},
+\func{\_exit} e \funcm{sigreturn}; l'esecuzione di qualsiasi altra
+\textit{system call} comporta l'emissione di un \signal{SIGKILL} e conseguente
+terminazione immediata del processo.
+
+Si tenga presente che in questo caso, con versioni recenti della \acr{glibc}
+(il comportamento è stato introdotto con la 2.3), diventa impossibile usare
+anche \func{\_exit} in \textit{strict mode}, in quanto questa funzione viene
+intercettata ed al suo posto viene chiamata \func{exit\_group} (vedi
+sez.~\ref{sec:pthread_management}) che non è consentita e comporta un
+\signal{SIGKILL}.
+
+Si tenga presente che, non essendo \func{execve} fra le funzioni permesse, per
+poter eseguire un programma terzo essendo in \textit{strict mode} questo dovrà
+essere fornito in una forma di codice interpretabile fornito attraverso un
+socket o una \textit{pipe}, creati prima di lanciare il processo che eseguirà
+il codice non fidato. 
+
+
+% TODO a partire dal kernel 3.5 è stato introdotto la possibilità di usare un
+% terzo argomento se il secondo è SECCOMP_MODE_FILTER, vedi
+% Documentation/prctl/seccomp_filter.txt 
+% vedi anche http://lwn.net/Articles/600250/
+
+% TODO documentare PR_SET_SECCOMP introdotto a partire dal kernel 3.5. Vedi:
+% * Documentation/prctl/seccomp_filter.txt
+% * http://lwn.net/Articles/475043/
+
+% TODO a partire dal kernel 3.17 è stata introdotta la nuova syscall seccomp,
+% vedi http://lwn.net/Articles/600250/ e http://lwn.net/Articles/603321/
+
+
+\itindend{secure~computing~mode}
+
+\subsection{Altre funzionalità di sicurezza.}
+\label{sec:procadv_security_misc}
+
+Oltre alle funzionalità specifiche esaminate nelle sezioni precedenti, il
+kernel supporta una varietà di ulteriori impostazioni di sicurezza,
+accessibili nelle maniere più varie, che abbiamo raccolto in questa sezione.
+
+Una serie di modalità di sicurezza sono attivabili a richiesta attraverso
+alcune opzioni di controllo attivabili via \func{sysctl} o il filesystem
+\texttt{/proc}, un elenco delle stesse e dei loro effetti è il seguente:
+
+\begin{basedescript}{\desclabelwidth{1cm}\desclabelstyle{\nextlinelabel}}
+\item[\sysctlrelfiled{fs}{protected\_hardlinks}] Un valore nullo, il default,
+  mantiene il comportamento standard che non pone restrizioni alla creazione
+  di \textit{hard link}. Se il valore viene posto ad 1 vengono invece attivate
+  una serie di restrizioni protettive, denominate
+  \itindex{protected~hardlinks} \textit{protected hardlinks}, che se non
+  soddisfatte causano il fallimento di \func{link} con un errore di
+  \errval{EPERM}. Perché questo non avvenga almeno una delle seguenti
+  condizioni deve essere soddisfatta:
+  \begin{itemize*}
+  \item il chiamante deve avere privilegi amministrativi (la
+    \textit{capability} \const{CAP\_FOWNER}). In caso di utilizzo
+    dell'\textit{user namespace} oltre a possedere \const{CAP\_FOWNER} è
+    necessario che l'\ids{UID} del proprietario del file sia mappato nel
+    \textit{namespace}.
+  \item il \textit{filesystem} \ids{UID} del chiamante (normalmente
+    equivalente all'\ids{UID} effettivo) deve corrispondere a quello del
+    proprietario del file a cui si vuole effettuare il collegamento.
+  \item devono essere soddisfatte tutte le seguenti condizioni:
+    \begin{itemize*}
+    \item il file è un file ordinario
+    \item il file non ha il \acr{suid} bit attivo
+    \item il file non ha lo \acr{sgid} bit attivo ed il permesso di esecuzione
+      per il gruppo
+    \item il chiamante ha i permessi di lettura e scrittura sul file
+    \end{itemize*}
+  \end{itemize*}
+
+  In sostanza in questo caso un utente potrà creare un collegamento diretto ad
+  un altro file solo se ne è il proprietario o se questo è un file ordinario
+  senza permessi speciali ed a cui ha accesso in lettura e scrittura.
+
+  Questa funzionalità fornisce una protezione generica che non inficia l'uso
+  ordinario di \func{link}, ma rende impraticabili una serie di possibili
+  abusi della stessa; oltre ad impedire l'uso di un \textit{hard link} come
+  variante in un attacco di \textit{symlink race} (eludendo i
+  \textit{protected symlinks} di cui al punto successivo), evita anche che si
+  possa lasciare un riferimento ad un eventuale programma \acr{suid}
+  vulnerabile, creando un collegamento diretto allo stesso.
+
+
+\item[\sysctlrelfiled{fs}{protected\_symlinks}] Un valore nullo, il default,
+  mantiene il comportamento standard che non pone restrizioni nel seguire i
+  link simbolici. Se il valore viene posto ad 1 vengono attivate delle
+  restrizioni protettive, denominate \itindex{protected~symlinks}
+  \textit{protected symlinks}. Quando vengono attivate una qualunque funzione
+  che esegua la risoluzione di un \textit{pathname} contenente un link
+  simbolico non conforme alle restrizioni fallirà con un errore di
+  \errval{EACCESS}. Per evitare l'errore deve essere soddisfatta una delle
+  seguenti condizioni:
+  \begin{itemize*}
+  \item il link non è in una directory con permessi analoghi a \file{/tmp}
+    (scrivibile a tutti e con lo \textit{sticky bit} attivo);
+  \item il link è in una directory con permessi analoghi a \file{/tmp} ma è
+    soddisfatta una delle condizioni seguenti: 
+    \begin{itemize*}
+    \item il link simbolico appartiene al chiamante: il controllo viene fatto
+      usando il \textit{filesystem} \ids{UID} (che normalmente corrisponde
+      all'\ids{UID} effettivo).
+    \item il link simbolico ha lo stesso proprietario della directory.
+    \end{itemize*}
+  \end{itemize*}
+
+  Questa funzionalità consente di rendere impraticabili alcuni attacchi in cui
+  si approfitta di una differenza di tempo fra il controllo e l'uso di un
+  file, ed in particolare quella classe di attacchi viene usualmente chiamati
+  \textit{symlink attack},\footnote{si tratta di un sottoinsieme di quella
+    classe di attacchi chiamata genericamente \textit{TOCTTOU}, acronimo
+    appunto di \textit{Time of check to time of use}.} di cui abbiamo parlato
+  in sez.~\ref{sec:file_temp_file}.
+
+  Un possibile esempio di questo tipo di attacco è quello contro un programma
+  che viene eseguito per conto di un utente privilegiato (ad esempio un
+  programma con il \acr{suid} o lo \acr{sgid} bit attivi) che prima controlla
+  l'esistenza di un file e se non esiste lo crea. Se questa procedura, che è
+  tipica della creazione di file temporanei sotto \file{/tmp}, non viene
+  eseguita in maniera corretta,\footnote{ad esempio con le modalità che
+    abbiamo trattato in sez.~\ref{sec:file_temp_file}, che per quanto note da
+    tempo continuano ad essere ignorate.} un attaccante ha una finestra di
+  tempo in cui può creare prima del programma un \textit{link simbolico} ad un
+  file di sua scelta, compresi file di dispositivo o file a cui non avrebbe
+  accesso, facendolo poi utilizzare al programma.
+
+  Attivando la funzionalità si rende impossibile seguire un link simbolico in
+  una directory temporanea come \texttt{/tmp}, a meno che questo non sia di
+  proprietà del chiamante, o che questo non appartenga al proprietario della
+  directory. Questo impedisce che i link simbolici creati da un attaccante
+  possano essere seguiti da un programma privilegiato (perché apparterranno
+  all'attaccante) mentre quelli creati dall'amministratore (che i genere è il
+  proprietario di \texttt{/tmp}) saranno seguiti comunque.
+
+\end{basedescript}
+
+
+% TODO: trattare pure protected_regular e protected_fifos introdotti con il
+% 4.19 (vedi https://lwn.net/Articles/763106/)
+
+
+
+% TODO: trattare keyctl (man 2 keyctl)
+
+
+
+% TODO trattare le funzioni di protezione della memoria pkey_alloc, pkey_free,
+% pkey_mprotect, introdotte con il kernel 4.8, vedi
+% http://lwn.net/Articles/689395/ e Documentation/x86/protection-keys.txt 
+
+\section{Funzioni di gestione e controllo}
+\label{sec:proc_manage_control}
+
+In questa sezione prenderemo in esame alcune specifiche \textit{system call}
+dedicate al controllo dei processi sia per quanto riguarda l'impostazione di
+caratteristiche specialistiche, che per quanto riguarda l'analisi ed il
+controllo della loro esecuzione.
+
+\subsection{La funzione \func{prctl}}
+\label{sec:process_prctl}
+
+Benché la gestione ordinaria dei processi possa essere effettuata attraverso
+le funzioni che abbiamo già esaminato nei capitoli \ref{cha:process_interface}
+e \ref{cha:process_handling}, esistono una serie di proprietà e
+caratteristiche specifiche dei processi per la cui gestione è stata
+predisposta una apposita \textit{system call} che fornisce una interfaccia
+generica per tutte le operazioni specialistiche. La funzione di sistema è
+\funcd{prctl} ed il suo prototipo è:\footnote{la funzione non è standardizzata
+  ed è specifica di Linux, anche se ne esiste una analoga in IRIX; è stata
+  introdotta con il kernel 2.1.57.}
+
+\begin{funcproto}{ 
+\fhead{sys/prctl.h}
+\fdecl{int prctl(int option, unsigned long arg2, unsigned long arg3, unsigned
+  long arg4, \\
+\phantom{int prctl(}unsigned long arg5)}
+\fdesc{Esegue una operazione speciale sul processo corrente.} 
+}
+
+{La funzione ritorna $0$ o un valore positivo dipendente dall'operazione in
+  caso di successo e $-1$ per un errore, nel qual caso \var{errno} assumerà
+  valori diversi a seconda del tipo di operazione richiesta, sono possibili:
+  \errval{EACCESS}, \errval{EBADF}, \errval{EBUSY}, \errval{EFAULT},
+  \errval{EINVAL}, \errval{ENXIO}, \errval{EOPNOTSUPP} o \errval{EPERM}.}
+\end{funcproto}
+
+La funzione ritorna in caso di successo un valore nullo o positivo, e $-1$ in
+caso di errore. Il significato degli argomenti della funzione successivi al
+primo, il valore di ritorno in caso di successo, il tipo di errore restituito
+in \var{errno} dipendono dall'operazione eseguita, indicata tramite il primo
+argomento, \param{option}. Questo è un valore intero che identifica
+l'operazione, e deve essere specificato con l'uso di una delle costanti
+predefinite del seguente elenco.\footnote{l'elenco potrebbe non risultare
+  aggiornato, in quanto nuove operazioni vengono aggiunte nello sviluppo del
+  kernel.} Tratteremo esplicitamente per ciascuna di esse il significato del
+il valore di ritorno in caso di successo, ma solo quando non corrisponde
+all'ordinario valore nullo (dato per implicito).
+
+%TODO: trattare PR_CAP_AMBIENT, dal 4.3
+%TODO: trattare PR_CAP_FP_*, dal 4.0, solo per MIPS
+%TODO: trattare PR_MPX_*_MANAGEMENT, dal 3.19
+%TODO: trattare PR_*NO_NEW_PRIVS, dal 3.5
+
+\begin{basedescript}{\desclabelwidth{1.5cm}\desclabelstyle{\nextlinelabel}}
+\item[\constd{PR\_CAPBSET\_READ}] Controlla la disponibilità di una delle
+  \textit{capability} (vedi sez.~\ref{sec:proc_capabilities}). La funzione
+  ritorna 1 se la capacità specificata nell'argomento \param{arg2} (con una
+  delle costanti di tab.~\ref{tab:proc_capabilities}) è presente nel
+  \textit{capabilities bounding set} del processo e zero altrimenti,
+  se \param{arg2} non è un valore valido si avrà un errore di \errval{EINVAL}.
+  Introdotta a partire dal kernel 2.6.25.
+
+\item[\constd{PR\_CAPBSET\_DROP}] Rimuove permanentemente una delle
+  \textit{capabilities} (vedi sez.~\ref{sec:proc_capabilities}) dal processo e
+  da tutti i suoi discendenti. La funzione cancella la capacità specificata
+  nell'argomento \param{arg2} con una delle costanti di
+  tab.~\ref{tab:proc_capabilities} dal \textit{capabilities bounding set} del
+  processo. L'operazione richiede i privilegi di amministratore (la capacità
+  \const{CAP\_SETPCAP}), altrimenti la chiamata fallirà con un errore di
+  \errcode{EPERM}; se il valore di \param{arg2} non è valido o se il supporto
+  per le \textit{file capabilities} non è stato compilato nel kernel la
+  chiamata fallirà con un errore di \errval{EINVAL}. Introdotta a partire dal
+  kernel 2.6.25.
+
+\item[\constd{PR\_SET\_DUMPABLE}] Imposta il flag che determina se la
+  terminazione di un processo a causa di un segnale per il quale è prevista la
+  generazione di un file di \textit{core dump} (vedi
+  sez.~\ref{sec:sig_standard}) lo genera effettivamente. In genere questo flag
+  viene attivato automaticamente, ma per evitare problemi di sicurezza (la
+  generazione di un file da parte di processi privilegiati può essere usata
+  per sovrascriverne altri) viene cancellato quando si mette in esecuzione un
+  programma con i bit \acr{suid} e \acr{sgid} attivi (vedi
+  sez.~\ref{sec:file_special_perm}) o con l'uso delle funzioni per la modifica
+  degli \ids{UID} dei processi (vedi sez.~\ref{sec:proc_setuid}).
+
+  L'operazione è stata introdotta a partire dal kernel 2.3.20, fino al kernel
+  2.6.12 e per i kernel successivi al 2.6.17 era possibile usare solo un
+  valore 0 (espresso anche come \constd{SUID\_DUMP\_DISABLE}) di \param{arg2}
+  per disattivare il flag ed un valore 1 (espresso anche come
+  \constd{SUID\_DUMP\_USER}) per attivarlo. Nei kernel dal 2.6.13 al 2.6.17 è
+  stato supportato anche il valore 2, che causava la generazione di un
+  \textit{core dump} leggibile solo dall'amministratore, ma questa
+  funzionalità è stata rimossa per motivi di sicurezza, in quanto consentiva
+  ad un utente normale di creare un file di \textit{core dump} appartenente
+  all'amministratore in directory dove l'utente avrebbe avuto permessi di
+  accesso. Specificando un valore diverso da 0 o 1 si ottiene un errore di
+  \errval{EINVAL}.
+
+\item[\constd{PR\_GET\_DUMPABLE}] Ottiene come valore di ritorno della funzione
+  lo stato corrente del flag che controlla la effettiva generazione dei
+  \textit{core dump}. Introdotta a partire dal kernel 2.3.20.
+
+\item[\constd{PR\_SET\_ENDIAN}] Imposta la \textit{endianness} del processo
+  chiamante secondo il valore fornito in \param{arg2}. I valori possibili sono
+  sono: \constd{PR\_ENDIAN\_BIG} (\textit{big endian}),
+  \constd{PR\_ENDIAN\_LITTLE} (\textit{little endian}), e
+  \constd{PR\_ENDIAN\_PPC\_LITTLE} (lo pseudo \textit{little endian} del
+  PowerPC). Introdotta a partire dal kernel 2.6.18, solo per architettura
+  PowerPC.
+
+\item[\constd{PR\_GET\_ENDIAN}] Ottiene il valore della \textit{endianness} del
+  processo chiamante, salvato sulla variabile puntata da \param{arg2} che deve
+  essere passata come di tipo ``\ctyp{int *}''. Introdotta a partire dal
+  kernel 2.6.18, solo su PowerPC.
+
+\item[\constd{PR\_SET\_FPEMU}] Imposta i bit di controllo per l'emulazione
+  della virgola mobile su architettura ia64, secondo il valore
+  di \param{arg2}, si deve passare \constd{PR\_FPEMU\_NOPRINT} per emulare in
+  maniera trasparente l'accesso alle operazioni in virgola mobile, o
+  \constd{PR\_FPEMU\_SIGFPE} per non emularle ed inviare il segnale
+  \signal{SIGFPE} (vedi sez.~\ref{sec:sig_prog_error}). Introdotta a partire
+  dal kernel 2.4.18, solo su architettura ia64.
+
+\item[\constd{PR\_GET\_FPEMU}] Ottiene il valore dei flag di controllo
+  dell'emulazione della virgola mobile, salvato all'indirizzo puntato
+  da \param{arg2}, che deve essere di tipo ``\ctyp{int *}''. Introdotta a
+  partire dal kernel 2.4.18, solo su architettura ia64.
+
+\item[\constd{PR\_SET\_FPEXC}] Imposta la modalità delle eccezioni in virgola
+  mobile (\textit{floating-point exception mode}) al valore di \param{arg2}.
+  I valori possibili sono: 
+  \begin{itemize*}
+  \item \constd{PR\_FP\_EXC\_SW\_ENABLE} per usare FPEXC per le eccezioni,
+  \item \constd{PR\_FP\_EXC\_DIV} per la divisione per zero in virgola mobile,
+  \item \constd{PR\_FP\_EXC\_OVF} per gli overflow,
+  \item \constd{PR\_FP\_EXC\_UND} per gli underflow,
+  \item \constd{PR\_FP\_EXC\_RES} per risultati non esatti,
+  \item \constd{PR\_FP\_EXC\_INV} per operazioni invalide,
+  \item \constd{PR\_FP\_EXC\_DISABLED} per disabilitare le eccezioni,
+  \item \constd{PR\_FP\_EXC\_NONRECOV} per usare la modalità di eccezione
+    asincrona non recuperabile,
+  \item \constd{PR\_FP\_EXC\_ASYNC} per usare la modalità di eccezione
+    asincrona recuperabile,
+  \item \constd{PR\_FP\_EXC\_PRECISE} per la modalità precisa di
+    eccezione.\footnote{trattasi di gestione specialistica della gestione
+      delle eccezioni dei calcoli in virgola mobile che, i cui dettagli al
+      momento vanno al di là dello scopo di questo testo.}
+  \end{itemize*}
+Introdotta a partire dal kernel 2.4.21, solo su PowerPC.
+
+\item[\constd{PR\_GET\_FPEXC}] Ottiene il valore della modalità delle eccezioni
+  delle operazioni in virgola mobile, salvata all'indirizzo
+  puntato \param{arg2}, che deve essere di tipo ``\ctyp{int *}''.  Introdotta
+  a partire dal kernel 2.4.21, solo su PowerPC.
+
+\item[\constd{PR\_SET\_KEEPCAPS}] Consente di controllare quali
+  \textit{capabilities} vengono cancellate quando si esegue un cambiamento di
+  \ids{UID} del processo (per i dettagli si veda
+  sez.~\ref{sec:proc_capabilities}, in particolare quanto illustrato a
+  pag.~\pageref{sec:capability-uid-transition}). Un valore nullo (il default)
+  per \param{arg2} comporta che vengano cancellate, il valore 1 che vengano
+  mantenute, questo valore viene sempre cancellato attraverso una \func{exec}.
+  L'uso di questo flag è stato sostituito, a partire dal kernel 2.6.26, dal
+  flag \const{SECURE\_KEEP\_CAPS} dei \textit{securebits} (vedi
+  sez.~\ref{sec:proc_capabilities} e l'uso di \const{PR\_SET\_SECUREBITS} più
+  avanti) e si è impostato con essi \const{SECURE\_KEEP\_CAPS\_LOCKED} si
+  otterrà un errore di \errval{EPERM}.  Introdotta a partire dal kernel
+  2.2.18.
+
+\item[\constd{PR\_GET\_KEEPCAPS}] Ottiene come valore di ritorno della funzione
+  il valore del flag di controllo delle \textit{capabilities} impostato con
+  \const{PR\_SET\_KEEPCAPS}. Introdotta a partire dal kernel 2.2.18.
+
+\item[\constd{PR\_SET\_NAME}] Imposta il nome del processo chiamante alla
+  stringa puntata da \param{arg2}, che deve essere di tipo ``\ctyp{char *}''. Il
+  nome può essere lungo al massimo 16 caratteri, e la stringa deve essere
+  terminata da NUL se più corta.  Introdotta a partire dal kernel 2.6.9.
+
+\item[\constd{PR\_GET\_NAME}] Ottiene il nome del processo chiamante nella
+  stringa puntata da \param{arg2}, che deve essere di tipo ``\ctyp{char *}'';
+  si devono allocare per questo almeno 16 byte, e il nome sarà terminato da
+  NUL se più corto. Introdotta a partire dal kernel 2.6.9.
+
+\item[\constd{PR\_SET\_PDEATHSIG}] Consente di richiedere l'emissione di un
+  segnale, che sarà ricevuto dal processo chiamante, in occorrenza della
+  terminazione del proprio processo padre; in sostanza consente di invertire
+  il ruolo di \signal{SIGCHLD}. Il valore di \param{arg2} deve indicare il
+  numero del segnale, o 0 per disabilitare l'emissione. Il valore viene
+  automaticamente cancellato per un processo figlio creato con \func{fork}.
+  Introdotta a partire dal kernel 2.1.57.
+
+\item[\constd{PR\_GET\_PDEATHSIG}] Ottiene il valore dell'eventuale segnale
+  emesso alla terminazione del padre, salvato all'indirizzo
+  puntato \param{arg2}, che deve essere di tipo ``\ctyp{int *}''. Introdotta a
+  partire dal kernel 2.3.15.
+
+\item[\constd{PR\_SET\_PTRACER}] Imposta un \ids{PID} per il ``\textit{tracer
+    process}'' usando \param{arg2}. Una impostazione successiva sovrascrive la
+  precedente, ed un valore nullo cancella la disponibilità di un
+  ``\textit{tracer process}''. Questa è una funzionalità fornita da
+  \textit{``Yama''}, uno specifico \textit{Linux Security Modules}, e serve a
+  consentire al processo indicato, quando le restrizioni introdotte da questo
+  modulo sono attive, di usare \func{ptrace} (vedi
+  sez.~\ref{sec:process_ptrace}) sul processo chiamante, anche se quello
+  indicato non ne è un progenitore. Il valore \constd{PR\_SET\_PTRACER\_ANY}
+  consente a tutti i processi l'uso di \func{ptrace}. L'uso si \textit{Yama}
+  attiene alla gestione della sicurezza dei processi, e consente di introdurre
+  una restrizione all'uso di \func{ptrace}, che è spesso sorgente di
+  compromissioni. Si tratta di un uso specialistico che va al di là dello
+  scopo di queste dispense, per i dettagli si consulti la documentazione su
+  \textit{Yama} nei sorgenti del kernel. Introdotta a partire dal kernel 3.4.
+
+\item[\constd{PR\_SET\_SECCOMP}] Attiva il \textit{secure computing mode} per
+  il processo corrente. Introdotta a partire dal kernel 2.6.23 la funzionalità
+  è stata ulteriormente estesa con il kernel 3.5, salvo poi diventare un
+  sottoinsieme della \textit{system call} \func{seccomp} a partire dal kernel
+  3.17. Prevede che si indichi per \param{arg2} il valore
+  \const{SECCOMP\_MODE\_STRICT} (unico possibile fino al kernel 2.6.23) per
+  selezionare il cosiddetto \textit{strict mode} o, dal kernel 3.5,
+  \const{SECCOMP\_MODE\_FILTER} per usare il \textit{filter mode}. Tratteremo
+  questa opzione nei dettagli più avanti, in sez.~\ref{sec:procadv_seccomp},
+  quando affronteremo l'argomento del \textit{Secure Computing}.
+
+\item[\constd{PR\_GET\_SECCOMP}] Ottiene come valore di ritorno della funzione
+  lo stato corrente del \textit{secure computing mode}. Fino al kernel 3.5,
+  quando era possibile solo lo \textit{strict mode}, la funzione era
+  totalmente inutile in quanto l'unico valore ottenibile era 0 in assenza di
+  \textit{secure computing}, dato che la chiamata di questa funzione in
+  \textit{strict mode} avrebbe comportato l'emissione di \signal{SIGKILL} per
+  il chiamante. La funzione però, a partire dal kernel 2.6.23, era stata
+  comunque definita per eventuali estensioni future, ed infatti con
+  l'introduzione del \textit{filter mode} con il kernel 3.5, se essa viene
+  inclusa nelle funzioni consentite restituisce il valore 2 quando il
+  \textit{secure computing mode} è attivo (se non inclusa si avrà di nuovo un
+  \signal{SIGKILL}).
+
+\item[\constd{PR\_SET\_SECUREBITS}] Imposta i \textit{securebits} per il
+  processo chiamante al valore indicato da \param{arg2}; per i dettagli sul
+  significato dei \textit{securebits} si veda
+  sez.~\ref{sec:proc_capabilities}, ed in particolare i valori di
+  tab.~\ref{tab:securebits_values} e la relativa trattazione. L'operazione
+  richiede i privilegi di amministratore (la capacità \const{CAP\_SETPCAP}),
+  altrimenti la chiamata fallirà con un errore di \errval{EPERM}. Introdotta a
+  partire dal kernel 2.6.26.
+
+\item[\constd{PR\_GET\_SECUREBITS}] Ottiene come valore di ritorno della
+  funzione l'impostazione corrente per i \textit{securebits}. Introdotta a
+  partire dal kernel 2.6.26.
+
+\item[\constd{PR\_SET\_TIMING}] Imposta il metodo di temporizzazione del
+  processo da indicare con il valore di \param{arg2}, attualmente i valori
+  possibili sono due, con \constd{PR\_TIMING\_STATISTICAL} si usa il metodo
+  statistico tradizionale, con \constd{PR\_TIMING\_TIMESTAMP} il più accurato
+  basato su dei \textit{timestamp}, quest'ultimo però non è ancora
+  implementato ed il suo uso comporta la restituzione di un errore di
+  \errval{EINVAL}. Introdotta a partire dal kernel 2.6.0-test4.
+
+\item[\constd{PR\_GET\_TIMING}] Ottiene come valore di ritorno della funzione
+  il metodo di temporizzazione del processo attualmente in uso (uno dei due
+  valori citati per \const{PR\_SET\_TIMING}). Introdotta a partire dal kernel
+  2.6.0-test4.
+
+\item[\constd{PR\_SET\_TSC}] Imposta il flag che indica se il processo
+  chiamante può leggere il registro di processore contenente il contatore dei
+  \textit{timestamp} (TSC, o \textit{Time Stamp Counter}) da indicare con il
+  valore di \param{arg2}. Si deve specificare \constd{PR\_TSC\_ENABLE} per
+  abilitare la lettura o \constd{PR\_TSC\_SIGSEGV} per disabilitarla con la
+  generazione di un segnale di \signal{SIGSEGV} (vedi
+  sez.~\ref{sec:sig_prog_error}). La lettura viene automaticamente
+  disabilitata se si attiva il \textit{secure computing mode} (vedi
+  \const{PR\_SET\_SECCOMP} e sez.~\ref{sec:procadv_seccomp}).  Introdotta a
+  partire dal kernel 2.6.26, solo su x86.
+
+\item[\constd{PR\_GET\_TSC}] Ottiene il valore del flag che controlla la
+  lettura del contattore dei \textit{timestamp}, salvato all'indirizzo
+  puntato \param{arg2}, che deve essere di tipo ``\ctyp{int *}''. Introdotta a
+  partire dal kernel 2.6.26, solo su x86.
+% articoli sul TSC e relativi problemi: http://lwn.net/Articles/209101/,
+% http://blog.cr0.org/2009/05/time-stamp-counter-disabling-oddities.html,
+% http://en.wikipedia.org/wiki/Time_Stamp_Counter 
+
+\item[\constd{PR\_SET\_UNALIGN}] Imposta la modalità di controllo per l'accesso
+  a indirizzi di memoria non allineati, che in varie architetture risultano
+  illegali, da indicare con il valore di \param{arg2}. Si deve specificare il
+  valore \constd{PR\_UNALIGN\_NOPRINT} per ignorare gli accessi non allineati,
+  ed il valore \constd{PR\_UNALIGN\_SIGBUS} per generare un segnale di
+  \signal{SIGBUS} (vedi sez.~\ref{sec:sig_prog_error}) in caso di accesso non
+  allineato.  Introdotta con diverse versioni su diverse architetture.
+
+\item[\const{PR\_GET\_UNALIGN}] Ottiene il valore della modalità di controllo
+  per l'accesso a indirizzi di memoria non allineati, salvato all'indirizzo
+  puntato \param{arg2}, che deve essere di tipo \code{(int *)}. Introdotta con
+  diverse versioni su diverse architetture.
+\item[\const{PR\_MCE\_KILL}] Imposta la politica di gestione degli errori
+  dovuti a corruzione della memoria per problemi hardware. Questo tipo di
+  errori vengono riportati dall'hardware di controllo della RAM e vengono
+  gestiti dal kernel,\footnote{la funzionalità è disponibile solo sulle
+    piattaforme più avanzate che hanno il supporto hardware per questo tipo di
+    controlli.} ma devono essere opportunamente riportati ai processi che
+  usano quella parte di RAM che presenta errori; nel caso specifico questo
+  avviene attraverso l'emissione di un segnale di \signal{SIGBUS} (vedi
+  sez.~\ref{sec:sig_prog_error}).\footnote{in particolare viene anche
+    impostato il valore di \var{si\_code} in \struct{siginfo\_t} a
+    \const{BUS\_MCEERR\_AO}; per il significato di tutto questo si faccia
+    riferimento alla trattazione di sez.~\ref{sec:sig_sigaction}.}
+
+  Il comportamento di default prevede che per tutti i processi si applichi la
+  politica generale di sistema definita nel file
+  \sysctlfiled{vm/memory\_failure\_early\_kill}, ma specificando
+  per \param{arg2} il valore \constd{PR\_MCE\_KILL\_SET} è possibile impostare
+  con il contenuto di \param{arg3} una politica specifica del processo
+  chiamante. Si può tornare alla politica di default del sistema utilizzando
+  invece per \param{arg2} il valore \constd{PR\_MCE\_KILL\_CLEAR}. In tutti i
+  casi, per compatibilità con eventuali estensioni future, tutti i valori
+  degli argomenti non utilizzati devono essere esplicitamente posti a zero,
+  pena il fallimento della chiamata con un errore di \errval{EINVAL}.
+  
+  In caso di impostazione di una politica specifica del processo con
+  \const{PR\_MCE\_KILL\_SET} i valori di \param{arg3} possono essere soltanto
+  due, che corrispondono anche al valore che si trova nell'impostazione
+  generale di sistema di \texttt{memory\_failure\_early\_kill}, con
+  \constd{PR\_MCE\_KILL\_EARLY} si richiede l'emissione immediata di
+  \signal{SIGBUS} non appena viene rilevato un errore, mentre con
+  \constd{PR\_MCE\_KILL\_LATE} il segnale verrà inviato solo quando il processo
+  tenterà un accesso alla memoria corrotta. Questi due valori corrispondono
+  rispettivamente ai valori 1 e 0 di
+  \texttt{memory\_failure\_early\_kill}.\footnote{in sostanza nel primo caso
+    viene immediatamente inviato il segnale a tutti i processi che hanno la
+    memoria corrotta mappata all'interno del loro spazio degli indirizzi, nel
+    secondo caso prima la pagina di memoria viene tolta dallo spazio degli
+    indirizzi di ciascun processo, mentre il segnale viene inviato solo quei
+    processi che tentano di accedervi.} Si può usare per \param{arg3} anche un
+  terzo valore, \constd{PR\_MCE\_KILL\_DEFAULT}, che corrisponde a impostare
+  per il processo la politica di default.\footnote{si presume la politica di
+    default corrente, in modo da non essere influenzati da un eventuale
+    successivo cambiamento della stessa.} Introdotta a partire dal kernel
+  2.6.32.
+\item[\constd{PR\_MCE\_KILL\_GET}] Ottiene come valore di ritorno della
+  funzione la politica di gestione degli errori dovuti a corruzione della
+  memoria. Tutti gli argomenti non utilizzati (al momento tutti) devono essere
+  nulli pena la ricezione di un errore di \errval{EINVAL}. Introdotta a
+  partire dal kernel 2.6.32.
+\itindbeg{child~reaper}
+\item[\constd{PR\_SET\_CHILD\_SUBREAPER}] Se \param{arg2} è diverso da zero
+  imposta l'attributo di \textit{child reaper} per il processo, se nullo lo
+  cancella. Lo stato di \textit{child reaper} è una funzionalità, introdotta
+  con il kernel 3.4, che consente di far svolgere al processo che ha questo
+  attributo il ruolo di ``\textsl{genitore adottivo}'' per tutti i processi
+  suoi ``\textsl{discendenti}'' che diventano orfani, in questo modo il
+  processo potrà ricevere gli stati di terminazione alla loro uscita,
+  sostituendo in questo ruolo \cmd{init} (si ricordi quanto illustrato in
+  sez.~\ref{sec:proc_termination}). Il meccanismo è stato introdotto ad uso
+  dei programmi di gestione dei servizi, per consentire loro di ricevere gli
+  stati di terminazione di tutti i processi che lanciano, anche se questi
+  eseguono una doppia \func{fork}; nel comportamento ordinario infatti questi
+  verrebbero adottati da \cmd{init} ed il programma che li ha lanciati non
+  sarebbe più in grado di riceverne lo stato di terminazione. Se un processo
+  con lo stato di \textit{child reaper} termina prima dei suoi discendenti,
+  svolgerà questo ruolo il più prossimo antenato ad avere lo stato di
+  \textit{child reaper}, 
+\item[\constd{PR\_GET\_CHILD\_SUBREAPER}] Ottiene l'impostazione relativa allo
+  lo stato di \textit{child reaper} del processo chiamante, salvata come
+  \textit{value result} all'indirizzo puntato da \param{arg2} (da indicare
+  come di tipo \code{int *}). Il valore viene letto come valore logico, se
+  diverso da 0 lo stato di \textit{child reaper} è attivo altrimenti è
+  disattivo. Introdotta a partire dal kernel 3.4.
+\itindend{child~reaper}
+
+
+% TODO documentare PR_MPX_INIT e PR_MPX_RELEASE, vedi
+% http://lwn.net/Articles/582712/ 
+
+% TODO documentare PR_SET_MM_MAP aggiunta con il kernel 3.18, per impostare i
+% parametri di base del layout dello spazio di indirizzi di un processo (area
+% codice e dati, stack, brack pointer ecc. vedi
+% http://git.kernel.org/linus/f606b77f1a9e362451aca8f81d8f36a3a112139e 
+
+% TODO documentare ARCH_SET_CPUID e ARCH_GET_CPUID, introdotte con il kernel
+% 4.12, vedi https://lwn.net/Articles/721182/
+
+% TODO documentare PR_SPEC_DISABLE_NOEXEC in 5.1, vedi
+% https://lwn.net/Articles/782511/ 
+
+\label{sec:prctl_operation}
+\end{basedescript}
+
+
+\subsection{La funzione \func{ptrace}}
+\label{sec:process_ptrace}
+
+%Da fare
+
+% TODO: trattare PTRACE_SEIZE, aggiunta con il kernel 3.1
+% TODO: trattare PTRACE_O_EXITKILL, aggiunta con il kernel 3.8 (vedi
+% http://lwn.net/Articles/529060/) 
+% TODO: trattare PTRACE_GETSIGMASK e PTRACE_SETSIGMASK introdotte con il
+% kernel 3.11
+% TODO: trattare PTRACE_O_SUSPEND_SECCOMP, aggiunta con il kernel 4.3, vedi
+% http://lwn.net/Articles/656675/ 
+
+\subsection{La funzione \func{kcmp}}
+\label{sec:process_kcmp}
+
+% TODO: trattare kcmp aggiunta con il kernel 3.5, vedi
+% https://lwn.net/Articles/478111/
+% vedi man kcmp e man 2 open
+
+
+
+\section{La gestione avanzata della creazione dei processi}
+\label{sec:process_adv_creation}
+
+In questa sezione tratteremo le funzionalità avanzate relative alla creazione
+dei processi e del loro ambiente, sia per quanto riguarda l'utilizzo delle
+stesse per la creazione dei \textit{thread} che per la gestione dei
+\textit{namespace} che sono alla base dei cosiddetti \textit{container}.
+
+
+\subsection{La \textit{system call} \func{clone}}
+\label{sec:process_clone}
+
+La funzione tradizionale con cui creare un nuovo processo in un sistema
+Unix-like, come illustrato in sez.~\ref{sec:proc_fork}, è \func{fork}, ma con
+l'introduzione del supporto del kernel per i \textit{thread}\unavref{ (vedi
+  cap.~\ref{cha:threads})}, si è avuta la necessità di una interfaccia che
+consentisse un maggiore controllo sulla modalità con cui vengono creati nuovi
+processi, che poi è stata utilizzata anche per fornire supporto per le
+tecnologie di virtualizzazione dei processi (i cosiddetti \textit{container})
+su cui torneremo in sez.~\ref{sec:process_namespaces}.
+
+Per questo l'interfaccia per la creazione di un nuovo processo è stata
+delegata ad una nuova \textit{system call}, \funcm{sys\_clone}, che consente
+di reimplementare anche la tradizionale \func{fork}. In realtà in questo caso
+più che di nuovi processi si può parlare della creazioni di nuovi
+``\textit{task}'' del kernel che possono assumere la veste sia di un processo
+classico isolato dagli altri come quelli trattati finora, che di un
+\textit{thread} in cui la memoria viene condivisa fra il processo chiamante ed
+il nuovo processo creato, come quelli che vedremo in
+sez.~\ref{sec:linux_thread}. Per evitare confusione fra \textit{thread} e
+processi ordinari, abbiamo deciso di usare la nomenclatura \textit{task} per
+indicare la unità di esecuzione generica messa a disposizione del kernel che
+\texttt{sys\_clone} permette di creare.
+
+La \textit{system call} richiede soltanto due argomenti: il
+primo, \param{flags}, consente di controllare le modalità di creazione del
+nuovo \textit{task}, il secondo, \param{child\_stack}, imposta l'indirizzo
+dello \textit{stack} per il nuovo \textit{task}, e deve essere indicato quando
+si intende creare un \textit{thread}. L'esecuzione del programma creato da
+\func{sys\_clone} riprende, come per \func{fork}, da dopo l'esecuzione della
+stessa.
+
+La necessità di avere uno \textit{stack} alternativo c'è solo quando si
+intende creare un \textit{thread}, in tal caso infatti il nuovo \textit{task}
+vede esattamente la stessa memoria del \textit{task}
+``\textsl{padre}'',\footnote{in questo caso per padre si intende semplicemente
+  il \textit{task} che ha eseguito \func{sys\_clone} rispetto al \textit{task}
+  da essa creato, senza nessuna delle implicazioni che il concetto ha per i
+  processi.} e nella sua esecuzione alla prima chiamata di una funzione
+andrebbe a scrivere sullo \textit{stack} usato anche dal padre (si ricordi
+quanto visto in sez.~\ref{sec:proc_mem_layout} riguardo all'uso dello
+\textit{stack}).
+
+Per evitare di doversi garantire contro la evidente possibilità di
+\textit{race condition} che questa situazione comporta (vedi
+sez.~\ref{sec:proc_race_cond} per una spiegazione della problematica) è
+necessario che il chiamante allochi preventivamente un'area di memoria.  In
+genere lo si fa con una \func{malloc} che allochi un buffer che la funzione
+imposterà come \textit{stack} del nuovo processo, avendo ovviamente cura di
+non utilizzarlo direttamente nel processo chiamante.
+
+In questo modo i due \textit{task} avranno degli \textit{stack} indipendenti e
+non si dovranno affrontare problematiche di \textit{race condition}.  Si tenga
+presente inoltre che in molte architetture di processore lo \textit{stack}
+cresce verso il basso, pertanto in tal caso non si dovrà specificare
+per \param{child\_stack} il puntatore restituito da \func{malloc}, ma un
+puntatore alla fine del buffer da essa allocato.
+
+Dato che tutto ciò è necessario solo per i \textit{thread} che condividono la
+memoria, la \textit{system call}, a differenza della funzione di libreria che
+vedremo a breve, consente anche di passare per \param{child\_stack} il valore
+\val{NULL}, che non imposta un nuovo \textit{stack}. Se infatti si crea un
+processo, questo ottiene un suo nuovo spazio degli indirizzi (è sottinteso
+cioè che non si stia usando il flag \const{CLONE\_VM} che vedremo a breve) ed
+in questo caso si applica la semantica del \textit{copy on write} illustrata
+in sez.~\ref{sec:proc_fork}, per cui le pagine dello \textit{stack} verranno
+automaticamente copiate come le altre e il nuovo processo avrà un suo
+\textit{stack} totalmente indipendente da quello del padre.
+
+Dato che l'uso principale della nuova \textit{system call} è quello relativo
+alla creazione dei \textit{thread}, la \acr{glibc} definisce una funzione di
+libreria con una sintassi diversa, orientata a questo scopo, e la
+\textit{system call} resta accessibile solo se invocata esplicitamente come
+visto in sez.~\ref{sec:proc_syscall}.\footnote{ed inoltre per questa
+  \textit{system call} non è disponibile la chiamata veloce con
+  \texttt{vsyscall}.} La funzione di libreria si chiama semplicemente
+\funcd{clone} ed il suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{sched.h}
+\fdecl{int clone(int (*fn)(void *), void *child\_stack, int flags, void *arg,
+  ...  \\
+\phantom{int clone(}/* pid\_t *ptid, struct user\_desc *tls, pid\_t *ctid */ )}
+\fdesc{Crea un nuovo processo o \textit{thread}.} 
+}
+{La funzione ritorna il \textit{Thread ID} assegnato al nuovo processo in caso
+  di successo e $-1$ per un errore, nel qual caso \var{errno} assumerà uno dei
+  valori: 
+\begin{errlist}
+    \item[\errcode{EAGAIN}] sono già in esecuzione troppi processi.
+    \item[\errcode{EINVAL}] si è usata una combinazione non valida di flag o
+      un valore nullo per \param{child\_stack}.
+    \item[\errcode{ENOMEM}] non c'è memoria sufficiente per creare una nuova
+      \texttt{task\_struct} o per copiare le parti del contesto del chiamante
+      necessarie al nuovo \textit{task}.
+    \item[\errcode{EPERM}] non si hanno i privilegi di amministratore
+      richiesti dai flag indicati.
+\end{errlist}}
+\end{funcproto}
+
+% NOTE: una pagina con la descrizione degli argomenti:
+% * http://www.lindevdoc.org/wiki/Clone 
+
+La funzione prende come primo argomento \param{fn} il puntatore alla funzione
+che verrà messa in esecuzione nel nuovo processo, che può avere un unico
+argomento di tipo puntatore a \ctyp{void}, il cui valore viene passato dal
+terzo argomento \param{arg}. Per quanto il precedente prototipo possa
+intimidire nella sua espressione, in realtà l'uso è molto semplice basterà
+definire una qualunque funzione \param{fn} che restituisce un intero ed ha
+come argomento un puntatore a \ctyp{void}, e \code{fn(arg)} sarà eseguita in
+un nuovo processo.
+
+Il nuovo processo resterà in esecuzione fintanto che la funzione \param{fn}
+non ritorna, o esegue \func{exit} o viene terminata da un segnale. Il valore
+di ritorno della funzione (o quello specificato con \func{exit}) verrà
+utilizzato come stato di uscita della funzione. I tre
+argomenti \param{ptid}, \param{tls} e \param{ctid} sono opzionali e sono
+presenti solo a partire dal kernel 2.6 e sono stati aggiunti come supporto per
+le funzioni di gestione dei \textit{thread} (la \textit{Native Thread Posix
+  Library}, vedi sez.~\ref{sec:linux_ntpl}) nella \acr{glibc}, essi vengono
+utilizzati soltanto se si sono specificati rispettivamente i flag
+\const{CLONE\_PARENT\_SETTID}, \const{CLONE\_SETTLS} e
+\const{CLONE\_CHILD\_SETTID}. 
+
+La funzione ritorna un l'identificatore del nuovo \textit{task}, denominato
+\texttt{Thread ID} (da qui in avanti \ids{TID}) il cui significato è analogo
+al \ids{PID} dei normali processi e che a questo corrisponde qualora si crei
+un processo ordinario e non un \textit{thread}.
+
+Il comportamento di \func{clone}, che si riflette sulle caratteristiche del
+nuovo processo da essa creato, è controllato principalmente
+dall'argomento \param{flags}, che deve essere specificato come maschera
+binaria, ottenuta con un OR aritmetico di una delle costanti del seguente
+elenco, che illustra quelle attualmente disponibili:\footnote{si fa
+  riferimento al momento della stesura di questa sezione, cioè con il kernel
+  3.2.}
+
+\begin{basedescript}{\desclabelwidth{1.5 cm}\desclabelstyle{\nextlinelabel}}
+
+\item[\constd{CLONE\_CHILD\_CLEARTID}] cancella il valore del \textit{thread
+    ID} posto all'indirizzo dato dall'argomento \param{ctid}, eseguendo un
+  riattivazione del \textit{futex} (vedi sez.~\ref{sec:xxx_futex}) a
+  quell'indirizzo. Questo flag viene utilizzato dalla librerie di gestione dei
+  \textit{thread} ed è presente dal kernel 2.5.49.
+
+\item[\constd{CLONE\_CHILD\_SETTID}] scrive il \ids{TID} del \textit{thread}
+  figlio all'indirizzo dato dall'argomento \param{ctid}. Questo flag viene
+  utilizzato dalla librerie di gestione dei \textit{thread} ed è presente dal
+  kernel 2.5.49.
+
+\item[\constd{CLONE\_FILES}] se impostato il nuovo processo condividerà con il
+  padre la \textit{file descriptor table} (vedi sez.~\ref{sec:file_fd}),
+  questo significa che ogni \textit{file descriptor} aperto da un processo
+  verrà visto anche dall'altro e che ogni chiusura o cambiamento dei
+  \textit{file descriptor flag} di un \textit{file descriptor} verrà per
+  entrambi.
+
+  Se non viene impostato il processo figlio eredita una copia della
+  \textit{file descriptor table} del padre e vale la semantica classica della
+  gestione dei \textit{file descriptor}, che costituisce il comportamento
+  ordinario di un sistema unix-like e che illustreremo in dettaglio in
+  sez.~\ref{sec:file_shared_access}.
+
+\item[\constd{CLONE\_FS}] se questo flag viene impostato il nuovo processo
+  condividerà con il padre le informazioni relative all'albero dei file, ed in
+  particolare avrà la stessa radice (vedi sez.~\ref{sec:file_chroot}), la
+  stessa directory di lavoro (vedi sez.~\ref{sec:file_work_dir}) e la stessa
+  \textit{umask} (sez.~\ref{sec:file_perm_management}). Una modifica di una
+  qualunque di queste caratteristiche in un processo, avrà effetto anche
+  sull'altro. Se assente il nuovo processo riceverà una copia delle precedenti
+  informazioni, che saranno così indipendenti per i due processi, come avviene
+  nel comportamento ordinario di un sistema unix-like.
+
+\item[\constd{CLONE\_IO}] se questo flag viene impostato il nuovo processo
+  condividerà con il padre il contesto dell'I/O, altrimenti, come avviene nel
+  comportamento ordinario con una \func{fork} otterrà un suo contesto
+  dell'I/O.
+
+  Il contesto dell'I/O viene usato dagli \textit{scheduler} di I/O (visti in
+  sez.~\ref{sec:io_priority}) e se questo è lo stesso per diversi processi
+  questi vengono trattati come se fossero lo stesso, condividendo il tempo per
+  l'accesso al disco, e possono interscambiarsi nell'accesso a disco. L'uso di
+  questo flag consente, quando più \textit{thread} eseguono dell'I/O per conto
+  dello stesso processo (ad esempio con le funzioni di I/O asincrono di
+  sez.~\ref{sec:file_asyncronous_io}), migliori prestazioni.
+
+%TODO : tutti i CLONE_NEW* attengono ai namespace, ed è meglio metterli nella
+%relativa sezione da creare a parte
+
+% \item[\constd{CLONE\_NEWIPC}] è uno dei flag ad uso dei \textit{container},
+%   introdotto con il kernel 2.6.19. L'uso di questo flag crea per il nuovo
+%   processo un nuovo \textit{namespace} per il sistema di IPC, sia per quello
+%   di SysV (vedi sez.~\ref{sec:ipc_sysv}) che, dal kernel 2.6.30, per le code
+%   di messaggi POSIX (vedi sez.~\ref{sec:ipc_posix_mq}); si applica cioè a
+%   tutti quegli oggetti che non vegono identificati con un \textit{pathname}
+%   sull'albero dei file.
+
+%   L'uso di questo flag richiede privilegi di amministratore (più precisamente
+%   la capacità \const{CAP\_SYS\_ADMIN}) e non può essere usato in combinazione
+%   con \const{CLONE\_SYSVSEM}. 
+
+% \item[\constd{CLONE\_NEWNET}]
+% \item[\constd{CLONE\_NEWNS}]
+% \item[\constd{CLONE\_NEWPID}]
+% \item[\constd{CLONE\_NEWUTS}]
+
+
+% TODO trattare CLONE_NEWCGROUP introdotto con il kernel 4.6, vedi
+% http://lwn.net/Articles/680566/ 
+
+\item[\constd{CLONE\_PARENT}]
+\item[\constd{CLONE\_PARENT\_SETTID}]
+\item[\constd{CLONE\_PID}]
+
+% TODO trattare CLONE_PIDFD introdotto con il kernel 5.2, vedi
+% https://lwn.net/Articles/787963/ e anche https://lwn.net/Articles/789023/
+  
+\item[\constd{CLONE\_PTRACE}] se questo flag viene impostato ed il processo
+  chiamante viene tracciato (vedi sez.~\ref{sec:process_ptrace}) anche il
+  figlio viene tracciato. 
+
+\item[\constd{CLONE\_SETTLS}]
+\item[\constd{CLONE\_SIGHAND}]
+\item[\constd{CLONE\_STOPPED}]
+\item[\constd{CLONE\_SYSVSEM}]
+\item[\constd{CLONE\_THREAD}]
+
+\item[\constd{CLONE\_UNTRACED}] se questo flag viene impostato un processo non
+  può più forzare \const{CLONE\_PTRACE} su questo processo.
+
+\item[\constd{CLONE\_VFORK}] se questo flag viene impostato il chiamante viene
+  fermato fintato che il figlio appena creato non rilascia la sua memoria
+  virtuale con una chiamata a \func{exec} o \func{exit}, viene quindi
+  replicato il comportamento di \func{vfork}.
+
+\item[\constd{CLONE\_VM}] se questo flag viene impostato il nuovo processo
+  condividerà con il padre la stessa memoria virtuale, e le scritture in
+  memoria fatte da uno qualunque dei processi saranno visibili dall'altro,
+  così come ogni mappatura in memoria (vedi sez.~\ref{sec:file_memory_map}). 
+
+  Se non viene impostato il processo figlio otterrà una copia dello spazio
+  degli indirizzi e si otterrà il comportamento ordinario di un processo di un
+  sistema unix-like creato con la funzione \func{fork}.
+\end{basedescript}
+
+
+
+\subsection{La gestione dei \textit{namespace}}
+\label{sec:process_namespaces}
+
+\itindbeg{namespace}
+Come accennato all'inizio di sez.~\ref{sec:process_clone} oltre al controllo
+delle caratteristiche dei processi usate per la creazione dei \textit{thread},
+l'uso di \func{clone} consente, ad uso delle nuove funzionalità di
+virtualizzazione dei processi, di creare nuovi ``\textit{namespace}'' per una
+serie di proprietà generali (come l'elenco dei \ids{PID}, l'albero dei file, i
+\textit{mount point}, la rete, il sistema di IPC, ecc.).
+
+L'uso dei ``\textit{namespace}'' consente creare gruppi di processi che vedono
+le suddette proprietà in maniera indipendente fra loro. I processi di ciascun
+gruppo vengono così eseguiti come in una sorta di spazio separato da quello
+degli altri gruppi, che costituisce poi quello che viene chiamato un
+\textit{container}.
+
+\itindend{namespace}
+
+
+\itindbeg{container}
+
+\itindend{container}
+
+
+%TODO sezione separata sui namespace 
+
+%TODO trattare unshare, vedi anche http://lwn.net/Articles/532748/
+
+%TODO: trattare la funzione setns e i namespace file descriptors (vedi
+% http://lwn.net/Articles/407495/) introdotti con il kernel 3.0, altre
+% informazioni su setns qui: http://lwn.net/Articles/532748/
+% http://lwn.net/Articles/531498/
+
+
+
+\section{Funzionalità avanzate e specialistiche}
+\label{sec:process_special}
+
+
+% TODO: trattare userfaultfd, introdotta con il 4.23, vedi
+% http://man7.org/linux/man-pages/man2/userfaultfd.2.html 
+
+% TODO: trattare process_vm_readv/process_vm_writev introdotte con il kernel
+% 3.2, vedi http://man7.org/linux/man-pages/man2/process_vm_readv.2.html e i
+% precedenti tentativi https://lwn.net/Articles/405346/
+
+
+\subsection{La gestione delle operazioni in virgola mobile}
+\label{sec:process_fenv}
+
+Da fare.
+
+% TODO eccezioni ed arrotondamenti per la matematica in virgola mobile 
+% consultare la manpage di fenv, math_error, fpclassify, matherr, isgreater,
+% isnan, nan, INFINITY
+
+
+\subsection{L'accesso alle porte di I/O}
+\label{sec:process_io_port}
+
+%
+% TODO l'I/O sulle porte di I/O 
+% consultare le manpage di ioperm, iopl e outb
+% non c'entra nulla qui, va trovato un altro posto (altri meccanismi di I/O in
+% fileintro ?)
+
+Da fare
+
+
+%\subsection{La gestione di architetture a nodi multipli}
+%\label{sec:process_NUMA}
+
+% TODO trattare i cpuset, che attiene anche a NUMA, e che possono essere usati
+% per associare l'uso di gruppi di processori a gruppi di processi (vedi
+% manpage omonima)
+% TODO trattare getcpu, che attiene anche a NUMA, mettere qui anche
+% sched_getcpu, che potrebbe essere indipendente ma richiama getcpu
+
+%TODO trattare le funzionalità per il NUMA
+% vedi man numa e, mbind, get_mempolicy, set_mempolicy, 
+% le pagine di manuale relative
+% vedere anche dove metterle...
+
+% \subsection{La gestione dei moduli}
+% \label{sec:kernel_modules}
+
+% da fare
+
+%TODO trattare init_module e finit_module (quest'ultima introdotta con il
+%kernel 3.8)
+
+%%%% Altre cose di cui non è chiara la collocazione:
+
+%TODO trattare membarrier, introdotta con il kernel 4.3
+% vedi http://lwn.net/Articles/369567/ http://lwn.net/Articles/369640/
+% http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=5b25b13ab08f616efd566347d809b4ece54570d1 
+% vedi anche l'ulteriore opzione "expedited" introdotta con il kernel 4.14
+% (https://lwn.net/Articles/728795/) 
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End:
+
+%  LocalWords:  system call namespace prctl IRIX kernel sys int option long
+%  LocalWords:  unsigned arg errno EACCESS EBADF EBUSY EFAULT EINVAL ENXIO PR
+%  LocalWords:  EOPNOTSUPP EPERM CAPBSET READ capability sez tab capabilities
+%  LocalWords:  bounding CAP SETPCAP DUMPABLE dump suid sgid UID DISABLE GET
+%  LocalWords:  ENDIAN endianness BIG big endian LITTLE little PPC PowerPC ia
+%  LocalWords:  FPEMU NOPRINT SIGFPE FPEXC point exception FP EXC SW ENABLE
+%  LocalWords:  OVF overflow UND underflow RES INV DISABLED NONRECOV ASYNC AO
+%  LocalWords:  KEEPCAPS pag exec SECURE KEEP CAPS securebits LOCKED NAME NUL
+%  LocalWords:  char PDEATHSIG SIGCHLD fork PTRACER PID tracer process ptrace
+%  LocalWords:  Security Modules ANY Yama SECCOMP secure computing seccomp vm
+%  LocalWords:  STRICT strict FILTER filter SIGKILL TIMING STATISTICAL TSC fn
+%  LocalWords:  TIMESTAMP timestamp Stamp Counter SIGSEGV UNALIGN SIGBUS MCE
+%  LocalWords:  KILL siginfo MCEERR memory failure early kill CLEAR child cap
+%  LocalWords:  reaper SUBREAPER init value result thread like flags stack FS
+%  LocalWords:  race condition malloc NULL copy write glibc vsyscall sched RT
+%  LocalWords:  void pid ptid struct desc tls ctid EAGAIN ENOMEM exit Posix
+%  LocalWords:  Library PARENT SETTID SETTLS TID CLEARTID futex FILES table
+%  LocalWords:  descriptor umask dell'I scheduler SIGHAND STOPPED SYSVSEM IPC
+%  LocalWords:  UNTRACED VFORK vfork mount filesystem LSM Mandatory Access fs
+%  LocalWords:  Control DAC MAC SELinux Smack Tomoyo AppArmor Discrectionary
+%  LocalWords:  permitted inheritable effective fig security ADMIN forced new
+%  LocalWords:  allowed dall' bound MODULE nell' all' capset sendmail SETGID
+%  LocalWords:  setuid orig IMMUTABLE MKNOD OVERRIDE SEARCH CHOWN FSETID LOCK
+%  LocalWords:  FOWNER saved FIXUP NOROOT AUDIT BLOCK SUSPEND SETFCAP group
+%  LocalWords:  socket domain locking mlock mlockall shmctl mmap OWNER LEASE
+%  LocalWords:  lease immutable append only mknod BIND SERVICE BROADCAST RAW
+%  LocalWords:  broadcast multicast PACKET CHROOT chroot NICE PACCT RAWIO TTY
+%  LocalWords:  accounting ioperm iopl RESOURCE CONFIG hangup vhangup SYSLOG
+%  LocalWords:  WAKE ALARM CLOCK BOOTTIME REALTIME sticky NOATIME fcntl swap
+%  LocalWords:  multicasting dell'IPC SysV trusted IOPRIO CLASS IDLE lookup
+%  LocalWords:  scheduling dcookie NEWNS unshare nice NUMA ioctl journaling
+%  LocalWords:  ext capget header hdrp datap const ESRCH SOURCE undef version
+%  LocalWords:  libcap lcap obj to text dup clear DIFFERS get ncap caps ssize
+%  LocalWords:  argument length all setpcap from string name proc cat capgetp
+%  LocalWords:  capsetp getcap read sigreturn sysctl protected hardlinks tmp
+%  LocalWords:  dell' symlink symlinks pathname TOCTTOU of
