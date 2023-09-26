@@ -5,6 +5,11 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt install wget -y
 
+# Pacchetti per uso vario
+sudo dpkg --add-architecture i386
+sudo apt update
+sudo apt install libnvidia-gl-535:i386
+
 #Installazione di deborphan
 sudo apt install deborphan -y
 
