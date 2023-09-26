@@ -1,7 +1,8 @@
 package EserciziBasilari;
+
 import java.util.Scanner;
 
-public class Main {
+public class MainBasilare {
 	
 	static Scanner input = new Scanner(System.in); // input
 	static Scanner risposta = new Scanner(System.in);
@@ -28,16 +29,16 @@ public class Main {
     
 	public static void MainFattoriale() {
 		
-        System.out.println("Insert an integer number: ");
+        System.out.println("Inserisci un numero intero : ");
         int numero = input.nextInt();
         if ( numero < 0 ){
-            System.out.println("The number must be positive!");
+            System.out.println("Il numero deve essere positivo!");
             System.exit(0);
         }
 
 
-        System.out.println("Recursive Factorial is: " + FattorialeRicorsivo(numero));
-        System.out.println("Iterative Factorial is: " + FattorialeIterativo(numero));
+        System.out.println("Il fattoriale ricorsivo è : " + FattorialeRicorsivo(numero));
+        System.out.println("Il fattoriale iterativo è : " + FattorialeIterativo(numero));
         input.close();
 
 	}
@@ -55,10 +56,10 @@ public class Main {
 	 
 	 public static void MainReverseString() {
 		 
-	        System.out.println("Insert a phrase: ");
+	        System.out.println("Inserisci una frase : ");
 	        String stringa = input.nextLine();
 
-	        System.out.println("String reversed is " + reverseString(stringa));
+	        System.out.println("La stringa inversa è " + reverseString(stringa));
 
 	        input.close();
 	    
@@ -146,9 +147,9 @@ public class Main {
 		input.close();
 		
 		if(x==y && x==z) System.out.print("tutti uguali");
-		else if(y==x && (y > z || y < z)) System.out.print("uno diverso");
-		else if(y==z && (y > x || z < x)) System.out.print("uno diverso");
-		else if(x==z && (z > y || z < y)) System.out.print("uno diverso");
+		else if(y==x && (y > z || y < z)) System.out.print("z è diverso");
+		else if(y==z && (y > x || z < x)) System.out.print("x è diverso");
+		else if(x==z && (z > y || z < y)) System.out.print("y è diverso");
 		else System.out.print("tutti diversi");
 	}
 	
