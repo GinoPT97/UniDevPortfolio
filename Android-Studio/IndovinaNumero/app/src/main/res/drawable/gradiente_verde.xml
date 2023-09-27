@@ -1,0 +1,15 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Colore di sfondo solido -->
+    <item android:drawable="@android:color/holo_green_light" />
+
+    <!-- Overlay trasparente per l'effetto sfumato -->
+    <item>
+        <shape>
+            <gradient
+                android:startColor="#00FF00"
+                android:endColor="#008000"
+                android:type="linear"
+                android:angle="45" />
+        </shape>
+    </item>
+</layer-list>
