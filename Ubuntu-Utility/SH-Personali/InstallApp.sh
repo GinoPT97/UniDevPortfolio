@@ -10,6 +10,9 @@ sudo dpkg --add-architecture i386
 sudo apt update
 sudo apt install libnvidia-gl-535:i386
 
+#Installazione dei jdk e jre
+sudo apt install openjdk-11-jdk openjdk-11-jre -y
+
 #Installazione di deborphan
 sudo apt install deborphan -y
 
@@ -59,6 +62,9 @@ sudo apt-get install gpart -y
 
 # Installazione di Eclipse
 sudo snap install --classic eclipse
+
+#Installazione di netbeans
+sudo snap install netbeans --classic
 
 # Installazione di GitHub Desktop
 sudo wget https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb
