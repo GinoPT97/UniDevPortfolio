@@ -178,6 +178,8 @@ public class MainBasilare {
 		 input.close();
 	 }
 	 
+	 
+	 
 	 public static void AllMain() {
 		    //MainFattoriale();
 			//MainReverseString();
