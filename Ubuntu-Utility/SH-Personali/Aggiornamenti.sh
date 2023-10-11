@@ -11,7 +11,7 @@ sudo apt upgrade -y
 sudo apt-get dist-upgrade -y
 
 #Per avanzamenti di sistema
-sudo do-release-upgrade -y
+sudo do-release-upgrade 
 
 #Blocca la sospensione energetica del wifi
 sudo rfkill unblock wifi
