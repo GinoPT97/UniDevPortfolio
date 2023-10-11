@@ -31,6 +31,9 @@ sudo snap refresh
 #aggiunta del firewall
 sudo ufw enable
 
+# Esecuzione del trim
+sudo fstrim --all --verbose
+
 # Riavvio di Ubuntu Software
 sudo systemctl restart snapd
 
