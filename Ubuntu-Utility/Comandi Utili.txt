@@ -13,7 +13,7 @@ sudo apt-get dist-upgrade -y
 - Scarica ed installa le ultime versioni dei pacchetti, delle dipendenze ed, eventualmente, il kernel più recente.
 
 ## Aggiornamento di Ubuntu alla versione successiva ##
-sudo do-release-upgrade
+sudo do-release-upgrade -y
 - Esegue l'avanzamento di versione, passando alla release di Ubuntu successiva.
 
 ## Rimozione dei pacchetti obsoleti ##
