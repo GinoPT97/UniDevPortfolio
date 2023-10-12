@@ -5,10 +5,11 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     private final String nickname;
-    private       Room   currentRoom;
+    private Room currentRoom;
 
 
-    /**CONSTRUCTOR
+    /**
+     * CONSTRUCTOR
      */
 
     public User(String nickname) {
@@ -16,7 +17,8 @@ public class User implements Serializable {
     }
 
 
-    /** GETTERS
+    /**
+     * GETTERS
      * & SETTERS
      */
 
@@ -24,9 +26,12 @@ public class User implements Serializable {
         return nickname;
     }
 
+    public Room getRoom() {
+        return currentRoom;
+    }
 
-    public void setRoom(Room room) { currentRoom = room; }
-
-    public Room getRoom() { return currentRoom; }
+    public void setRoom(Room room) {
+        currentRoom = room;
+    }
 
 }

@@ -6,12 +6,13 @@ import java.time.LocalTime;
 
 public class Message implements Serializable {
 
-    private final String     body;
-    private final LocalTime  time;
-    private final User       sender;
+    private final String body;
+    private final LocalTime time;
+    private final User sender;
 
 
-    /**CONSTRUCTOR
+    /**
+     * CONSTRUCTOR
      */
 
     public Message(String body, LocalTime time, User sender) {
@@ -21,13 +22,20 @@ public class Message implements Serializable {
     }
 
 
-    /**GETTERS
+    /**
+     * GETTERS
      */
 
-    public String getBody() { return body; }
+    public String getBody() {
+        return body;
+    }
 
-    public LocalTime getTime() { return time; }
+    public LocalTime getTime() {
+        return time;
+    }
 
-    public User getSender() {return sender; }
+    public User getSender() {
+        return sender;
+    }
 
 }

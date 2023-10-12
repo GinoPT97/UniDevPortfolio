@@ -17,10 +17,10 @@ import com.example.randomchat.controller.Controller;
 public class LoadingDialog {
 
     private final Activity activity;
-    private AlertDialog dialog;
     private final String loadingMessage;
+    private AlertDialog dialog;
 
-    public LoadingDialog(Activity activity, String loadingMessage){
+    public LoadingDialog(Activity activity, String loadingMessage) {
         this.loadingMessage = loadingMessage;
         this.activity = activity;
     }

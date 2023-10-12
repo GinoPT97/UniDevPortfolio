@@ -41,12 +41,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         User iUser = mUsers.get(position);
-        String user =  iUser.getNickname();
+        String user = iUser.getNickname();
         holder.chatUser.setText(user);
 
         ArrayList<Message> messages = mChats.get(iUser);
         assert messages != null;
-        Message lastMessage = messages.get(messages.size()-1);
+        Message lastMessage = messages.get(messages.size() - 1);
         holder.chatTime.setText(lastMessage.getTime().format(DateTimeFormatter.ofPattern("HH:mm")));
         holder.chatLastMessage.setText(lastMessage.getBody());
     }

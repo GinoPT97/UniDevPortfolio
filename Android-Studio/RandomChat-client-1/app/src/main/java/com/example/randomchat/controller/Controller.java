@@ -2,12 +2,11 @@ package com.example.randomchat.controller;
 
 import android.content.Intent;
 
+import com.example.randomchat.R;
+import com.example.randomchat.activities.HomeActivity;
 import com.example.randomchat.activities.HomeFragment;
 import com.example.randomchat.activities.LastChatsFragment;
 import com.example.randomchat.activities.LastMessagesActivity;
-import com.example.randomchat.infrastructure.ClientSocket;
-import com.example.randomchat.R;
-import com.example.randomchat.activities.HomeActivity;
 import com.example.randomchat.activities.MessagesActivity;
 import com.example.randomchat.activities.WelcomeActivity;
 import com.example.randomchat.activities.dialogs.LoadingDialog;
@@ -15,6 +14,7 @@ import com.example.randomchat.entities.Friend;
 import com.example.randomchat.entities.Message;
 import com.example.randomchat.entities.Room;
 import com.example.randomchat.entities.User;
+import com.example.randomchat.infrastructure.ClientSocket;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -23,13 +23,10 @@ public class Controller {
 
     private static Controller instance = null;
     private final ClientSocket clientSocket;
-
-    private User currentUser;
-    private Friend friend;
-
     private final int ROOM_NUM = 5;
     private final ArrayList<Room> rooms = new ArrayList<>();
-
+    private User currentUser;
+    private Friend friend;
     private WelcomeActivity welcomeActivity;
     private HomeActivity homeActivity;
     private HomeFragment homeFragment;
@@ -45,7 +42,7 @@ public class Controller {
     }
 
     public static Controller getInstance() {
-        if(instance == null)
+        if (instance == null)
             instance = new Controller();
         return instance;
     }
@@ -56,7 +53,7 @@ public class Controller {
      */
 
     public void setUp(String nickname) {
-        for(int i = 0; i < ROOM_NUM; ++i) {
+        for (int i = 0; i < ROOM_NUM; ++i) {
             String name = welcomeActivity.getResources().getStringArray(R.array.rooms_names)[i];
             String description = welcomeActivity.getResources().getStringArray(R.array.rooms_descriptions)[i];
             rooms.add(new Room(name, i, description));
@@ -85,13 +82,13 @@ public class Controller {
     }
 
     public void sendToFriend(Message msg) {
-        String command = "SND "+msg.getBody().length();
-        clientSocket.sendMessage(command+" "+msg.getBody());
+        String command = "SND " + msg.getBody().length();
+        clientSocket.sendMessage(command + " " + msg.getBody());
         lastChatsFragment.updateChats(friend, msg);
     }
 
     public void receiveFromFriend(String msg) {
-        if(messagesActivity != null && !messagesActivity.isDestroyed()) {
+        if (messagesActivity != null && !messagesActivity.isDestroyed()) {
             Message message = new Message(msg, LocalTime.now(), friend);
             messagesActivity.updateChat(message);
             lastChatsFragment.updateChats(friend, message);
@@ -118,7 +115,7 @@ public class Controller {
         currentUser.setRoom(rooms.get(roomNumber));
         loadingDialog = new LoadingDialog(homeActivity, homeActivity.getResources().getStringArray(R.array.rooms_names)[roomNumber]);
         loadingDialog.startLoading();
-        clientSocket.sendMessage("SRC "+roomNumber);
+        clientSocket.sendMessage("SRC " + roomNumber);
     }
 
     public void leaveRoom() {
@@ -126,11 +123,11 @@ public class Controller {
     }
 
     public void updateRooms(String roomInfo) {
-        for(int i = 0; i < ROOM_NUM; ++i) {
-            int size = Integer.parseInt(roomInfo.substring(i, i+1));
-            if(size != rooms.get(i).getSize()) {
+        for (int i = 0; i < ROOM_NUM; ++i) {
+            int size = Integer.parseInt(roomInfo.substring(i, i + 1));
+            if (size != rooms.get(i).getSize()) {
                 rooms.get(i).setSize(size);
-                if(homeFragment != null)
+                if (homeFragment != null)
                     homeFragment.updateRooms(i, size);
             }
         }
@@ -147,14 +144,14 @@ public class Controller {
     }
 
     public void onFriendLeave() {
-        if(messagesActivity != null && !messagesActivity.isDestroyed()) {
+        if (messagesActivity != null && !messagesActivity.isDestroyed()) {
             messagesActivity.finish();
             homeActivity.onFail(homeActivity.getResources().getString(R.string.friend_leave_text));
         }
     }
 
     public void onSocketError() {
-        if(homeActivity != null)
+        if (homeActivity != null)
             homeActivity.onFail(homeActivity.getResources().getString(R.string.generic_error_text));
         clientSocket.initSocket();
         clientSocket.setNickname(currentUser.getNickname());
@@ -185,6 +182,8 @@ public class Controller {
         this.homeFragment = homeFragment;
     }
 
-    public void setLastChatsFragment(LastChatsFragment lastChatsFragment) { this.lastChatsFragment = lastChatsFragment; }
+    public void setLastChatsFragment(LastChatsFragment lastChatsFragment) {
+        this.lastChatsFragment = lastChatsFragment;
+    }
 
 }
