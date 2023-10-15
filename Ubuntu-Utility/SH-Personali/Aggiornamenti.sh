@@ -7,6 +7,12 @@ sudo true
 sudo apt update
 sudo apt upgrade -y
 
+## Aggiornamento dei pacchetti e delle dipendenze 
+sudo apt-get dist-upgrade -y
+
+#Per avanzamenti di sistema
+sudo do-release-upgrade 
+
 #Blocca la sospensione energetica del wifi
 sudo rfkill unblock wifi
 sudo rfkill unblock all

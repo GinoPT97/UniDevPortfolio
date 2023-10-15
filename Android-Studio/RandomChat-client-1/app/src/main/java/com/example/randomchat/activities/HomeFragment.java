@@ -25,7 +25,9 @@ public class HomeFragment extends Fragment {
     private Bundle bundle;
     private RoomAdapter roomAdapter;
 
-    public HomeFragment() { Controller.getInstance().setHomeFragment(this); }
+    public HomeFragment() {
+        Controller.getInstance().setHomeFragment(this);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +50,7 @@ public class HomeFragment extends Fragment {
         ArrayList<Room> rooms = (ArrayList<Room>) bundle.getSerializable("rooms");
 
         recyclerView = view.findViewById(R.id.rooms_recycleView);
-        if(roomAdapter == null)
+        if (roomAdapter == null)
             roomAdapter = new RoomAdapter(rooms);
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -60,8 +62,8 @@ public class HomeFragment extends Fragment {
     public void updateRooms(int position, int newSize) {
         ArrayList<Room> rooms = (ArrayList<Room>) bundle.getSerializable("rooms");
         rooms.get(position).setSize(newSize);
-        if(this.isVisible()) {
-            requireActivity().runOnUiThread(()->
+        if (this.isVisible()) {
+            requireActivity().runOnUiThread(() ->
                     Objects.requireNonNull(recyclerView.getAdapter()).notifyItemChanged(position)
             );
         }

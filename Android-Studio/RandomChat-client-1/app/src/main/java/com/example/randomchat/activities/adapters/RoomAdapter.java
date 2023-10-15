@@ -49,17 +49,19 @@ public class RoomAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public int getItemCount() { return rooms.size(); }
+    public int getItemCount() {
+        return rooms.size();
+    }
 
 
     private static class RoomHolder extends RecyclerView.ViewHolder {
 
-         TextView roomName;
-         TextView roomSize;
-         TextView roomDescription;
-         ImageView drawable;
+        TextView roomName;
+        TextView roomSize;
+        TextView roomDescription;
+        ImageView drawable;
 
-         RoomHolder(@NonNull View itemView) {
+        RoomHolder(@NonNull View itemView) {
             super(itemView);
             roomName = itemView.findViewById(R.id.roomName_textView);
             roomSize = itemView.findViewById(R.id.roomSize_textView);
@@ -71,7 +73,7 @@ public class RoomAdapter extends RecyclerView.Adapter {
         @SuppressLint("SetTextI18n")
         void bind(String name, int size, String description, int draw) {
             roomName.setText(name);
-            roomSize.setText(size+" online");
+            roomSize.setText(size + " online");
             roomDescription.setText(description);
             drawable.setImageResource(draw);
         }

@@ -15,21 +15,22 @@ public class ClientSocket {
     private PrintWriter out;
     private BufferedReader in;
 
-    private ClientSocket(){}
+    private ClientSocket() {
+    }
 
     public static ClientSocket getInstance() {
-        if(instance == null)
+        if (instance == null)
             instance = new ClientSocket();
         return instance;
     }
 
 
     public void initSocket() {
-        
-        if(mSocket != null && mSocket.isConnected()) 
+
+        if (mSocket != null && mSocket.isConnected())
             return;
-        
-        new Thread(()-> {
+
+        new Thread(() -> {
             final String SERVER_ADR = "MyMachineAddress.com"; // This is just an example, provide your server ip address
             final int SERVER_PORT = 5200; // Provide the port number of the server app
             try {
@@ -39,19 +40,19 @@ public class ClientSocket {
                 out = new PrintWriter(mSocket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
                 new Thread(new SocketListener()).start();
-            }catch (IOException e) {
-                if(mSocket != null) {
+            } catch (IOException e) {
+                if (mSocket != null) {
                     closeConnection();
                 }
             }
         }).start();
-        
+
     }
 
 
     public void setNickname(String nickname) {
-        new Thread(()-> {
-            if(mSocket != null && mSocket.isConnected()) {
+        new Thread(() -> {
+            if (mSocket != null && mSocket.isConnected()) {
                 out.write(nickname);
                 out.flush();
             }
@@ -61,11 +62,11 @@ public class ClientSocket {
 
 
     public void sendMessage(String msg) {
-        new Thread(()-> {
-            if(mSocket != null && mSocket.isConnected()) {
+        new Thread(() -> {
+            if (mSocket != null && mSocket.isConnected()) {
                 out.write(msg);
                 out.flush();
-            }else {
+            } else {
                 Controller.getInstance().onSocketError();
             }
         }).start();
@@ -81,13 +82,14 @@ public class ClientSocket {
             mSocket = null;
             in = null;
             out = null;
-        }catch(IOException ignored) {}
+        } catch (IOException ignored) {
+        }
     }
 
-    
+
     private void handleMessage(String msg) {
 
-        if(msg.length() < 3)
+        if (msg.length() < 3)
             return;
 
         int responseCode = Integer.parseInt(msg.substring(0, 3));
@@ -130,15 +132,15 @@ public class ClientSocket {
     private class SocketListener implements Runnable {
         @Override
         public void run() {
-            while(mSocket != null && mSocket.isConnected()) {
+            while (mSocket != null && mSocket.isConnected()) {
                 try {
                     final String msg = in.readLine();
-                    if(msg == null) {
+                    if (msg == null) {
                         closeConnection();
                         Controller.getInstance().onSocketError();
                         break;
-                    }else handleMessage(msg);
-                }catch(IOException e) {
+                    } else handleMessage(msg);
+                } catch (IOException e) {
                     closeConnection();
                     Controller.getInstance().onSocketError();
                     break;

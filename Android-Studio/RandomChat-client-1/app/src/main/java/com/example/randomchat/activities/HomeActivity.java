@@ -21,11 +21,10 @@ import com.google.android.material.tabs.TabLayout;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private ConstraintLayout layout;
-
     private final HomeFragment homeFragment = new HomeFragment();
     private final LastChatsFragment lastChatsFragment = new LastChatsFragment();
     private final ProfileFragment profileFragment = new ProfileFragment();
+    private ConstraintLayout layout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,10 +67,12 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
 
         });
 
@@ -90,7 +91,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
     public void onFail(String msg) {
-        runOnUiThread(()-> {
+        runOnUiThread(() -> {
             Snackbar snackbar = Snackbar.make(layout, msg, Snackbar.LENGTH_SHORT);
             snackbar.setBackgroundTint(ContextCompat.getColor(this, R.color.error));
 

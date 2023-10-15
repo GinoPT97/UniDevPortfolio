@@ -40,7 +40,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
 
         if (message.getSender() instanceof Friend) {
             return VIEW_TYPE_MESSAGE_RECEIVED;
-        }else {
+        } else {
             return VIEW_TYPE_MESSAGE_SENT;
         }
     }
@@ -55,7 +55,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent, parent, false);
 
-        }else {
+        } else {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_received, parent, false);
         }
@@ -84,7 +84,7 @@ public class MessageAdapter extends RecyclerView.Adapter {
         void bind(Message message) {
             messageText.setText(message.getBody());
 
-            DateTimeFormatter formatter  = DateTimeFormatter.ofPattern("HH:mm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
             String sentTime = formatter.format(message.getTime());
             timeText.setText(sentTime);
         }

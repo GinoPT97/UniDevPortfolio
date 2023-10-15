@@ -34,7 +34,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         Button sendButton = findViewById(R.id.sendButton);
         sendButton.setOnClickListener(view -> {
-            if(isNicknameValid()) {
+            if (isNicknameValid()) {
                 controller.setUp(Objects.requireNonNull(nicknameEditText.getText()).toString());
             }
         });
@@ -42,12 +42,12 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private boolean isNicknameValid() {
-        if(nicknameEditText.getText() == null || nicknameEditText.getText().length() < 1) {
+        if (nicknameEditText.getText() == null || nicknameEditText.getText().length() < 1) {
             textInputLayout.setError(getString(R.string.nickname_length_error));
             return false;
         }
 
-        if(nicknameEditText.getText().toString().matches(".*\\s+.*")) {
+        if (nicknameEditText.getText().toString().matches(".*\\s+.*")) {
             textInputLayout.setError(getString(R.string.nickname_spaces_error));
             return false;
         }

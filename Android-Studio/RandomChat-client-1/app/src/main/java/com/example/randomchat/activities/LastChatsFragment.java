@@ -51,13 +51,13 @@ public class LastChatsFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.chats);
         TextView infoTextView = view.findViewById(R.id.bottomTextView);
 
-        if(!chats.isEmpty()) {
+        if (!chats.isEmpty()) {
             animationView.setVisibility(View.GONE);
             infoTextView.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
             recyclerView.setAdapter(new ChatAdapter(chats));
-        }else {
+        } else {
             animationView.setVisibility(View.VISIBLE);
             infoTextView.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
@@ -67,9 +67,9 @@ public class LastChatsFragment extends Fragment {
 
 
     public void updateChats(Friend friend, Message msg) {
-        if(chats.containsKey(friend)) {
+        if (chats.containsKey(friend)) {
             Objects.requireNonNull(chats.get(friend)).add(msg);
-        }else {
+        } else {
             ArrayList<Message> messages = new ArrayList<>();
             messages.add(msg);
             chats.put(friend, messages);

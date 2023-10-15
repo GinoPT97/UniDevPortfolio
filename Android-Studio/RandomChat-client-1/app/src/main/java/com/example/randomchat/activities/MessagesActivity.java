@@ -39,14 +39,10 @@ import java.util.concurrent.TimeUnit;
 
 public class MessagesActivity extends AppCompatActivity {
 
+    private final int MIC_REQ_CODE = 1;
+    private final ArrayList<Message> messages = new ArrayList<>();
     private RecyclerView recyclerView;
     private EditText editMessage;
-    private SpeechRecognizer speechRecognizer;
-
-    private final int MIC_REQ_CODE = 1;
-
-    private final ArrayList<Message> messages = new ArrayList<>();
-
     private final ActivityResultLauncher<Intent> getTextFromSpeech = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
@@ -55,6 +51,7 @@ public class MessagesActivity extends AppCompatActivity {
                 }
             }
     );
+    private SpeechRecognizer speechRecognizer;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -74,7 +71,7 @@ public class MessagesActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         User currentUser = (User) bundle.getSerializable("currentUser");
 
-        materialToolbar.setTitle(getString(R.string.chatting_text)+" "+bundle.getString("friend"));
+        materialToolbar.setTitle(getString(R.string.chatting_text) + " " + bundle.getString("friend"));
         materialToolbar.setNavigationOnClickListener(view -> {
             LeaveChatDialog dialog = new LeaveChatDialog();
             dialog.show(getSupportFragmentManager(), "leaveChat");
@@ -85,8 +82,8 @@ public class MessagesActivity extends AppCompatActivity {
 
             @Override
             public void onTick(long l) {
-                int minutes = (int) (l/1000)/60;
-                int second = (int) (l/1000) % 60;
+                int minutes = (int) (l / 1000) / 60;
+                int second = (int) (l / 1000) % 60;
 
                 String time = String.format(Locale.getDefault(), "%02d:%02d", minutes, second);
                 timerText.setText(time);
@@ -109,26 +106,26 @@ public class MessagesActivity extends AppCompatActivity {
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
 
 
         buttonSpeech.setOnClickListener(view -> {
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},MIC_REQ_CODE);
-            }else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, MIC_REQ_CODE);
+            } else {
                 getTextFromSpeech.launch(speechRecognizerIntent);
             }
         });
 
         buttonSend.setOnClickListener(view1 -> {
             String body = editMessage.getText().toString();
-            if(body.length() > 0 && body.length() <= 150) {
+            if (body.length() > 0 && body.length() <= 150) {
                 Message message = new Message(body, LocalTime.now(), currentUser);
                 updateChat(message);
                 controller.sendToFriend(message);
                 editMessage.getText().clear();
-            }else if(body.length() > 150) {
+            } else if (body.length() > 150) {
                 Toast.makeText(this, getString(R.string.message_too_long), Toast.LENGTH_SHORT).show();
             }
         });
@@ -148,8 +145,8 @@ public class MessagesActivity extends AppCompatActivity {
     }
 
 
-    public void updateChat(Message message){
-        runOnUiThread(()-> {
+    public void updateChat(Message message) {
+        runOnUiThread(() -> {
             messages.add(message);
             Objects.requireNonNull(recyclerView.getAdapter()).notifyItemInserted(messages.size() - 1);
             recyclerView.scrollToPosition(messages.size() - 1);
@@ -160,8 +157,8 @@ public class MessagesActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == MIC_REQ_CODE && grantResults.length > 0) {
-            if(grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == MIC_REQ_CODE && grantResults.length > 0) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, getString(R.string.request_mic_permission), Toast.LENGTH_SHORT).show();
             }
         }
