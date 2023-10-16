@@ -4,7 +4,7 @@
 sudo apt update
 sudo apt upgrade -y
 sudo apt install wget -y
-sudo snap install curl -y
+sudo snap install curl 
 
 # Pacchetti per uso vario
 sudo dpkg --add-architecture i386
