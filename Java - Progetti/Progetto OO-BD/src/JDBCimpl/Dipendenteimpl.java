@@ -1,13 +1,16 @@
 package JDBCimpl;
 
-import JDBC.DipendenteJDBC;
-
-import java.sql.*;
+import java.sql.Connection;
 import java.sql.Date;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import Entita.Dipendente;
-import Entita.Ordine;
+import JDBC.DipendenteJDBC;
 
 public class Dipendenteimpl implements DipendenteJDBC{
 	private PreparedStatement setNewDip,getAllDip, updatedp;

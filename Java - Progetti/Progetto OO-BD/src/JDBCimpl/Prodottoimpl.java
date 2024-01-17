@@ -1,11 +1,14 @@
 package JDBCimpl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import Entita.Prodotto;
 import JDBC.ProdottoJDBC;
-
-import java.sql.*;
 
 public class Prodottoimpl implements ProdottoJDBC{
 	private Connection connection;

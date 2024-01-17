@@ -3,7 +3,6 @@ package JDBC;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Entita.Cliente;
 import Entita.Tessera;
 
 public interface TesseraJDBC {

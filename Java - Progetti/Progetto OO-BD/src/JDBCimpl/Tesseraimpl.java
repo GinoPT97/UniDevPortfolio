@@ -1,10 +1,12 @@
 package JDBCimpl;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import Entita.Cliente;
-import Entita.Dipendente;
 import Entita.Tessera;
 import JDBC.TesseraJDBC;
 

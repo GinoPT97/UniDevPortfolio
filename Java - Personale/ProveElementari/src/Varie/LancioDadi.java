@@ -1,6 +1,8 @@
+package Varie;
+
 import java.util.Scanner;
 
-public class lancioDadi {
+public class LancioDadi {
 
     // Attributi
     final int numerolanci = 10000;
@@ -8,7 +10,7 @@ public class lancioDadi {
 
 
 
-    public lancioDadi()
+    public LancioDadi()
     {
         // lanci[] = new int [numeroLanci];
         //lanci = new int [numerolanci];   //vettori
@@ -46,7 +48,7 @@ public class lancioDadi {
 
         /*System.out.println("Quante volte vuoi lanciare il dado?");
         numeroLanci =  in.nextInt();*/
-        lancioDadi ld = new lancioDadi();
+        LancioDadi ld = new LancioDadi();
 
         do
         {

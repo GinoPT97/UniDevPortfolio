@@ -1,8 +1,6 @@
 package Entita;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.*;
 
 public class Ordine {
           private String codordine;

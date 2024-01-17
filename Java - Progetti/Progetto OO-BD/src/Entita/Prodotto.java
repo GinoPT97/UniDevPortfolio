@@ -1,7 +1,6 @@
 package Entita;
 
-import java.awt.Component;
-import java.util.*;
+import java.util.Date;
 
 public class Prodotto {
 	     private String codprodotto;

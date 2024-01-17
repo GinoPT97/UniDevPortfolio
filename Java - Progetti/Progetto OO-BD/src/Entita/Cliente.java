@@ -1,7 +1,5 @@
 package Entita;
 
-import java.util.ArrayList;
-
 public class Cliente {
        private String codcliente;
        private String nome;

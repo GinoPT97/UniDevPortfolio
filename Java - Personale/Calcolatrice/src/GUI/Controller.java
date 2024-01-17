@@ -1,11 +1,15 @@
 package GUI;
 
-import Model.*;
-import DBConfig.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import DAO.calcolat;
 import DAOimpl.calcolatimpl;
-import java.sql.*;
-import java.util.ArrayList;
+import DBConfig.ConnectionException;
+import DBConfig.DBConfiguration;
+import DBConfig.DBConnect;
+import Model.Calc;
+import Model.Model;
 
 public class Controller {
     private Model m;

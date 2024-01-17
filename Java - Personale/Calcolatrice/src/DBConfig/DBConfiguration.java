@@ -1,7 +1,10 @@
 package DBConfig;
 
-import java.sql.*;
-import DBConfig.ConnectionException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DBConfiguration {
 		private Connection connection;

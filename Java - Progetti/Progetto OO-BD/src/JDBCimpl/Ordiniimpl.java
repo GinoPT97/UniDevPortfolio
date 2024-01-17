@@ -1,14 +1,13 @@
 package JDBCimpl;
 
-import java.sql.*;
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 
-import Entita.Cliente;
-import Entita.Dipendente;
 import Entita.Ordine;
-import Entita.Tessera;
 import JDBC.OrdiniJDBC;
 
 public class Ordiniimpl implements OrdiniJDBC{

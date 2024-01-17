@@ -9,8 +9,6 @@ import java.util.ArrayList;
 
 import Entita.Articoli;
 import Entita.Cliente;
-import Entita.Ordine;
-import Entita.Prodotto;
 import JDBC.ArticoliJDBC;
 
 public class ArticoliImpl implements ArticoliJDBC{

@@ -1,20 +1,33 @@
 package GUI;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import DBConfiguration.*;
-import Entita.*;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.*;
+import java.sql.Connection;
 import java.sql.Date;
-import java.util.*;
+import java.sql.SQLException;
 import java.util.List;
 
-import JDBC.*;
-import JDBCimpl.*;
+import javax.swing.table.DefaultTableModel;
+
+import DBConfiguration.ConnectionException;
+import DBConfiguration.DBConfiguration;
+import DBConfiguration.DBConnection;
+import Entita.Articoli;
+import Entita.Cliente;
+import Entita.Dipendente;
+import Entita.Ordine;
+import Entita.Prodotto;
+import Entita.Tessera;
+import JDBC.ArticoliJDBC;
+import JDBC.ClienteJDBC;
+import JDBC.DipendenteJDBC;
+import JDBC.OrdiniJDBC;
+import JDBC.ProdottoJDBC;
+import JDBC.TesseraJDBC;
+import JDBCimpl.ArticoliImpl;
+import JDBCimpl.Clienteimpl;
+import JDBCimpl.Dipendenteimpl;
+import JDBCimpl.Ordiniimpl;
+import JDBCimpl.Prodottoimpl;
+import JDBCimpl.Tesseraimpl;
 
 public class Controller {
 	private LoginFrame logf;
