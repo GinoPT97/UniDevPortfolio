@@ -51,7 +51,7 @@ public class DBConfiguration {
         ResultSet rs = st.executeQuery(sql);
         while (rs.next()) {
             if (sequence_name.equals(rs.getString(1))) {
-				;
+
 			}
                 return true;
         }
