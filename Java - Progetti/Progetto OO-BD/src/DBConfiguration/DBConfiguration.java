@@ -10,7 +10,7 @@ import java.sql.Statement;
 
 public class DBConfiguration {
 	private Connection connection = null;
-	
+
 	public DBConfiguration(Connection connection) {
         this.connection = connection;
     }
@@ -24,10 +24,11 @@ public class DBConfiguration {
     private boolean tableExists(String table_name) throws SQLException {
         DatabaseMetaData metadata = connection.getMetaData();
         ResultSet tables = metadata.getTables(null, null, table_name, null);
-        if (tables.next())
-            return true;
-        else
-            return false;
+        if (tables.next()) {
+			return true;
+		} else {
+			return false;
+		}
     }
 
     //Verifica l'esistenza dei trigger
@@ -36,8 +37,9 @@ public class DBConfiguration {
         String sql = "SELECT trigger_name FROM information_schema.triggers";
         ResultSet rs = st.executeQuery(sql);
         while (rs.next()) {
-            if (trigger_name.equals(rs.getString(1)))
-                return true;
+            if (trigger_name.equals(rs.getString(1))) {
+				return true;
+			}
         }
         return false;
     }
@@ -48,7 +50,9 @@ public class DBConfiguration {
         String sql = "SELECT c.relname FROM pg_class c WHERE c.relkind = 'S'";  //Query che ritorna il nome delle sequenze create dall'utente; fonte: https://stackoverflow.com/questions/1493262/list-all-sequences-in-a-postgres-db-8-1-with-sql
         ResultSet rs = st.executeQuery(sql);
         while (rs.next()) {
-            if (sequence_name.equals(rs.getString(1)));
+            if (sequence_name.equals(rs.getString(1))) {
+				;
+			}
                 return true;
         }
         return false;
@@ -60,19 +64,19 @@ public class DBConfiguration {
     	if(connectionExists()) {
     		try {
     			Statement st = connection.createStatement();
-    			
+
     			String sql = "CREATE SEQUENCE SCodCliente INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
     			result = st.executeUpdate(sql);
-    			
+
     			sql = "CREATE SEQUENCE SCodDipendente INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
     			result = result + st.executeUpdate(sql);
-    			
+
     			sql = "CREATE SEQUENCE SCodProdotto INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
     			result = result + st.executeUpdate(sql);
-    			
+
     			sql = "CREATE SEQUENCE SCodOrdine INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
     			result = result + st.executeUpdate(sql);
-    			
+
     			sql = "CREATE SEQUENCE SCodTessera INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
     			result = result + st.executeUpdate(sql);
     		}catch(SQLException ex){
@@ -81,7 +85,7 @@ public class DBConfiguration {
     	}
 		return result;
     }
-	    
+
 	    public int createTableCliente() throws ConnectionException {
 	        int result = -1;
 
@@ -104,20 +108,21 @@ public class DBConfiguration {
 	                    result = st.executeUpdate(sql);
 	                    st.close();
 
-	                } else
-	                    System.out.println("Table Cliente already exists!");
+	                } else {
+						System.out.println("Table Cliente already exists!");
+					}
 	            }
 	            catch(SQLException ex)
 	            {
 	                System.out.println("SQL Exception in creation table Cliente : "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exist!");
+	        } else {
+				throw new ConnectionException("A connection must exist!");
+			}
 
 	        return result;
 	    }
-	    
+
 	    public int createTableDipendente() throws ConnectionException {
 	        int result = -1;
 
@@ -140,20 +145,21 @@ public class DBConfiguration {
 	                    result = st.executeUpdate(sql);
 	                    st.close();
 
-	                } else
-	                    System.out.println("Table Dipendente already exists!");
+	                } else {
+						System.out.println("Table Dipendente already exists!");
+					}
 	            }
 	            catch(SQLException ex)
 	            {
 	                System.out.println("SQL Exception in creation table Dipendente : "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exist!");
+	        } else {
+				throw new ConnectionException("A connection must exist!");
+			}
 
 	        return result;
 	    }
-	    
+
 	    public int createTableTessera() throws ConnectionException {
 	        int result = -1;
 
@@ -176,20 +182,21 @@ public class DBConfiguration {
 	                    result = st.executeUpdate(sql);
 	                    st.close();
 
-	                } else
-	                    System.out.println("Table Tessera already exists!");
+	                } else {
+						System.out.println("Table Tessera already exists!");
+					}
 	            }
 	            catch(SQLException ex)
 	            {
 	                System.out.println("SQL Exception in creation table Tessera : "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exist!");
+	        } else {
+				throw new ConnectionException("A connection must exist!");
+			}
 
 	        return result;
 	    }
-	    
+
 	    public int createTableProdotto() throws ConnectionException {
 	        int result = -1;
 
@@ -219,20 +226,21 @@ public class DBConfiguration {
 	                    result = st.executeUpdate(sql);
 	                    st.close();
 
-	                } else
-	                    System.out.println("Table Prodotto already exists!");
+	                } else {
+						System.out.println("Table Prodotto already exists!");
+					}
 	            }
 	            catch(SQLException ex)
 	            {
 	                System.out.println("SQL Exception in creation table Prodotto : "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exist!");
+	        } else {
+				throw new ConnectionException("A connection must exist!");
+			}
 
 	        return result;
 	    }
-	    
+
 	    public int createTableOrdine() throws ConnectionException {
 	        int result = -1;
 
@@ -256,20 +264,21 @@ public class DBConfiguration {
 	                    result = st.executeUpdate(sql);
 	                    st.close();
 
-	                } else
-	                    System.out.println("Table Ordine already exists!");
+	                } else {
+						System.out.println("Table Ordine already exists!");
+					}
 	            }
 	            catch(SQLException ex)
 	            {
 	                System.out.println("SQL Exception in creation table Ordine : "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exist!");
+	        } else {
+				throw new ConnectionException("A connection must exist!");
+			}
 
 	        return result;
 	    }
-	    
+
 	    public int createTableArticoliOrdine() throws ConnectionException
 	    {
 	        int result = -1;
@@ -292,19 +301,19 @@ public class DBConfiguration {
 	                            " );";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
-	                }
-	                else
-	                    System.out.println("Table 'ARTICOLIORDINE' already exists!");
+	                } else {
+						System.out.println("Table 'ARTICOLIORDINE' already exists!");
+					}
 	            }
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation table 'ARTICOLIORDINE': "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
-	    
+
 	    public int createFunctionUpdateScorta() throws ConnectionException
 	    {
 	        int result = -1;
@@ -329,9 +338,9 @@ public class DBConfiguration {
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation function 'updateScorta()': "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -359,9 +368,9 @@ public class DBConfiguration {
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation function 'restoreScorta()': "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -391,9 +400,9 @@ public class DBConfiguration {
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation function 'selectPrezzo()': "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -423,9 +432,9 @@ public class DBConfiguration {
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation function 'updatePrezzo()': "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -455,9 +464,9 @@ public class DBConfiguration {
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation function 'updateDeletePrezzo()': "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -525,9 +534,9 @@ public class DBConfiguration {
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation function 'updatePunti()': "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -561,9 +570,9 @@ public class DBConfiguration {
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation function 'updateDeletePunti()': "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -579,16 +588,16 @@ public class DBConfiguration {
 	                            "EXECUTE PROCEDURE updateScorta();";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
-	                }
-	                else
-	                    System.out.println("Trigger 'updateScorta' already exists!");
+	                } else {
+						System.out.println("Trigger 'updateScorta' already exists!");
+					}
 	            }
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation trigger 'updateScorta': " + ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -604,16 +613,16 @@ public class DBConfiguration {
 	                            "EXECUTE PROCEDURE selectPrezzo();";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
-	                }
-	                else
-	                    System.out.println("Trigger 'selectPrezzo' already exists!");
+	                } else {
+						System.out.println("Trigger 'selectPrezzo' already exists!");
+					}
 	            }
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation trigger 'selectPrezzo: " + ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -629,16 +638,16 @@ public class DBConfiguration {
 	                            "EXECUTE PROCEDURE updatePrezzo();";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
-	                }
-	                else
-	                    System.out.println("Trigger 'updatePrezzo' already exists!");
+	                } else {
+						System.out.println("Trigger 'updatePrezzo' already exists!");
+					}
 	            }
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation trigger 'updatePrezzo: " + ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -654,16 +663,16 @@ public class DBConfiguration {
 	                            "EXECUTE PROCEDURE updateDeletePrezzo();";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
-	                }
-	                else
-	                    System.out.println("Trigger 'updateDeletePrezzo' already exists!");
+	                } else {
+						System.out.println("Trigger 'updateDeletePrezzo' already exists!");
+					}
 	            }
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation trigger 'updateDeletePrezzo: " + ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -679,16 +688,16 @@ public class DBConfiguration {
 	                            "EXECUTE PROCEDURE checkScorta();";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
-	                }
-	                else
-	                    System.out.println("Trigger 'checkScorta' already exists!");
+	                } else {
+						System.out.println("Trigger 'checkScorta' already exists!");
+					}
 	            }
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation trigger 'checkScorta': " + ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -704,16 +713,16 @@ public class DBConfiguration {
 	                            "EXECUTE PROCEDURE updatePunti();";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
-	                }
-	                else
-	                    System.out.println("Trigger 'updatePunti' already exists!");
+	                } else {
+						System.out.println("Trigger 'updatePunti' already exists!");
+					}
 	            }
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation trigger 'updatePunti': " + ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -729,16 +738,16 @@ public class DBConfiguration {
 	                            "EXECUTE PROCEDURE restoreScorta();";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
-	                }
-	                else
-	                    System.out.println("Trigger 'restoreScorta' already exists!");
+	                } else {
+						System.out.println("Trigger 'restoreScorta' already exists!");
+					}
 	            }
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation trigger 'restoreScorta': " + ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
 
@@ -754,19 +763,19 @@ public class DBConfiguration {
 	                            "EXECUTE PROCEDURE updateDeletePunti();";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
-	                }
-	                else
-	                    System.out.println("Trigger 'updateDeletePunti' already exists!");
+	                } else {
+						System.out.println("Trigger 'updateDeletePunti' already exists!");
+					}
 	            }
 	            catch (SQLException ex) {
 	                System.out.println("SQL Exception found in creation trigger 'updateDeletePunti': " + ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exists!");
+	        } else {
+				throw new ConnectionException("A connection must exists!");
+			}
 	        return result;
 	    }
-	    
+
 	    public int createTipologie() throws ConnectionException {
 	        int result = -1;
 
@@ -781,9 +790,9 @@ public class DBConfiguration {
 	            {
 	                System.out.println("SQL Exception in creation type tipologia: "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exist!");
+	        } else {
+				throw new ConnectionException("A connection must exist!");
+			}
 
 	        return result;
 	    }

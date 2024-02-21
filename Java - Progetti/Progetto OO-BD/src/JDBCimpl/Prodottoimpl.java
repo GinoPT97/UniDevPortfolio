@@ -14,9 +14,9 @@ public class Prodottoimpl implements ProdottoJDBC{
 	private Connection connection;
 	private PreparedStatement setNewProdotto, getallprodotti, updateprodotto, upscorte;
 	private Statement getcategoria;
-	private ArrayList<Prodotto> prod = new ArrayList<Prodotto>();
-	private ArrayList<Prodotto> prodc = new ArrayList<Prodotto>();
-	
+	private ArrayList<Prodotto> prod = new ArrayList<>();
+	private ArrayList<Prodotto> prodc = new ArrayList<>();
+
 	public Prodottoimpl(Connection connection) throws SQLException{
 		this.connection = connection;
 		getallprodotti = connection.prepareStatement("SELECT * FROM prodotto ORDER BY nome DESC");
@@ -25,7 +25,7 @@ public class Prodottoimpl implements ProdottoJDBC{
 		upscorte = connection.prepareStatement("UPDATE prodotto SET scorta = scorta - ? WHERE codprodotto = ?");
 		getcategoria = connection.createStatement();
 	}
-	
+
 	@Override
 	public boolean setNewProdotto(Prodotto prodotto) throws SQLException{
 		setNewProdotto.setString(1, prodotto.getNome());
@@ -59,20 +59,25 @@ public class Prodottoimpl implements ProdottoJDBC{
 		}
 		setNewProdotto.setInt(10, prodotto.getScorta());
         int row = setNewProdotto.executeUpdate();
-        if(row<1) return false;
-        else return true;
+        if(row<1) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
 	public ArrayList<Prodotto> getallprodotti() throws SQLException {
 		prod.clear();
 		ResultSet rs = getallprodotti.executeQuery();
-        while(rs.next()) prod.add(new Prodotto(rs.getString("codprodotto"),rs.getString("nome"),
-        			                    rs.getString("descrizione"),rs.getDouble("prezzo"), 
-        			                    rs.getString("luogoprovenienza"),
-        			                    rs.getDate("dataraccolta"), rs.getDate("datamungitura"),
-        			                    rs.getBoolean("glutine"), rs.getDate("datascadenza"),
-        			                    rs.getString("categoria"),rs.getInt("scorta")));
+        while(rs.next()) {
+			prod.add(new Prodotto(rs.getString("codprodotto"),rs.getString("nome"),
+						                    rs.getString("descrizione"),rs.getDouble("prezzo"),
+						                    rs.getString("luogoprovenienza"),
+						                    rs.getDate("dataraccolta"), rs.getDate("datamungitura"),
+						                    rs.getBoolean("glutine"), rs.getDate("datascadenza"),
+						                    rs.getString("categoria"),rs.getInt("scorta")));
+		}
         rs.close();
         return prod;
 	}
@@ -111,20 +116,25 @@ public class Prodottoimpl implements ProdottoJDBC{
 		updateprodotto.setInt(10, prodotto.getScorta());
 		updateprodotto.setString(11, prodotto.getCodProd());
 		int row = updateprodotto.executeUpdate();
-		if(row<1) return false;
-        else return true;
+		if(row<1) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
 	public ArrayList<Prodotto> getbycategoria(String categoria) throws SQLException {
 		prodc.clear();
 		ResultSet rs = getcategoria.executeQuery("SELECT * FROM prodotto WHERE categoria = '"+categoria+"' ORDER BY nome DESC");
-		while( rs.next()) prodc.add(new Prodotto( rs.getString("codprodotto"), rs.getString("nome"),
-        			                     rs.getString("descrizione"), rs.getDouble("prezzo"), 
-        			                     rs.getString("luogoprovenienza"), rs.getDate("dataraccolta"), 
-        			                     rs.getDate("datamungitura"), rs.getBoolean("glutine"), 
-        			                     rs.getDate("datascadenza"),  rs.getString("categoria"),
-        			                     rs.getInt("scorta")));
+		while( rs.next()) {
+			prodc.add(new Prodotto( rs.getString("codprodotto"), rs.getString("nome"),
+						                     rs.getString("descrizione"), rs.getDouble("prezzo"),
+						                     rs.getString("luogoprovenienza"), rs.getDate("dataraccolta"),
+						                     rs.getDate("datamungitura"), rs.getBoolean("glutine"),
+						                     rs.getDate("datascadenza"),  rs.getString("categoria"),
+						                     rs.getInt("scorta")));
+		}
          rs.close();
 		return prodc;
 	}
@@ -134,7 +144,10 @@ public class Prodottoimpl implements ProdottoJDBC{
 		upscorte.setInt(1, x);
 		upscorte.setString(2, codprod);
 		int row = upscorte.executeUpdate();
-		if(row<1) return false;
-        else return true;
+		if(row<1) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }

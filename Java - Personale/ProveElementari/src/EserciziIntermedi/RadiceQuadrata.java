@@ -3,9 +3,9 @@ package EserciziIntermedi;
 import java.util.Scanner;
 
 public class RadiceQuadrata {
-	
+
 	    public static void main(String[] args) {
-	    	
+
 	        Scanner scanner = new Scanner(System.in);
 
 	        try {

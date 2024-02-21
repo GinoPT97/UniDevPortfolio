@@ -3,9 +3,9 @@ package EserciziIntermedi;
 import java.util.Scanner;
 
 public class DivisioneEccezione {
-	
+
 	public static void main(String[] args) {
-		
+
 		// Creiamo uno scanner per leggere input da tastiera
 		Scanner scanner = new Scanner(System.in);
 

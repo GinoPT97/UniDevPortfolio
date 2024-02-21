@@ -3,7 +3,7 @@ package EserciziIntermedi;
 import java.util.Scanner;
 
 public class TrovaMassimo {
-	
+
 	// Funzione per trovare il massimo degli elementi in un array di interi
     public static int trovaMassimo(int[] arr) {
         if (arr.length == 0) {
@@ -23,7 +23,7 @@ public class TrovaMassimo {
         // Restituisci il massimo trovato
         return massimo;
     }
-    
+
     public static void main(String[] args) {
         // Crea un oggetto Scanner per leggere l'input da tastiera
         Scanner scanner = new Scanner(System.in);

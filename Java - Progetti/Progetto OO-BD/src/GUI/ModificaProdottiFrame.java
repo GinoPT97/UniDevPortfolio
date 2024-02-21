@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import Entita.Prodotto;
@@ -42,9 +43,9 @@ public class ModificaProdottiFrame extends JFrame {
 	private JButton backbutton;
 	private JButton updatebutton;
 	private JButton clearbutton;
-	
+
 	public void elementi() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 650, 450);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -52,139 +53,139 @@ public class ModificaProdottiFrame extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setLocationRelativeTo(null);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
-		
+
 		JPanel elempanel = new JPanel();
 		elempanel.setBorder(new EmptyBorder(20, 100, 20, 100));
 		contentPane.add(elempanel, BorderLayout.CENTER);
 		elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
-		
+
 		JPanel nomepanel = new JPanel();
 		elempanel.add(nomepanel);
-		
+
 		JLabel nomelab = new JLabel("Nome :");
 		nomepanel.add(nomelab);
-		
+
 		nometf = new JTextField();
 		nometf.setColumns(10);
 		nomepanel.add(nometf);
-		
+
 		JPanel descrizionepanel = new JPanel();
 		elempanel.add(descrizionepanel);
-		
+
 		JLabel descrlab = new JLabel("Descrizione :");
 		descrizionepanel.add(descrlab);
-		
+
 		descta = new JTextArea();
 		descta.setRows(1);
 		descta.setColumns(10);
 		descrizionepanel.add(descta);
-		
+
 		JPanel provenienzapanel = new JPanel();
 		elempanel.add(provenienzapanel);
-		
+
 		JLabel provlab = new JLabel("Provenienza :");
 		provenienzapanel.add(provlab);
-		
+
 		provtf = new JTextField();
 		provtf.setColumns(10);
 		provenienzapanel.add(provtf);
-		
+
 		JPanel prezzopanel = new JPanel();
 		elempanel.add(prezzopanel);
-		
+
 		JLabel prezzolab = new JLabel("Prezzo :");
 		prezzopanel.add(prezzolab);
-		
+
 		prezzotf = new JTextField();
 		prezzotf.setColumns(10);
 		prezzopanel.add(prezzotf);
-		
+
 		JPanel raccoltapanel = new JPanel();
 		elempanel.add(raccoltapanel);
-		
+
 		JLabel racclab = new JLabel("Data Raccolta (YYYY-MM-DD)  :");
 		raccoltapanel.add(racclab);
-		
+
 		racctf = new JTextField();
 		racctf.setEditable(false);
 		racctf.setColumns(10);
 		raccoltapanel.add(racctf);
-		
+
 		JPanel mungiturapanel = new JPanel();
 		elempanel.add(mungiturapanel);
-		
+
 		JLabel munglab = new JLabel("Data Mungitura (YYYY-MM-DD)  :");
 		mungiturapanel.add(munglab);
-		
+
 		mungtf = new JTextField();
 		mungtf.setEditable(false);
 		mungtf.setColumns(10);
 		mungiturapanel.add(mungtf);
-		
+
 		JPanel glutinepanel = new JPanel();
 		elempanel.add(glutinepanel);
-		
+
 		JLabel glutlab = new JLabel("Glutine :");
 		glutinepanel.add(glutlab);
-		
+
 		glutcb = new JCheckBox("Si");
 		glutcb.setEnabled(false);
 		glutinepanel.add(glutcb);
-		
+
 		JPanel scadenzapanel = new JPanel();
 		elempanel.add(scadenzapanel);
-		
+
 		JLabel scadlab = new JLabel("Data Scadenza  (YYYY-MM-DD) :");
 		scadenzapanel.add(scadlab);
-		
+
 		scadtf = new JTextField();
 		scadtf.setEditable(false);
 		scadtf.setColumns(10);
 		scadenzapanel.add(scadtf);
-		
+
 		JPanel scortapanel = new JPanel();
 		elempanel.add(scortapanel);
-		
+
 		JLabel scortalab = new JLabel("Scorta :");
 		scortapanel.add(scortalab);
-		
+
 		scortatf = new JTextField();
 		scortatf.setColumns(10);
 		scortapanel.add(scortatf);
-		
+
 		JPanel categoriapanel = new JPanel();
 		elempanel.add(categoriapanel);
-		
+
 		categoriacb = new JComboBox(new String[] {"Ortofrutticoli","Inscatolati","Latticini","Farinacei"});
 		categoriapanel.add(categoriacb);
-		
+
 		JButton selbutton = new JButton("Seleziona");
 		categoriapanel.add(selbutton);
-	    
+
 	    JPanel buttonpanel = new JPanel();
 	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
-	    
+
 	    updatebutton = new JButton("Inserisci");
 	    updatebutton.setBackground(Color.BLUE);
 	    buttonpanel.add(updatebutton);
-	    
+
 	    clearbutton = new JButton("Pulisci");
 	    clearbutton.setBackground(Color.WHITE);
 	    buttonpanel.add(clearbutton);
-	    
+
 	    backbutton = new JButton("Indietro");
 	    backbutton.setBackground(Color.RED);
 	    buttonpanel.add(backbutton);
-	    
+
 	    JPanel panel = new JPanel();
 	    panel.setBackground(new Color(178, 34, 34));
 	    contentPane.add(panel, BorderLayout.NORTH);
-	    
+
 	    JLabel titlelabel = new JLabel("Modifica Prodotto");
 	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
 	    panel.add(titlelabel);
 	}
-	
+
 	public void viewprod(Prodotto pe) {
 		cod = pe.getCodProd();
 		nometf.setText(pe.getNome());
@@ -192,13 +193,23 @@ public class ModificaProdottiFrame extends JFrame {
 		provtf.setText(pe.getLuogoProv());
 		prezzotf.setText(String.valueOf(pe.getPrezzo()));
 		scortatf.setText(String.valueOf(pe.getScorta()));
-		if(pe.getGlutine()==true) glutcb.setSelected(true);
-		if(pe.getCategoria().equals("Ortofrutticoli")) categoriacb.setSelectedIndex(0);
-		if(pe.getCategoria().equals("Inscatolati")) categoriacb.setSelectedIndex(1);
-		if(pe.getCategoria().equals("Latticini")) categoriacb.setSelectedIndex(2);
-		if(pe.getCategoria().equals("Farinacei")) categoriacb.setSelectedIndex(3);
+		if(pe.getGlutine()) {
+			glutcb.setSelected(true);
+		}
+		if(pe.getCategoria().equals("Ortofrutticoli")) {
+			categoriacb.setSelectedIndex(0);
+		}
+		if(pe.getCategoria().equals("Inscatolati")) {
+			categoriacb.setSelectedIndex(1);
+		}
+		if(pe.getCategoria().equals("Latticini")) {
+			categoriacb.setSelectedIndex(2);
+		}
+		if(pe.getCategoria().equals("Farinacei")) {
+			categoriacb.setSelectedIndex(3);
+		}
 	}
-	
+
 	public void clean() {
     	nometf.setText("");
 		descta.setText("");
@@ -210,9 +221,10 @@ public class ModificaProdottiFrame extends JFrame {
 	    scadtf.setText("");
 	    glutcb.setSelected(false);
     }
-	
+
 	public void azioni(Controller c) {
 		backbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				clean();
 				c.visAndprod(3);
@@ -220,12 +232,14 @@ public class ModificaProdottiFrame extends JFrame {
 		});
 
 		clearbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				clean();
 			}
 		});
-		
+
 		updatebutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				DateFormat data = new SimpleDateFormat ("yyyy-MM-dd");
 				try {

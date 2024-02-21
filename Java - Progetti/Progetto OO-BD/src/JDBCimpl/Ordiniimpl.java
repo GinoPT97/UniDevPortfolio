@@ -14,15 +14,15 @@ public class Ordiniimpl implements OrdiniJDBC{
 	private Connection connection;
 	private PreparedStatement newordine,allordine,newarticoli;
 	private Statement olddate,currCod;
-	private ArrayList<Ordine> ord = new ArrayList<Ordine>();
-	
+	private ArrayList<Ordine> ord = new ArrayList<>();
+
 	public Ordiniimpl(Connection connection) throws SQLException{
 		this.connection = connection;
 		newordine = connection.prepareStatement("INSERT INTO ordine VALUES (NEXTVAL('SCodOrdine'),?,?,?,?)");
 		newarticoli = connection.prepareStatement("INSERT INTO articoliordine VALUES (NEXTVAL(?,?,?,?)");
 		allordine = connection.prepareStatement("SELECT * FROM ordine ORDER BY dataacquisto DESC");
-		olddate = connection.createStatement();	
-		currCod = connection.createStatement();	
+		olddate = connection.createStatement();
+		currCod = connection.createStatement();
 	}
 
 	@Override
@@ -32,16 +32,21 @@ public class Ordiniimpl implements OrdiniJDBC{
 		newordine.setString(3, ordine.getIdCt());
 		newordine.setString(4, ordine.getIdDip());
         int row = newordine.executeUpdate();
-        if(row<1) return false;
-        else return true;
+        if(row<1) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
 	public ArrayList<Ordine> getallordini() throws SQLException {
 		ResultSet rs = allordine.executeQuery();
-		while(rs.next()) ord.add(new Ordine(rs.getString("codordine"), rs.getDate("dataacquisto"), 
-				                                  rs.getDouble("prezzototale"), rs.getString("codcliente"), 
-				                                  rs.getString("coddipendente")));
+		while(rs.next()) {
+			ord.add(new Ordine(rs.getString("codordine"), rs.getDate("dataacquisto"),
+					                                  rs.getDouble("prezzototale"), rs.getString("codcliente"),
+					                                  rs.getString("coddipendente")));
+		}
 		rs.close();
 		return ord;
 	}
@@ -50,7 +55,9 @@ public class Ordiniimpl implements OrdiniJDBC{
 	public String getOldDate() throws SQLException {
 		ResultSet rs = olddate.executeQuery("SELECT MIN(dataacquisto) AS old FROM ordine");
 		String old = null;
-		if(rs.next()) old = rs.getDate("old").toString();
+		if(rs.next()) {
+			old = rs.getDate("old").toString();
+		}
 		rs.close();
 		return old;
 	}
@@ -59,7 +66,9 @@ public class Ordiniimpl implements OrdiniJDBC{
 	public String getCurrentCod() throws SQLException {
 		ResultSet rs = currCod.executeQuery("SELECT currval('SCodOrdine') AS codordine");
 		String codOrd = null;
-		if(rs.next()) codOrd = rs.getString("codordine");
+		if(rs.next()) {
+			codOrd = rs.getString("codordine");
+		}
 		rs.close();
 		return codOrd;
 	}

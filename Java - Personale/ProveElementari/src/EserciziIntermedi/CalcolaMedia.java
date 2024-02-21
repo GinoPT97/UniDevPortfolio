@@ -3,7 +3,7 @@ package EserciziIntermedi;
 import java.util.Scanner;
 
 public class CalcolaMedia {
-	
+
 	// Metodo per calcolare la media degli elementi in un array
     private static double calcolaMedia(int[] array) {
         int somma = 0;
@@ -20,7 +20,7 @@ public class CalcolaMedia {
     }
 
     public static void main(String[] args) {
-    	
+
         Scanner scanner = new Scanner(System.in);
 
         // Chiedi all'utente di inserire la lunghezza dell'array

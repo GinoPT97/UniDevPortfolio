@@ -3,7 +3,7 @@ package EserciziIntermedi;
 import java.util.Scanner;
 
 public class MediaArrayEccezione {
-	
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 

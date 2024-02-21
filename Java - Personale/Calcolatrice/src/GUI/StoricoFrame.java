@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -19,25 +20,26 @@ public class StoricoFrame extends JFrame {
 	private DefaultTableModel model;
 
 	public StoricoFrame(String string, Controller c) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 702, 500);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(0, 128, 128));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(69, 43, 556, 335);
 		this.getContentPane().add(scrollPane);
-		
+
 		JButton deletebutton = new JButton("Elimina");
 		deletebutton.setBackground(Color.BLUE);
 		deletebutton.setBounds(230, 403, 85, 21);
 		contentPane.add(deletebutton);
-		
+
 		JButton backbutton = new JButton("Indietro");
 		backbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				c.back2();
 			}
@@ -45,7 +47,7 @@ public class StoricoFrame extends JFrame {
 		backbutton.setBackground(Color.RED);
 		backbutton.setBounds(375, 403, 85, 21);
 		contentPane.add(backbutton);
-		
+
 		table = new JTable();
 		model = new DefaultTableModel();
 		Object[] colonne = {"1� Operando", "Operatore","2� Operando","Risultato"};

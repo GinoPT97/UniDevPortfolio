@@ -15,17 +15,17 @@ public class Clienteimpl implements ClienteJDBC{
 	private Connection connection;
 	private PreparedStatement setNewCt, getAllCt, cercacl, updatecl;
 	private Statement idcl,onect;
-	private ArrayList<Cliente> ctTot = new ArrayList<Cliente>();
+	private ArrayList<Cliente> ctTot = new ArrayList<>();
 	private Cliente ct;
 	private String id = null;
-	
+
 	public Clienteimpl(Connection connection) throws SQLException{
 		this.connection = connection;
 		getAllCt = connection.prepareStatement("SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente  ORDER BY C.cognome DESC");
 		cercacl = connection.prepareStatement("SELECT codcliente FROM cliente WHERE nome = ? AND cognome = ? AND codicefiscale = ?");
 		setNewCt = connection.prepareStatement("INSERT INTO cliente VALUES (nextval('SCodCliente'), ?, ?, ?, ?, ?, ?)");
 		updatecl = connection.prepareStatement("UPDATE cliente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE codcliente = ?");
-        idcl = connection.createStatement();	
+        idcl = connection.createStatement();
         onect = connection.createStatement();
  	}
 
@@ -38,17 +38,22 @@ public class Clienteimpl implements ClienteJDBC{
 		setNewCt.setString(5, cliente.getTel());
 		setNewCt.setString(6, cliente.getEmail());
         int row = setNewCt.executeUpdate();
-        if(row<1) return false;
-        else return true;
+        if(row<1) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
 	public ArrayList<Cliente> getAllCt() throws SQLException {
 		ResultSet rs = getAllCt.executeQuery();
-        while(rs.next()) ctTot.add(new Cliente(rs.getString("codcliente"),rs.getString("nome"),
-        			                     rs.getString("cognome"),rs.getString("codicefiscale"),
-        			                     rs.getString("email"),rs.getString("indirizzo"),
-        			                     rs.getString("telefono"), new Tessera(rs.getString("codtessera"),rs.getInt("numeropunti"), null),null));
+        while(rs.next()) {
+			ctTot.add(new Cliente(rs.getString("codcliente"),rs.getString("nome"),
+						                     rs.getString("cognome"),rs.getString("codicefiscale"),
+						                     rs.getString("email"),rs.getString("indirizzo"),
+						                     rs.getString("telefono"), new Tessera(rs.getString("codtessera"),rs.getInt("numeropunti"), null),null));
+		}
         rs.close();
         return ctTot;
 	}
@@ -60,8 +65,9 @@ public class Clienteimpl implements ClienteJDBC{
 		cercacl.setString(3, codicefiscale);
 		ResultSet rs = cercacl.executeQuery();
 		String s = null;
-		while(rs.next())
-		s = rs.getString("codcliente");
+		while(rs.next()) {
+			s = rs.getString("codcliente");
+		}
 		rs.close();
 		return s;
 	}
@@ -76,14 +82,19 @@ public class Clienteimpl implements ClienteJDBC{
 		updatecl.setString(6, cliente.getEmail());
 		updatecl.setString(7, cliente.getCodCl());
         int row = updatecl.executeUpdate();
-        if(row<1) return false;
-        else return true;
+        if(row<1) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
 	public String getIdCt(String codfisc) throws SQLException {
 		ResultSet rs = idcl.executeQuery("SELECT codcliente FROM cliente WHERE codicefiscale = '"+codfisc+"'");
-		if(rs.next()) id = rs.getString("codcliente");
+		if(rs.next()) {
+			id = rs.getString("codcliente");
+		}
         rs.close();
         return id;
 	}
@@ -91,7 +102,9 @@ public class Clienteimpl implements ClienteJDBC{
 	@Override
 	public Cliente getCtByid(String idct) throws SQLException {
 		ResultSet rs = idcl.executeQuery("SELECT * FROM cliente WHERE codcliente = '"+idct+"'");
-		if(rs.next()) ct = new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null,null,null);
+		if(rs.next()) {
+			ct = new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null,null,null);
+		}
         rs.close();
 		return ct;
 	}

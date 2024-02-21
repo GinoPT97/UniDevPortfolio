@@ -15,11 +15,11 @@ import JDBC.DipendenteJDBC;
 public class Dipendenteimpl implements DipendenteJDBC{
 	private PreparedStatement setNewDip,getAllDip, updatedp;
 	private Statement getDipVendite, getDipIntroiti, verifyId, getdip, lastsell;
-	private ArrayList<Dipendente> diplist = new ArrayList<Dipendente>();
-	private List<String> ordven = new ArrayList<String>();
-	private List<String> ordint = new ArrayList<String>();
+	private ArrayList<Dipendente> diplist = new ArrayList<>();
+	private List<String> ordven = new ArrayList<>();
+	private List<String> ordint = new ArrayList<>();
 	private Dipendente dip;
-	
+
 	public Dipendenteimpl(Connection connection) throws SQLException{
 		getAllDip = connection.prepareStatement("SELECT * FROM dipendente ORDER BY cognome DESC");
 		setNewDip = connection.prepareStatement("INSERT INTO dipendente VALUES (NEXTVAL('SCodDipendente'), ?, ?, ?, ?, ?, ?)");
@@ -39,26 +39,33 @@ public class Dipendenteimpl implements DipendenteJDBC{
 		setNewDip.setString(5, dipendente.getTel());
 		setNewDip.setString(6, dipendente.getEmail());
         int row = setNewDip.executeUpdate();
-        if (row<1) return false;
-        else return true;
+        if (row<1) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override
 	public boolean verifyID(String id) throws SQLException{
 		ResultSet rs = verifyId.executeQuery("SELECT coddipendente FROM dipendente WHERE coddipendente = '" + id + "';");
-		if(rs.next())
-		if(rs.getString("coddipendente").equals(id)) return true;
+		if(rs.next()) {
+			if(rs.getString("coddipendente").equals(id)) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public ArrayList<Dipendente> getAllDip() throws SQLException{
         ResultSet rs = getAllDip.executeQuery();
-        while(rs.next())
-        	diplist.add(new Dipendente(rs.getString("coddipendente"),rs.getString("nome"),
+        while(rs.next()) {
+			diplist.add(new Dipendente(rs.getString("coddipendente"),rs.getString("nome"),
         			                         rs.getString("cognome"),rs.getString("codicefiscale"),
         			                         rs.getString("email"),rs.getString("indirizzo"),
         			                         rs.getString("telefono")));
+		}
         rs.close();
         return diplist;
 	}
@@ -109,16 +116,21 @@ public class Dipendenteimpl implements DipendenteJDBC{
 		updatedp.setString(6, dipendente.getEmail());
 		updatedp.setString(7, dipendente.getCodDIP());
         int row = updatedp.executeUpdate();
-        if(row<1) return false;
-        else return true;
+        if(row<1) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 
 	@Override
 	public Dipendente getOneDip(String id) throws SQLException {
 		ResultSet rs = getdip.executeQuery("SELECT * FROM dipendente WHERE coddipendente = '"+id+"'");
-		while(rs.next()) dip = new Dipendente(id,rs.getString("nome"),rs.getString("cognome"),rs.getString("codicefiscale"),
-        			                                rs.getString("email"),rs.getString("indirizzo"), rs.getString("telefono"));
+		while(rs.next()) {
+			dip = new Dipendente(id,rs.getString("nome"),rs.getString("cognome"),rs.getString("codicefiscale"),
+						                                rs.getString("email"),rs.getString("indirizzo"), rs.getString("telefono"));
+		}
         rs.close();
         return dip;
 	}

@@ -23,8 +23,8 @@ public class LoginFrame extends JFrame {
 	private JPanel contentPane;
 	private JButton logbutt;
 	private JButton clearbutt;
-	private JTextField idtf; 
-	
+	private JTextField idtf;
+
     public void elementi(Controller c) {
 		setBounds(100, 100, 700, 450);
 		contentPane = new JPanel();
@@ -36,15 +36,15 @@ public class LoginFrame extends JFrame {
 		JPanel buttonpanel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) buttonpanel.getLayout();
 		flowLayout.setAlignment(FlowLayout.TRAILING);
-		
+
 		JPanel infopanel = new JPanel();
 		infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
-		
+
 		JPanel titlepanel = new JPanel();
 		titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 		titlepanel.setBackground(new Color(0, 128, 0));
 		titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		JLabel titlelabel = new JLabel("");
 		titlelabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titlelabel.setVerticalAlignment(SwingConstants.TOP);
@@ -53,11 +53,12 @@ public class LoginFrame extends JFrame {
 		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		contentPane.add(buttonpanel, BorderLayout.SOUTH);
-		
+
 		logbutt = new JButton("Login");
 		buttonpanel.add(logbutt);
 		logbutt.setVerticalAlignment(SwingConstants.TOP);
 		logbutt.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					if(c.verifyid(idtf.getText())) {
@@ -79,18 +80,19 @@ public class LoginFrame extends JFrame {
 			}
 		});
 		logbutt.setBackground(Color.GREEN);
-		
+
 		clearbutt = new JButton("Clear");
 		buttonpanel.add(clearbutt);
 		clearbutt.setVerticalAlignment(SwingConstants.BOTTOM);
 		clearbutt.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				idtf.setText("");
 			}
 		});
 		contentPane.add(infopanel, BorderLayout.CENTER);
 		infopanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		JLabel idlab = new JLabel("ID :");
 		infopanel.add(idlab);
 		idtf = new JTextField();
@@ -100,7 +102,7 @@ public class LoginFrame extends JFrame {
 		idtf.setColumns(10);
 		contentPane.add(titlepanel, BorderLayout.NORTH);
     }
-    
+
 	public LoginFrame(String title, Controller c) throws SQLException{
 		super(title);
 		c.connect();

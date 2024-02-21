@@ -12,8 +12,8 @@ import Model.Calc;
 public class calcolatimpl implements calcolat {
 	private Connection connection;
 	private PreparedStatement setNewCalc,getAllCalc;
-	private ArrayList<Calc> calcal = new ArrayList<Calc>();
-	
+	private ArrayList<Calc> calcal = new ArrayList<>();
+
 	public calcolatimpl(Connection connection) throws SQLException{
 		this.connection = connection;
 		setNewCalc = connection.prepareStatement("INSERT INTO calcolatrice VALUES (?, ?, ?, ?)");
@@ -27,8 +27,11 @@ public class calcolatimpl implements calcolat {
 		setNewCalc.setString(3, calcolatrice.getOperator());
 		setNewCalc.setFloat(4, calcolatrice.getRis());
         int row = setNewCalc.executeUpdate();
-        if(row<1) return true;
-        else return false;
+        if(row<1) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override

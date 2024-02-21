@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 import Model.Calc;
 
@@ -43,7 +44,7 @@ public class Calcolatrice extends JFrame{
 	     private JTextField operando1 = new JTextField(15);
 	     private JTextField operando2 = new JTextField(15);
 	     private JLabel risout = new JLabel("0.0");
-         
+
 	     public void elem() {
 	     pane1.add(inser1);
     	 pane1.add(operando1);
@@ -65,7 +66,7 @@ public class Calcolatrice extends JFrame{
     	 pane7.add(clear);
     	 pane7.add(backbutt);
 	     }
-	     
+
          public void pan() {
         	 elem();
         	 pane8.add(pane1);
@@ -77,56 +78,59 @@ public class Calcolatrice extends JFrame{
         	 pane8.add(pane7);
         	 pane8.setLayout(new BoxLayout(pane8, BoxLayout.Y_AXIS));
         	 this.add(pane8);
-             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+             this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
              this.pack();
          }
-         
+
          public float first () {
         	 String s = operando1.getText();
-        	 float a = Float.parseFloat(s);  
+        	 float a = Float.parseFloat(s);
 			 return a;
          }
          public float second () {
         	 String s = operando2.getText();
-        	 float b = Float.parseFloat(s);  
+        	 float b = Float.parseFloat(s);
 			 return b;
          }
-         
+
          public void az(Controller c) {
         	 clear.addActionListener(new ActionListener() {
-        		 public void actionPerformed(ActionEvent e) {
+        		 @Override
+				public void actionPerformed(ActionEvent e) {
         			 operando1.setText("");
         			 operando2.setText("");
         			 risout.setText("0.0");
         		 }
         	 });
-        	 
+
         	 calc.addActionListener(new ActionListener() {
-        		 public void actionPerformed(ActionEvent e) {
+        		 @Override
+				public void actionPerformed(ActionEvent e) {
         			int op = combo1.getSelectedIndex();
 					switch(op) {
-					case 0: 
+					case 0:
 						String s = c.somma();
 						risout.setText(s);
 						break;
-					case 1: 
+					case 1:
 						String s1 = c.sottrazione();
 						risout.setText(s1);
 						break;
-        		    case 2: 
+        		    case 2:
 						String s2 = c.moltiplicazione();
 						risout.setText(s2);
 						break;
-        		    case 3: 
+        		    case 3:
 						String s3 = c.moltiplicazione();
 						risout.setText(s3);
 						break;
         		 }
         		}
         	 });
-        	 
+
         	 calc.addActionListener(new ActionListener() {
-        		 public void actionPerformed(ActionEvent e) {
+        		 @Override
+				public void actionPerformed(ActionEvent e) {
         			 if(sommacb.isSelected()) {
         				String s = c.somma();
  						risout.setText(s);
@@ -137,50 +141,56 @@ public class Calcolatrice extends JFrame{
         			 }
         			 if(moltcb.isSelected()) {
         				String s2 = c.moltiplicazione();
- 						risout.setText(s2); 
+ 						risout.setText(s2);
         			 }
         			 if(divcb.isSelected()) {
          				String s2 = c.divisione();
-  						risout.setText(s2); 
+  						risout.setText(s2);
          			 }
         		 }
         	 });
-             
+
              sommabutt.addActionListener(new ActionListener() {
-            	 public void actionPerformed(ActionEvent e) {
+            	 @Override
+				public void actionPerformed(ActionEvent e) {
             		 String s = c.somma();
             		 risout.setText(s);
             	 }
              });
-             
+
              sottbutt.addActionListener(new ActionListener() {
-            	 public void actionPerformed(ActionEvent e) {
+            	 @Override
+				public void actionPerformed(ActionEvent e) {
             		 String s = c.sottrazione();
             		 risout.setText(s);
             	 }
              });
-            
+
              moltbutt.addActionListener(new ActionListener() {
-            	 public void actionPerformed(ActionEvent e) {
+            	 @Override
+				public void actionPerformed(ActionEvent e) {
             		 String s = c.moltiplicazione();
             		 risout.setText(s);
             	 }
              });
-             
+
              divbutt.addActionListener(new ActionListener() {
-            	 public void actionPerformed(ActionEvent e) {
+            	 @Override
+				public void actionPerformed(ActionEvent e) {
             		 String s = c.divisione();
             		 risout.setText(s);
             	 }
              });
              backbutt.addActionListener(new ActionListener() {
-            	 public void actionPerformed(ActionEvent e) {
+            	 @Override
+				public void actionPerformed(ActionEvent e) {
             		 c.back1();
             	 }
              });
-             
+
              calc.addActionListener(new ActionListener() {
-            	 public void actionPerformed(ActionEvent e) {
+            	 @Override
+				public void actionPerformed(ActionEvent e) {
                 	 String s =(String) combo1.getSelectedItem();
                 	 try {
                 		float a = Float.parseFloat(inser1.getText());
@@ -194,7 +204,7 @@ public class Calcolatrice extends JFrame{
                  }
              });
          }
-         
+
          public Calcolatrice(String title, Controller c) {
         	 super(title);
         	 this.pan();

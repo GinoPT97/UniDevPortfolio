@@ -12,7 +12,7 @@ import java.sql.SQLException;
     private final String IP = "localhost";
     private final String PORT = "5432";
     private String url = "jdbc:postgresql://"+IP+":"+PORT + "/";
-    
+
     private DBConnection(String db) throws SQLException {
 
         try

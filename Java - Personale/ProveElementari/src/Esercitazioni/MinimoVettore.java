@@ -3,7 +3,7 @@ package Esercitazioni;
 import java.util.Scanner;
 
 public class MinimoVettore {
-	
+
 	// Funzione per trovare il valore minimo di un vettore
     public static int trovaMinimo(int[] array) {
         // Assicurarsi che il vettore non sia vuoto

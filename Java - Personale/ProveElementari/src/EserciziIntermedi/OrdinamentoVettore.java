@@ -3,7 +3,7 @@ package EserciziIntermedi;
 import java.util.Scanner;
 
 public class OrdinamentoVettore {
-	
+
 	// Importa la classe Scanner dal package java.util per consentire l'input da tastiera
 	static Scanner input = new Scanner(System.in);
 
@@ -54,7 +54,8 @@ public class OrdinamentoVettore {
 	    Ordinamento(vettore);
 
 	    // Stampa gli elementi dell'array ordinato
-	    for (int i = 0; i < vettore.length; i++) 
-	        System.out.println(vettore[i]);
+	    for (int element : vettore) {
+			System.out.println(element);
+		}
 	}
 }

@@ -32,7 +32,7 @@ import JDBCimpl.Tesseraimpl;
 public class Controller {
 	private LoginFrame logf;
 	private NuovoProdottoFrame nprodf;
-	private AdminFrame adminf; 
+	private AdminFrame adminf;
 	private DipendenteFrame dipf;
 	private VisioneDipendentiFrame vdipf;
 	public VisioneProdottiFrame vprodf;
@@ -57,7 +57,7 @@ public class Controller {
     private TesseraJDBC tsjdbc = null;
     private ArticoliJDBC artjdbc = null;
 	public String iddip;
-	
+
 	public Controller() throws SQLException {
 		logf = new LoginFrame("Login - Ortofrutta", this);
 		logf.setVisible(true);
@@ -78,24 +78,38 @@ public class Controller {
 	    visordf = new VisioneOrdineFrame("Visione Ordini",this);
 	    searchf = new RicercaFrame("Ricerca Clienti",this);
 	}
-	
+
 	public void logtoutente(int x) {
 		logf.setVisible(false);
-		if(x==1) adminf.setVisible(true);
-		if(x==2) dipf.setVisible(true);
+		if(x==1) {
+			adminf.setVisible(true);
+		}
+		if(x==2) {
+			dipf.setVisible(true);
+		}
 	}
-	
+
 	public void logout(int x) {
-		if(x==1) adminf.setVisible(false);
-		if(x==2) dipf.setVisible(false);
+		if(x==1) {
+			adminf.setVisible(false);
+		}
+		if(x==2) {
+			dipf.setVisible(false);
+		}
 		logf.setVisible(true);
 	}
-	
+
 	public void adminAndElem(int x) {
 		adminf.setVisible(false);
-		if (x==1) vdipf.setVisible(true);
-		if (x==2) vprodf.setVisible(true);
-		if (x==3) statdipf.setVisible(true);
+		if (x==1) {
+			vdipf.setVisible(true);
+		}
+		if (x==2) {
+			vprodf.setVisible(true);
+		}
+		if (x==3) {
+			statdipf.setVisible(true);
+		}
 		if (x==4) {
 			visordf.setVisible(true);
 			visordf.x = 3;
@@ -108,7 +122,7 @@ public class Controller {
 			adminf.setVisible(true);
 		}
 	}
-	
+
 	public void searchAndElem(int x) {
 		if(x==1) {
 			adminf.setVisible(false);
@@ -116,13 +130,19 @@ public class Controller {
 			searchf.setVisible(true);
 		} else {
 			searchf.setVisible(false);
-			if(x==2) adminf.setVisible(true);
-			if(x==3) dipf.setVisible(true);
+			if(x==2) {
+				adminf.setVisible(true);
+			}
+			if(x==3) {
+				dipf.setVisible(true);
+			}
 		}
 	}
-	
+
 	public void visAndCarr(int x) {
-		if (x==1) carrf.setVisible(true);
+		if (x==1) {
+			carrf.setVisible(true);
+		}
 		if (x==2) {
 			carrf.setVisible(false);
 			visordf.setVisible(true);
@@ -134,13 +154,17 @@ public class Controller {
 			visordf.setVisible(false);
 			dipf.setVisible(true);
 		}
-		
+
 	}
-	
+
 	public void dipAndElem(int x) {
 		dipf.setVisible(false);
-		if (x==1) visctf.setVisible(true);
-		if (x==2) ptessf.setVisible(true);
+		if (x==1) {
+			visctf.setVisible(true);
+		}
+		if (x==2) {
+			ptessf.setVisible(true);
+		}
 		if (x==3) {
 			visordf.setVisible(true);
 			visordf.x = 4;
@@ -151,44 +175,56 @@ public class Controller {
 			visctf.setVisible(false);
 		}
 	}
-	
+
 	public void visAnddip(int x) {
 		vdipf.setVisible(false);
-		if (x==1) ndipf.setVisible(true);
-		if (x==2) updipf.setVisible(true);
+		if (x==1) {
+			ndipf.setVisible(true);
+		}
+		if (x==2) {
+			updipf.setVisible(true);
+		}
 		if (x==3) {
 			vdipf.setVisible(true);
 			ndipf.setVisible(false);
 			updipf.setVisible(false);
 		}
 	}
-	
+
 	public void visAndcl(int x) {
 		visctf.setVisible(false);
-		if (x==1) nclf.setVisible(true);
-		if (x==2) upclf.setVisible(true);
+		if (x==1) {
+			nclf.setVisible(true);
+		}
+		if (x==2) {
+			upclf.setVisible(true);
+		}
 		if (x==3) {
 			upclf.setVisible(false);
 			nclf.setVisible(false);
 			visctf.setVisible(true);
 		}
 	}
-	
+
 	public void visAndprod(int x) {
 		vprodf.setVisible(false);
-		if (x==1) nprodf.setVisible(true);
-		if (x==2) modprodf.setVisible(true);
+		if (x==1) {
+			nprodf.setVisible(true);
+		}
+		if (x==2) {
+			modprodf.setVisible(true);
+		}
 		if (x==3) {
 			modprodf.setVisible(false);
 			nprodf.setVisible(false);
 			vprodf.setVisible(true);
 		}
 	}
-	
+
 	public static void main(String[] args) throws SQLException{
 		Controller c = new Controller();
 	}
-	
+
 	public void connect() throws SQLException{
         try {
 		    dbconn = DBConnection.getInstance("postgres");
@@ -232,114 +268,114 @@ public class Controller {
 	            e.printStackTrace();
 	        }
 	  }
-	
+
 	public boolean verifyid(String ID) throws SQLException{
 		return (dpjdbc.verifyID(ID));
 	}
-	
+
 	public boolean newdip(Dipendente dip) throws SQLException {
 		return (dpjdbc.setNewDip(dip));
 	}
-	
+
 	public boolean newclt(Cliente ct) throws SQLException {
 		return (cljdbc.setNewCt(ct));
 	}
-	
+
 	public boolean newprod(Prodotto pe) throws SQLException {
 		return prdjdbc.setNewProdotto(pe);
 	}
-	
+
 	public String punti(String codt) throws SQLException {
 		return tsjdbc.getpuntit(codt);
 	}
-	
+
 	public List<String> introitidip(Date di, Date df) throws SQLException {
 		return dpjdbc.getDipIntroiti(di, df);
 	}
-	
+
 	public List<String> venditedip(Date di, Date df) throws SQLException {
 		return dpjdbc.getDipVendite(di, df);
 	}
-	
+
 	public boolean nuovatessera(String a,String b, String c) throws SQLException {
 		return tsjdbc.newtessera(cljdbc.getCtByNCCF(a, b, c));
 	}
-	
+
 	public boolean upprod(Prodotto pe) throws SQLException {
 		return prdjdbc.updateProdotto(pe);
 	}
-	
+
 	public boolean updip(Dipendente de) throws SQLException {
 		return dpjdbc.updatedipendente(de);
 	}
-	
+
 	public boolean upcliente(Cliente ce) throws SQLException {
 		return cljdbc.updateCliente(ce);
 	}
-	
+
 	public String getct(String codfisc) throws SQLException {
 		return cljdbc.getIdCt(codfisc);
 	}
-	
+
 	public boolean upscorte(int x,String s) throws SQLException {
 		return prdjdbc.updateScorte(x, s);
 	}
-	
+
 	public boolean uppunti(String codcl,double d) throws SQLException {
 		return tsjdbc.updatepunti(codcl, d);
 	}
-	
+
 	public boolean nuovoordine(Ordine ordine) throws SQLException {
 		return ordjdbc.newordine(ordine);
 	}
-	
+
 	public boolean newarticoli(Articoli articoli) throws SQLException {
 		return artjdbc.newordine(articoli);
 	}
-	
+
 	public String OldDate() throws SQLException{
 		return ordjdbc.getOldDate();
 	}
-	
+
 	public String CurrOrd() throws SQLException{
 		return ordjdbc.getCurrentCod();
 	}
-	
+
 	public void ClientSearch(DefaultTableModel model) throws SQLException {
 		for(Cliente c : artjdbc.SearchClient()) {
 			Object[] pr = {c.getNome(),c.getCognome(),c.getArticoliOrdini().getNumPunti(), c.getArticoliOrdini().getCategoria()};
 			model.insertRow(0, pr);
 		}
 	}
-	
+
 	public void alltessera(DefaultTableModel model) throws SQLException {
 		for(Tessera t : tsjdbc.alltessera()) {
 			Object[] pr = {t.getCodT(),t.getNPunti()};
 			model.insertRow(0, pr);
 		}
 	}
-	
+
 	public void allcliente(DefaultTableModel model) throws SQLException {
 		for(Cliente c : cljdbc.getAllCt()) {
 			  Object[] pr = {c.getCodCl(),c.getNome(),c.getCognome(),c.getCodFis(),c.getEmail(),c.getInd(),c.getTel(),c.getTessera().getCodT(),c.getTessera().getNPunti()};
 			  model.insertRow(0, pr);
 		}
 	}
-	
+
 	public void categoriaprodotti(String c,DefaultTableModel model) throws SQLException {
 		for(Prodotto p : prdjdbc.getbycategoria(c)) {
 			Object[] pr = {p.getCodProd(),p.getNome(),p.getPrezzo(),p.getCategoria(),p.getScorta()};
 			model.insertRow(0, pr);
 		}
 	}
-	
+
 	public void alldipendenti(DefaultTableModel model) throws SQLException {
 		for(Dipendente d : dpjdbc.getAllDip()) {
 			Object[] pr = {d.getCodDIP(),d.getNome(),d.getCognome(),d.getCodFis(),d.getEmail(),d.getInd(),d.getTel()};
 			model.insertRow(0, pr);
 		}
 	}
-	
+
 	public void allordini(DefaultTableModel model) throws SQLException {
 		for(Ordine o : ordjdbc.getallordini()) {
 			Cliente ct = cljdbc.getCtByid(o.getIdCt());
@@ -348,11 +384,13 @@ public class Controller {
 			model.insertRow(0, pr);
 		}
 	}
-	
+
 	public void allprodotti(DefaultTableModel model) throws SQLException {
 		String a = "No";
 		for(Prodotto p : prdjdbc.getallprodotti()) {
-			if(p.getGlutine()==true) a = "Si";
+			if(p.getGlutine()) {
+				a = "Si";
+			}
 			Object[] pr = {p.getCodProd(),p.getNome(),p.getDscrizione(),p.getPrezzo(),p.getLuogoProv(),p.getDataracc(),p.getDatamung(),a,p.getDatascad(),p.getCategoria(),p.getScorta()};
 			model.insertRow(0, pr);
 		}

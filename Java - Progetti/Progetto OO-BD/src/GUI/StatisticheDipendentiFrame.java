@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class StatisticheDipendentiFrame extends JFrame {
@@ -68,7 +69,7 @@ public class StatisticheDipendentiFrame extends JFrame {
 	private String old = null;
 
 	public void elementi() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 850, 470);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -76,148 +77,148 @@ public class StatisticheDipendentiFrame extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setLocationRelativeTo(null);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
-		
+
 		searchpanel = new JPanel();
 		searchpanel.setBorder(new EmptyBorder(100, 10, 100, 10));
 		contentPane.add(searchpanel, BorderLayout.WEST);
 		searchpanel.setLayout(new BoxLayout(searchpanel, BoxLayout.Y_AXIS));
-		
+
 		periodolab = new JLabel("Periodo ricerca (YYYY-MM-DD)");
 		searchpanel.add(periodolab);
-		
+
 		firstpanel = new JPanel();
 		searchpanel.add(firstpanel);
-		
+
 		startlab = new JLabel("Da : ");
 		firstpanel.add(startlab);
-		
+
 		starttf = new JTextField();
 		starttf.setColumns(10);
 		firstpanel.add(starttf);
-		
+
 		secondpanel = new JPanel();
 		searchpanel.add(secondpanel);
-		
+
 		finallab = new JLabel("Fino a :");
 		secondpanel.add(finallab);
-		
+
 		finaltf = new JTextField();
 		finaltf.setColumns(10);
 		secondpanel.add(finaltf);
-		
+
 		periodocb = new JComboBox(datacb);
 		periodocb.setMaximumRowCount(4);
 		searchpanel.add(periodocb);
-		
+
 		selectbutton = new JButton("Seleziona");
 		searchpanel.add(selectbutton);
-		
+
 		introitipanel = new JPanel();
 		introitipanel.setBorder(new EmptyBorder(100, 30, 100, 40));
 		contentPane.add(introitipanel);
 		introitipanel.setLayout(new BoxLayout(introitipanel, BoxLayout.Y_AXIS));
-		
+
 		introlab = new JLabel("Dipendente con piu' introiti");
 		introitipanel.add(introlab);
-		
+
 		nomepanel = new JPanel();
 		introitipanel.add(nomepanel);
-		
+
 		nomelab = new JLabel("Nome :");
 		nomepanel.add(nomelab);
-		
+
 		nomeintroititf = new JTextField();
 		nomeintroititf.setEditable(false);
 		nomeintroititf.setColumns(10);
 		nomepanel.add(nomeintroititf);
-		
+
 		cognomepanel = new JPanel();
 		introitipanel.add(cognomepanel);
-		
+
 		cognomelab = new JLabel("Cognome :");
 		cognomepanel.add(cognomelab);
-		
+
 		cognomeintroititf = new JTextField();
 		cognomeintroititf.setEditable(false);
 		cognomeintroititf.setColumns(10);
 		cognomepanel.add(cognomeintroititf);
-		
+
 		rispanel = new JPanel();
 		introitipanel.add(rispanel);
-		
+
 		introitilab = new JLabel("Introiti :");
 		rispanel.add(introitilab);
-		
+
 		introititf = new JTextField();
 		introititf.setEditable(false);
 		introititf.setColumns(10);
 		rispanel.add(introititf);
-		
+
 		venditepanel = new JPanel();
 		venditepanel.setBorder(new EmptyBorder(100, 30, 100, 10));
 		contentPane.add(venditepanel, BorderLayout.EAST);
 		venditepanel.setLayout(new BoxLayout(venditepanel, BoxLayout.Y_AXIS));
-		
+
 		venditelab = new JLabel("Dipendente con piu' vendite");
 		venditepanel.add(venditelab);
-		
+
 		nomeintroitipanel = new JPanel();
 		venditepanel.add(nomeintroitipanel);
-		
+
 		nomelab1 = new JLabel("Nome :");
 		nomeintroitipanel.add(nomelab1);
-		
+
 		nomevenditetf = new JTextField();
 		nomevenditetf.setEditable(false);
 		nomevenditetf.setColumns(10);
 		nomeintroitipanel.add(nomevenditetf);
-		
+
 		cognomeintroitipanel = new JPanel();
 		venditepanel.add(cognomeintroitipanel);
-		
+
 		cognomelab1 = new JLabel("Cognome :");
 		cognomeintroitipanel.add(cognomelab1);
-		
+
 		cognomevenditetf = new JTextField();
 		cognomevenditetf.setEditable(false);
 		cognomevenditetf.setColumns(10);
 		cognomeintroitipanel.add(cognomevenditetf);
-		
+
 		risintroitipanel = new JPanel();
 		venditepanel.add(risintroitipanel);
-		
+
 		venditelab1 = new JLabel("Vendite :");
 		risintroitipanel.add(venditelab1);
-		
+
 		venditetf = new JTextField();
 		venditetf.setEditable(false);
 		venditetf.setColumns(10);
 		risintroitipanel.add(venditetf);
-		
+
 		buttonpanel = new JPanel();
 		contentPane.add(buttonpanel, BorderLayout.SOUTH);
-		
+
 		searchbutton = new JButton("Cerca");
 		searchbutton.setBackground(Color.GREEN);
 		buttonpanel.add(searchbutton);
-		
+
 		clearbutton = new JButton("Pulisci");
 		clearbutton.setBackground(Color.WHITE);
 		buttonpanel.add(clearbutton);
-		
+
 		backbutton = new JButton("Indietro");
 		backbutton.setBackground(Color.RED);
 		buttonpanel.add(backbutton);
-		
+
 		titlepanel = new JPanel();
 		titlepanel.setBackground(new Color(147, 112, 219));
 		contentPane.add(titlepanel, BorderLayout.NORTH);
-		
+
 		titlelabel = new JLabel("Statistiche dipendenti");
 		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
 		titlepanel.add(titlelabel);
 	}
-	
+
 	private void clean() {
 		starttf.setText("");
 		finaltf.setText("");
@@ -228,28 +229,38 @@ public class StatisticheDipendentiFrame extends JFrame {
 		introititf.setText("");
 		venditetf.setText("");
 	}
-	
+
 	public void azioni(Controller c) throws SQLException{
 		old = c.OldDate();
 		selectbutton.addActionListener(new ActionListener(){
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				finaltf.setText(dataod.toString());
-				if(periodocb.getSelectedItem().equals("3 mesi")) starttf.setText(dataod.minusMonths(3)+"");
-				else if(periodocb.getSelectedItem().equals("6 mesi")) starttf.setText(dataod.minusMonths(6).toString());
-				else if(periodocb.getSelectedItem().equals("9 mesi")) starttf.setText(dataod.minusMonths(9).toString());
-				else if(periodocb.getSelectedItem().equals("12 mesi")) starttf.setText(dataod.minusMonths(12).toString());
-				else if(periodocb.getSelectedItem().equals("Tutti")) starttf.setText(old);
+				if(periodocb.getSelectedItem().equals("3 mesi")) {
+					starttf.setText(dataod.minusMonths(3)+"");
+				} else if(periodocb.getSelectedItem().equals("6 mesi")) {
+					starttf.setText(dataod.minusMonths(6).toString());
+				} else if(periodocb.getSelectedItem().equals("9 mesi")) {
+					starttf.setText(dataod.minusMonths(9).toString());
+				} else if(periodocb.getSelectedItem().equals("12 mesi")) {
+					starttf.setText(dataod.minusMonths(12).toString());
+				} else if(periodocb.getSelectedItem().equals("Tutti")) {
+					starttf.setText(old);
+				}
 			}
 		});
-		
+
 		searchbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					java.sql.Date di = java.sql.Date.valueOf(starttf.getText());
 					java.sql.Date df = java.sql.Date.valueOf(finaltf.getText());
 					ordint = c.introitidip(di,df);
 					ordven = c.venditedip(di,df);
-					if(starttf.getText().equals("") || finaltf.getText().equals("")) JOptionPane.showMessageDialog(null, "Inserire le date di ricerca!");
+					if(starttf.getText().equals("") || finaltf.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Inserire le date di ricerca!");
+					}
 					if(ordint.isEmpty() || ordven.isEmpty()) {
 						JOptionPane.showMessageDialog(null, "In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
 						clean();
@@ -266,21 +277,23 @@ public class StatisticheDipendentiFrame extends JFrame {
 				}
 			}
 		});
-		
+
 		clearbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				clean();
 			}
 		});
-		
+
 		backbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				clean();
 				c.adminAndElem(5);
 			}
 		});
 	}
-	
+
 	public StatisticheDipendentiFrame(String title,Controller c) throws SQLException {
 		super(title);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(StatisticheDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));

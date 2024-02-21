@@ -27,11 +27,12 @@ public class DBConfiguration {
 	    {
 	        DatabaseMetaData metadata = connection.getMetaData();
 	        ResultSet tables = metadata.getTables(null, null, tbl_name, null);
-	        if (tables.next())
-	            return true;
+	        if (tables.next()) {
+				return true;
+			}
 	        return false;
 	    }
-	    
+
 	    public int createTableCalcolatrice() throws ConnectionException {
 	        int result = -1;
 
@@ -51,16 +52,17 @@ public class DBConfiguration {
 	                    result = st.executeUpdate(sql);
 	                    st.close();
 
-	                } else
-	                    System.out.println("Table Calcolatrice already exists!");
+	                } else {
+						System.out.println("Table Calcolatrice already exists!");
+					}
 	            }
 	            catch(SQLException ex)
 	            {
 	                System.out.println("SQL Exception in creation table calcolatrice : "+ex);
 	            }
-	        }
-	        else
-	            throw new ConnectionException("A connection must exist!");
+	        } else {
+				throw new ConnectionException("A connection must exist!");
+			}
 
 	        return result;
 	    }
