@@ -13,3 +13,4 @@ public interface HashTableInterface<K, V> {
     // Restituisce il numero di coppie chiave-valore presenti nella hashtable
     int size();
 }
+
