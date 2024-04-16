@@ -2,25 +2,36 @@ package HashTable;
 
 import java.util.LinkedList;
 
-public class HashTable<K, V> implements HashTableInterface<K, V> {
+// Classe dell'hashtable
+public class HashTable<K, V> {
+    private static final int DEFAULT_CAPACITY = 10;
     private LinkedList<Entry<K, V>>[] table;
-    private int capacity;
     private int size;
 
+    // Costruttore
+    public HashTable() {
+        this(DEFAULT_CAPACITY);
+    }
+
+    // Costruttore con capacità specifica
     public HashTable(int capacity) {
-        this.capacity = capacity;
         this.table = new LinkedList[capacity];
         this.size = 0;
     }
 
-    @Override
+    // Funzione di hash
+    private int hash(K key) {
+        return Math.abs(key.hashCode()) % table.length;
+    }
+
+    // Metodo per inserire un elemento
     public void put(K key, V value) {
         int index = hash(key);
         if (table[index] == null) {
             table[index] = new LinkedList<>();
         }
 
-        // Gestione delle collisioni
+        // Controlla se la chiave esiste già e aggiorna il valore
         for (Entry<K, V> entry : table[index]) {
             if (entry.key.equals(key)) {
                 entry.value = value;
@@ -28,44 +39,41 @@ public class HashTable<K, V> implements HashTableInterface<K, V> {
             }
         }
 
-        // Se non c'è una collisione, aggiungiamo l'elemento
+        // Se la chiave non esiste, aggiungila alla lista
         table[index].add(new Entry<>(key, value));
         size++;
     }
 
-    @Override
+    // Metodo per recuperare un elemento
     public V get(K key) {
         int index = hash(key);
-        if (table[index] != null) {
-            for (Entry<K, V> entry : table[index]) {
+        LinkedList<Entry<K, V>> list = table[index];
+        if (list != null) {
+            for (Entry<K, V> entry : list) {
                 if (entry.key.equals(key)) {
                     return entry.value;
                 }
             }
         }
-        return null;
+        return null; // Chiave non trovata
     }
 
-    @Override
+    // Metodo per rimuovere un elemento
     public void remove(K key) {
         int index = hash(key);
-        if (table[index] != null) {
-            table[index].removeIf(entry -> entry.key.equals(key));
+        LinkedList<Entry<K, V>> list = table[index];
+        if (list != null) {
+            list.removeIf(entry -> entry.key.equals(key));
             size--;
         }
     }
 
-    @Override
+    // Metodo per ottenere la dimensione della hashtable
     public int size() {
         return size;
     }
 
-    private int hash(K key) {
-        // Implementazione della funzione di hash appropriata
-        // Potrebbe essere diversa a seconda delle esigenze
-        return Math.abs(key.hashCode() % capacity);
-    }
-
+    // Classe Entry per memorizzare coppie chiave-valore
     private static class Entry<K, V> {
         K key;
         V value;
@@ -76,5 +84,6 @@ public class HashTable<K, V> implements HashTableInterface<K, V> {
         }
     }
 }
+
 
 
