@@ -15,9 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import javax.swing.JTextField;
 
 public class VisioneOrdineFrame extends JFrame {
 
@@ -31,6 +34,8 @@ public class VisioneOrdineFrame extends JFrame {
 	private JLabel titleabel;
 	private JButton ordinebutton;
 	public int x;
+	private JButton searchbutton;
+	private JTextField searchtf;
 
 	public void elementi() {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -56,6 +61,14 @@ public class VisioneOrdineFrame extends JFrame {
 
 		buttonpanel = new JPanel();
 		contentPane.add(buttonpanel, BorderLayout.SOUTH);
+		
+		searchtf = new JTextField();
+		buttonpanel.add(searchtf);
+		searchtf.setColumns(10);
+		
+		searchbutton = new JButton("Cerca");
+		searchbutton.setBackground(new Color(60, 179, 113));
+		buttonpanel.add(searchbutton);
 
 		ordinebutton = new JButton("Nuovo Ordine");
 		ordinebutton.setBackground(Color.GREEN);
@@ -76,6 +89,22 @@ public class VisioneOrdineFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 		c.allordini(model);
+		
+		searchbutton.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        String query = searchtf.getText().trim().toLowerCase();
+		        if (query.isEmpty()) {
+		            // Se la query è vuota, ripristina la tabella mostrando tutti i dati
+		            table.setRowSorter(null);
+		        } else {
+		            // Filtra i risultati sulla base della query
+		            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+		            sorter.setRowFilter(RowFilter.regexFilter(query));
+		            table.setRowSorter(sorter);
+		        }
+		    }
+		});
 
 		ordinebutton.addActionListener(new ActionListener() {
 			@Override

@@ -16,11 +16,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import Entita.Dipendente;
+import javax.swing.JTextField;
 
 public class VisioneDipendentiFrame extends JFrame {
 
@@ -34,6 +37,8 @@ public class VisioneDipendentiFrame extends JFrame {
 	private JButton addbutton;
 	private JButton updatebutton;
 	private JLabel titlelab;
+	private JButton searchbutton;
+	private JTextField searchtf;
 
 	public void elementi() {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -67,13 +72,21 @@ public class VisioneDipendentiFrame extends JFrame {
 
 		buttonpanel = new JPanel();
 		contentPane.add(buttonpanel, BorderLayout.SOUTH);
+		
+		searchtf = new JTextField();
+		buttonpanel.add(searchtf);
+		searchtf.setColumns(10);
+		
+		searchbutton = new JButton("Cerca");
+		searchbutton.setBackground(new Color(107, 142, 35));
+		buttonpanel.add(searchbutton);
 
 		addbutton = new JButton("Aggiungi");
 		addbutton.setBackground(Color.GREEN);
 		buttonpanel.add(addbutton);
 
 		updatebutton = new JButton("Modifica");
-		updatebutton.setBackground(Color.BLUE);
+		updatebutton.setBackground(new Color(70, 130, 180));
 		buttonpanel.add(updatebutton);
 
 		backbutton = new JButton("Indietro");
@@ -83,6 +96,22 @@ public class VisioneDipendentiFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 		c.alldipendenti(model);
+		
+		searchbutton.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        String query = searchtf.getText().trim().toLowerCase();
+		        if (query.isEmpty()) {
+		            // Se la query è vuota, ripristina la tabella mostrando tutti i dati
+		            table.setRowSorter(null);
+		        } else {
+		            // Filtra i risultati sulla base della query
+		            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+		            sorter.setRowFilter(RowFilter.regexFilter(query));
+		            table.setRowSorter(sorter);
+		        }
+		    }
+		});
 
 		addbutton.addActionListener(new ActionListener() {
 			@Override
