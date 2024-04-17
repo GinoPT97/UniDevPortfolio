@@ -8,6 +8,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -18,23 +20,24 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public class RicercaFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JTable searchtable;
-	private JButton selettorebutton;
 	private JComboBox categoriacb;
 	private DefaultTableModel searchmodel = new DefaultTableModel();
 	private Object[] searchcolonne = {"Nome","Cognome","Categoria","Numero Punti"};
 	private JButton backbutton;
 	private JButton searchbutton;
 	private JButton clearbutton;
-	private JButton selectpuntibutt;
+	private JComboBox punticb;
 	public int x;
 
 	public void elementi() {
@@ -63,15 +66,6 @@ public class RicercaFrame extends JFrame {
 		contentPane.add(searchpanel, BorderLayout.WEST);
 		searchpanel.setLayout(new BoxLayout(searchpanel, BoxLayout.Y_AXIS));
 
-		JPanel categoriapanel = new JPanel();
-		searchpanel.add(categoriapanel);
-
-		categoriacb = new JComboBox(new String[]{"Ortofrutticoli","Inscatolati","Latticini","Farinacei"});
-		categoriapanel.add(categoriacb);
-
-		selettorebutton = new JButton("Seleziona");
-		categoriapanel.add(selettorebutton);
-
 		JPanel puntipanel = new JPanel();
 		searchpanel.add(puntipanel);
 
@@ -80,12 +74,12 @@ public class RicercaFrame extends JFrame {
 
 		JPanel panel = new JPanel();
 		searchpanel.add(panel);
+		
+				categoriacb = new JComboBox(new String[]{"Ortofrutticoli","Inscatolati","Latticini","Farinacei"});
+				panel.add(categoriacb);
 
-		JComboBox punticb = new JComboBox(new String[] {"0-500","501-1000","1001-5000",">5000","Tutti"});
+		punticb = new JComboBox(new String[] {"0-500","501-1000","1001-5000",">5000","Tutti"});
 		panel.add(punticb);
-
-		selectpuntibutt = new JButton("seleziona");
-		panel.add(selectpuntibutt);
 
 		JPanel tablepanel = new JPanel();
 		contentPane.add(tablepanel);
@@ -122,12 +116,57 @@ public class RicercaFrame extends JFrame {
 	public void azioni(Controller c) throws SQLException{
 		c.ClientSearch(searchmodel);
 
-		selectpuntibutt.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		// Dentro il metodo azioni(Controller c)
+		searchbutton.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        String categoriaSelezionata = (String) categoriacb.getSelectedItem();
+		        String intervalloPunti = (String) punticb.getSelectedItem();
 
-			}
+		        // Filtrare i risultati basati sulla categoria
+		        RowFilter<Object, Object> categoriaFilter = null;
+		        if (!categoriaSelezionata.equals("Tutti")) {
+		            categoriaFilter = RowFilter.regexFilter(categoriaSelezionata, 2);
+		        }
+
+		        // Filtrare i risultati basati sull'intervallo di punti
+		        RowFilter<Object, Object> puntiFilter = null;
+		        if (!intervalloPunti.equals("Tutti")) {
+		            int minPunti = 0, maxPunti = 0;
+		            switch (intervalloPunti) {
+		                case "0-500":
+		                    maxPunti = 500;
+		                    break;
+		                case "501-1000":
+		                    minPunti = 501;
+		                    maxPunti = 1000;
+		                    break;
+		                case "1001-5000":
+		                    minPunti = 1001;
+		                    maxPunti = 5000;
+		                    break;
+		                case ">5000":
+		                    minPunti = 5001;
+		                    break;
+		            }
+		            puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, minPunti, 3);
+		        }
+
+		        // Applicare i filtri
+		        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
+		        List<RowFilter<Object, Object>> filters = new ArrayList<>();
+		        if (categoriaFilter != null) {
+		            filters.add(categoriaFilter);
+		        }
+		        if (puntiFilter != null) {
+		            filters.add(puntiFilter);
+		        }
+		        RowFilter<Object, Object> combinedFilter = RowFilter.andFilter(filters);
+		        sorter.setRowFilter(combinedFilter);
+		        searchtable.setRowSorter(sorter);
+		    }
 		});
+
 
 		backbutton.addActionListener(new ActionListener() {
 			@Override
@@ -143,5 +182,4 @@ public class RicercaFrame extends JFrame {
 		this.elementi();
 		this.azioni(c);
 	}
-
 }

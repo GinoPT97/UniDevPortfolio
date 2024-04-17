@@ -327,7 +327,7 @@ public class Controller {
 
 	public void ClientSearch(DefaultTableModel model) throws SQLException {
 		for(Cliente c : artjdbc.SearchClient()) {
-			Object[] pr = {c.getNome(),c.getCognome(),c.getArticoliOrdini().getNumPunti(), c.getArticoliOrdini().getCategoria()};
+			Object[] pr = {c.getNome(),c.getCognome(), c.getArticoliOrdini().getCategoria(),c.getArticoliOrdini().getNumPunti()};
 			model.insertRow(0, pr);
 		}
 	}
