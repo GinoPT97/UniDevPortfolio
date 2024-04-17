@@ -296,8 +296,8 @@ public class DBConfiguration {
 	                            "NumeroArticoli INT NOT NULL,\n"+
 	                            "Categoria TIPOLOGIA,\n"+
 	                            "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"+
-	                            "CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto)\n"+
-	                            "CONSTRAINT ArtocoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES PRODOTTO(CodOrdine)\\n"+
+	                            "CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"+
+	                            "CONSTRAINT ArtocoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES PRODOTTO(CodOrdine)\n"+
 	                            " );";
 	                    result = st.executeUpdate(sql);
 	                    st.close();
