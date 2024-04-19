@@ -2,6 +2,7 @@
 #include <string.h>
 #define MD 20
 using namespace std;
+
 main(){
     char parola1[MD], parola2[MD], parola3[2*MD];
     cout<<"Inserire la prima parola (senza spazi): ";

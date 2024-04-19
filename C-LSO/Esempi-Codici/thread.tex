@@ -1,0 +1,173 @@
+%% thread.tex
+%%
+%% Copyright (C) 2007-2018 Simone Piccardi.  Permission is granted to
+%% copy, distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.1 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+
+\chapter{I thread}
+\label{cha:threads}
+
+
+\itindbeg{thread} 
+
+Tratteremo in questo capitolo un modello di programmazione multitasking,
+quello dei \textit{thread}, alternativo al modello classico dei processi,
+tipico di Unix. Ne esamineremo le caratteristiche, vantaggi e svantaggi, e le
+diverse realizzazioni che sono disponibili per Linux; nella seconda parte
+tratteremo in dettaglio quella che è l'implementazione principale, che fa
+riferimento all'interfaccia standardizzata da POSIX.1e.
+
+
+\section{Introduzione ai \textit{thread}}
+\label{sec:thread_intro}
+
+Questa prima sezione costituisce una introduzione ai \textit{thread} e
+tratterà i concetti principali del relativo modello di programmazione,
+esamineremo anche quali modelli sono disponibili per Linux, dando una breve
+panoramica sulle implementazioni alternative.
+
+
+\subsection{Una panoramica}
+\label{sec:thread_overview}
+
+% riferimenti
+% http://vergil.chemistry.gatech.edu/resources/programming/threads.html
+% http://math.arizona.edu/~swig/documentation/pthreads/
+% http://www.humanfactor.com/pthreads/
+
+Il modello classico dell'esecuzione dei programmi nei sistemi Unix, illustrato
+in sez.~\ref{cha:process_interface}, è fondato sui processi. Il modello nasce
+per assicurare la massima stabilità al sistema e prevede una rigida
+separazione fra i diversi processi, in modo che questi non possano disturbarsi
+a vicenda. 
+
+Le applicazioni moderne però sono altamente concorrenti, e necessitano quindi
+di un gran numero di processi; questo ha portato a scontrarsi con alcuni
+limiti dell'architettura precedente. In genere i fautori del modello di
+programmazione a \texttt{thread} sottolineano due problemi connessi all'uso
+dei processi:
+\begin{itemize}
+\item
+\item 
+\end{itemize}
+
+
+
+\subsection{\textit{Thread} e processi}
+\label{sec:thread_process}
+
+Per un utilizzo effettivo dei \textit{thread} è sempre opportuno capire se
+questi sono davvero adatti allo scopo che ci si pone.
+
+
+\subsection{Implementazioni alternative}
+\label{sec:thread_other}
+
+Vedremo nella prossima sezione le caratteristiche del supporto per i
+\textit{thread} fornita dal kernel, ma esistono diversi possibili approcci
+alle modalità in cui questi possono essere realizzati. 
+
+% TODO cenni su pth e le implementazioni in userspace
+
+
+\section{I \textit{thread} e Linux}
+\label{sec:linux_thread}
+
+In questa sezione tratteremo le implementazioni dei \textit{thread}
+disponibili con Linux che ha visto un radicale cambiamento nel passaggio dalla
+serie 2.4 alla serie 2.6, che ha portato alla versione attuale. 
+
+\subsection{I \textit{LinuxThread}}
+\label{sec:linux_old_thread}
+
+
+\subsection{La \textit{Native Thread Posix Library}}
+\label{sec:linux_ntpl}
+
+
+
+
+
+% http://www.gnu.org/software/pth/
+
+
+\section{Posix \textit{thread}}
+\label{sec:thread_posix_intro}
+
+
+Tratteremo in questa sezione l'interfaccia di programmazione con i
+\textit{thread} standardizzata dallo standard POSIX 1.c, che è quella che è
+stata seguita anche dalle varie implementazioni dei \textit{thread} realizzate
+su Linux, ed in particolare dalla \textit{Native Thread Posix Library} che è
+stata integrata con i kernel della serie 2.6 e che fa parte a pieno titolo
+della \acr{glibc}.
+
+
+\subsection{Una panoramica}
+\label{sec:pthread_overview}
+
+
+\subsection{La gestione dei \textit{thread}}
+\label{sec:pthread_management}
+
+
+Benché la funzione sia utilizzabile anche con i processi, tanto che a partire
+dalla versione 2.3 della \acr{glibc} viene a sostituire \func{\_exit} (tramite
+un \textit{wrapper} che la utilizza al suo posto) per la terminazione di tutti
+i \textit{thread} di un processo si deve usare la funzione di sistema
+\func{exit\_group}, il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{linux/unistd.h}
+\fdecl{void exit\_group(int status)}
+\fdesc{Termina tutti i \textit{thread} di un processo.} 
+}
+{La funzione non ha errori e pertanto non ritorna.}
+\end{funcproto}
+
+La funzione è sostanzialmente identica alla \textit{system call} \func{\_exit}
+ma a differenza di quest'ultima, che termina solo il \textit{thread}
+chiamante, termina tutti \textit{thread} del processo. 
+
+
+\section{La sincronizzazione dei \textit{thread}}
+\label{sec:pthread_sync}
+
+\subsection{I \textit{mutex}}
+\label{sec:pthread_mutex}
+
+
+\subsection{Le variabili di condizione}
+\label{sec:pthread_cond}
+
+
+\itindend{thread} 
+
+
+\subsection{I \textit{thread} e i segnali.}
+\label{sec:thread_signal}
+
+% TODO trattare tkill e tgkill per l'invio di segnali a thread, fare un
+% capitolo apposito su thread e segnali
+
+
+
+
+% TODO troppe cose, ma segue list di notizie correlate
+% aggiunta rt_tgsigqueueinfo con il kernel 2.6.31
+
+
+
+% LocalWords:  thread multitasking POSIX sez Posix Library kernel glibc mutex
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End: 
+

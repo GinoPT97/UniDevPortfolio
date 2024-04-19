@@ -1,0 +1,70 @@
+%% pref.tex
+%%
+%% Copyright (C) 2000-2018 Simone Piccardi.  Permission is granted to
+%% copy, distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.1 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+
+\chapter{Prefazione}
+\label{cha:preface}
+
+Questo progetto mira alla stesura di un testo il più completo e chiaro
+possibile sulla programmazione di sistema su un kernel Linux.  Essendo i
+concetti in gran parte gli stessi, il testo dovrebbe restare valido anche per
+la programmazione in ambito di sistemi Unix generici, ma resta una attenzione
+specifica alle caratteristiche peculiari del kernel Linux e delle versioni
+delle librerie del C in uso con esso; in particolare si darà ampio spazio alla
+versione realizzata dal progetto GNU, le cosiddette \textit{GNU C Library} o
+\textsl{glibc}, che ormai sono usate nella stragrande maggioranza dei casi,
+senza tralasciare, là dove note, le differenze con altre implementazioni come
+le \textsl{libc5} o le \textsl{uclib}.
+
+L'obiettivo finale di questo progetto è quello di riuscire a ottenere un testo
+utilizzabile per apprendere i concetti fondamentali della programmazione di
+sistema della stessa qualità dei libri del compianto R. W. Stevens (è un
+progetto molto ambizioso ...).
+
+Infatti benché le pagine di manuale del sistema (quelle che si accedono con il
+comando \cmd{man}) e il manuale delle librerie del C GNU siano una fonte
+inesauribile di informazioni (da cui si è costantemente attinto nella stesura
+di tutto il testo) la loro struttura li rende totalmente inadatti ad una
+trattazione che vada oltre la descrizione delle caratteristiche particolari
+dello specifico argomento in esame (ed in particolare lo \textit{GNU C Library
+  Reference Manual} non brilla per chiarezza espositiva).
+
+Per questo motivo si è cercato di fare tesoro di quanto appreso dai testi di
+R. W. Stevens (in particolare \cite{APUE} e \cite{UNP1}) per rendere la
+trattazione dei vari argomenti in una sequenza logica il più esplicativa
+possibile, corredando il tutto, quando possibile, con programmi di esempio.
+
+Dato che sia il kernel che tutte le librerie fondamentali di GNU/Linux sono
+scritte in C, questo sarà il linguaggio di riferimento del testo. In
+particolare il compilatore usato per provare tutti i programmi e gli esempi
+descritti nel testo è lo GNU GCC. Il testo presuppone una conoscenza media del
+linguaggio, e di quanto necessario per scrivere, compilare ed eseguire un
+programma.
+
+Infine, dato che lo scopo del progetto è la produzione di un libro, si è
+scelto di usare \LaTeX\ come "ambiente di sviluppo" del medesimo, sia per
+l'impareggiabile qualità tipografica ottenibile, che per la congruenza dello
+strumento con il fine, tanto sul piano pratico, quanto su quello filosofico.
+
+Il testo sarà, almeno inizialmente, in italiano. Per il momento lo si è
+suddiviso in due parti, la prima sulla programmazione di sistema, in cui si
+trattano le varie funzionalità disponibili per i programmi che devono essere
+eseguiti su una singola macchina, la seconda sulla programmazione di rete, in
+cui si trattano le funzionalità per eseguire programmi che mettono in
+comunicazione macchine diverse.
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End: 
+
+% LocalWords:  kernel Library glibc Stevens Reference Manual GCC

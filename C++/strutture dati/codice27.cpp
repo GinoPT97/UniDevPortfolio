@@ -2,6 +2,7 @@
 #include <string.h>
 #define MD 20
 using namespace std;
+
 main(){
     int i, n;
     char parola[MD];

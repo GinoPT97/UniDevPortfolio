@@ -2,6 +2,7 @@
 #include <string.h>
 #define MD 200
 using namespace std;
+
 main(){
     int i, n;
     string testo; //Il tipo string lo vedremo meglio nella prossima dispensa

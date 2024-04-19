@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="it">
+  <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GaPiL -- Guida alla Programmazione in Linux</title>
+    <meta name="author" content="Simone Piccardi" />
+    <meta name="title" content="Guida alla Programmazione in Linux" />
+    <meta name="description" content="Un manuale di programmazione avanzata in
+      Linux" />
+    <meta name="keywords" content="programmazione, programmazione linux, 
+      POSIX, programmazione avanzata "/>
+    <style type="text/css">
+<!--
+ a {text-decoration: none;}
+ td {font-family: sans-serif}
+-->
+    </style>
+  </head>
+  <body link="mediumslateblue" vlink="mediumblue" alink="red" bgcolor="white">
+
+    <table width="800" cellspacing="0" cellpadding="0" border="0">
+      <tbody>
+	<tr>
+	  <td width="170" align="center">
+	    <img src="gapil.png" width="160" border="0" />
+	  </td>
+	  <td valign="bottom" align="left" bgcolor="white">
+	    <table cellspacing="0">
+	      <tr>
+		<td>
+		  <font face="sans-serif" size="+4" 
+		    color="darkred" style="font-size: 22pt"> 
+		    <b>Guida alla Programmazione in Linux</b> 
+		    <br/>
+		      <font color="midnightblue">
+			<b>Simone Piccardi</b>
+		      </font>
+		  </font>
+		</td>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+
+    <table width="790" cellspacing="0" cellpadding="3" border="0">
+      <tbody>
+	<tr>
+	  <td width="164" align="center">
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  href="index.html">
+	      <font face="sans-serif">
+		<b>Home</b>
+	      </font>
+	    </a> 
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  href="stato.html">
+	      <font face="sans-serif">
+		<b>Stato</b>
+	      </font>
+	    </a> 
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  href="download.html">
+	      <font face="sans-serif">
+		<b>Download</b>
+	      </font>
+	    </a> 
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  
+	    href="http://www.lilik.it/~mirko/gapil/gapil.html">
+	      <font face="sans-serif" color="darkred">
+		<b>Versione online</b>
+	      </font>
+	    </a>
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  
+	      href="http://gapil.truelite.it/sources">
+	      <font face="sans-serif">
+		<b>Trac</b>
+	      </font>
+	    </a> 
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+
+<!-- CUT HERE -->
+    <table width="1000" cellspacing="10" cellpadding="10" border="0">
+      <tbody>
+	<tr>
+	  <td width="130" valign="top">
+	    <b>
+	      <font color="#0000aa">
+		GaPiL
+	      </font>
+	    </b>
+	  </td>
+	  <td bgcolor="lightblue"> 
+	    <b>GaPiL</b> è scritta in LaTeX, la versione aggiornata di
+	    tutti i file è disponibile in tempo reale sul sito di
+	    Truelite Srl: <a href="http://gapil.truelite.it/sources">
+	    http://gapil.truelite.it/sources</a>. La versione online è
+	    pubblicata su <a
+	    href="http://www.lilik.it/~mirko/gapil/gapil.html"> <font
+	    face="sans-serif"> <b>qui</b></font></a>, ed ormai è divenuta
+	    piuttosto obsoleta non essendo aggiornata da anni, chiunque sia
+	    interessato a creare una nuova versione può contattarmi.
+
+	    <p>
+	      Per chi come me preferisce la carta allo schermo, ho
+	      provveduto a mettere in linea delle versioni stampabili
+	      rigenerate a-periodicamente (si suggerisce la versione PDF, in
+	      genere più aggiornata). Esse
+	      sono liberamente scaricabili dagli indirizzi seguenti, insieme
+	      all'archivio compresso di tutti i sorgenti:
+	    </p>
+	    <ul>
+	      <li> <a href="gapil.pdf">Versione
+		PDF</a>
+	      </li>
+	      <li> <a href="gapil.ps">Versione
+		PS</a>
+	      </li>
+	      <li> 
+		<a href="gapil_source.tgz">
+		  Archivio dei sorgenti</a>
+	      </li>
+	    </ul>
+	    <p>
+	    Se poi volete proprio una versione cartacea, ho messo a
+	    disposizione la guida su lulu.com, che fornisce un servizio di
+	    stampa a richiesta; al momento è disponibile solo la versione
+	    completa dalla guida, all'indirizzo: 
+	    <ul>
+	      <li> 
+		<a href="http://www.lulu.com/content/612937">
+		  Versione Completa
+		</a>
+	      </li>
+	    </ul>
+	    si tenga presente che per sua natura questa tenderà a variare
+	    parecchio, essendo la guida in costante sviluppo. </p>
+	    <p>
+	    Il costo in più della versione stampata (ed anche quello del
+	    download, che comunque potrete effettuare gratis da qui) sarà
+	    usato come supporto allo sviluppo: mi impegno ad aggiungere due
+	    pagine alla guida (che per mancanza di tempo riesco a sviluppare
+	    sempre meno) per ogni copia acquistata.</p>
+	    <p>
+	    Appena pronta seguirà, per quanti preferiscono avere un libro il cui
+	    contenuto non subisce aggiornamente radicali ogni settimana, la
+	    pubblicazione della prima parte della guida, che a quel punto non
+	    dovrebbe subire variazioni rilevanti essendo sostanzialmente
+	    completa.</p>
+
+	  </td>
+	  <td valign="top">
+<!-- Generated by OpenX 2.8.5 -->
+<script type='text/javascript' src='http://openx.fountainpen.it/www/delivery/spcjs.php?id=3'></script>
+<script type='text/javascript'><!--// <![CDATA[
+    /* [id3] gapil.truelite.it - Default */
+        OA_show(3);
+// ]]> --></script><noscript><a target='_blank' href='http://openx.fountainpen.it/www/delivery/ck.php?n=80aa9ec'><img border='0' alt='' src='http://openx.fountainpen.it/www/delivery/avw.php?zoneid=3&amp;n=80aa9ec' /></a></noscript>
+	  </td>
+	
+	</tr>
+	<tr>
+	  <td width="130" valign="top">
+	    <b>
+	      <font color="#0000aa">
+		Subversion anonimo
+	      </font>
+	    </b>
+	  </td>
+	  <td bgcolor="lightblue"> Dal 19 Luglio 2004 l'accesso ai sorgenti è
+	  garantito utilizzando <a href="http://subversion.tigris.org/">
+	  Subversion</a>. Per scaricare per la prima volta la versione
+	  corrente (che probabilmente conterrà errori e imprecisioni) si deve
+	  usare il comando:
+	    <p>
+	      <b>
+		svn co http://gapil.truelite.it/svn/trunk gapil
+	      </b>
+	    </p>
+	  questo creerà una directory <b>gapil</b> con dentro tutti i
+	  sorgenti; per i successivi aggiornamenti basterà porsi in tale
+	  directory ed eseguire il comando.
+	    <p>
+	      <b>
+		svn update
+	      </b>
+	    </p>
+	  per la documentazione di Subversion si può utilizzare il <a
+	  href="http://svnbook.red-bean.com/">Subversion Book</a>.
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+
+<!-- Piwik -->
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.fountainpen.it/" : "http://piwik.fountainpen.it/");
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://piwik.fountainpen.it/piwik.php?idsite=3" style="border:0" alt=""/></p></noscript>
+<!-- End Piwik Tag -->
+
+<!-- CUT HERE -->
+  </body>
+</html>

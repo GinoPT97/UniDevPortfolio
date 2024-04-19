@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="it">
+  <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GaPiL -- Guida alla Programmazione in Linux</title>
+    <meta name="author" content="Simone Piccardi" />
+    <meta name="title" content="Guida alla Programmazione in Linux" />
+    <meta name="description" content="Un manuale di programmazione avanzata in
+      Linux" />
+    <meta name="keywords" content="programmazione, programmazione linux, 
+      POSIX, programmazione avanzata "/>
+    <style type="text/css">
+<!--
+ a {text-decoration: none;}
+ td {font-family: sans-serif}
+-->
+    </style>
+  </head>
+  <body link="mediumslateblue" vlink="mediumblue" alink="red" bgcolor="white">
+
+    <table cellspacing="0" cellpadding="0" border="0" width="800">
+      <tbody>
+	<tr>
+	  <td width="170" align="center">
+	    <img src="gapil.png" width="160" border="0" />
+	  </td>
+	  <td valign="bottom" align="left" bgcolor="white">
+	    <table cellspacing="0">
+	      <tr>
+		<td>
+		  <font face="sans-serif" size="+4" 
+		    color="darkred" style="font-size: 22pt"> 
+		    <b>Guida alla Programmazione in Linux</b> 
+		    <br />
+		      <font color="midnightblue">
+			<b>Simone Piccardi</b>
+		      </font>
+		  </font>
+		</td>
+	      </tr>
+	    </table>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+
+    <table width="790" cellspacing="0" cellpadding="3" border="0">
+      <tbody>
+	<tr>
+	  <td width="164" align="center" >
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  href="index.html">
+	      <font face="sans-serif">
+		<b>Home</b>
+	      </font>
+	    </a> 
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  href="stato.html">
+	      <font face="sans-serif">
+		<b>Stato</b>
+	      </font>
+	    </a> 
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  href="download.html">
+	      <font face="sans-serif">
+		<b>Download</b>
+	      </font>
+	    </a> 
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  
+	      href="http://www.lilik.it/~mirko/gapil/gapil.html">
+	      <font face="sans-serif" color="darkred">
+		<b>Versione online</b>
+	      </font>
+	    </a>
+	  </td>
+	  <td align="center" bgcolor="#dddddd">
+	    <a target="_parent"  
+	      href="http://gapil.truelite.it/sources">
+	      <font face="sans-serif">
+		<b>Trac</b>
+	      </font>
+	    </a>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+
+<!-- CUT HERE -->
+    <table width="1000" cellspacing="10" cellpadding="10" border="0">
+      <tbody>
+	<tr>
+	  <td width="130" valign="top"><b>
+	      <font color="#0000aa">
+		Il progetto
+	      </font>
+	    </b>
+	  </td>
+	  <td bgcolor="lightblue"  width="600"> 	    
+	    <b>GaPiL</b> nasce dalla mia convinzione profonda che la <a
+	      href="http://www.gnu.org/philosophy/philosophy.it.html">
+	      "filosofia"</a> che ispira il software libero si applichi anche
+	      ad altri campi che non siano necessariamente quelli della
+	      scrittura di programmi per computer. In particolare ritengo che
+	      possa assumere una grande rilevanza in ambiti come quelli
+	      dell'educazione e della formazione.
+	   
+	    <p> Ma se trovare della buona documentazione libera, specie per
+	        quanto riguarda i programmi che girano sul sistema GNU/Linux,
+	        è ormai relativamente facile, la produzione di buoni testi
+	        didattici è ancora molto limitata, soprattutto se li si cercano
+	        in lingua italiana.
+	    </p>
+	    <p> <b>GaPiL</b> è un tentativo di scrivere un manuale di
+	        programmazione di sistema in ambiente Linux, con una
+	        particolare attenzione alle caratteristiche specifiche delle
+	        interfacce fornite dal kernel. Per questo motivo si parla di
+	        Linux e non di GNU/Linux.
+	    </p>
+	    <p> Nonostante questa specificità, essendo la gran parte delle
+	        funzioni di sistema standardizzate, la guida dovrebbe
+	        risultare utile anche facendo riferimenti ad altri sistemi di
+	        tipo Unix come BSD, in ogni caso si sono sottolineate
+	        esplicitamente le caratteristiche specifiche di Linux.  
+	    </p>
+	    <p>
+	        Benché buona parte della trattazione delle funzioni di
+	        libreria sia del tutto identica, facendo riferimento a
+	        standard generali come POSIX, si 
+	        è comunque prestata particolare attenzione alle funzioni delle
+	        GNU libc, che sono la versione più usata delle librerie del C,
+	        senza dimenticare, ove note, di citare le differenze con
+	        possibili alternative come le libc5 o le uclibc.
+	    </p>
+	    <p>
+	        L'obiettivo resta comunque quello di riuscire a produrre un
+	        testo, rilasciato sotto <a
+	        href="http://www.gnu.org/copyleft/fdl.html">GNU FDL</a>, che
+	        possa servire a chi si accosta per la prima volta alla
+	        programmazione avanzata e di sistema su un kernel Linux, con
+	        la speranza di poter un giorno raggiungere la qualità dei
+	        lavori del compianto R. W. Stevens.
+	    </p>
+	  </td>
+	  <td valign="top">
+<!-- Generated by OpenX 2.8.5 -->
+<script type='text/javascript' src='http://openx.fountainpen.it/www/delivery/spcjs.php?id=3'></script>
+<script type='text/javascript'><!--// <![CDATA[
+    /* [id3] gapil.truelite.it - Default */
+        OA_show(3);
+// ]]> --></script><noscript><a target='_blank' href='http://openx.fountainpen.it/www/delivery/ck.php?n=80aa9ec'><img border='0' alt='' src='http://openx.fountainpen.it/www/delivery/avw.php?zoneid=3&amp;n=80aa9ec' /></a></noscript>
+	  </td>
+	</tr> 
+	<tr>
+	  <td width="130" valign="top">
+	    <b>
+	      <font color="#0000aa">
+		Altro materiale
+	      </font>
+	    </b>
+	  </td>
+	  <td bgcolor="lightblue"> 
+	  
+	    Potete trovare altra documentazione libera di vario tipo (non
+	    necessariamente attinente l'informatica) prodotta da me
+	    all'indirizzo: <a
+	    href="http://firenze.linux.it/~piccardi/pubblicazioni.html">
+	    http://firenze.linux.it/~piccardi/pubblicazioni.html</a>
+	    <p>
+	    Invece la documentazione tecnica più recente che ho prodotto è
+	    pubblicata sul sito di <a href="http://www.truelite.it">Truelite
+	    Srl</a>, ed in particolare sono disponibili una serie di manuali
+	    su temi di natura sistemistica a partire da <a href=
+	    "http://labs.truelite.it/truedoc">
+	    http://labs.truelite.it/truedoc</a>.
+	    </p>
+	    <p>
+	    Infine, sia per dar sfogo ad una passione personale, che per
+	    giocare con Mediawiki, ho creato una sito dedicato alla storia
+	    della penna stilografica, con molto materiale ed informazioni,
+	    sempre libere, all'indirizzo:
+	    <a
+	    href="http://www.fountainpen.it">
+	    http://www.fountainpen.it</a>
+	    <p>
+	    </p>
+	  </td>
+	</tr>
+	<tr>
+	  <td width="130" valign="top">
+	    <b>
+	      <font color="#0000aa">
+		Notizie
+	      </font>
+	    </b>
+	  </td>
+	  <td bgcolor="lightblue"> 
+	      <b>6 - dicembre - 2008</b> <br/> Aggiornata la versione cartacea
+	       acquistabile su lulu.com, all'indirizzo 
+	      <a href="http://stores.lulu.com/piccardi">
+		http://stores.lulu.com/piccardi</a>, contiene le ultime
+		novità in particolare riguardo le funzioni delle ACL. Si
+		ricorda che il sovrapprezzo serve a finanziare lo sviluppo del
+		testo; si può sempre scaricare la versione corrente aggiornata
+		e gratuita da questo sito.
+	    <p>
+	      <b>5 - gennaio - 2007</b> <br/> Pubblicata una versione
+	      stampabile a richiesta su lulu.com, ordinabile all'indirizzo 
+	      <a href="http://stores.lulu.com/piccardi">
+		http://stores.lulu.com/piccardi</a>. 
+	    <p>
+	      <b>1 - giugno - 2006</b> <br/> Nuova revisione con varie aggiunte
+	      e correzioni, in occasione della pubblicazione sul DVD di
+	      LinuxPro. 
+	    <p>
+	      <b>11 - marzo - 2005</b> <br/> Modificata la pagina dell'accesso
+	      ai sorgenti, non viene più utilizzato ViewCVS ma è stato
+	      installato il sistema di tracking <a
+	      href="http://www.edgewall.com/trac/">trac</a> che oltre alla
+	      navigazione dei contenuti consente di tenere sotto controllo le
+	      revisioni, e l'evoluzione della guida e di inviare ticket via
+	      web.
+	    <p>
+	      <b>6 - marzo - 2005</b> <br/> Realizzato un web server
+	      elementare a scopo didattico, in vista <a href="
+	      http://www.lilik.it/page.php?pg=gapil">dell'iniziativa del
+	      Lilik</a> su GaPiL.
+	    <p>
+	      <b>12 - gennaio - 2005</b> <br/> Completata la sezione sulla
+	      gestione della risoluzione degli indirizzi ed iniziata la
+	      sezione sulle opzioni dei socket.
+	    <p>
+	      <b>19 - luglio - 2004</b> <br/> Completata una prima sezione sui
+	      socket UDP ed iniziata una sezione sulle funzioni per la
+	      risoluzione degli indirizzi. Inoltre da oggi i sorgenti di Gapil
+	      sono accessibili usando <a href="http://subversion.tigris.org/">
+	      Subversion</a> sul sito di <a
+	      href="http://www.truelite.it">Truelite Srl</a>.
+	    <p>
+	      <b>3 - marzo - 2004</b> <br/> Ristrutturata la parte sulla
+	      programmazione di rete, inserita la sezione sull'I/O
+	      multiplexing (completata con esempio di server basato su
+	      <b>poll</b>) nella sezione sui socket TCP. Introdotti i nuovi
+	      capitoli sugli altri socket, ed iniziata la sezione sui socket
+	      UDP. 
+	    <p>
+	      <b>26 - dicembre - 2003</b> <br/> Inserito esempio di server
+	      basato sull'I/O multiplexing. Ristrutturato il capitolo sui file
+	      avanzati scorporando in una sezione a parte l'I/O multiplexing,
+	      e inserendo alcuni esempi per <b>pselect</b>. Creata una terza
+	      parte per le appendici.
+	    <p>
+	      <b>8 - novembre - 2003</b> <br/> Corretta tabella sbagliata al
+	      capitolo 5, completata la sezione sull'uso dell'I/O multiplexing
+	      sul lato client ed iniziata la versione server, inserita la
+	      trattazione della funzione shutdown.
+	    </p>
+	    <p>
+	      <b>21 - settembre - 2003</b> <br/> Completato il capitolo sui
+	      socket elementari, e corretti numerosi errori. Revisione della
+	      sezione sull'I/O multiplexing nel capitolo sui file avanzati in
+	      vista dell'uso nel capitolo sui socket TCP avanzati.
+	    </p>
+	    <p>
+	      <b>6 - aprile - 2003</b> <br/> Grazie all'incredibile lavoro di
+	      Mirko Maischberger abbiamo una favolosa versione in HTML, che
+	      collego direttamente dalla sua home page. Non finirò mai di
+	      ringraziarlo per aver domato htlatex fino a produrre la prima
+	      versione di GaPiL realmente consuntabile on line. Con
+	      l'occasione è stata completamente revisionata la parte di
+	      introduzione alle reti.
+	    </p>
+	    <p>
+	      <b>10 - marzo - 2003</b> <br/> Completata la memoria condivisa
+	      POSIX, introdotte le relative funzioni di interfaccia,
+	      revisionati ed ampliati i capitoli sull'introduzione alla rete
+	      ed ai socket.
+	    </p>
+	    <p>
+	      <b>20 - febbraio - 2003</b> <br/> Completata la sezione sulle
+	      alternative al SysV IPC, introdotte le code di messaggi POSIX,
+	      un esempio di uso della memoria condivisa, e parecchie revisioni
+	      generali.
+	    </p>
+	    <p>
+	      <b>10 - dicembre - 2002</b> <br/> Completata la sezione sul file
+	      locking, inserita una nuova sezione sulle alternative al SysV
+	      IPC, estesa la parte sulla memoria condivisa, fatta una
+	      revisione generale degli indici.
+	    </p>
+	    <p>
+	      <b>26 - ottobre - 2002</b> <br/> Revisione di terminali, code di
+	      messaggi e advisory file locking.  Aggiunta la struttura dei
+	      semafori SysV IPC, del file locking in stile POSIX, ed un
+	      contributo di Daniele Masini sull'allocazione della memoria.
+	    </p>
+	    <p>
+	      <b>18 - ottobre - 2002</b> <br/> Aggiunte: trattazione elementare
+	      dei terminali, dei semafori di System V IPC, del file locking in
+	      stile BSD.
+	    </p>
+	    <p>
+	      <b>24 - settembre - 2002</b> <br/> Spostato tutto sul CVS
+	      pubblico del FLUG che consente l'accesso anonimo. Aggiunta una
+	      trattazione preliminare delle code di messaggi di System V IPC e
+	      del controllo di sessione.
+	    </p>
+	    <p>
+	      <b>20 - agosto - 2002</b> <br/> Completata la stesura preliminare
+	      del memory mapped I/O, inserito un esempio di server basato
+	      sulle FIFO, completata la versione iniziale dell'introduzione
+	      al System V IPC.
+	    </p>
+	    <p>
+	      <b>7 - agosto - 2002</b> <br/> Completata la prima stesura delle
+	      sezioni relative all'I/O asincrono ed ai segnali real-time,
+	      iniziata la stesura della sezione sul memory mapped I/O.
+	    </p>
+	    <p>
+	      <b>22 - luglio - 2002</b> <br/> Iniziata la stesura del capitolo
+	      sull'I/O avanzato. Completata la sezione su pipe e FIFO (in
+	      versione preliminare) inziate le sezioni su I/O asincrono ed una
+	      sezione aggiuntiva sui segnali real-time nel relativo capitolo.
+	    </p>
+	    <p>
+	      <b>3 - luglio - 2002</b> <br/> Prima versione del sito, con
+	      rilascio della prima versione di GaPiL in un HTML passabile.
+	      <br/> Sono in versione preliminare, ma ricontrollati e di
+	      qualità accettabile, i capitoli dal primo al nono: introduzione,
+	      gestione dei processi, interfacce di base per i file e per il
+	      controllo dei parametri del sistema, gestione dei segnali. Sono
+	      da ricontrollare, ma di qualità decente, i capitoli dal
+	      tredicesimo al sedicesimo: reti e socket elementari (il
+	      sedicesimo capitolo è incompleto). Sono in corso di stesura, e
+	      pertanto di qualità non classificabile (che può oscillare fra la
+	      bozza non rivista ed il semplice elenco degli argomenti) gli
+	      altri capitoli.
+	    </p>
+	  </td>
+	</tr>
+     </tbody>
+    </table>
+
+<!-- Piwik -->
+<script type="text/javascript">
+var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.fountainpen.it/" : "http://piwik.fountainpen.it/");
+document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+</script><script type="text/javascript">
+try {
+var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 3);
+piwikTracker.trackPageView();
+piwikTracker.enableLinkTracking();
+} catch( err ) {}
+</script><noscript><p><img src="http://piwik.fountainpen.it/piwik.php?idsite=3" style="border:0" alt=""/></p></noscript>
+<!-- End Piwik Tag -->
+
+<!-- CUT HERE -->
+  </body>
+</html>

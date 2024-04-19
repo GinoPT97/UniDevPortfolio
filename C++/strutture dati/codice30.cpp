@@ -3,6 +3,7 @@
 #define MD 20
 #define MAXPAROLE 50
 using namespace std;
+
 main(){
     int n, i, j, pos;
     char parole[MAXPAROLE][MD], minimo[MD], temp[MD];

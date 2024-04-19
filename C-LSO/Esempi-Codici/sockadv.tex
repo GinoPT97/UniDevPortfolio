@@ -1,0 +1,148 @@
+%% sockadv.tex
+%%
+%% Copyright (C) 2004-2018 Simone Piccardi.  Permission is granted to
+%% copy, distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.1 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+
+\chapter{Socket avanzati}
+\label{cha:advanced_socket}
+
+
+Esamineremo in questo capitolo le funzionalità più evolute della gestione dei
+socket, le funzioni avanzate, la gestione dei dati urgenti e
+\textit{out-of-band} e dei messaggi ancillari, come l'uso come l'uso del I/O
+multiplexing (vedi sez.~\ref{sec:file_multiplexing}) con i socket.
+
+
+\section{Le funzioni di I/O avanzate}
+\label{sec:sock_advanced_IO}
+
+Tratteremo in questa sezione le funzioni di I/O più avanzate che permettono di
+controllare le funzionalità specifiche della comunicazione dei dati che sono
+disponibili con i vari tipi di socket.
+
+\subsection{La funzioni \func{send} e \func{recv}}
+\label{sec:net_send_recv}
+
+Da fare
+
+
+% TODO: note su MSG_ZEROCOPY/SOCK_ZEROCOPY, aggiunte con il kernel 4.14 (e per
+% la ricezione con il kernel 4.18, vedi https://lwn.net/Articles/726917/ e
+% https://lwn.net/Articles/752300/ 
+
+\subsection{La funzioni \func{sendmsg} e \func{recvmsg}}
+\label{sec:net_sendmsg}
+
+Finora abbiamo trattato delle funzioni che permettono di inviare dati sul
+socket in forma semplificata. Se infatti si devono semplicemente ...
+
+% TODO trattare anche recvmmsg, introdotta con il kernel 2.3.33, vedi
+% http://kernelnewbies.org/Linux_2_6_33 
+
+% TODO trattare anche sendmmsg, introdotta con il kernel 3.0, vedi
+% 
+
+
+\subsection{I messaggi ancillari}
+\label{sec:net_ancillary_data}
+
+Quanto è stata attivata l'opzione \const{IP\_RECVERR} il kernel attiva per il
+socket una speciale coda su cui vengono inviati tutti gli errori riscontrati.
+Questi possono essere riletti usando il flag \const{MSG\_ERRQUEUE}, nel qual
+caso sarà passato come messaggio ancillare una struttura di tipo
+\struct{sock\_extended\_err} illustrata in
+fig.~\ref{fig:sock_extended_err_struct}.
+
+\begin{figure}[!htb]
+  \footnotesize \centering
+  \begin{minipage}[c]{\textwidth}
+    \includestruct{listati/sock_extended_err.h}
+  \end{minipage}
+  \caption{La struttura \structd{sock\_extended\_err} usata dall'opzione
+    \const{IP\_RECVERR} per ottenere le informazioni relative agli errori su
+    un socket.}
+  \label{fig:sock_extended_err_struct}
+\end{figure}
+
+% TODO vedi man cmsg
+
+\subsection{I \textsl{dati urgenti} o \textit{out-of-band}}
+\label{sec:TCP_urgent_data}
+
+\itindbeg{out-of-band} 
+
+Una caratteristica particolare dei socket TCP è quella che consente di inviare
+all'altro capo della comunicazione una sorta di messaggio privilegiato, che si
+richiede che sia trattato il prima possibile. Si fa riferimento a questa
+funzionalità come all'invio dei cosiddetti \textsl{dati urgenti} (o
+\textit{urgent data}); talvolta essi chiamati anche dati \textit{out-of-band}
+poiché, come vedremo più avanti, possono essere letti anche al di fuori del
+flusso di dati normale.
+
+Come già accennato in sez.~\ref{sec:file_multiplexing} la presenza di dati
+urgenti viene rilevata in maniera specifica sia di \func{select} (con il
+\textit{file descriptor set} \param{exceptfds}) che da \func{poll} (con la
+condizione \const{POLLRDBAND}).
+
+
+Le modalità di lettura dei dati urgenti sono due, la prima e più comune
+prevede l'uso di \func{recvmsg} con 
+
+
+% TODO aggiungere pezzo di codice per inviare dati urgenti all'echo server
+
+La seconda modalità di lettura prevede invece l'uso dell'opzione dei socket
+\const{SO\_OOBINLINE} (vedi sez.~\ref{sec:sock_generic_options}) che consente
+di ricevere i dati urgenti direttamente nel flusso dei dati del socket; in tal
+caso però si pone il problema di come distinguere i dati normali da quelli
+urgenti. Come già accennato in sez.~\ref{sec:sock_ioctl_IP} a questo scopo si
+può usare \func{ioctl} con l'operazione \const{SIOCATMARK}, che consente di
+sapere se si è arrivati o meno all'\textit{urgent mark}. 
+
+La procedura allora prevede che, una volta che si sia rilevata la presenza di
+dati urgenti, si ripeta la lettura ordinaria dal socket fintanto che
+\const{SIOCATMARK} non restituisce un valore diverso da zero; la successiva
+lettura restituirà i dati urgenti.
+
+
+\itindend{out-of-band} 
+
+
+% TODO trattare sendmmsg aggiunta con il kernel 3.0.
+% e gli ICMP socket, vedi  http://lwn.net/Articles/420799/
+
+
+\section{L'uso dell'I/O non bloccante}
+\label{sec:sock_noblok_IO}
+
+Tratteremo in questa sezione le modalità avanzate che permettono di utilizzare
+i socket con una comunicazione non bloccante, in modo da 
+
+
+
+
+
+\subsection{La gestione delle opzioni IP}  
+\label{sec:sock_IP_options}  
+
+Abbiamo visto in sez.~\ref{sec:sock_ipv4_options} come di possa usare  
+\func{setsockopt} con l'opzione \const{IP\_OPTIONS} per impostare le opzioni  
+IP associate per i pacchetti associati ad un socket.  Vedremo qui il
+significato di tali opzioni e le modalità con cui esse possono essere
+utilizzate ed impostate.
+
+% LocalWords:  socket of multiplexing sez sendmsg recvmsg RECVERR kernel MSG
+% LocalWords:  ERRQUEUE sock err fig TCP dell'I setsockopt OPTIONS urgent poll
+% LocalWords:  select descriptor exceptfds POLLRDBAND OOBINLINE ioctl all' mark
+% LocalWords:  SIOCATMARK
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End: 
