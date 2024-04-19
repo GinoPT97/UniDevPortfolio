@@ -2,6 +2,7 @@
 //Esempio: 81222456 -> 1-1, 3-2, 1-4, 1-5, 1-6, 1-8
 #include <iostream>
 using namespace std;
+
 main(){
     long long x; //intero a 64 bit
     int i, cifra, f[10];

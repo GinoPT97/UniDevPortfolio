@@ -2,6 +2,7 @@
 #include <iostream>
 #define MD 20
 using namespace std;
+
 int main(){
     int i, j, n, m;//n è la dimensione dei vettori, m è il numero dei vettori da sommare
     float v[MD], vSomma[MD];

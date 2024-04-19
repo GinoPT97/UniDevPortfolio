@@ -1,6 +1,7 @@
 #include <iostream>
 #define MAX 10
 using namespace std;
+
 main(){
     int n, i;
     float v1[MAX], v2[MAX];

@@ -1,6 +1,7 @@
 #include <iostream>
 #define MD 20
 using namespace std;
+
 int main(){
     int n, x, v[MD];
     int i, sx, dx, c;

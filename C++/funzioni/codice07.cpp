@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+
 void scambia(int &x, int &y){ //Così dico che i parametri sono passati per indirizzo
     int temp;
     temp=x;  //E' più semplice in C++ senza tutti gli *

@@ -1,6 +1,7 @@
 #include <iostream>
 #define MD 20
 using namespace std;
+
 int main(){
     int i, n1, n2;//Due vettori, due dimensioni diverse
     float v1[MD], v2[MD], v3[2*MD];//Il vettore finale può essere di 2MD valori

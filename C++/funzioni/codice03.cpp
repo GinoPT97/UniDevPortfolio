@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+
 int minimo(int x, int y){//due parametri separati da virgola. Occorre specificare il tipo per ogni parametro
     if(x<y)
         return x;

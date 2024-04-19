@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+
 void stampa(int x, int y){//void per non ritornare nulla. Da notare l'assenza del return
     if(x < y)
         cout<<"Hai inserito (in ordine crescente): "<<x<<"   "<<y;

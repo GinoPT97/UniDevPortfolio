@@ -2,6 +2,7 @@
 #include <iostream>
 #define MD 10		//Definizione di una costante
 using namespace std;
+
 main(){
     int n, i;
     float v[MD], somma;

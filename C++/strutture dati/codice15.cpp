@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+
 main(){
     int i, n, x, resti[32];
     do{

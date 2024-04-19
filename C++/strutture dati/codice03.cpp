@@ -2,6 +2,7 @@
 //la somma dei valori assoluti degli elementi
 #include <iostream>
 using namespace std;
+
 main(){
     float x, somma;
     int cont, n;

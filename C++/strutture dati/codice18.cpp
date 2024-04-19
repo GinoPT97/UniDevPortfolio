@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+
 int main(){
     int i, j, n1, n2, cont, trovato;
     float v1[10], v2[10];

@@ -3,6 +3,7 @@
 //Visualizza il vettore al contrario
 #include <iostream>
 using namespace std;
+
 main(){
     int i, n, v[10];
     //Lettura della dimensione con controllo che sia tra 1 e 10
