@@ -3,7 +3,7 @@
 *Realizzare un programma che effettui la somma di due numeri utilizzando una apposita subroutine.
 *Per il passaggio dei parametri si utilizzano i registri.
 
-*Nota: Attenzione al fatto che, affinchï¿½ con questa tecnica funzioni tutto correttamente, occorre che il programma chiamante 
+*Nota: Attenzione al fatto che, affinchè con questa tecnica funzioni tutto correttamente, occorre che il programma chiamante 
 *         e la soubroutine chiamata stabiliscano un accordo sui registri utilizzati per lo scambio.
 *         Nel programma che segue il chiamante pone i due addendi nei registri D0 e D1 e si aspetta che la soubroutine chiamata
 *         ponga il risultato della somma nel registro D2.
