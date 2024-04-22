@@ -1,0 +1,11 @@
+$ DECLARE
+$   ex EXCEPTION;
+$ BEGIN
+$   IF condizione THEN
+$     RAISE ex;
+$   END IF;
+$ EXCEPTION
+$   WHEN ex THEN
+$     DBMS_OUTPUT.PUT_LINE ('ERROR');
+$     ...
+$ END;

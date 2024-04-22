@@ -1,0 +1,13 @@
+$ CREATE TRIGGER name
+$ [BEFORE | AFTER] [INSERT | UPDATE | DELETE] ON tabName
+$ FOR EACH ROW
+$ [WHEN New.x > y] 
+$ DECLARE
+$   ...
+$ BEGIN
+$   ...
+$ [EXCEPTION]
+$   [WHEN nomeEx THEN]
+$     ...
+$     ...	
+$ END;

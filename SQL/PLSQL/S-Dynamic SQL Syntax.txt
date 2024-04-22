@@ -1,0 +1,19 @@
+Usare : invece di @
+
+$ sql1 := 'INSERT INTO nomeTab VALUES (@var2, @var3, @var4)';
+$ EXECUTE IMMEDIATE sql1 USING var1, var 2, var3;
+$ 
+$ sqlSelect := 'SELECT * FROM x WHERE x.y = @var1';
+$ EXECUTE IMMEDIATE sqlSelect INTO var1 USING var2;
+$ 
+$ sqlInto := 'SELECT * INTO @var1 FROM x WHERE x.y = @var2';
+$ EXECUTE IMMEDIATE sqlReturn USING var2 RETURNING INTO var 1;
+$ 
+$ v_query_str := 'SELECT COUNT(*) FROM emp_' || p_loc || ' WHERE job = @bind_job'; 
+$ EXECUTE IMMEDIATE v_query_str INTO v_num_of_employees USING p_job;  
+$ 
+$ sqlBlock := 'BEGIN fooName(@var1, @var2); END;';
+$ EXECUTE IMMEDIATE sqlBlock USING IN OUT var1, var2;
+$ 
+$ sqlReturn := 'UPDATE tab SET x = 100 WHERE y = @var1 RETURNING x INTO @var2';
+$ EXECUTE IMMEDIATE sqlReturn USING var1 RETURNING INTO var 2;

@@ -1,0 +1,12 @@
+Per utilizzare alcune opzioni di Fetch:
+$ DECLARE
+$ SCROLL CURSOR curs IS
+$ SELECT...
+  
+Opzioni di Fetch:
+1) NEXT: implicito
+2) PRIOR: precedente
+3) FIRST: prima riga
+4) LAST: ultima riga
+5) ABSOLUTE x: va ad x
+6) RELATIVE x: salta x elem

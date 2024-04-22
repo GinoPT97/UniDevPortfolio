@@ -1,0 +1,6 @@
+Attenzione a:
+
+$ 1) Codifica associazioni
+$ 2) Foreign Key in chi partecipa con meno
+$ 3) Classi di associazioni
+$ 4) Ricorsiva * a *: metti un attributo nella classe da usare come Foreign Key, nella classe d'associazione o nella medesima tabella se non è * a *. La Primary Key non conta la Foreign Key.

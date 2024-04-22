@@ -1,0 +1,12 @@
+Example:
+
+$ SELECT col1, col2, 
+$ CASE 
+$ WHEN col3 > col4 THEN col3
+$ WHEN col3 < col4 THEN col4
+$ END as colname,
+$ CASE col5
+$ WHEN 10 THEN 'string'
+$ ELSE TO_CHAR(col5)
+$ END
+$ FROM tableName;
