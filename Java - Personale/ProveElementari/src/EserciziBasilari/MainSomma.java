@@ -38,7 +38,7 @@ public class MainSomma {
             System.out.println("Inserisci la seconda stringa");
            String str2 =risposta.nextLine();
 
-            System.out.println("Il risultato è: "+ somma(str1,str2));
+            System.out.println("Il risultato è : "+ somma(str1,str2));
 
 
         }
