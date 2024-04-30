@@ -23,10 +23,6 @@ sudo apt install zram-config -y
 # Installazione di Preload
 sudo apt install preload -y
 
-#Installazione di grub-Customizer
-sudo add-apt-repository ppa:danielrichter2007/grub-customizer --yes
-sudo apt-get install grub-customizer -y
-
 #Installazione di wine per giochi e cose varie Windows
 sudo apt-get install wine -y
 sudo apt-get install winetricks -y
