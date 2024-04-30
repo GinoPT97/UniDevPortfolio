@@ -23,10 +23,6 @@ sudo apt install zram-config -y
 # Installazione di Preload
 sudo apt install preload -y
 
-#Installazione di wine per giochi e cose varie Windows
-sudo apt-get install wine -y
-sudo apt-get install winetricks -y
-
 #Installazione di ClamAV 
 sudo apt-get install clamav -y
 sudo systemctl enable clamav-freshclam
@@ -59,9 +55,6 @@ sudo apt-get install gpart -y
 
 # Installazione di Eclipse
 sudo snap install --classic eclipse
-
-#Installazione di netbeans
-sudo snap install netbeans --classic
 
 # Installazione di GitHub Desktop
 sudo wget https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb
