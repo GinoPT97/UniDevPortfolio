@@ -10,7 +10,7 @@ sudo apt-get install -y wget curl libnvidia-gl-535:i386 openjdk-11-jdk openjdk-1
 sudo snap install curl cmake flutter --classic
 sudo snap refresh snap-store --channel=preview/edge
 sudo snap install snapcraft --classic
-sudo snap install gedit eclipse android-studio tor torbrowser-launcher swi-prolog code telegram-desktop
+sudo snap install gedit eclipse android-studio tor torbrowser-launcher swi-prolog code telegram-desktop vlc whatsie
 
 # Rimozione di Firefox
 sudo snap remove --purge firefox
@@ -26,7 +26,7 @@ sudo dpkg -i google-chrome.deb
 sudo rm google-chrome.deb
 
 # Configurazione della password dell'utente PostgreSQL
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'admin';"
+#sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'admin';"
 
 # Installazione di pgAdmin 4
 #curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
