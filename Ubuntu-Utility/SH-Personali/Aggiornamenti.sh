@@ -1,24 +1,22 @@
 #!/bin/bash
 
-# Assicurati di avere tutti i permessi necessari
-sudo true
+# Riparazione dei pacchetti APT
+sudo dpkg --configure -a
 
 # Aggiornamento dei pacchetti APT
-sudo apt update
-sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
 
-## Aggiornamento dei pacchetti e delle dipendenze 
+# Aggiornamento dei pacchetti e delle dipendenze 
 sudo apt-get dist-upgrade -y
 
-#Per avanzamenti di sistema
+# Per avanzamenti di sistema
 sudo do-release-upgrade 
 
-#Blocca la sospensione energetica del wifi
+# Blocca la sospensione energetica del wifi
 sudo rfkill unblock wifi
 sudo rfkill unblock all
 
 # Pulizia dei pacchetti inutili e orfani APT
-sudo apt autoremove -y
 sudo apt autoremove --purge -y
 sudo apt-get autoremove --purge -y $(deborphan)
 
@@ -28,7 +26,7 @@ sudo apt clean -y
 # Aggiornamento dei pacchetti Snap
 sudo snap refresh
 
-#aggiunta del firewall
+# Aggiunta del firewall
 sudo ufw enable
 
 # Riavvio di Ubuntu Software
