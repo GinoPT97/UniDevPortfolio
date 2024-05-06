@@ -18,7 +18,7 @@ sudo rfkill unblock all
 
 # Pulizia dei pacchetti inutili e orfani APT
 sudo apt autoremove --purge -y
-sudo apt-get autoremove --purge -y $(deborphan)
+sudo apt-get autoremove --purge -y deborphan
 
 # Pulizia della cache dei pacchetti APT
 sudo apt clean -y

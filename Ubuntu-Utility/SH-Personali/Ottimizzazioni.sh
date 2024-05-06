@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Esegui script con privilegi di amministratore
-
 # Ottieni i permessi
 sudo journalctl --vacuum-files
 
@@ -15,9 +13,7 @@ sudo systemd-resolve --flush-caches
 sudo fc-cache -f -v
 
 # Pulisci i file di registro di sistema compressi
-sudo umount /var/log/journal
 sudo journalctl --vacuum-time=7d
-sudo mount /var/log/journal
 
 # Pulisci la cache del browser
 google-chrome --clear-cache
