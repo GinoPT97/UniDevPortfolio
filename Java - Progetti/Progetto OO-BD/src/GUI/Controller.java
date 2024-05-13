@@ -241,9 +241,7 @@ public class Controller {
 	public List<String> venditedip(Date di, Date df) throws SQLException {
 		return dpjdbc.getDipVendite(di, df);
 	}
-
-	public boolean nuovatessera(String a, String b, String c) throws SQLException {
-		return tsjdbc.newtessera(cljdbc.getCtByNCCF(a, b, c));
+		
 	public boolean nuovatessera(String a,String b, String c) throws SQLException {
 		return tsjdbc.newtessera(cljdbc.getCtByNCCF(a, b, c));
 	}
