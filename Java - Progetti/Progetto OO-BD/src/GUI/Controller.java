@@ -48,14 +48,14 @@ public class Controller {
 	private VisioneOrdineFrame visordf;
 	public RicercaFrame searchf;
 	private DBConnection dbconn;
-    private DBConfiguration config = null;
-    private Connection connection = null;
-    private ClienteJDBC cljdbc = null;
-    private DipendenteJDBC dpjdbc = null;
-    private ProdottoJDBC prdjdbc = null;
-    private OrdiniJDBC ordjdbc = null;
-    private TesseraJDBC tsjdbc = null;
-    private ArticoliJDBC artjdbc = null;
+	private DBConfiguration config = null;
+	private Connection connection = null;
+	private ClienteJDBC cljdbc = null;
+	private DipendenteJDBC dpjdbc = null;
+	private ProdottoJDBC prdjdbc = null;
+	private OrdiniJDBC ordjdbc = null;
+	private TesseraJDBC tsjdbc = null;
+	private ArticoliJDBC artjdbc = null;
 	public String iddip;
 
 	public Controller() throws SQLException {
@@ -69,38 +69,38 @@ public class Controller {
 		vdipf = new VisioneDipendentiFrame("Gestione Dipendenti", this);
 		vprodf = new VisioneProdottiFrame("Gestione Prodotti", this);
 		visctf = new VisioneClienteFrame("Gestione Clienti", this);
-		upclf = new ModificaClienteFrame("Modifica Cliente",this);
-		updipf = new ModificaDipendenteFrame("Modifica Dipendente",this);
+		upclf = new ModificaClienteFrame("Modifica Cliente", this);
+		updipf = new ModificaDipendenteFrame("Modifica Dipendente", this);
 		modprodf = new ModificaProdottiFrame("Modifica Prodotti", this);
-		statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti",this);
+		statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti", this);
 		ptessf = new PuntiTesseraFrame("Punti Tessera", this);
 		carrf = new CarrelloFrame("Carrello", this);
-	    visordf = new VisioneOrdineFrame("Visione Ordini",this);
-	    searchf = new RicercaFrame("Ricerca Clienti",this);
+		visordf = new VisioneOrdineFrame("Visione Ordini", this);
+		searchf = new RicercaFrame("Ricerca Clienti", this);
 	}
 
 	public void logtoutente(int x) {
 		logf.setVisible(false);
-		if(x==1) adminf.setVisible(true);
-		if(x==2) dipf.setVisible(true);
+		if (x == 1) adminf.setVisible(true);
+		if (x == 2) dipf.setVisible(true);
 	}
 
 	public void logout(int x) {
-		if(x==1) adminf.setVisible(false);
-		if(x==2) dipf.setVisible(false);
+		if (x == 1) adminf.setVisible(false);
+		if (x == 2) dipf.setVisible(false);
 		logf.setVisible(true);
 	}
 
 	public void adminAndElem(int x) {
 		adminf.setVisible(false);
-		if (x==1) vdipf.setVisible(true);
-		if (x==2) vprodf.setVisible(true);
-		if (x==3) statdipf.setVisible(true);
-		if (x==4) {
+		if (x == 1) vdipf.setVisible(true);
+		if (x == 2) vprodf.setVisible(true);
+		if (x == 3) statdipf.setVisible(true);
+		if (x == 4) {
 			visordf.setVisible(true);
 			visordf.x = 3;
 		}
-		if (x==5) {
+		if (x == 5) {
 			vdipf.setVisible(false);
 			vprodf.setVisible(false);
 			statdipf.setVisible(false);
@@ -110,27 +110,27 @@ public class Controller {
 	}
 
 	public void searchAndElem(int x) {
-		if(x==1) {
+		if (x == 1) {
 			adminf.setVisible(false);
 			dipf.setVisible(false);
 			searchf.setVisible(true);
 		} else {
 			searchf.setVisible(false);
-			if(x==2) adminf.setVisible(true);
-			if(x==3) dipf.setVisible(true);
+			if (x == 2) adminf.setVisible(true);
+			if (x == 3) dipf.setVisible(true);
 		}
 	}
 
 	public void visAndCarr(int x) {
-		if (x==1) carrf.setVisible(true);
-		if (x==2) {
+		if (x == 1) carrf.setVisible(true);
+		if (x == 2) {
 			carrf.setVisible(false);
 			visordf.setVisible(true);
 		}
-		if (x==3) {
+		if (x == 3) {
 			visordf.setVisible(false);
 			adminf.setVisible(true);
-		}else if(x==4) {
+		} else if (x == 4) {
 			visordf.setVisible(false);
 			dipf.setVisible(true);
 		}
@@ -138,13 +138,13 @@ public class Controller {
 
 	public void dipAndElem(int x) {
 		dipf.setVisible(false);
-		if (x==1) visctf.setVisible(true);
-		if (x==2) ptessf.setVisible(true);
-		if (x==3) {
+		if (x == 1) visctf.setVisible(true);
+		if (x == 2) ptessf.setVisible(true);
+		if (x == 3) {
 			visordf.setVisible(true);
 			visordf.x = 4;
 		}
-		if (x==4) {
+		if (x == 4) {
 			dipf.setVisible(true);
 			ptessf.setVisible(false);
 			visctf.setVisible(false);
@@ -153,9 +153,9 @@ public class Controller {
 
 	public void visAnddip(int x) {
 		vdipf.setVisible(false);
-		if (x==1) ndipf.setVisible(true);
-		if (x==2) updipf.setVisible(true);
-		if (x==3) {
+		if (x == 1) ndipf.setVisible(true);
+		if (x == 2) updipf.setVisible(true);
+		if (x == 3) {
 			vdipf.setVisible(true);
 			ndipf.setVisible(false);
 			updipf.setVisible(false);
@@ -164,9 +164,9 @@ public class Controller {
 
 	public void visAndcl(int x) {
 		visctf.setVisible(false);
-		if (x==1) nclf.setVisible(true);
-		if (x==2) upclf.setVisible(true);
-		if (x==3) {
+		if (x == 1) nclf.setVisible(true);
+		if (x == 2) upclf.setVisible(true);
+		if (x == 3) {
 			upclf.setVisible(false);
 			nclf.setVisible(false);
 			visctf.setVisible(true);
@@ -175,57 +175,55 @@ public class Controller {
 
 	public void visAndprod(int x) {
 		vprodf.setVisible(false);
-		if (x==1) nprodf.setVisible(true);
-		if (x==2) modprodf.setVisible(true);
-		if (x==3) {
+		if (x == 1) nprodf.setVisible(true);
+		if (x == 2) modprodf.setVisible(true);
+		if (x == 3) {
 			modprodf.setVisible(false);
 			nprodf.setVisible(false);
 			vprodf.setVisible(true);
 		}
 	}
 
-	public static void main(String[] args) throws SQLException{
+	public static void main(String[] args) throws SQLException {
 		Controller c = new Controller();
 	}
 
-	public void connect() throws SQLException{
-        try {
-		    dbconn = DBConnection.getInstance("postgres");
-            connection = dbconn.getConnection();
-            config = new DBConfiguration(connection);
-  	        //Metodi per la definizione del DB:
-            config.createTipologie();
-	        config.createSequences();
+	public void connect() throws SQLException {
+		try {
+			dbconn = DBConnection.getInstance("postgres");
+			connection = dbconn.getConnection();
+			config = new DBConfiguration(connection);
+			//Metodi per la definizione del DB:
+			config.createTipologie();
+			config.createSequences();
 			config.createTableCliente();
 			config.createTableDipendente();
-	        config.createTableOrdine();
-	        config.createTableProdotto();
-	        config.createTableTessera();
-	        config.createTableArticoliOrdine();
-	        cljdbc = new Clienteimpl(connection);
-	        dpjdbc = new Dipendenteimpl(connection);
-	        prdjdbc = new Prodottoimpl(connection);
-	        ordjdbc = new Ordiniimpl(connection);
-	        tsjdbc = new Tesseraimpl(connection);
-	        artjdbc = new ArticoliImpl(connection);
-            }
-	        catch (SQLException | ConnectionException e)
-	        {
-	            System.out.println("SQLException: "+ e.getMessage());
-	            e.printStackTrace();
-	        }
-	  }
+			config.createTableOrdine();
+			config.createTableProdotto();
+			config.createTableTessera();
+			config.createTableArticoliOrdine();
+			cljdbc = new Clienteimpl(connection);
+			dpjdbc = new Dipendenteimpl(connection);
+			prdjdbc = new Prodottoimpl(connection);
+			ordjdbc = new Ordiniimpl(connection);
+			tsjdbc = new Tesseraimpl(connection);
+			artjdbc = new ArticoliImpl(connection);
+		} catch (SQLException | ConnectionException e) {
+			System.out.println("SQLException: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 
-	public boolean verifyid(String ID) throws SQLException{
-		return (dpjdbc.verifyID(ID));
+	public boolean verifyid(String ID) throws SQLException {
+		return dpjdbc.verifyID(ID);
 	}
 
 	public boolean newdip(Dipendente dip) throws SQLException {
-		return (dpjdbc.setNewDip(dip));
+		return dpjdbc.setNewDip(dip);
 	}
 
 	public boolean newclt(Cliente ct) throws SQLException {
-		return (cljdbc.setNewCt(ct));
+		return cljdbc.setNewCt(ct);
 	}
 
 	public boolean newprod(Prodotto pe) throws SQLException {
@@ -244,6 +242,8 @@ public class Controller {
 		return dpjdbc.getDipVendite(di, df);
 	}
 
+	public boolean nuovatessera(String a, String b, String c) throws SQLException {
+		return tsjdbc.newtessera(cljdbc.getCtByNCCF(a, b, c));
 	public boolean nuovatessera(String a,String b, String c) throws SQLException {
 		return tsjdbc.newtessera(cljdbc.getCtByNCCF(a, b, c));
 	}
