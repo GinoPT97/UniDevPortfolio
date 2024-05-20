@@ -31,7 +31,6 @@ sudo snap install --classic teams-for-linux
 sudo snap install --classic whatsie
 sudo snap install --classic zoom-client
 sudo snap install --classic spotify
-sudo snap install --classic webstorm 
 
 # Configurazione di pgAdmin 4
 curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
