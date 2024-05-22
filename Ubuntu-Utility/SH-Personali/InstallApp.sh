@@ -21,8 +21,9 @@ wget https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/
 sudo dpkg -i GitHubDesktop-linux-2.8.1-linux2.deb
 
 # Installazione di applicazioni tramite Snap
-sudo snap install --classic code
+sudo snap install dbeaver-ce
 sudo snap install openjdk
+sudo snap install --classic code
 sudo snap install --classic android-studio
 sudo snap install --classic eclipse
 sudo snap install --classic pycharm-community
