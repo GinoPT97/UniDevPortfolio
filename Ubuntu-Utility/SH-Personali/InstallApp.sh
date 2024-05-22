@@ -4,7 +4,7 @@
 sudo apt update && sudo apt upgrade -y
 
 # Installazione di pacchetti di sistema essenziali
-sudo apt install wget curl deborphan kate zram-config preload flatpak git gparted gpart default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-15 postgresql-client-15 postgresql-client-common postgresql-common codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor -y
+sudo apt install wget curl deborphan kate zram-config preload flatpak git gparted gpart default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor -y
 
 # Rimozione di Firefox e installazione di Google Chrome
 sudo apt-get remove --purge firefox && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && sudo dpkg -i google-chrome-stable_current_amd64.deb
