@@ -4,13 +4,20 @@
 sudo apt update && sudo apt upgrade -y
 
 # Installazione di pacchetti di sistema essenziali
-sudo apt install wget curl deborphan kate zram-config preload flatpak git gparted gpart default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-15 postgresql-client-15 postgresql-client-common postgresql-common codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor -y
+sudo apt install wget curl deborphan kate zram-config preload flatpak git gparted gpart default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor -y
+sudo apt install postgresql postgresql-contrib curl ca-certificates -y
 
-# Rimozione di Firefox e installazione di Google Chrome
-sudo apt-get remove --purge firefox && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && sudo dpkg -i google-chrome-stable_current_amd64.deb
+# Rimozione di Firefox, installazione di GitHub Desktop e installazione di Google Chrome
+# Rimozione di Firefox
+sudo apt-get remove --purge firefox
+sudo snap remove firefox
+
+# Installazione di Google Chrome
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
 
 # Installazione di GitHub Desktop
-sudo wget https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb
+wget https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb
 sudo dpkg -i GitHubDesktop-linux-2.8.1-linux2.deb
 
 # Installazione di applicazioni tramite Snap
@@ -31,6 +38,7 @@ sudo snap install --classic teams-for-linux
 sudo snap install --classic whatsie
 sudo snap install --classic zoom-client
 sudo snap install --classic spotify
+sudo snap install --classic cmake
 
 # Configurazione di pgAdmin 4
 curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
