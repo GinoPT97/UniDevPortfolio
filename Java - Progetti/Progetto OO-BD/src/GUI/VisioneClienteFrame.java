@@ -70,11 +70,11 @@ public class VisioneClienteFrame extends JFrame {
 
 		JPanel buttonpanel = new JPanel();
 		contentPane.add(buttonpanel, BorderLayout.SOUTH);
-		
+
 		searchtf = new JTextField();
 		buttonpanel.add(searchtf);
 		searchtf.setColumns(10);
-		
+
 		searchbutton = new JButton("Cerca");
 		searchbutton.setBackground(new Color(107, 142, 35));
 		buttonpanel.add(searchbutton);
@@ -94,7 +94,7 @@ public class VisioneClienteFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 		c.allcliente(model);
-		
+
 		searchbutton.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {

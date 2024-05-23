@@ -81,21 +81,35 @@ public class Controller {
 
 	public void logtoutente(int x) {
 		logf.setVisible(false);
-		if (x == 1) adminf.setVisible(true);
-		if (x == 2) dipf.setVisible(true);
+		if (x == 1) {
+			adminf.setVisible(true);
+		}
+		if (x == 2) {
+			dipf.setVisible(true);
+		}
 	}
 
 	public void logout(int x) {
-		if (x == 1) adminf.setVisible(false);
-		if (x == 2) dipf.setVisible(false);
+		if (x == 1) {
+			adminf.setVisible(false);
+		}
+		if (x == 2) {
+			dipf.setVisible(false);
+		}
 		logf.setVisible(true);
 	}
 
 	public void adminAndElem(int x) {
 		adminf.setVisible(false);
-		if (x == 1) vdipf.setVisible(true);
-		if (x == 2) vprodf.setVisible(true);
-		if (x == 3) statdipf.setVisible(true);
+		if (x == 1) {
+			vdipf.setVisible(true);
+		}
+		if (x == 2) {
+			vprodf.setVisible(true);
+		}
+		if (x == 3) {
+			statdipf.setVisible(true);
+		}
 		if (x == 4) {
 			visordf.setVisible(true);
 			visordf.x = 3;
@@ -116,13 +130,19 @@ public class Controller {
 			searchf.setVisible(true);
 		} else {
 			searchf.setVisible(false);
-			if (x == 2) adminf.setVisible(true);
-			if (x == 3) dipf.setVisible(true);
+			if (x == 2) {
+				adminf.setVisible(true);
+			}
+			if (x == 3) {
+				dipf.setVisible(true);
+			}
 		}
 	}
 
 	public void visAndCarr(int x) {
-		if (x == 1) carrf.setVisible(true);
+		if (x == 1) {
+			carrf.setVisible(true);
+		}
 		if (x == 2) {
 			carrf.setVisible(false);
 			visordf.setVisible(true);
@@ -138,8 +158,12 @@ public class Controller {
 
 	public void dipAndElem(int x) {
 		dipf.setVisible(false);
-		if (x == 1) visctf.setVisible(true);
-		if (x == 2) ptessf.setVisible(true);
+		if (x == 1) {
+			visctf.setVisible(true);
+		}
+		if (x == 2) {
+			ptessf.setVisible(true);
+		}
 		if (x == 3) {
 			visordf.setVisible(true);
 			visordf.x = 4;
@@ -153,8 +177,12 @@ public class Controller {
 
 	public void visAnddip(int x) {
 		vdipf.setVisible(false);
-		if (x == 1) ndipf.setVisible(true);
-		if (x == 2) updipf.setVisible(true);
+		if (x == 1) {
+			ndipf.setVisible(true);
+		}
+		if (x == 2) {
+			updipf.setVisible(true);
+		}
 		if (x == 3) {
 			vdipf.setVisible(true);
 			ndipf.setVisible(false);
@@ -164,8 +192,12 @@ public class Controller {
 
 	public void visAndcl(int x) {
 		visctf.setVisible(false);
-		if (x == 1) nclf.setVisible(true);
-		if (x == 2) upclf.setVisible(true);
+		if (x == 1) {
+			nclf.setVisible(true);
+		}
+		if (x == 2) {
+			upclf.setVisible(true);
+		}
 		if (x == 3) {
 			upclf.setVisible(false);
 			nclf.setVisible(false);
@@ -175,8 +207,12 @@ public class Controller {
 
 	public void visAndprod(int x) {
 		vprodf.setVisible(false);
-		if (x == 1) nprodf.setVisible(true);
-		if (x == 2) modprodf.setVisible(true);
+		if (x == 1) {
+			nprodf.setVisible(true);
+		}
+		if (x == 2) {
+			modprodf.setVisible(true);
+		}
 		if (x == 3) {
 			modprodf.setVisible(false);
 			nprodf.setVisible(false);
@@ -241,7 +277,7 @@ public class Controller {
 	public List<String> venditedip(Date di, Date df) throws SQLException {
 		return dpjdbc.getDipVendite(di, df);
 	}
-		
+
 	public boolean nuovatessera(String a,String b, String c) throws SQLException {
 		return tsjdbc.newtessera(cljdbc.getCtByNCCF(a, b, c));
 	}

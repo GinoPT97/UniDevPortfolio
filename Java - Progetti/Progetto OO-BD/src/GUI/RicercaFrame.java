@@ -74,7 +74,7 @@ public class RicercaFrame extends JFrame {
 
 		JPanel panel = new JPanel();
 		searchpanel.add(panel);
-		
+
 				categoriacb = new JComboBox(new String[]{"Ortofrutticoli","Inscatolati","Latticini","Farinacei"});
 				panel.add(categoriacb);
 

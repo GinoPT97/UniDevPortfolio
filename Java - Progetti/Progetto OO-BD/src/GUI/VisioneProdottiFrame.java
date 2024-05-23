@@ -72,11 +72,11 @@ public class VisioneProdottiFrame extends JFrame {
 
 		buttonpanel = new JPanel();
 		contentPane.add(buttonpanel, BorderLayout.SOUTH);
-		
+
 		searchtf = new JTextField();
 		buttonpanel.add(searchtf);
 		searchtf.setColumns(10);
-		
+
 		searchbutton = new JButton("Cerca");
 		searchbutton.setBackground(new Color(46, 139, 87));
 		buttonpanel.add(searchbutton);
@@ -96,7 +96,7 @@ public class VisioneProdottiFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 		c.allprodotti(model);
-		
+
 		searchbutton.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
