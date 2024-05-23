@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ottieni i permessi
-sudo journalctl --vacuum-files=1G
+sudo journalctl --vacuum-size=1G
 
 # Pulisci i file temporanei
 sudo rm -rf /tmp/*
