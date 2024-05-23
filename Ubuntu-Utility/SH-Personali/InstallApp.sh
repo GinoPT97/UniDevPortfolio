@@ -7,8 +7,18 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -f wget curl deborphan kate zram-config preload flatpak git gparted gpart default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor -y
 sudo apt install -f postgresql postgresql-contrib curl ca-certificates -y
 
+#Installazione di pgadmin4
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/mantic pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
+sudo apt install pgadmin4
+
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install python3.11
+
+# Configurazione della password dell'utente PostgreSQL
+sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'admin';"
+
 # Rimozione di Firefox, installazione di GitHub Desktop e installazione di Google Chrome
-# Rimozione di Firefox
 sudo apt-get remove --purge firefox
 sudo snap remove firefox
 
@@ -46,9 +56,6 @@ sudo snap install --classic cmake
 #echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list
 #sudo apt update && sudo apt install pgadmin4 -y
 #sudo /usr/pgadmin4/bin/setup-web.sh
-
-# Configurazione della password dell'utente PostgreSQL
-#sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'admin';"
 
 #Installazione dello store basato su Flutter
 #sudo snap install flutter --classic
