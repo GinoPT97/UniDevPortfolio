@@ -29,7 +29,7 @@ sudo snap refresh
 # Aggiunta del firewall
 sudo ufw enable
 
-# Riavvio di Ubuntu Software
-sudo systemctl restart snapd
+# Ricarica il demone di systemd
+sudo systemctl daemon-reload
 
 echo "Aggiornamenti completati e Ubuntu Software riavviato!"
