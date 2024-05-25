@@ -7,15 +7,13 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -f wget curl deborphan kate zram-config preload flatpak git gparted gpart default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor -y
 sudo apt install -f postgresql postgresql-contrib curl ca-certificates -y
 
-#Installazione e configurazione di NordVPN
+#Installazione di NordVPN
 sh <(curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh)
 nordvpn login
-nordvpn connect
 
 #Installazione di pgadmin4
 sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/mantic pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list && apt update'
 sudo apt install pgadmin4
-
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update
 sudo apt install python3.11
@@ -55,6 +53,13 @@ sudo snap install --classic whatsie
 sudo snap install --classic zoom-client
 sudo snap install --classic spotify
 sudo snap install --classic cmake
+
+#Configurazione di NordVPN
+nordvpn connect
+nordvpn set autoconnect on
+nordvpn set killswitch on
+nordvpn set threatprotectionlite on
+sudo service tor start
 
 # Configurazione di pgAdmin 4
 #curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
