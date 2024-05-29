@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Funzione per gestire gli errori
-handle_error() {
-    echo "Errore alla linea $1"
-    exit 1
-}
-
 # Trap per catturare errori e chiamare la funzione handle_error
 trap 'handle_error $LINENO' ERR
 
