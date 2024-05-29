@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Trap per catturare errori e chiamare la funzione handle_error
-trap 'handle_error $LINENO' ERR
-
 # Nome dell'ambiente virtuale
 ENV_NAME="kratos"
 

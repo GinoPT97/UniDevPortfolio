@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Trap per catturare errori e chiamare la funzione handle_error
-trap 'handle_error $LINENO' ERR
-
 # Riparazione dei pacchetti APT
 sudo dpkg --configure -a
 

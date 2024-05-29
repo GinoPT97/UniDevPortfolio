@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Trap per catturare errori e chiamare la funzione handle_error
-trap 'handle_error $LINENO' ERR
-
 # Ottieni i permessi
 sudo -v
 
