@@ -9,9 +9,6 @@ sudo apt update && sudo apt upgrade -y
 # Aggiornamento dei pacchetti e delle dipendenze
 sudo apt-get dist-upgrade -y
 
-# Per avanzamenti di sistema
-sudo do-release-upgrade 
-
 # Blocca la sospensione energetica del wifi
 sudo rfkill unblock wifi
 sudo rfkill unblock all
@@ -21,6 +18,9 @@ sudo apt autoremove --purge -y
 
 # Pulizia della cache dei pacchetti APT
 sudo apt clean
+
+# Installazione di snapd
+sudo apt install snapd -y
 
 # Aggiornamento dei pacchetti Snap
 sudo snap refresh

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # Ottieni i permessi
 sudo -v
 
