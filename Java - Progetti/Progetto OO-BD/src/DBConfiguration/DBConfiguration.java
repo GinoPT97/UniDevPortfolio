@@ -264,40 +264,40 @@ public class DBConfiguration {
 	        return result;
 	    }
 
-	    public int createTableArticoliOrdine() throws ConnectionException
-	    {
-	        int result = -1;
+		public int createTableArticoliOrdine() throws ConnectionException
+		{
+			int result = -1;
 
-	        if (connectionExists()) {
-	            try {
-	                Statement st = connection.createStatement();
-	                if (!tableExists("ARTICOLIORDINE")) {
-	                    String sql = "CREATE TABLE ARTICOLIORDINE (\n"+
-	                            "CodOrdine VARCHAR(5) NOT NULL CHECK(CodOrdine ~* '^[0-9]+$'),\n"+
-	                            "CodProdotto VARCHAR(5) NOT NULL CHECK(CodProdotto ~* '^[0-9]+$'),\n"+
-	                            "CodCliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n" +
-	                            "Prezzo NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00),\n"+
-	                            "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00), \n"+
-	                            "NumeroArticoli INT NOT NULL,\n"+
-	                            "Categoria TIPOLOGIA,\n"+
-	                            "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"+
-	                            "CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"+
-	                            "CONSTRAINT ArtocoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES PRODOTTO(CodOrdine)\n"+
-	                            " );";
-	                    result = st.executeUpdate(sql);
-	                    st.close();
-	                } else {
+			if (connectionExists()) {
+				try {
+					Statement st = connection.createStatement();
+					if (!tableExists("ARTICOLIORDINE")) {
+						String sql = "CREATE TABLE ARTICOLIORDINE (\n"+
+								"CodOrdine VARCHAR(5) NOT NULL CHECK(CodOrdine ~* '^[0-9]+$'),\n"+
+								"CodProdotto VARCHAR(5) NOT NULL CHECK(CodProdotto ~* '^[0-9]+$'),\n"+
+								"CodCliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n" +
+								"Prezzo NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00),\n"+
+								"NumeroPunti NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00), \n"+
+								"NumeroArticoli INT NOT NULL,\n"+
+								"Categoria TIPOLOGIA,\n"+
+								"CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"+
+								"CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"+
+								"CONSTRAINT ArtocoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"+
+								" );";
+						result = st.executeUpdate(sql);
+						st.close();
+					} else {
 						System.out.println("Table 'ARTICOLIORDINE' already exists!");
 					}
-	            }
-	            catch (SQLException ex) {
-	                System.out.println("SQL Exception found in creation table 'ARTICOLIORDINE': "+ex);
-	            }
-	        } else {
+				}
+				catch (SQLException ex) {
+					System.out.println("SQL Exception found in creation table 'ARTICOLIORDINE': "+ex);
+				}
+			} else {
 				throw new ConnectionException("A connection must exists!");
 			}
-	        return result;
-	    }
+			return result;
+		}
 
 	    public int createTipologie() throws ConnectionException {
 	        int result = -1;
@@ -319,7 +319,7 @@ public class DBConfiguration {
 
 	        return result;
 	    }
-	    
+
 	    public int populateDatabase() throws ConnectionException {
 	        int result = -1;
 
@@ -408,5 +408,4 @@ public class DBConfiguration {
 	        }
 	        return result;
 	    }
-
 	}

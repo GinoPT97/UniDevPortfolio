@@ -238,6 +238,7 @@ public class Controller {
 			config.createTableProdotto();
 			config.createTableTessera();
 			config.createTableArticoliOrdine();
+			config.populateDatabase();
 			cljdbc = new Clienteimpl(connection);
 			dpjdbc = new Dipendenteimpl(connection);
 			prdjdbc = new Prodottoimpl(connection);
