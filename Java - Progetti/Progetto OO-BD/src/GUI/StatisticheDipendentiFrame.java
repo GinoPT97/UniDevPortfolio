@@ -251,31 +251,44 @@ public class StatisticheDipendentiFrame extends JFrame {
 		});
 
 		searchbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					java.sql.Date di = java.sql.Date.valueOf(starttf.getText());
-					java.sql.Date df = java.sql.Date.valueOf(finaltf.getText());
-					ordint = c.introitidip(di,df);
-					ordven = c.venditedip(di,df);
-					if(starttf.getText().equals("") || finaltf.getText().equals("")) {
-						JOptionPane.showMessageDialog(null, "Inserire le date di ricerca!");
-					}
-					if(ordint.isEmpty() || ordven.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
-						clean();
-					}else {
-						nomeintroititf.setText(ordint.get(0).toString());
-						cognomeintroititf.setText(ordint.get(1).toString());
-						introititf.setText(ordint.get(2).toString());
-						nomevenditetf.setText(ordven.get(0).toString());
-						cognomevenditetf.setText(ordven.get(1).toString());
-						venditetf.setText(ordven.get(2).toString());
-					}
-				} catch (SQLException e1) {
-				   JOptionPane.showMessageDialog(null, "Errore!\n" + "Tipo di errore : " + e1);
-				}
-			}
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        System.out.println("Bottone premuto");
+
+		        String startText = starttf.getText();
+		        String finalText = finaltf.getText();
+
+		        if (starttf.getText().equals("") || finaltf.getText().equals("")) {
+		            System.out.println("Mostrando messaggio di errore...");
+		            JOptionPane.showMessageDialog(null, "Inserire le date di ricerca!");
+		        }
+
+		        try {
+		            java.sql.Date di = java.sql.Date.valueOf(startText);
+		            java.sql.Date df = java.sql.Date.valueOf(finalText);
+
+		            System.out.println("Date convertite correttamente: " + di + ", " + df);
+
+		            ordint = c.introitidip(di, df);
+		            ordven = c.venditedip(di, df);
+
+		            if (ordint.isEmpty() || ordven.isEmpty()) {
+		                JOptionPane.showMessageDialog(null, "In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
+		                clean();
+		            } else {
+		                nomeintroititf.setText(ordint.get(0).toString());
+		                cognomeintroititf.setText(ordint.get(1).toString());
+		                introititf.setText(ordint.get(2).toString());
+		                nomevenditetf.setText(ordven.get(0).toString());
+		                cognomevenditetf.setText(ordven.get(1).toString());
+		                venditetf.setText(ordven.get(2).toString());
+		            }
+		        } catch (SQLException e1) {
+		            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1);
+		        } catch (IllegalArgumentException e2) {
+		            JOptionPane.showMessageDialog(null, "Le date inserite non sono valide. Utilizzare il formato yyyy-MM-dd.");
+		        }
+		    }
 		});
 
 		clearbutton.addActionListener(new ActionListener() {
