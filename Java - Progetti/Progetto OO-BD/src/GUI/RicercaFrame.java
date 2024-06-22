@@ -36,7 +36,6 @@ public class RicercaFrame extends JFrame {
 	private Object[] searchcolonne = {"Nome","Cognome","Categoria","Numero Punti"};
 	private JButton backbutton;
 	private JButton searchbutton;
-	private JButton clearbutton;
 	private JComboBox punticb;
 	public int x;
 
@@ -102,9 +101,6 @@ public class RicercaFrame extends JFrame {
 		searchbutton.setBackground(new Color(30, 144, 255));
 		buttonpanel.add(searchbutton);
 
-		clearbutton = new JButton("Pulisci");
-		buttonpanel.add(clearbutton);
-
 		backbutton = new JButton("Indietro");
 		backbutton.setBackground(Color.RED);
 		backbutton.setHorizontalAlignment(SwingConstants.TRAILING);
@@ -167,6 +163,12 @@ public class RicercaFrame extends JFrame {
 		        searchtable.setRowSorter(sorter);
 		    }
 		});
+
+		backbutton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		
 	}
 
 	public RicercaFrame(String title,Controller c) throws SQLException{
