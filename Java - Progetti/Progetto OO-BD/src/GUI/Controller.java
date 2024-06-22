@@ -324,13 +324,15 @@ public class Controller {
 	}
 
 	public void ClientSearch(DefaultTableModel model) throws SQLException {
-		for(Cliente c : artjdbc.SearchClient()) {
-			Object[] pr = {c.getNome(),c.getCognome(), c.getArticoliOrdini().getCategoria(),c.getArticoliOrdini().getNumPunti()};
-			model.insertRow(0, pr);
-		}
+	    model.setRowCount(0); // Resetta il modello per evitare duplicati
+	    for(Cliente c : artjdbc.SearchClient()) {
+	        Object[] pr = {c.getNome(), c.getCognome(), c.getArticoliOrdini().getCategoria(), c.getArticoliOrdini().getNumPunti()};
+	        model.addRow(pr);
+	    }
 	}
 
 	public void alltessera(DefaultTableModel model) throws SQLException {
+		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		for(Tessera t : tsjdbc.alltessera()) {
 			Object[] pr = {t.getCodT(),t.getNPunti()};
 			model.insertRow(0, pr);
@@ -338,6 +340,7 @@ public class Controller {
 	}
 
 	public void allcliente(DefaultTableModel model) throws SQLException {
+		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		for(Cliente c : cljdbc.getAllCt()) {
 			  Object[] pr = {c.getCodCl(),c.getNome(),c.getCognome(),c.getCodFis(),c.getEmail(),c.getInd(),c.getTel(),c.getTessera().getCodT(),c.getTessera().getNPunti()};
 			  model.insertRow(0, pr);
@@ -345,6 +348,7 @@ public class Controller {
 	}
 
 	public void categoriaprodotti(String c,DefaultTableModel model) throws SQLException {
+		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		for(Prodotto p : prdjdbc.getbycategoria(c)) {
 			Object[] pr = {p.getCodProd(),p.getNome(),p.getPrezzo(),p.getCategoria(),p.getScorta()};
 			model.insertRow(0, pr);
@@ -352,6 +356,7 @@ public class Controller {
 	}
 
 	public void alldipendenti(DefaultTableModel model) throws SQLException {
+		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		for(Dipendente d : dpjdbc.getAllDip()) {
 			Object[] pr = {d.getCodDIP(),d.getNome(),d.getCognome(),d.getCodFis(),d.getEmail(),d.getInd(),d.getTel()};
 			model.insertRow(0, pr);
@@ -359,6 +364,7 @@ public class Controller {
 	}
 
 	public void allordini(DefaultTableModel model) throws SQLException {
+		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		for(Ordine o : ordjdbc.getallordini()) {
 			Cliente ct = cljdbc.getCtByid(o.getIdCt());
 			Dipendente d = dpjdbc.getOneDip(o.getIdDip());
@@ -368,6 +374,7 @@ public class Controller {
 	}
 
 	public void allprodotti(DefaultTableModel model) throws SQLException {
+		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		String a = "No";
 		for(Prodotto p : prdjdbc.getallprodotti()) {
 			if(p.getGlutine()) {

@@ -43,18 +43,19 @@ public class ArticoliImpl implements ArticoliJDBC{
 
 	@Override
 	public ArrayList<Cliente> SearchClient() throws SQLException {
-		ResultSet rs = searchClient.executeQuery("SELECT C.codcliente, C.nome, C.cognome, AO.categoria, SUM(AO.numeropunti) AS total_punti\r\n" +
-				                                 "FROM cliente AS C\r\n" +
-				                                 "JOIN articoliordine AS AO ON C.codcliente = AO.codcliente\r\n" +
-				                                 "GROUP BY C.codcliente, C.nome, C.cognome, AO.categoria;");
-		while(rs.next()) {
-			Cliente.add(new Cliente(null,rs.getString("nome"),
-			                            rs.getString("cognome"),null,
-			                            null,null,null, null,
-			                            new Articoli(null, null, 0.0, rs.getDouble("total_punti"), 0, rs.getString("categoria"))));
-		}
+	    ArrayList<Cliente> clienti = new ArrayList<>();
+	    ResultSet rs = searchClient.executeQuery("SELECT C.codcliente, C.nome, C.cognome, AO.categoria, SUM(AO.numeropunti) AS total_punti " +
+	                                             "FROM cliente AS C " +
+	                                             "JOIN articoliordine AS AO ON C.codcliente = AO.codcliente " +
+	                                             "GROUP BY C.codcliente, C.nome, C.cognome, AO.categoria;");
+	    while(rs.next()) {
+	        clienti.add(new Cliente(null, rs.getString("nome"),
+	                                rs.getString("cognome"), null,
+	                                null, null, null, null,
+	                                new Articoli(null, null, 0.0, rs.getDouble("total_punti"), 0, rs.getString("categoria"))));
+	    }
 	    rs.close();
-		return Cliente;
+	    return clienti;
 	}
 
 }

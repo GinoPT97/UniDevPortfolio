@@ -116,7 +116,6 @@ public class RicercaFrame extends JFrame {
 	public void azioni(Controller c) throws SQLException{
 		c.ClientSearch(searchmodel);
 
-		// Dentro il metodo azioni(Controller c)
 		searchbutton.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
@@ -132,24 +131,26 @@ public class RicercaFrame extends JFrame {
 		        // Filtrare i risultati basati sull'intervallo di punti
 		        RowFilter<Object, Object> puntiFilter = null;
 		        if (!intervalloPunti.equals("Tutti")) {
-		            int minPunti = 0, maxPunti = 0;
 		            switch (intervalloPunti) {
 		                case "0-500":
-		                    maxPunti = 500;
+		                    puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 3);
 		                    break;
 		                case "501-1000":
-		                    minPunti = 501;
-		                    maxPunti = 1000;
+		                    List<RowFilter<Object, Object>> betweenFilterList = new ArrayList<>(2);
+		                    betweenFilterList.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3));
+		                    betweenFilterList.add(RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3));
+		                    puntiFilter = RowFilter.andFilter(betweenFilterList);
 		                    break;
 		                case "1001-5000":
-		                    minPunti = 1001;
-		                    maxPunti = 5000;
+		                    List<RowFilter<Object, Object>> betweenFilterList2 = new ArrayList<>(2);
+		                    betweenFilterList2.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3));
+		                    betweenFilterList2.add(RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3));
+		                    puntiFilter = RowFilter.andFilter(betweenFilterList2);
 		                    break;
 		                case ">5000":
-		                    minPunti = 5001;
+		                    puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 3);
 		                    break;
 		            }
-		            puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, minPunti, 3);
 		        }
 
 		        // Applicare i filtri
@@ -166,15 +167,6 @@ public class RicercaFrame extends JFrame {
 		        searchtable.setRowSorter(sorter);
 		    }
 		});
-
-
-		backbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.searchAndElem(x);
-			}
-		});
-
 	}
 
 	public RicercaFrame(String title,Controller c) throws SQLException{
