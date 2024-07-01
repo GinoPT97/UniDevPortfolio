@@ -57,5 +57,4 @@ public class ArticoliImpl implements ArticoliJDBC{
 	    rs.close();
 	    return clienti;
 	}
-
 }
