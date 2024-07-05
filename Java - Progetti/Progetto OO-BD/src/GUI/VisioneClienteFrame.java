@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -100,12 +101,18 @@ public class VisioneClienteFrame extends JFrame {
 		    public void actionPerformed(ActionEvent e) {
 		        String query = searchtf.getText().trim().toLowerCase();
 		        if (query.isEmpty()) {
-		            // Se la query è vuota, ripristina la tabella mostrando tutti i dati
-		            table.setRowSorter(null);
+		            // Se la query è vuota, mostra tutti i dati
+		            table.setRowSorter(null); // Rimuove il filtro
 		        } else {
-		            // Filtra i risultati sulla base della query
+		            // Applica il filtro sulla tabella
 		            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-		            sorter.setRowFilter(RowFilter.regexFilter(query));
+		            try {
+		                // Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro case insensitive
+		                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+		            } catch (PatternSyntaxException ex) {
+		                System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
+		                return; // Esci se c'è un errore di sintassi
+		            }
 		            table.setRowSorter(sorter);
 		        }
 		    }

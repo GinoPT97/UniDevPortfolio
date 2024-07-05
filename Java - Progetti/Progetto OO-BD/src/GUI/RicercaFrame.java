@@ -126,31 +126,26 @@ public class RicercaFrame extends JFrame {
 
 		        // Filtrare i risultati basati sull'intervallo di punti
 		        RowFilter<Object, Object> puntiFilter = null;
-		        if (!intervalloPunti.equals("Tutti")) {
-		            switch (intervalloPunti) {
-		                case "0-500":
-		                    puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 3);
-		                    break;
-		                case "501-1000":
-		                    List<RowFilter<Object, Object>> betweenFilterList = new ArrayList<>(2);
-		                    betweenFilterList.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3));
-		                    betweenFilterList.add(RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3));
-		                    puntiFilter = RowFilter.andFilter(betweenFilterList);
-		                    break;
-		                case "1001-5000":
-		                    List<RowFilter<Object, Object>> betweenFilterList2 = new ArrayList<>(2);
-		                    betweenFilterList2.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3));
-		                    betweenFilterList2.add(RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3));
-		                    puntiFilter = RowFilter.andFilter(betweenFilterList2);
-		                    break;
-		                case ">5000":
-		                    puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 3);
-		                    break;
-		            }
+		        switch (intervalloPunti) {
+		            case "0-500":
+		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 3);
+		                break;
+		            case "501-1000":
+		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3);
+		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3);
+		                break;
+		            case "1001-5000":
+		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3);
+		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3);
+		                break;
+		            case ">5000":
+		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 3);
+		                break;
+		            default:
+		                break;
 		        }
 
 		        // Applicare i filtri
-		        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
 		        List<RowFilter<Object, Object>> filters = new ArrayList<>();
 		        if (categoriaFilter != null) {
 		            filters.add(categoriaFilter);
@@ -158,9 +153,15 @@ public class RicercaFrame extends JFrame {
 		        if (puntiFilter != null) {
 		            filters.add(puntiFilter);
 		        }
-		        RowFilter<Object, Object> combinedFilter = RowFilter.andFilter(filters);
-		        sorter.setRowFilter(combinedFilter);
-		        searchtable.setRowSorter(sorter);
+
+		        if (!filters.isEmpty()) {
+		            RowFilter<Object, Object> combinedFilter = RowFilter.andFilter(filters);
+		            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
+		            sorter.setRowFilter(combinedFilter);
+		            searchtable.setRowSorter(sorter);
+		        } else {
+		            searchtable.setRowSorter(null); // Rimuovi tutti i filtri se non ci sono criteri selezionati
+		        }
 		    }
 		});
 
