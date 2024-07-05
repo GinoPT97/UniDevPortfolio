@@ -31,55 +31,56 @@ import JDBCimpl.Prodottoimpl;
 import JDBCimpl.Tesseraimpl;
 
 public class Controller {
-	private LoginFrame logf;
-	private NuovoProdottoFrame nprodf;
-	private AdminFrame adminf;
-	private DipendenteFrame dipf;
-	private VisioneDipendentiFrame vdipf;
-	public VisioneProdottiFrame vprodf;
-	public ModificaProdottiFrame modprodf;
-	private StatisticheDipendentiFrame statdipf;
-	private PuntiTesseraFrame ptessf;
-	private CarrelloFrame carrf;
-	private VisioneClienteFrame visctf;
-	private NuovoDipendenteFrame ndipf;
-	public ModificaDipendenteFrame updipf;
-	private NuovoClienteFrame nclf;
-	public ModificaClienteFrame upclf;
-	private VisioneOrdineFrame visordf;
-	public RicercaFrame searchf;
-	private DBConnection dbconn;
-	private DBConfiguration config = null;
-	private Connection connection = null;
-	private ClienteJDBC cljdbc = null;
-	private DipendenteJDBC dpjdbc = null;
-	private ProdottoJDBC prdjdbc = null;
-	private OrdiniJDBC ordjdbc = null;
-	private TesseraJDBC tsjdbc = null;
-	private ArticoliJDBC artjdbc = null;
-	public String iddip;
+    private LoginFrame logf;
+    private NuovoProdottoFrame nprodf;
+    private AdminFrame adminf;
+    private DipendenteFrame dipf;
+    private VisioneDipendentiFrame vdipf;
+    public VisioneProdottiFrame vprodf;
+    public ModificaProdottiFrame modprodf;
+    private StatisticheDipendentiFrame statdipf;
+    private PuntiTesseraFrame ptessf;
+    private CarrelloFrame carrf;
+    private VisioneClienteFrame visctf;
+    private NuovoDipendenteFrame ndipf;
+    public ModificaDipendenteFrame updipf;
+    private NuovoClienteFrame nclf;
+    public ModificaClienteFrame upclf;
+    private VisioneOrdineFrame visordf;
+    public RicercaFrame searchf;
+    private DBConnection dbconn;
+    private DBConfiguration config = null;
+    private Connection connection = null;
+    private ClienteJDBC cljdbc = null;
+    private DipendenteJDBC dpjdbc = null;
+    private ProdottoJDBC prdjdbc = null;
+    private OrdiniJDBC ordjdbc = null;
+    private TesseraJDBC tsjdbc = null;
+    private ArticoliJDBC artjdbc = null;
+    public String iddip;
+    private Frame lastFrame;  // Variabile per tenere traccia dell'ultimo frame
 
-	public Controller() throws SQLException {
-		logf = new LoginFrame("Login - Ortofrutta", this);
-		logf.setVisible(true);
-		adminf = new AdminFrame("Admin Area", this);
-		dipf = new DipendenteFrame("Dipendente Area", this);
-		nprodf = new NuovoProdottoFrame("Nuovo Prodotto", this);
-		ndipf = new NuovoDipendenteFrame("Nuovo Dipendente", this);
-		nclf = new NuovoClienteFrame("Nuovo Cliente", this);
-		vdipf = new VisioneDipendentiFrame("Gestione Dipendenti", this);
-		vprodf = new VisioneProdottiFrame("Gestione Prodotti", this);
-		visctf = new VisioneClienteFrame("Gestione Clienti", this);
-		upclf = new ModificaClienteFrame("Modifica Cliente", this);
-		updipf = new ModificaDipendenteFrame("Modifica Dipendente", this);
-		modprodf = new ModificaProdottiFrame("Modifica Prodotti", this);
-		statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti", this);
-		ptessf = new PuntiTesseraFrame("Punti Tessera", this);
-		carrf = new CarrelloFrame("Carrello", this);
-		visordf = new VisioneOrdineFrame("Visione Ordini", this);
-		searchf = new RicercaFrame("Ricerca Clienti", this);
-	}
-	
+    public Controller() throws SQLException {
+        logf = new LoginFrame("Login - Ortofrutta", this);
+        logf.setVisible(true);
+        adminf = new AdminFrame("Admin Area", this);
+        dipf = new DipendenteFrame("Dipendente Area", this);
+        nprodf = new NuovoProdottoFrame("Nuovo Prodotto", this);
+        ndipf = new NuovoDipendenteFrame("Nuovo Dipendente", this);
+        nclf = new NuovoClienteFrame("Nuovo Cliente", this);
+        vdipf = new VisioneDipendentiFrame("Gestione Dipendenti", this);
+        vprodf = new VisioneProdottiFrame("Gestione Prodotti", this);
+        visctf = new VisioneClienteFrame("Gestione Clienti", this);
+        upclf = new ModificaClienteFrame("Modifica Cliente", this);
+        updipf = new ModificaDipendenteFrame("Modifica Dipendente", this);
+        modprodf = new ModificaProdottiFrame("Modifica Prodotti", this);
+        statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti", this);
+        ptessf = new PuntiTesseraFrame("Punti Tessera", this);
+        carrf = new CarrelloFrame("Carrello", this);
+        visordf = new VisioneOrdineFrame("Visione Ordini", this);
+        searchf = new RicercaFrame("Ricerca Clienti", this);
+    }
+    
     private void setVisibleFrame(Frame toShow, Frame... toHide) {
         for (Frame frame : toHide) {
             frame.setVisible(false);
@@ -107,6 +108,7 @@ public class Controller {
     }
 
     public void adminAndElem(int x) {
+        lastFrame = adminf;  // Aggiorna lastFrame
         if (x == 1) {
             setVisibleFrame(vdipf, adminf);
         }
@@ -126,6 +128,7 @@ public class Controller {
 
     public void searchAndElem(int x) {
         if (x == 1) {
+            lastFrame = (adminf.isVisible()) ? adminf : dipf;  // Aggiorna lastFrame
             setVisibleFrame(searchf, adminf, dipf);
         } else {
             if (x == 2) {
@@ -145,13 +148,16 @@ public class Controller {
             setVisibleFrame(visordf, carrf);
         }
         if (x == 3) {
+            lastFrame = adminf;  // Aggiorna lastFrame
             setVisibleFrame(adminf, visordf);
         } else if (x == 4) {
+            lastFrame = dipf;  // Aggiorna lastFrame
             setVisibleFrame(dipf, visordf);
         }
     }
 
     public void dipAndElem(int x) {
+        lastFrame = dipf;  // Aggiorna lastFrame
         if (x == 1) {
             setVisibleFrame(visctf, dipf);
         }
@@ -200,6 +206,10 @@ public class Controller {
         if (x == 3) {
             setVisibleFrame(vprodf, nprodf, modprodf);
         }
+    }
+
+    public void returnToLastFrame() {
+        setVisibleFrame(lastFrame, visordf, searchf);
     }
     
 	public static void main(String[] args) throws SQLException {
@@ -368,3 +378,7 @@ public class Controller {
 		}
 	}
 }
+
+
+
+

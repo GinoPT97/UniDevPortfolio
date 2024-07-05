@@ -166,6 +166,7 @@ public class RicercaFrame extends JFrame {
 
 		backbutton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				c.returnToLastFrame();
 			}
 		});
 		

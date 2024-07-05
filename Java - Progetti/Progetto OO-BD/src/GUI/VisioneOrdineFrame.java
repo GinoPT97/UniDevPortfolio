@@ -116,7 +116,7 @@ public class VisioneOrdineFrame extends JFrame {
 		backbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				c.visAndCarr(x);
+				c.returnToLastFrame();
 			}
 		});
 	}
