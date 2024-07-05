@@ -319,9 +319,44 @@ public class DBConfiguration {
 
 	        return result;
 	    }
+	    
+	    public int FromatTables() throws ConnectionException {
+	        int result = 0;
+
+	        if (!connectionExists()) {
+	            throw new ConnectionException("A connection must exist!");
+	        }
+
+	        try (Statement st = connection.createStatement()) {
+	            // Prima eliminare le righe dalle tabelle figlie
+	            String sqlDeleteArticoliordine = "DELETE FROM Articoliordine;";
+	            result += st.executeUpdate(sqlDeleteArticoliordine);
+
+	            String sqlDeleteOrdine = "DELETE FROM Ordine;";
+	            result += st.executeUpdate(sqlDeleteOrdine);
+
+	            String sqlDeleteProdotto = "DELETE FROM Prodotto;";
+	            result += st.executeUpdate(sqlDeleteProdotto);
+
+	            String sqlDeleteTessera = "DELETE FROM Tessera;";
+	            result += st.executeUpdate(sqlDeleteTessera);
+
+	            // Poi eliminare le righe dalle tabelle madri
+	            String sqlDeleteDipendente = "DELETE FROM Dipendente;";
+	            result += st.executeUpdate(sqlDeleteDipendente);
+
+	            String sqlDeleteCliente = "DELETE FROM Cliente;";
+	            result += st.executeUpdate(sqlDeleteCliente);
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+
+	        return result;
+	    }
 
 	    public int populateDatabase() throws ConnectionException {
-	        int result = -1;
+	        int result = 0;
 
 	        if (!connectionExists()) {
 	            throw new ConnectionException("A connection must exist!");
@@ -337,8 +372,7 @@ public class DBConfiguration {
 	                                "('44455','giorgio','rossi','WWWWWW55W55W555W', 'Via Don Carlo','1234567890','giorgio@arte.it')," +
 	                                "('55566','paolo','verdi','QQQQQQ66Q66Q666Q', 'Via Don Alberto','1234567890','paolo@arte.it')," +
 	                                "('66677','simone','bianchi','UUUUUU77U77U777U','Via Don Giuseppe','1234567890','simone@arte.it')," +
-	                                "('88899','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it') " +
-	                                "ON CONFLICT (codcliente) DO NOTHING;";
+	                                "('88899','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it'); " ;
 	            result += st.executeUpdate(sqlCliente);
 
 	            // Popola la tabella Dipendente
@@ -349,8 +383,7 @@ public class DBConfiguration {
 	                                   "('11111','mario','rossi','YYYYYY11Y11Y111Y','via parma','1234567890','mario@arte.it')," +
 	                                   "('22222','andrea','verdi','HHHHHH22H22H222H','via milano','1234567890','andrea@arte.it')," +
 	                                   "('33333','giuseppe','bianchi','KKKKKK88K88K888K','via torino','1234567890','giuseppe@arte.it')," +
-	                                   "('44444','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it') " +
-	                                   "ON CONFLICT (coddipendente) DO NOTHING;";
+	                                   "('44444','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it'); " ;
 	            result += st.executeUpdate(sqlDipendente);
 
 	            // Popola la tabella Tessera
@@ -362,21 +395,19 @@ public class DBConfiguration {
 	                                "('77777','50','44455')," +
 	                                "('66667','80','55566')," +
 	                                "('55551','10','66677')," +
-	                                "('33333','150','88899') " +
-	                                "ON CONFLICT (codtessera) DO NOTHING;";
+	                                "('33333','150','88899'); ";
 	            result += st.executeUpdate(sqlTessera);
 
-	            // Popola la tabella Prodotto
+	         // Popola la tabella Prodotto
 	            String sqlProdotto = "INSERT INTO prodotto (codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES " +
-	                                 "('11111', 'Mela Rossa', 'Mela italiana rossa', 1.50, 'Italia', '2022-07-01', NULL, NULL, '2022-07-15', 'Ortofrutticoli', 100)," +
+	                                 "('11111', 'Mela Rossa', 'Mela italiana rossa', 1.50, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Ortofrutticoli', 100)," +
 	                                 "('22222', 'Formaggio Parmigiano', 'Formaggio Parmigiano Reggiano', 15.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 50)," +
 	                                 "('33333', 'Pomodori in scatola', 'Pomodori pelati in scatola', 2.00, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Inscatolati', 200)," +
 	                                 "('44444', 'Spaghetti', 'Spaghetti di grano duro', 1.20, 'Italia', NULL, NULL, TRUE, NULL, 'Farinacei', 300)," +
-	                                 "('55555', 'Arance', 'Arance siciliane', 1.20, 'Italia', '2022-07-01', NULL, NULL, '2022-07-15', 'Ortofrutticoli', 150)," +
+	                                 "('55555', 'Arance', 'Arance siciliane', 1.20, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Ortofrutticoli', 150)," +
 	                                 "('66666', 'Parmigiano', 'Parmigiano Reggiano DOP', 18.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 70)," +
 	                                 "('77777', 'Tonno in scatola', 'Tonno al naturale in scatola', 3.50, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Inscatolati', 100)," +
-	                                 "('88888', 'Farina', 'Farina di grano tenero tipo \"00\"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200) " +
-	                                 "ON CONFLICT (codprodotto) DO NOTHING;";
+	                                 "('88888', 'Farina', 'Farina di grano tenero tipo \"00\"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200); " ;
 	            result += st.executeUpdate(sqlProdotto);
 
 	            // Popola la tabella Ordine
@@ -395,35 +426,35 @@ public class DBConfiguration {
 	                               "('12132','120','2013-06-17','88899','33333')," +
 	                               "('18181','40','2023-12-05','44455','22222')," +
 	                               "('19191','65','2024-04-18','66677','33333')," +
-	                               "('20202','55','2024-02-28','88899','79799') " +
-	                               "ON CONFLICT (codordine) DO NOTHING;";
+	                               "('20202','55','2024-02-28','88899','79799'); " ;
 	            result += st.executeUpdate(sqlOrdine);
 
 	            // Popola la tabella ArticoliOrdine
 	            String sqlArticoliOrdine = "INSERT INTO articoliordine (CodOrdine, CodProdotto, CodCliente, prezzo, numeropunti, numeroarticoli, categoria) VALUES " +
-	                                       "('12122', '44444', '77777', '1.20', '3.00', '2', 'Farinacei')," +
-	                                       "('13312', '11111', '11111', '1.50', '6.00', '4', 'Ortofrutticoli')," +
-	                                       "('12122', '33333', '11111', '2.00', '10.00', '5', 'Inscatolati')," +
-	                                       "('13512', '77777', '33333', '3.50', '7.00', '2', 'Inscatolati')," +
-	                                       "('14142', '44444', '22222', '1.20', '3.60', '3', 'Farinacei')," +
-	                                       "('12131', '55555', '11111', '1.20', '6.00', '5', 'Ortofrutticoli')," +
-	                                       "('15151', '66666', '33333', '18.00', '36.00', '2', 'Latticini')," +
-	                                       "('12132', '22222', '33333', '15.00', '45.00', '3', 'Latticini')," +
-	                                       "('17171', '44444', '11111', '1.20', '2.40', '2', 'Farinacei')," +
-	                                       "('12122', '11111', '88899', '1.50', '3.00', '2', 'Ortofrutticoli')," +
-	                                       "('18181', '22222', '11111', '15.00', '45.00', '3', 'Latticini')," +
-	                                       "('19191', '66666', '88899', '18.00', '54.00', '3', 'Latticini')," +
-	                                       "('20202', '55555', '55566', '1.20', '6.00', '5', 'Ortofrutticoli')" +
+	                                       "('12122','88888','11111', '0.80', '2', '10', 'Farinacei')," +
+	                                       "('11112','88888','11111', '0.80', '2', '10', 'Farinacei')," +
+	                                       "('11132','77777','11111', '3.50', '2', '10', 'Inscatolati')," +
+	                                       "('13112','66666','11111', '18.00', '5', '4', 'Latticini')," +
+	                                       "('13312','66666','11111', '18.00', '5', '4', 'Latticini')," +
+	                                       "('13512','55555','11111', '1.20', '10', '5', 'Ortofrutticoli')," +
+	                                       "('14142','44444','55566', '1.20', '10', '5', 'Farinacei')," +
+	                                       "('12131','33333','66677', '2.00', '15', '8', 'Inscatolati')," +
+	                                       "('15151','22222','88899', '15.00', '5', '3', 'Latticini')," +
+	                                       "('16161','22222','55566', '15.00', '5', '3', 'Latticini')," +
+	                                       "('17171','11111','33333', '1.50', '2', '4', 'Ortofrutticoli')," +
+	                                       "('12132','55555','88899', '1.20', '10', '5', 'Ortofrutticoli')," +
+	                                       "('18181','44444','44455', '1.20', '10', '5', 'Farinacei')," +
+	                                       "('19191','11111','66677', '1.50', '2', '4', 'Ortofrutticoli')," +
+	                                       "('20202','88888','88899', '0.80', '2', '10', 'Farinacei') " +
 	                                       "ON CONFLICT DO NOTHING;";
 	            result += st.executeUpdate(sqlArticoliOrdine);
 
-	        } catch (SQLException ex) {
-	            System.out.println("SQL Exception in populating database: " + ex);
+	        } catch (SQLException e) {
+	            e.printStackTrace();
 	        }
 
 	        return result;
 	    }
-
 	}
 
 

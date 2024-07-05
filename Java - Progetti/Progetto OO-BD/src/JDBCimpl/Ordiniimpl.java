@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 import Entita.Ordine;
 import JDBC.OrdiniJDBC;
@@ -52,14 +53,21 @@ public class Ordiniimpl implements OrdiniJDBC{
 	}
 
 	@Override
-	public String getOldDate() throws SQLException {
-		ResultSet rs = olddate.executeQuery("SELECT MIN(dataacquisto) AS old FROM ordine");
-		String old = null;
-		if(rs.next()) {
-			old = rs.getDate("old").toString();
-		}
-		rs.close();
-		return old;
+	public String getOldDate() {
+	    String query = "SELECT MIN(dataacquisto) AS old FROM ordine";
+	    try (PreparedStatement ps = connection.prepareStatement(query);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        if (rs.next()) {
+	            Date oldDate = rs.getDate("old");
+	            if (oldDate != null) {
+	                return oldDate.toString();
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Error executing query: " + e.getMessage());
+	    }
+	    return null;
 	}
 
 	@Override

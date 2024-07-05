@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.Frame;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -78,148 +79,129 @@ public class Controller {
 		visordf = new VisioneOrdineFrame("Visione Ordini", this);
 		searchf = new RicercaFrame("Ricerca Clienti", this);
 	}
+	
+    private void setVisibleFrame(Frame toShow, Frame... toHide) {
+        for (Frame frame : toHide) {
+            frame.setVisible(false);
+        }
+        toShow.setVisible(true);
+    }
 
-	public void logtoutente(int x) {
-		logf.setVisible(false);
-		if (x == 1) {
-			adminf.setVisible(true);
-		}
-		if (x == 2) {
-			dipf.setVisible(true);
-		}
-	}
+    public void logtoutente(int x) {
+        logf.setVisible(false);
+        if (x == 1) {
+            setVisibleFrame(adminf, dipf);
+        }
+        if (x == 2) {
+            setVisibleFrame(dipf, adminf);
+        }
+    }
 
-	public void logout(int x) {
-		if (x == 1) {
-			adminf.setVisible(false);
-		}
-		if (x == 2) {
-			dipf.setVisible(false);
-		}
-		logf.setVisible(true);
-	}
+    public void logout(int x) {
+        if (x == 1) {
+            setVisibleFrame(logf, adminf);
+        }
+        if (x == 2) {
+            setVisibleFrame(logf, dipf);
+        }
+    }
 
-	public void adminAndElem(int x) {
-		adminf.setVisible(false);
-		if (x == 1) {
-			vdipf.setVisible(true);
-		}
-		if (x == 2) {
-			vprodf.setVisible(true);
-		}
-		if (x == 3) {
-			statdipf.setVisible(true);
-		}
-		if (x == 4) {
-			visordf.setVisible(true);
-			visordf.x = 3;
-		}
-		if (x == 5) {
-			vdipf.setVisible(false);
-			vprodf.setVisible(false);
-			statdipf.setVisible(false);
-			visordf.setVisible(false);
-			adminf.setVisible(true);
-		}
-	}
+    public void adminAndElem(int x) {
+        if (x == 1) {
+            setVisibleFrame(vdipf, adminf);
+        }
+        if (x == 2) {
+            setVisibleFrame(vprodf, adminf);
+        }
+        if (x == 3) {
+            setVisibleFrame(statdipf, adminf);
+        }
+        if (x == 4) {
+            setVisibleFrame(visordf, adminf);
+        }
+        if (x == 5) {
+            setVisibleFrame(adminf, vdipf, vprodf, statdipf, visordf);
+        }
+    }
 
-	public void searchAndElem(int x) {
-		if (x == 1) {
-			adminf.setVisible(false);
-			dipf.setVisible(false);
-			searchf.setVisible(true);
-		} else {
-			searchf.setVisible(false);
-			if (x == 2) {
-				adminf.setVisible(true);
-			}
-			if (x == 3) {
-				dipf.setVisible(true);
-			}
-		}
-	}
+    public void searchAndElem(int x) {
+        if (x == 1) {
+            setVisibleFrame(searchf, adminf, dipf);
+        } else {
+            if (x == 2) {
+                setVisibleFrame(adminf, searchf);
+            }
+            if (x == 3) {
+                setVisibleFrame(dipf, searchf);
+            }
+        }
+    }
 
-	public void visAndCarr(int x) {
-		if (x == 1) {
-			carrf.setVisible(true);
-		}
-		if (x == 2) {
-			carrf.setVisible(false);
-			visordf.setVisible(true);
-		}
-		if (x == 3) {
-			visordf.setVisible(false);
-			adminf.setVisible(true);
-		} else if (x == 4) {
-			visordf.setVisible(false);
-			dipf.setVisible(true);
-		}
-	}
+    public void visAndCarr(int x) {
+        if (x == 1) {
+            setVisibleFrame(carrf);
+        }
+        if (x == 2) {
+            setVisibleFrame(visordf, carrf);
+        }
+        if (x == 3) {
+            setVisibleFrame(adminf, visordf);
+        } else if (x == 4) {
+            setVisibleFrame(dipf, visordf);
+        }
+    }
 
-	public void dipAndElem(int x) {
-		dipf.setVisible(false);
-		if (x == 1) {
-			visctf.setVisible(true);
-		}
-		if (x == 2) {
-			ptessf.setVisible(true);
-		}
-		if (x == 3) {
-			visordf.setVisible(true);
-			visordf.x = 4;
-		}
-		if (x == 4) {
-			dipf.setVisible(true);
-			ptessf.setVisible(false);
-			visctf.setVisible(false);
-		}
-	}
+    public void dipAndElem(int x) {
+        if (x == 1) {
+            setVisibleFrame(visctf, dipf);
+        }
+        if (x == 2) {
+            setVisibleFrame(ptessf, dipf);
+        }
+        if (x == 3) {
+            setVisibleFrame(visordf, dipf);
+        }
+        if (x == 4) {
+            setVisibleFrame(dipf, ptessf, visctf);
+        }
+    }
 
-	public void visAnddip(int x) {
-		vdipf.setVisible(false);
-		if (x == 1) {
-			ndipf.setVisible(true);
-		}
-		if (x == 2) {
-			updipf.setVisible(true);
-		}
-		if (x == 3) {
-			vdipf.setVisible(true);
-			ndipf.setVisible(false);
-			updipf.setVisible(false);
-		}
-	}
+    public void visAnddip(int x) {
+        if (x == 1) {
+            setVisibleFrame(ndipf, vdipf);
+        }
+        if (x == 2) {
+            setVisibleFrame(updipf, vdipf);
+        }
+        if (x == 3) {
+            setVisibleFrame(vdipf, ndipf, updipf);
+        }
+    }
 
-	public void visAndcl(int x) {
-		visctf.setVisible(false);
-		if (x == 1) {
-			nclf.setVisible(true);
-		}
-		if (x == 2) {
-			upclf.setVisible(true);
-		}
-		if (x == 3) {
-			upclf.setVisible(false);
-			nclf.setVisible(false);
-			visctf.setVisible(true);
-		}
-	}
+    public void visAndcl(int x) {
+        if (x == 1) {
+            setVisibleFrame(nclf, visctf);
+        }
+        if (x == 2) {
+            setVisibleFrame(upclf, visctf);
+        }
+        if (x == 3) {
+            setVisibleFrame(visctf, nclf, upclf);
+        }
+    }
 
-	public void visAndprod(int x) {
-		vprodf.setVisible(false);
-		if (x == 1) {
-			nprodf.setVisible(true);
-		}
-		if (x == 2) {
-			modprodf.setVisible(true);
-		}
-		if (x == 3) {
-			modprodf.setVisible(false);
-			nprodf.setVisible(false);
-			vprodf.setVisible(true);
-		}
-	}
-
+    public void visAndprod(int x) {
+        if (x == 1) {
+            setVisibleFrame(nprodf, vprodf);
+        }
+        if (x == 2) {
+            setVisibleFrame(modprodf, vprodf);
+        }
+        if (x == 3) {
+            setVisibleFrame(vprodf, nprodf, modprodf);
+        }
+    }
+    
 	public static void main(String[] args) throws SQLException {
 		Controller c = new Controller();
 	}
@@ -238,6 +220,7 @@ public class Controller {
 			config.createTableProdotto();
 			config.createTableTessera();
 			config.createTableArticoliOrdine();
+			config.FromatTables();
 			config.populateDatabase();
 			cljdbc = new Clienteimpl(connection);
 			dpjdbc = new Dipendenteimpl(connection);
