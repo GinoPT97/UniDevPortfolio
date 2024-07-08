@@ -14,7 +14,7 @@ import JDBC.ClienteJDBC;
 public class Clienteimpl implements ClienteJDBC{
 	private Connection connection;
 	private PreparedStatement setNewCt, getAllCt, cercacl, updatecl;
-	private Statement idcl,onect;
+	private Statement idcl;
 	private ArrayList<Cliente> ctTot = new ArrayList<>();
 	private Cliente ct;
 	private String id = null;
@@ -26,7 +26,6 @@ public class Clienteimpl implements ClienteJDBC{
 		setNewCt = connection.prepareStatement("INSERT INTO cliente VALUES (nextval('SCodCliente'), ?, ?, ?, ?, ?, ?)");
 		updatecl = connection.prepareStatement("UPDATE cliente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE codcliente = ?");
         idcl = connection.createStatement();
-        onect = connection.createStatement();
  	}
 
 	@Override

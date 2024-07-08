@@ -184,3 +184,6 @@ public class NuovoClienteFrame extends JFrame {
 		this.azioni(c);
 	}
 }
+
+
+

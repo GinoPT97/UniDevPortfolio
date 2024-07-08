@@ -324,6 +324,14 @@ public class Controller {
 	    }
 	}
 
+	public void categoriaprodotti(String c,DefaultTableModel model) throws SQLException {
+		model.setRowCount(0); // Resetta il modello per evitare duplicati
+		for(Prodotto p : prdjdbc.getbycategoria(c)) {
+			Object[] pr = {p.getCodProd(),p.getNome(),p.getPrezzo(),p.getCategoria(),p.getScorta()};
+			model.insertRow(0, pr);
+		}
+	}
+
 	public void alltessera(DefaultTableModel model) throws SQLException {
 		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		for(Tessera t : tsjdbc.alltessera()) {
@@ -337,14 +345,6 @@ public class Controller {
 		for(Cliente c : cljdbc.getAllCt()) {
 			  Object[] pr = {c.getCodCl(),c.getNome(),c.getCognome(),c.getCodFis(),c.getEmail(),c.getInd(),c.getTel(),c.getTessera().getCodT(),c.getTessera().getNPunti()};
 			  model.insertRow(0, pr);
-		}
-	}
-
-	public void categoriaprodotti(String c,DefaultTableModel model) throws SQLException {
-		model.setRowCount(0); // Resetta il modello per evitare duplicati
-		for(Prodotto p : prdjdbc.getbycategoria(c)) {
-			Object[] pr = {p.getCodProd(),p.getNome(),p.getPrezzo(),p.getCategoria(),p.getScorta()};
-			model.insertRow(0, pr);
 		}
 	}
 
