@@ -80,7 +80,7 @@ public class Controller {
         visordf = new VisioneOrdineFrame("Visione Ordini", this);
         searchf = new RicercaFrame("Ricerca Clienti", this);
     }
-    
+
     private void setVisibleFrame(Frame toShow, Frame... toHide) {
         for (Frame frame : toHide) {
             frame.setVisible(false);
@@ -211,7 +211,7 @@ public class Controller {
     public void returnToLastFrame() {
         setVisibleFrame(lastFrame, visordf, searchf);
     }
-    
+
 	public static void main(String[] args) throws SQLException {
 		Controller c = new Controller();
 	}

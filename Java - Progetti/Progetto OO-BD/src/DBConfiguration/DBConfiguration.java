@@ -319,7 +319,7 @@ public class DBConfiguration {
 
 	        return result;
 	    }
-	    
+
 	    public int FromatTables() throws ConnectionException {
 	        int result = 0;
 

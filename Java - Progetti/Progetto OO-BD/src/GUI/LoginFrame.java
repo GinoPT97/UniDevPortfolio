@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 /*
@@ -133,9 +134,13 @@ public class LoginFrame extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
         
         try {
-            backgroundImage = ImageIO.read(getClass().getResource("/Immagini/ImmLog.png"));
+            backgroundImage = ImageIO.read(getClass().getClassLoader().getResourceAsStream("Immagini/Imm2.png"));
+            if (backgroundImage == null) {
+                throw new IOException("Image not found");
+            }
         } catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Image not found: Immagini/Imm2.png", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         JLayeredPane layeredPane = new JLayeredPane();
@@ -164,12 +169,11 @@ public class LoginFrame extends JFrame {
         titlePanel.setBorder(new EmptyBorder(10, 0, 10, 0));
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-        JLabel titleLabel = new JLabel("");
+        JLabel titleLabel = new JLabel("Ortofrutta 2000");
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setVerticalAlignment(SwingConstants.TOP);
-        titlePanel.add(titleLabel);
-        titleLabel.setText("Ortofrutta 2000");
         titleLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlePanel.add(titleLabel);
 
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 

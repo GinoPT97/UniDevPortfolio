@@ -166,11 +166,12 @@ public class RicercaFrame extends JFrame {
 		});
 
 		backbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				c.returnToLastFrame();
 			}
 		});
-		
+
 	}
 
 	public RicercaFrame(String title,Controller c) throws SQLException{
