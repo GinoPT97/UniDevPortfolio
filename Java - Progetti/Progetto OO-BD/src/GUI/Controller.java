@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.Frame;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -60,7 +61,7 @@ public class Controller {
     public String iddip;
     private Frame lastFrame;  // Variabile per tenere traccia dell'ultimo frame
 
-    public Controller() throws SQLException {
+    public Controller() throws SQLException, IOException {
         logf = new LoginFrame("Login - Ortofrutta", this);
         logf.setVisible(true);
         adminf = new AdminFrame("Admin Area", this);
@@ -212,7 +213,7 @@ public class Controller {
         setVisibleFrame(lastFrame, visordf, searchf);
     }
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, IOException {
 		Controller c = new Controller();
 	}
 
