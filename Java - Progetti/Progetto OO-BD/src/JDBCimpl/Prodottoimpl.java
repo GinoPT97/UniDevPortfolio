@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import Entita.Prodotto;
 import JDBC.ProdottoJDBC;
+import Model.Prodotto;
 
 public class Prodottoimpl implements ProdottoJDBC{
 	private Connection connection;

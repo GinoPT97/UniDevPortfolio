@@ -3,7 +3,7 @@ package JDBC;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Entita.Prodotto;
+import Model.Prodotto;
 
 public interface ProdottoJDBC {
         public boolean setNewProdotto(Prodotto prodotto) throws SQLException;

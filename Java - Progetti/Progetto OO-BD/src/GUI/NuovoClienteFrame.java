@@ -18,7 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import Entita.Cliente;
+import Model.Cliente;
 
 public class NuovoClienteFrame extends JFrame {
 	private Controller c;

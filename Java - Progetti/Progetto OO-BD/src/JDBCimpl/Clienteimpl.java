@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import Entita.Cliente;
-import Entita.Tessera;
 import JDBC.ClienteJDBC;
+import Model.Cliente;
+import Model.Tessera;
 
 public class Clienteimpl implements ClienteJDBC{
 	private Connection connection;

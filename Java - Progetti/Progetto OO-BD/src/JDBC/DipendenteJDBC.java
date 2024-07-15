@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import Entita.Dipendente;
+import Model.Dipendente;
 
 public interface DipendenteJDBC {
 	public boolean setNewDip(Dipendente dipendente) throws SQLException;

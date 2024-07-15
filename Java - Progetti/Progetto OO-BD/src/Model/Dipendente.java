@@ -1,4 +1,4 @@
-package Entita;
+package Model;
 
 public class Dipendente {
 	private String coddipendente;

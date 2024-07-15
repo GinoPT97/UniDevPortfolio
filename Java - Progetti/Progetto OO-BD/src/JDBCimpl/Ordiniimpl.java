@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-import Entita.Ordine;
 import JDBC.OrdiniJDBC;
+import Model.Ordine;
 
 public class Ordiniimpl implements OrdiniJDBC{
 	private Connection connection;

@@ -18,7 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import Entita.Dipendente;
+import Model.Dipendente;
 
 public class ModificaDipendenteFrame extends JFrame {
 	private Controller c;

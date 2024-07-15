@@ -3,7 +3,7 @@ package JDBC;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Entita.Ordine;
+import Model.Ordine;
 
 public interface OrdiniJDBC {
       public boolean newordine(Ordine ordine) throws SQLException;

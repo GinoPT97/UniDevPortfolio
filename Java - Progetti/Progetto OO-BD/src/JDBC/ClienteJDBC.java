@@ -3,7 +3,7 @@ package JDBC;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Entita.Cliente;
+import Model.Cliente;
 
 public interface ClienteJDBC {
 	public boolean setNewCt(Cliente cliente) throws SQLException;

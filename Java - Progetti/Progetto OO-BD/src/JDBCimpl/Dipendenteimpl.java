@@ -9,8 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import Entita.Dipendente;
 import JDBC.DipendenteJDBC;
+import Model.Dipendente;
 
 public class Dipendenteimpl implements DipendenteJDBC{
 	private PreparedStatement setNewDip,getAllDip, updatedp;

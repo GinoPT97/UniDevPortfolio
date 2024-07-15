@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import Entita.Prodotto;
+import Model.Prodotto;
 
 public class ModificaProdottiFrame extends JFrame {
 	private Controller c;

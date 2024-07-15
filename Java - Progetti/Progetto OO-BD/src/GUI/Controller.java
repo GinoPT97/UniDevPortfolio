@@ -12,12 +12,6 @@ import javax.swing.table.DefaultTableModel;
 import DBConfiguration.ConnectionException;
 import DBConfiguration.DBConfiguration;
 import DBConfiguration.DBConnection;
-import Entita.Articoli;
-import Entita.Cliente;
-import Entita.Dipendente;
-import Entita.Ordine;
-import Entita.Prodotto;
-import Entita.Tessera;
 import JDBC.ArticoliJDBC;
 import JDBC.ClienteJDBC;
 import JDBC.DipendenteJDBC;
@@ -30,6 +24,12 @@ import JDBCimpl.Dipendenteimpl;
 import JDBCimpl.Ordiniimpl;
 import JDBCimpl.Prodottoimpl;
 import JDBCimpl.Tesseraimpl;
+import Model.Articoli;
+import Model.Cliente;
+import Model.Dipendente;
+import Model.Ordine;
+import Model.Prodotto;
+import Model.Tessera;
 
 public class Controller {
     private LoginFrame logf;

@@ -3,7 +3,7 @@ package JDBC;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Entita.Tessera;
+import Model.Tessera;
 
 public interface TesseraJDBC {
         public boolean newtessera (String codcl) throws SQLException;

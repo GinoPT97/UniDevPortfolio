@@ -24,7 +24,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import Entita.Cliente;
+import Model.Cliente;
 
 public class VisioneClienteFrame extends JFrame {
 

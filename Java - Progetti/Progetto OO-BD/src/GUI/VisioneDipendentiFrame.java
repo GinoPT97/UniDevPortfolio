@@ -24,7 +24,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import Entita.Dipendente;
+import Model.Dipendente;
 
 public class VisioneDipendentiFrame extends JFrame {
 

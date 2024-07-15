@@ -6,9 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Entita.Cliente;
-import Entita.Tessera;
 import JDBC.TesseraJDBC;
+import Model.Cliente;
+import Model.Tessera;
 
 public class Tesseraimpl implements TesseraJDBC{
 	private Connection connection;

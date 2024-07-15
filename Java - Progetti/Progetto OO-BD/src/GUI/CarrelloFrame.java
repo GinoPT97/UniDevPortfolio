@@ -24,8 +24,8 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import Entita.Articoli;
-import Entita.Ordine;
+import Model.Articoli;
+import Model.Ordine;
 
 public class CarrelloFrame extends JFrame {
 	private Controller c;

@@ -24,7 +24,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import Entita.Prodotto;
+import Model.Prodotto;
 
 public class VisioneProdottiFrame extends JFrame {
     private Controller c;
