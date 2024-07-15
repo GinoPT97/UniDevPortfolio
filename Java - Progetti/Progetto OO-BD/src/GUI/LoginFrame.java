@@ -16,7 +16,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -30,23 +29,42 @@ public class LoginFrame extends JFrame {
 	private JButton logbutt;
 	private JButton clearbutt;
 	private JTextField idtf;
+	private Image backgroundImage;
 
     public void elementi(Controller c) {
 		setBounds(100, 100, 700, 450);
-		contentPane = new JPanel();
+		contentPane = new JPanel() {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				if (backgroundImage != null) {
+					g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+				}
+			}
+		};
 		contentPane.setBackground(new Color(238, 238, 238));
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		setContentPane(contentPane);
 		setLocationRelativeTo(null);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
+
+		try {
+			backgroundImage = ImageIO.read(getClass().getResource("/Immagini/ImmLog.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		JPanel buttonpanel = new JPanel();
+		buttonpanel.setOpaque(false); // Make the panel transparent
 		FlowLayout flowLayout = (FlowLayout) buttonpanel.getLayout();
 		flowLayout.setAlignment(FlowLayout.TRAILING);
 
 		JPanel infopanel = new JPanel();
+		infopanel.setOpaque(false); // Make the panel transparent
 		infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
 
 		JPanel titlepanel = new JPanel();
+		titlepanel.setOpaque(false); // Make the panel transparent
 		titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 		titlepanel.setBackground(new Color(0, 128, 0));
 		titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
@@ -113,6 +131,8 @@ public class LoginFrame extends JFrame {
 		super(title);
 		c.connect();
 		this.elementi(c);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 }
+
 
