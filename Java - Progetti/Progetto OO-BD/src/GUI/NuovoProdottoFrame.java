@@ -49,107 +49,122 @@ public class NuovoProdottoFrame extends JFrame {
 	private JComboBox categoriacb;
 
 	public void clean() {
-    	nometf.setText("");
+		nometf.setText("");
 		descta.setText("");
-	    prezzotf.setText("");
-	    provtf.setText("");
-	    scortatf.setText("");
-	    racctf.setText("");
-	    mungtf.setText("");
-	    scadtf.setText("");
-	    glutcb.setSelected(false);
-    }
+		prezzotf.setText("");
+		provtf.setText("");
+		scortatf.setText("");
+		racctf.setText("");
+		mungtf.setText("");
+		scadtf.setText("");
+		glutcb.setSelected(false);
+	}
 
-    public void azioni(Controller c) {
-    	clearbutton.addActionListener(new ActionListener() {
-    		@Override
+	public void azioni(Controller c) {
+		clearbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
-    			clean();
-    		   }
-    	     });
+				clean();
+			}
+		});
 
-      	     backbutton.addActionListener(new ActionListener() {
-    		  @Override
+		backbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
-    			  clean();
-    			  c.visAndprod(3);
-    		  }
-    	      });
+				clean();
+				c.visAndprod(3);
+			}
+		});
 
-      	  insertbutton.addActionListener(new ActionListener() {
-    		@Override
+		insertbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
-    			DateFormat data = new SimpleDateFormat ("yyyy-MM-dd");
-    		    try {
-    		    	if(nometf.getText().equals("") || descta.getText().equals("") || prezzotf.getText().equals("") || provtf.getText().equals("") || scortatf.getText().equals("")) {
-    		    		JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
-    		    	} else {
-    		    		if(categoriacb.getSelectedItem().toString().equals("Ortofrutticoli")) {
-            		    	c.newprod(new Prodotto("", nometf.getText(), descta.getText(), Double.parseDouble(prezzotf.getText()), provtf.getText(), data.parse(racctf.getText()), null, glutcb.isSelected(), null, categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-            		    } else if(categoriacb.getSelectedItem().toString().equals("Inscatolati")) {
-            		    	c.newprod(new Prodotto("", nometf.getText(), descta.getText(), Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null, glutcb.isSelected(), data.parse(scadtf.getText()), categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-            		    } else if(categoriacb.getSelectedItem().toString().equals("Latticini")) {
-            		    	c.newprod(new Prodotto("", nometf.getText(), descta.getText(), Double.parseDouble(prezzotf.getText()), provtf.getText(), null, data.parse(mungtf.getText()), glutcb.isSelected(), null, categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-            		    } else if(categoriacb.getSelectedItem().toString().equals("Farinacei")) {
-        					c.newprod(new Prodotto("", nometf.getText(), descta.getText(), Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null, glutcb.isSelected(), null, categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-            		    }
-    		    		clean();
-    		    		JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
-    		    	}
-    		    } catch (NumberFormatException | SQLException | ParseException e1) {
-    				JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-    			}
-    		   }
-    	     });
+				DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
+				try {
+					if (nometf.getText().equals("") || descta.getText().equals("") || prezzotf.getText().equals("")
+							|| provtf.getText().equals("") || scortatf.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
+					} else {
+						if (categoriacb.getSelectedItem().toString().equals("Ortofrutticoli")) {
+							c.newprod(new Prodotto("", nometf.getText(), descta.getText(),
+									Double.parseDouble(prezzotf.getText()), provtf.getText(),
+									data.parse(racctf.getText()), null, glutcb.isSelected(), null,
+									categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
+						} else if (categoriacb.getSelectedItem().toString().equals("Inscatolati")) {
+							c.newprod(new Prodotto("", nometf.getText(), descta.getText(),
+									Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null,
+									glutcb.isSelected(), data.parse(scadtf.getText()),
+									categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
+						} else if (categoriacb.getSelectedItem().toString().equals("Latticini")) {
+							c.newprod(new Prodotto("", nometf.getText(), descta.getText(),
+									Double.parseDouble(prezzotf.getText()), provtf.getText(), null,
+									data.parse(mungtf.getText()), glutcb.isSelected(), null,
+									categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
+						} else if (categoriacb.getSelectedItem().toString().equals("Farinacei")) {
+							c.newprod(new Prodotto("", nometf.getText(), descta.getText(),
+									Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null,
+									glutcb.isSelected(), null, categoriacb.getSelectedItem().toString(),
+									Integer.parseInt(scortatf.getText())));
+						}
+						clean();
+						JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
+					}
+				} catch (NumberFormatException | SQLException | ParseException e1) {
+					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+				}
+			}
+		});
 
-      	   selbutton.addActionListener(new ActionListener() {
-   	    	@Override
+		selbutton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent event) {
-   	    	   int type = categoriacb.getSelectedIndex();
- 			   switch(type) {
- 			   case 0:
- 				  racctf.setEditable(true);
- 				  mungtf.setEditable(false);
- 				  scadtf.setEditable(false);
- 				  glutcb.setEnabled(false);
- 			   break;
- 			   case 1:
- 				  racctf.setEditable(false);
- 				  mungtf.setEditable(false);
- 				  scadtf.setEditable(true);
- 				  glutcb.setEnabled(false);
- 			   break;
- 			   case 2:
- 				  racctf.setEditable(false);
- 				  mungtf.setEditable(true);
- 				  scadtf.setEditable(false);
- 				  glutcb.setEnabled(false);
- 			   break;
- 			   case 3:
- 				  racctf.setEditable(false);
- 				  mungtf.setEditable(false);
- 				  scadtf.setEditable(false);
- 				  glutcb.setEnabled(true);
- 			   break;
- 			   }
- 		   }
-   	     });
+				int type = categoriacb.getSelectedIndex();
+				switch (type) {
+				case 0:
+					racctf.setEditable(true);
+					mungtf.setEditable(false);
+					scadtf.setEditable(false);
+					glutcb.setEnabled(false);
+					break;
+				case 1:
+					racctf.setEditable(false);
+					mungtf.setEditable(false);
+					scadtf.setEditable(true);
+					glutcb.setEnabled(false);
+					break;
+				case 2:
+					racctf.setEditable(false);
+					mungtf.setEditable(true);
+					scadtf.setEditable(false);
+					glutcb.setEnabled(false);
+					break;
+				case 3:
+					racctf.setEditable(false);
+					mungtf.setEditable(false);
+					scadtf.setEditable(false);
+					glutcb.setEnabled(true);
+					break;
+				}
+			}
+		});
 
-      	 descta.addKeyListener(new KeyListener() {
-      		 @Override
+		descta.addKeyListener(new KeyListener() {
+			@Override
 			public void keyTyped(KeyEvent e) {
-      	        if (descta.getText().length() >= 500 ) {
+				if (descta.getText().length() >= 500) {
 					e.consume();
 				}
-      	    }
+			}
+
 			@Override
 			public void keyPressed(KeyEvent e) {
 			}
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 			}
-      	   });
-    }
+		});
+	}
 
 	public void elementi() {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -159,7 +174,8 @@ public class NuovoProdottoFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setLocationRelativeTo(null);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoProdottoFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(NuovoProdottoFrame.class.getResource("/Immagini/ImmIcon.png")));
 
 		JPanel elempanel = new JPanel();
 		elempanel.setBorder(new EmptyBorder(10, 50, 10, 50));
@@ -264,39 +280,39 @@ public class NuovoProdottoFrame extends JFrame {
 		JPanel categoriapanel = new JPanel();
 		elempanel.add(categoriapanel);
 
-		categoriacb = new JComboBox(new String[] {"Ortofrutticoli","Inscatolati","Latticini","Farinacei"});
+		categoriacb = new JComboBox(new String[] { "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei" });
 		categoriapanel.add(categoriacb);
 
 		selbutton = new JButton("Selezione");
 		categoriapanel.add(selbutton);
 
-	    buttonpanel = new JPanel();
-	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
+		buttonpanel = new JPanel();
+		contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-	    insertbutton = new JButton("Inserisci");
-	    insertbutton.setBackground(Color.GREEN);
-	    buttonpanel.add(insertbutton);
+		insertbutton = new JButton("Inserisci");
+		insertbutton.setBackground(Color.GREEN);
+		buttonpanel.add(insertbutton);
 
-	    clearbutton = new JButton("Pulisci");
-	    clearbutton.setBackground(Color.WHITE);
-	    buttonpanel.add(clearbutton);
+		clearbutton = new JButton("Pulisci");
+		clearbutton.setBackground(Color.WHITE);
+		buttonpanel.add(clearbutton);
 
-	    backbutton = new JButton("Indietro");
-	    backbutton.setBackground(Color.RED);
-	    buttonpanel.add(backbutton);
+		backbutton = new JButton("Indietro");
+		backbutton.setBackground(Color.RED);
+		buttonpanel.add(backbutton);
 
-	    JPanel titlepanel = new JPanel();
-	    titlepanel.setBackground(new Color(139, 0, 0));
-	    contentPane.add(titlepanel, BorderLayout.NORTH);
+		JPanel titlepanel = new JPanel();
+		titlepanel.setBackground(new Color(139, 0, 0));
+		contentPane.add(titlepanel, BorderLayout.NORTH);
 
-	    JLabel titlelabel = new JLabel("Inserimento nuovo prodotto");
-	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-	    titlepanel.add(titlelabel);
+		JLabel titlelabel = new JLabel("Inserimento nuovo prodotto");
+		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+		titlepanel.add(titlelabel);
 	}
 
-    public NuovoProdottoFrame(String title, Controller c) {
-  	  super(title);
-  	  this.elementi();
-      this.azioni(c);
-    }
+	public NuovoProdottoFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
 }

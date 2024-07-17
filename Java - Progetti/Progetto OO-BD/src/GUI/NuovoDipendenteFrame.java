@@ -55,7 +55,8 @@ public class NuovoDipendenteFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(), emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
+					c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
+							emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
 					clean();
 					JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
 				} catch (SQLException e1) {
@@ -80,7 +81,8 @@ public class NuovoDipendenteFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setLocationRelativeTo(null);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
 		JPanel buttonpanel = new JPanel();
 		contentPane.add(buttonpanel, BorderLayout.SOUTH);
@@ -170,7 +172,7 @@ public class NuovoDipendenteFrame extends JFrame {
 		panel.add(titlelabel);
 	}
 
-	public NuovoDipendenteFrame(String title,Controller c) {
+	public NuovoDipendenteFrame(String title, Controller c) {
 		super(title);
 		this.elementi();
 		this.azioni(c);

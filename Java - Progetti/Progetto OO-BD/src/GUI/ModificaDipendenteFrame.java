@@ -82,7 +82,8 @@ public class ModificaDipendenteFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					c.updip(new Dipendente(cod, nometf.getText(), cognometf.getText(), codfisctf.getText(), emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
+					c.updip(new Dipendente(cod, nometf.getText(), cognometf.getText(), codfisctf.getText(),
+							emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
 					clean();
 					c.visAnddip(3);
 					JOptionPane.showMessageDialog(null, "Dipendente modificato");
@@ -198,7 +199,7 @@ public class ModificaDipendenteFrame extends JFrame {
 		titlepanel.add(titlelabel);
 	}
 
-	public ModificaDipendenteFrame(String title,Controller c) {
+	public ModificaDipendenteFrame(String title, Controller c) {
 		super(title);
 		this.elementi();
 		this.azioni(c);

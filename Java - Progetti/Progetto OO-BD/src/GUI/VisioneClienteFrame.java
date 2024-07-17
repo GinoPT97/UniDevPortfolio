@@ -45,7 +45,8 @@ public class VisioneClienteFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(VisioneClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
 		setLocationRelativeTo(null);
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -53,7 +54,8 @@ public class VisioneClienteFrame extends JFrame {
 
 		table = new JTable();
 		model = new DefaultTableModel();
-		Object[] colonne = {"Id Cliente","Nome","Cognome","Codice fiscale","Email","Indirizzo","Telefono","Id Tessera", "Punti"};
+		Object[] colonne = { "Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono",
+				"Id Tessera", "Punti" };
 		final Object[] rows = new Object[8];
 		model.setColumnIdentifiers(colonne);
 		table.setModel(model);
@@ -97,25 +99,26 @@ public class VisioneClienteFrame extends JFrame {
 		c.allcliente(model);
 
 		searchbutton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        String query = searchtf.getText().trim().toLowerCase();
-		        if (query.isEmpty()) {
-		            // Se la query è vuota, mostra tutti i dati
-		            table.setRowSorter(null); // Rimuove il filtro
-		        } else {
-		            // Applica il filtro sulla tabella
-		            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-		            try {
-		                // Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro case insensitive
-		                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-		            } catch (PatternSyntaxException ex) {
-		                System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
-		                return; // Esci se c'è un errore di sintassi
-		            }
-		            table.setRowSorter(sorter);
-		        }
-		    }
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String query = searchtf.getText().trim().toLowerCase();
+				if (query.isEmpty()) {
+					// Se la query è vuota, mostra tutti i dati
+					table.setRowSorter(null); // Rimuove il filtro
+				} else {
+					// Applica il filtro sulla tabella
+					TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+					try {
+						// Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro
+						// case insensitive
+						sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+					} catch (PatternSyntaxException ex) {
+						System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
+						return; // Esci se c'è un errore di sintassi
+					}
+					table.setRowSorter(sorter);
+				}
+			}
 		});
 
 		addbutton.addActionListener(new ActionListener() {
@@ -129,12 +132,12 @@ public class VisioneClienteFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int i = table.getSelectedRow();
-				if(i>=0) {
+				if (i >= 0) {
 					c.visAndcl(2);
 					c.upclf.viewct(new Cliente(table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(),
-		                           table.getValueAt(i, 2).toString(), table.getValueAt(i, 3).toString(),
-		                           table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
-		                           table.getValueAt(i, 6).toString(),null,null));
+							table.getValueAt(i, 2).toString(), table.getValueAt(i, 3).toString(),
+							table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
+							table.getValueAt(i, 6).toString(), null, null));
 				} else {
 					JOptionPane.showMessageDialog(null, "Scegli una riga da modificare");
 				}

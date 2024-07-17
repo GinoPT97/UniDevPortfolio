@@ -43,7 +43,8 @@ public class VisioneDipendentiFrame extends JFrame {
 
 	public void elementi() {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(VisioneDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
 		setBounds(100, 100, 850, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -56,7 +57,7 @@ public class VisioneDipendentiFrame extends JFrame {
 
 		table = new JTable();
 		model = new DefaultTableModel();
-		Object[] colonne = {"Id","Nome","Cognome","Codice fiscale","Email","Indirizzo","Telefono"};
+		Object[] colonne = { "Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono" };
 		final Object[] rows = new Object[7];
 		model.setColumnIdentifiers(colonne);
 		table.setModel(model);
@@ -99,25 +100,26 @@ public class VisioneDipendentiFrame extends JFrame {
 		c.alldipendenti(model);
 
 		searchbutton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        String query = searchtf.getText().trim().toLowerCase();
-		        if (query.isEmpty()) {
-		            // Se la query è vuota, mostra tutti i dati
-		            table.setRowSorter(null); // Rimuove il filtro
-		        } else {
-		            // Applica il filtro sulla tabella
-		            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-		            try {
-		                // Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro case insensitive
-		                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-		            } catch (PatternSyntaxException ex) {
-		                System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
-		                return; // Esci se c'è un errore di sintassi
-		            }
-		            table.setRowSorter(sorter);
-		        }
-		    }
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String query = searchtf.getText().trim().toLowerCase();
+				if (query.isEmpty()) {
+					// Se la query è vuota, mostra tutti i dati
+					table.setRowSorter(null); // Rimuove il filtro
+				} else {
+					// Applica il filtro sulla tabella
+					TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+					try {
+						// Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro
+						// case insensitive
+						sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+					} catch (PatternSyntaxException ex) {
+						System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
+						return; // Esci se c'è un errore di sintassi
+					}
+					table.setRowSorter(sorter);
+				}
+			}
 		});
 
 		addbutton.addActionListener(new ActionListener() {
@@ -131,11 +133,12 @@ public class VisioneDipendentiFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int i = table.getSelectedRow();
-				if(i>=0) {
+				if (i >= 0) {
 					c.visAnddip(2);
-					c.updipf.viewdip(new Dipendente(table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(),
-							   table.getValueAt(i, 2).toString(), table.getValueAt(i, 3).toString(),
-							   table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString()));
+					c.updipf.viewdip(new Dipendente(table.getValueAt(i, 0).toString(),
+							table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+							table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(),
+							table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString()));
 				} else {
 					JOptionPane.showMessageDialog(null, "Scegli una riga da modificare");
 				}
@@ -150,7 +153,7 @@ public class VisioneDipendentiFrame extends JFrame {
 		});
 	}
 
-	public VisioneDipendentiFrame(String title,Controller c) throws SQLException {
+	public VisioneDipendentiFrame(String title, Controller c) throws SQLException {
 		super(title);
 		this.elementi();
 		this.azioni(c);

@@ -22,9 +22,9 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class StatisticheDipendentiFrame extends JFrame {
-    private Controller c;
+	private Controller c;
 	private JPanel contentPane;
-	private String[] datacb = {"3 mesi","6 mesi","9 mesi","12 mesi","Tutti"};
+	private String[] datacb = { "3 mesi", "6 mesi", "9 mesi", "12 mesi", "Tutti" };
 	private LocalDate dataod = LocalDate.now();
 	private JPanel searchpanel;
 	private JPanel introitipanel;
@@ -76,7 +76,8 @@ public class StatisticheDipendentiFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setLocationRelativeTo(null);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
 		searchpanel = new JPanel();
 		searchpanel.setBorder(new EmptyBorder(100, 10, 100, 10));
@@ -230,65 +231,67 @@ public class StatisticheDipendentiFrame extends JFrame {
 		venditetf.setText("");
 	}
 
-	public void azioni(Controller c) throws SQLException{
+	public void azioni(Controller c) throws SQLException {
 		old = c.OldDate();
-		selectbutton.addActionListener(new ActionListener(){
+		selectbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				finaltf.setText(dataod.toString());
-				if(periodocb.getSelectedItem().equals("3 mesi")) {
-					starttf.setText(dataod.minusMonths(3)+"");
-				} else if(periodocb.getSelectedItem().equals("6 mesi")) {
+				if (periodocb.getSelectedItem().equals("3 mesi")) {
+					starttf.setText(dataod.minusMonths(3) + "");
+				} else if (periodocb.getSelectedItem().equals("6 mesi")) {
 					starttf.setText(dataod.minusMonths(6).toString());
-				} else if(periodocb.getSelectedItem().equals("9 mesi")) {
+				} else if (periodocb.getSelectedItem().equals("9 mesi")) {
 					starttf.setText(dataod.minusMonths(9).toString());
-				} else if(periodocb.getSelectedItem().equals("12 mesi")) {
+				} else if (periodocb.getSelectedItem().equals("12 mesi")) {
 					starttf.setText(dataod.minusMonths(12).toString());
-				} else if(periodocb.getSelectedItem().equals("Tutti")) {
+				} else if (periodocb.getSelectedItem().equals("Tutti")) {
 					starttf.setText(old);
 				}
 			}
 		});
 
 		searchbutton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        System.out.println("Bottone premuto");
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Bottone premuto");
 
-		        String startText = starttf.getText();
-		        String finalText = finaltf.getText();
+				String startText = starttf.getText();
+				String finalText = finaltf.getText();
 
-		        if (starttf.getText().equals("") || finaltf.getText().equals("")) {
-		            System.out.println("Mostrando messaggio di errore...");
-		            JOptionPane.showMessageDialog(null, "Inserire le date di ricerca!");
-		        }
+				if (starttf.getText().equals("") || finaltf.getText().equals("")) {
+					System.out.println("Mostrando messaggio di errore...");
+					JOptionPane.showMessageDialog(null, "Inserire le date di ricerca!");
+				}
 
-		        try {
-		            java.sql.Date di = java.sql.Date.valueOf(startText);
-		            java.sql.Date df = java.sql.Date.valueOf(finalText);
+				try {
+					java.sql.Date di = java.sql.Date.valueOf(startText);
+					java.sql.Date df = java.sql.Date.valueOf(finalText);
 
-		            System.out.println("Date convertite correttamente: " + di + ", " + df);
+					System.out.println("Date convertite correttamente: " + di + ", " + df);
 
-		            ordint = c.introitidip(di, df);
-		            ordven = c.venditedip(di, df);
+					ordint = c.introitidip(di, df);
+					ordven = c.venditedip(di, df);
 
-		            if (ordint.isEmpty() || ordven.isEmpty()) {
-		                JOptionPane.showMessageDialog(null, "In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
-		                clean();
-		            } else {
-		                nomeintroititf.setText(ordint.get(0).toString());
-		                cognomeintroititf.setText(ordint.get(1).toString());
-		                introititf.setText(ordint.get(2).toString());
-		                nomevenditetf.setText(ordven.get(0).toString());
-		                cognomevenditetf.setText(ordven.get(1).toString());
-		                venditetf.setText(ordven.get(2).toString());
-		            }
-		        } catch (SQLException e1) {
-		            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1);
-		        } catch (IllegalArgumentException e2) {
-		            JOptionPane.showMessageDialog(null, "Le date inserite non sono valide. Utilizzare il formato yyyy-MM-dd.");
-		        }
-		    }
+					if (ordint.isEmpty() || ordven.isEmpty()) {
+						JOptionPane.showMessageDialog(null,
+								"In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
+						clean();
+					} else {
+						nomeintroititf.setText(ordint.get(0).toString());
+						cognomeintroititf.setText(ordint.get(1).toString());
+						introititf.setText(ordint.get(2).toString());
+						nomevenditetf.setText(ordven.get(0).toString());
+						cognomevenditetf.setText(ordven.get(1).toString());
+						venditetf.setText(ordven.get(2).toString());
+					}
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1);
+				} catch (IllegalArgumentException e2) {
+					JOptionPane.showMessageDialog(null,
+							"Le date inserite non sono valide. Utilizzare il formato yyyy-MM-dd.");
+				}
+			}
 		});
 
 		clearbutton.addActionListener(new ActionListener() {
@@ -307,9 +310,10 @@ public class StatisticheDipendentiFrame extends JFrame {
 		});
 	}
 
-	public StatisticheDipendentiFrame(String title,Controller c) throws SQLException {
+	public StatisticheDipendentiFrame(String title, Controller c) throws SQLException {
 		super(title);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(StatisticheDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(Toolkit.getDefaultToolkit()
+				.getImage(StatisticheDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
 		this.elementi();
 		this.azioni(c);
 	}

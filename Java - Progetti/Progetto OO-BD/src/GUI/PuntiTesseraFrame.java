@@ -36,7 +36,8 @@ public class PuntiTesseraFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 		setLocationRelativeTo(null);
 
 		JPanel buttonpanel = new JPanel();
@@ -97,7 +98,7 @@ public class PuntiTesseraFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if(idtf.getText()!=null) {
+					if (idtf.getText() != null) {
 						totlab.setText(c.punti(idtf.getText()));
 					} else {
 						JOptionPane.showMessageDialog(null, "Inserire l'id della tessera");

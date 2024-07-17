@@ -8,5 +8,6 @@ import Model.Cliente;
 
 public interface ArticoliJDBC {
 	public boolean newordine(Articoli articoli) throws SQLException;
-    public ArrayList<Cliente> SearchClient() throws SQLException;
+
+	public ArrayList<Cliente> SearchClient() throws SQLException;
 }

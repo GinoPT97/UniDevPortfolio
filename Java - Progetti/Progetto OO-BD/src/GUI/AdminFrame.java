@@ -17,7 +17,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class AdminFrame extends JFrame {
-    private AdminFrame af;
+	private AdminFrame af;
 	private JPanel contentPane;
 	private JButton logoutbutton;
 	private JButton statistichebutton;

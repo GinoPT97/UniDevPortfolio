@@ -33,7 +33,7 @@ public class RicercaFrame extends JFrame {
 	private JTable searchtable;
 	private JComboBox categoriacb;
 	private DefaultTableModel searchmodel = new DefaultTableModel();
-	private Object[] searchcolonne = {"Nome","Cognome","Categoria","Numero Punti"};
+	private Object[] searchcolonne = { "Nome", "Cognome", "Categoria", "Numero Punti" };
 	private JButton backbutton;
 	private JButton searchbutton;
 	private JComboBox punticb;
@@ -45,7 +45,8 @@ public class RicercaFrame extends JFrame {
 		setBounds(100, 100, 904, 433);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 		setLocationRelativeTo(null);
 
 		setContentPane(contentPane);
@@ -74,10 +75,10 @@ public class RicercaFrame extends JFrame {
 		JPanel panel = new JPanel();
 		searchpanel.add(panel);
 
-				categoriacb = new JComboBox(new String[]{"Ortofrutticoli","Inscatolati","Latticini","Farinacei"});
-				panel.add(categoriacb);
+		categoriacb = new JComboBox(new String[] { "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei" });
+		panel.add(categoriacb);
 
-		punticb = new JComboBox(new String[] {"0-500","501-1000","1001-5000",">5000","Tutti"});
+		punticb = new JComboBox(new String[] { "0-500", "501-1000", "1001-5000", ">5000", "Tutti" });
 		panel.add(punticb);
 
 		JPanel tablepanel = new JPanel();
@@ -109,60 +110,60 @@ public class RicercaFrame extends JFrame {
 		searchmodel.setColumnIdentifiers(searchcolonne);
 	}
 
-	public void azioni(Controller c) throws SQLException{
+	public void azioni(Controller c) throws SQLException {
 		c.ClientSearch(searchmodel);
 
 		searchbutton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        String categoriaSelezionata = (String) categoriacb.getSelectedItem();
-		        String intervalloPunti = (String) punticb.getSelectedItem();
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String categoriaSelezionata = (String) categoriacb.getSelectedItem();
+				String intervalloPunti = (String) punticb.getSelectedItem();
 
-		        // Filtrare i risultati basati sulla categoria
-		        RowFilter<Object, Object> categoriaFilter = null;
-		        if (!categoriaSelezionata.equals("Tutti")) {
-		            categoriaFilter = RowFilter.regexFilter(categoriaSelezionata, 2);
-		        }
+				// Filtrare i risultati basati sulla categoria
+				RowFilter<Object, Object> categoriaFilter = null;
+				if (!categoriaSelezionata.equals("Tutti")) {
+					categoriaFilter = RowFilter.regexFilter(categoriaSelezionata, 2);
+				}
 
-		        // Filtrare i risultati basati sull'intervallo di punti
-		        RowFilter<Object, Object> puntiFilter = null;
-		        switch (intervalloPunti) {
-		            case "0-500":
-		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 3);
-		                break;
-		            case "501-1000":
-		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3);
-		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3);
-		                break;
-		            case "1001-5000":
-		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3);
-		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3);
-		                break;
-		            case ">5000":
-		                puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 3);
-		                break;
-		            default:
-		                break;
-		        }
+				// Filtrare i risultati basati sull'intervallo di punti
+				RowFilter<Object, Object> puntiFilter = null;
+				switch (intervalloPunti) {
+				case "0-500":
+					puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 3);
+					break;
+				case "501-1000":
+					puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3);
+					puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3);
+					break;
+				case "1001-5000":
+					puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3);
+					puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3);
+					break;
+				case ">5000":
+					puntiFilter = RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 3);
+					break;
+				default:
+					break;
+				}
 
-		        // Applicare i filtri
-		        List<RowFilter<Object, Object>> filters = new ArrayList<>();
-		        if (categoriaFilter != null) {
-		            filters.add(categoriaFilter);
-		        }
-		        if (puntiFilter != null) {
-		            filters.add(puntiFilter);
-		        }
+				// Applicare i filtri
+				List<RowFilter<Object, Object>> filters = new ArrayList<>();
+				if (categoriaFilter != null) {
+					filters.add(categoriaFilter);
+				}
+				if (puntiFilter != null) {
+					filters.add(puntiFilter);
+				}
 
-		        if (!filters.isEmpty()) {
-		            RowFilter<Object, Object> combinedFilter = RowFilter.andFilter(filters);
-		            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
-		            sorter.setRowFilter(combinedFilter);
-		            searchtable.setRowSorter(sorter);
-		        } else {
-		            searchtable.setRowSorter(null); // Rimuovi tutti i filtri se non ci sono criteri selezionati
-		        }
-		    }
+				if (!filters.isEmpty()) {
+					RowFilter<Object, Object> combinedFilter = RowFilter.andFilter(filters);
+					TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
+					sorter.setRowFilter(combinedFilter);
+					searchtable.setRowSorter(sorter);
+				} else {
+					searchtable.setRowSorter(null); // Rimuovi tutti i filtri se non ci sono criteri selezionati
+				}
+			}
 		});
 
 		backbutton.addActionListener(new ActionListener() {
@@ -174,7 +175,7 @@ public class RicercaFrame extends JFrame {
 
 	}
 
-	public RicercaFrame(String title,Controller c) throws SQLException{
+	public RicercaFrame(String title, Controller c) throws SQLException {
 		super(title);
 		this.elementi();
 		this.azioni(c);

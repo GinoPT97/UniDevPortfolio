@@ -32,9 +32,9 @@ public class CarrelloFrame extends JFrame {
 	private double tot = 0.00;
 	private JPanel contentPane;
 	private DefaultTableModel prodmodel = new DefaultTableModel();
-	private DefaultTableModel ordmodel= new DefaultTableModel();
-	private Object[] prodcolonne = {"Id","Nome","Prezzo","Categoria","Scorta"};
-	private Object[] ordinecolonne = {"Id","Nome","Prezzo","Categoria","Quantita"};
+	private DefaultTableModel ordmodel = new DefaultTableModel();
+	private Object[] prodcolonne = { "Id", "Nome", "Prezzo", "Categoria", "Scorta" };
+	private Object[] ordinecolonne = { "Id", "Nome", "Prezzo", "Categoria", "Quantita" };
 	private LocalDate dataod = LocalDate.now();
 	private JPanel bottonpanel;
 	private JPanel prodottopanel;
@@ -125,7 +125,7 @@ public class CarrelloFrame extends JFrame {
 		contentPane.add(centerpanel);
 		centerpanel.setLayout(new BoxLayout(centerpanel, BoxLayout.Y_AXIS));
 
-		categoriacb = new JComboBox(new String[]{"Ortofrutticoli","Inscatolati","Latticini","Farinacei"});
+		categoriacb = new JComboBox(new String[] { "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei" });
 		centerpanel.add(categoriacb);
 
 		selectbutton = new JButton("Seleziona");
@@ -167,8 +167,9 @@ public class CarrelloFrame extends JFrame {
 	}
 
 	public double totale() {
-		for(int j=0; j<ordmodel.getRowCount(); j++) {
-			tot += Double.parseDouble(ordmodel.getValueAt(j, 2).toString()) * Integer.parseInt(ordmodel.getValueAt(j, 4).toString());
+		for (int j = 0; j < ordmodel.getRowCount(); j++) {
+			tot += Double.parseDouble(ordmodel.getValueAt(j, 2).toString())
+					* Integer.parseInt(ordmodel.getValueAt(j, 4).toString());
 		}
 		totalelab.setText("Totale : " + "" + String.valueOf(tot));
 		double tot1 = tot;
@@ -182,7 +183,7 @@ public class CarrelloFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				prodmodel.setRowCount(0);
 				try {
-					if(categoriacb.getSelectedItem().equals("Ortofrutticoli")) {
+					if (categoriacb.getSelectedItem().equals("Ortofrutticoli")) {
 						c.categoriaprodotti("Ortofrutticoli", prodmodel);
 					} else if (categoriacb.getSelectedItem().equals("Inscatolati")) {
 						c.categoriaprodotti("Inscatolati", prodmodel);
@@ -192,7 +193,7 @@ public class CarrelloFrame extends JFrame {
 						c.categoriaprodotti("Latticini", prodmodel);
 					}
 				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Errore!" + "\n" +  "Tipo di errore : \n" + e1);
+					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : \n" + e1);
 				}
 			}
 		});
@@ -201,16 +202,18 @@ public class CarrelloFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int i = prodottotable.getSelectedRow();
-				if(i==-1 && quantitatf.getText().equals("")) {
+				if (i == -1 && quantitatf.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Seleziona un prodotto e la quantita'!");
-				} else if(i==-1) {
+				} else if (i == -1) {
 					JOptionPane.showMessageDialog(null, "Seleziona un prodotto!");
-				} else if(quantitatf.getText().equals("")) {
+				} else if (quantitatf.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Seleziona la quantita'!");
-				} else if(Integer.parseInt(prodmodel.getValueAt(i, 4).toString())<Integer.parseInt(quantitatf.getText())) {
+				} else if (Integer.parseInt(prodmodel.getValueAt(i, 4).toString()) < Integer
+						.parseInt(quantitatf.getText())) {
 					JOptionPane.showMessageDialog(null, "Scorte insufficenti!");
 				} else {
-					Object[] p = {prodmodel.getValueAt(i, 0),prodmodel.getValueAt(i, 1),prodmodel.getValueAt(i, 2),prodmodel.getValueAt(i, 3), quantitatf.getText()};
+					Object[] p = { prodmodel.getValueAt(i, 0), prodmodel.getValueAt(i, 1), prodmodel.getValueAt(i, 2),
+							prodmodel.getValueAt(i, 3), quantitatf.getText() };
 					ordmodel.addRow(p);
 					quantitatf.setText("");
 					totale();
@@ -237,26 +240,29 @@ public class CarrelloFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-				  java.sql.Date sd = java.sql.Date.valueOf(dataod);
-				  c.nuovoordine(new Ordine("", sd, tot, c.getct(codfisctf.getText()), c.iddip));
-				  for(int j=0; j<ordmodel.getRowCount(); j++) {
-					c.upscorte(Integer.parseInt(ordmodel.getValueAt(j, 4).toString()), ordmodel.getValueAt(j, 0).toString());
-					c.newarticoli(new Articoli(c.CurrOrd(),c.getct(codfisctf.getText().toString()),
-		                    Double.parseDouble(ordmodel.getValueAt(j, 2).toString()),
-		                    Double.parseDouble(ordmodel.getValueAt(j, 2).toString())*Double.parseDouble(ordmodel.getValueAt(j, 4).toString()),
-		                    Integer.parseInt(ordmodel.getValueAt(j, 4).toString()),ordmodel.getValueAt(j, 3).toString()));
-				  }
-				  c.uppunti(c.getct(codfisctf.getText()), totale());
-				  JOptionPane.showMessageDialog(null, "Ordine aggiunto");
-	              clean();
-			  } catch (SQLException e1) {
-				  JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-			  }
+					java.sql.Date sd = java.sql.Date.valueOf(dataod);
+					c.nuovoordine(new Ordine("", sd, tot, c.getct(codfisctf.getText()), c.iddip));
+					for (int j = 0; j < ordmodel.getRowCount(); j++) {
+						c.upscorte(Integer.parseInt(ordmodel.getValueAt(j, 4).toString()),
+								ordmodel.getValueAt(j, 0).toString());
+						c.newarticoli(new Articoli(c.CurrOrd(), c.getct(codfisctf.getText().toString()),
+								Double.parseDouble(ordmodel.getValueAt(j, 2).toString()),
+								Double.parseDouble(ordmodel.getValueAt(j, 2).toString())
+										* Double.parseDouble(ordmodel.getValueAt(j, 4).toString()),
+								Integer.parseInt(ordmodel.getValueAt(j, 4).toString()),
+								ordmodel.getValueAt(j, 3).toString()));
+					}
+					c.uppunti(c.getct(codfisctf.getText()), totale());
+					JOptionPane.showMessageDialog(null, "Ordine aggiunto");
+					clean();
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+				}
 			}
 		});
 	}
 
-	public CarrelloFrame(String title,Controller c) throws SQLException {
+	public CarrelloFrame(String title, Controller c) throws SQLException {
 		super(title);
 		this.elementi();
 		this.azioni(c);

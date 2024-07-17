@@ -11,7 +11,7 @@ import JDBC.ClienteJDBC;
 import Model.Cliente;
 import Model.Tessera;
 
-public class Clienteimpl implements ClienteJDBC{
+public class Clienteimpl implements ClienteJDBC {
 	private Connection connection;
 	private PreparedStatement setNewCt, getAllCt, cercacl, updatecl;
 	private Statement idcl;
@@ -19,14 +19,17 @@ public class Clienteimpl implements ClienteJDBC{
 	private Cliente ct;
 	private String id = null;
 
-	public Clienteimpl(Connection connection) throws SQLException{
+	public Clienteimpl(Connection connection) throws SQLException {
 		this.connection = connection;
-		getAllCt = connection.prepareStatement("SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente  ORDER BY C.cognome DESC");
-		cercacl = connection.prepareStatement("SELECT codcliente FROM cliente WHERE nome = ? AND cognome = ? AND codicefiscale = ?");
+		getAllCt = connection.prepareStatement(
+				"SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente  ORDER BY C.cognome DESC");
+		cercacl = connection.prepareStatement(
+				"SELECT codcliente FROM cliente WHERE nome = ? AND cognome = ? AND codicefiscale = ?");
 		setNewCt = connection.prepareStatement("INSERT INTO cliente VALUES (nextval('SCodCliente'), ?, ?, ?, ?, ?, ?)");
-		updatecl = connection.prepareStatement("UPDATE cliente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE codcliente = ?");
-        idcl = connection.createStatement();
- 	}
+		updatecl = connection.prepareStatement(
+				"UPDATE cliente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE codcliente = ?");
+		idcl = connection.createStatement();
+	}
 
 	@Override
 	public boolean setNewCt(Cliente cliente) throws SQLException {
@@ -36,8 +39,8 @@ public class Clienteimpl implements ClienteJDBC{
 		setNewCt.setString(4, cliente.getInd());
 		setNewCt.setString(5, cliente.getTel());
 		setNewCt.setString(6, cliente.getEmail());
-        int row = setNewCt.executeUpdate();
-        if(row<1) {
+		int row = setNewCt.executeUpdate();
+		if (row < 1) {
 			return false;
 		} else {
 			return true;
@@ -47,14 +50,14 @@ public class Clienteimpl implements ClienteJDBC{
 	@Override
 	public ArrayList<Cliente> getAllCt() throws SQLException {
 		ResultSet rs = getAllCt.executeQuery();
-        while(rs.next()) {
-			ctTot.add(new Cliente(rs.getString("codcliente"),rs.getString("nome"),
-						                     rs.getString("cognome"),rs.getString("codicefiscale"),
-						                     rs.getString("email"),rs.getString("indirizzo"),
-						                     rs.getString("telefono"), new Tessera(rs.getString("codtessera"),rs.getInt("numeropunti"), null),null));
+		while (rs.next()) {
+			ctTot.add(new Cliente(rs.getString("codcliente"), rs.getString("nome"), rs.getString("cognome"),
+					rs.getString("codicefiscale"), rs.getString("email"), rs.getString("indirizzo"),
+					rs.getString("telefono"), new Tessera(rs.getString("codtessera"), rs.getInt("numeropunti"), null),
+					null));
 		}
-        rs.close();
-        return ctTot;
+		rs.close();
+		return ctTot;
 	}
 
 	@Override
@@ -64,7 +67,7 @@ public class Clienteimpl implements ClienteJDBC{
 		cercacl.setString(3, codicefiscale);
 		ResultSet rs = cercacl.executeQuery();
 		String s = null;
-		while(rs.next()) {
+		while (rs.next()) {
 			s = rs.getString("codcliente");
 		}
 		rs.close();
@@ -80,8 +83,8 @@ public class Clienteimpl implements ClienteJDBC{
 		updatecl.setString(5, cliente.getTel());
 		updatecl.setString(6, cliente.getEmail());
 		updatecl.setString(7, cliente.getCodCl());
-        int row = updatecl.executeUpdate();
-        if(row<1) {
+		int row = updatecl.executeUpdate();
+		if (row < 1) {
 			return false;
 		} else {
 			return true;
@@ -90,21 +93,21 @@ public class Clienteimpl implements ClienteJDBC{
 
 	@Override
 	public String getIdCt(String codfisc) throws SQLException {
-		ResultSet rs = idcl.executeQuery("SELECT codcliente FROM cliente WHERE codicefiscale = '"+codfisc+"'");
-		if(rs.next()) {
+		ResultSet rs = idcl.executeQuery("SELECT codcliente FROM cliente WHERE codicefiscale = '" + codfisc + "'");
+		if (rs.next()) {
 			id = rs.getString("codcliente");
 		}
-        rs.close();
-        return id;
+		rs.close();
+		return id;
 	}
 
 	@Override
 	public Cliente getCtByid(String idct) throws SQLException {
-		ResultSet rs = idcl.executeQuery("SELECT * FROM cliente WHERE codcliente = '"+idct+"'");
-		if(rs.next()) {
-			ct = new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null,null,null);
+		ResultSet rs = idcl.executeQuery("SELECT * FROM cliente WHERE codcliente = '" + idct + "'");
+		if (rs.next()) {
+			ct = new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null, null);
 		}
-        rs.close();
+		rs.close();
 		return ct;
 	}
 }

@@ -52,7 +52,8 @@ public class ModificaProdottiFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setLocationRelativeTo(null);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
 		JPanel elempanel = new JPanel();
 		elempanel.setBorder(new EmptyBorder(20, 100, 20, 100));
@@ -156,34 +157,34 @@ public class ModificaProdottiFrame extends JFrame {
 		JPanel categoriapanel = new JPanel();
 		elempanel.add(categoriapanel);
 
-		categoriacb = new JComboBox(new String[] {"Ortofrutticoli","Inscatolati","Latticini","Farinacei"});
+		categoriacb = new JComboBox(new String[] { "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei" });
 		categoriapanel.add(categoriacb);
 
 		JButton selbutton = new JButton("Seleziona");
 		categoriapanel.add(selbutton);
 
-	    JPanel buttonpanel = new JPanel();
-	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
+		JPanel buttonpanel = new JPanel();
+		contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-	    updatebutton = new JButton("Inserisci");
-	    updatebutton.setBackground(Color.BLUE);
-	    buttonpanel.add(updatebutton);
+		updatebutton = new JButton("Inserisci");
+		updatebutton.setBackground(Color.BLUE);
+		buttonpanel.add(updatebutton);
 
-	    clearbutton = new JButton("Pulisci");
-	    clearbutton.setBackground(Color.WHITE);
-	    buttonpanel.add(clearbutton);
+		clearbutton = new JButton("Pulisci");
+		clearbutton.setBackground(Color.WHITE);
+		buttonpanel.add(clearbutton);
 
-	    backbutton = new JButton("Indietro");
-	    backbutton.setBackground(Color.RED);
-	    buttonpanel.add(backbutton);
+		backbutton = new JButton("Indietro");
+		backbutton.setBackground(Color.RED);
+		buttonpanel.add(backbutton);
 
-	    JPanel panel = new JPanel();
-	    panel.setBackground(new Color(178, 34, 34));
-	    contentPane.add(panel, BorderLayout.NORTH);
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(178, 34, 34));
+		contentPane.add(panel, BorderLayout.NORTH);
 
-	    JLabel titlelabel = new JLabel("Modifica Prodotto");
-	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-	    panel.add(titlelabel);
+		JLabel titlelabel = new JLabel("Modifica Prodotto");
+		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+		panel.add(titlelabel);
 	}
 
 	public void viewprod(Prodotto pe) {
@@ -193,34 +194,34 @@ public class ModificaProdottiFrame extends JFrame {
 		provtf.setText(pe.getLuogoProv());
 		prezzotf.setText(String.valueOf(pe.getPrezzo()));
 		scortatf.setText(String.valueOf(pe.getScorta()));
-		if(pe.getGlutine()) {
+		if (pe.getGlutine()) {
 			glutcb.setSelected(true);
 		}
-		if(pe.getCategoria().equals("Ortofrutticoli")) {
+		if (pe.getCategoria().equals("Ortofrutticoli")) {
 			categoriacb.setSelectedIndex(0);
 		}
-		if(pe.getCategoria().equals("Inscatolati")) {
+		if (pe.getCategoria().equals("Inscatolati")) {
 			categoriacb.setSelectedIndex(1);
 		}
-		if(pe.getCategoria().equals("Latticini")) {
+		if (pe.getCategoria().equals("Latticini")) {
 			categoriacb.setSelectedIndex(2);
 		}
-		if(pe.getCategoria().equals("Farinacei")) {
+		if (pe.getCategoria().equals("Farinacei")) {
 			categoriacb.setSelectedIndex(3);
 		}
 	}
 
 	public void clean() {
-    	nometf.setText("");
+		nometf.setText("");
 		descta.setText("");
-	    prezzotf.setText("");
-	    provtf.setText("");
-	    scortatf.setText("");
-	    racctf.setText("");
-	    mungtf.setText("");
-	    scadtf.setText("");
-	    glutcb.setSelected(false);
-    }
+		prezzotf.setText("");
+		provtf.setText("");
+		scortatf.setText("");
+		racctf.setText("");
+		mungtf.setText("");
+		scadtf.setText("");
+		glutcb.setSelected(false);
+	}
 
 	public void azioni(Controller c) {
 		backbutton.addActionListener(new ActionListener() {
@@ -241,28 +242,41 @@ public class ModificaProdottiFrame extends JFrame {
 		updatebutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DateFormat data = new SimpleDateFormat ("yyyy-MM-dd");
+				DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
 				try {
-					if(nometf.getText().equals("") || descta.getText().equals("") || prezzotf.getText().equals("") || provtf.getText().equals("") || scortatf.getText().equals("")) {
-    		    		JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
-    		    	} else {
-    		    		if(categoriacb.getSelectedItem().toString().equals("Ortofrutticoli")) {
-            		    	c.upprod(new Prodotto(cod, nometf.getText(), descta.getText(), Double.parseDouble(prezzotf.getText()), provtf.getText(), data.parse(racctf.getText()), null, glutcb.isSelected(), null, categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-            		    } else if(categoriacb.getSelectedItem().toString().equals("Inscatolati")) {
-            		    	c.upprod(new Prodotto(cod, nometf.getText(), descta.getText(), Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null, glutcb.isSelected(), data.parse(scadtf.getText()), categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-            		    } else if(categoriacb.getSelectedItem().toString().equals("Latticini")) {
-            		    	c.upprod(new Prodotto(cod, nometf.getText(), descta.getText(), Double.parseDouble(prezzotf.getText()), provtf.getText(), null, data.parse(mungtf.getText()), glutcb.isSelected(), null, categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-            		    } else if(categoriacb.getSelectedItem().toString().equals("Farinacei")) {
-        					c.upprod(new Prodotto(cod, nometf.getText(), descta.getText(), Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null, glutcb.isSelected(), null, categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-            		    }
-    		    		clean();
-    		    		c.visAndprod(3);
-					    JOptionPane.showMessageDialog(null, "Prodotto Modificato");
-    		    	}
+					if (nometf.getText().equals("") || descta.getText().equals("") || prezzotf.getText().equals("")
+							|| provtf.getText().equals("") || scortatf.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
+					} else {
+						if (categoriacb.getSelectedItem().toString().equals("Ortofrutticoli")) {
+							c.upprod(new Prodotto(cod, nometf.getText(), descta.getText(),
+									Double.parseDouble(prezzotf.getText()), provtf.getText(),
+									data.parse(racctf.getText()), null, glutcb.isSelected(), null,
+									categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
+						} else if (categoriacb.getSelectedItem().toString().equals("Inscatolati")) {
+							c.upprod(new Prodotto(cod, nometf.getText(), descta.getText(),
+									Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null,
+									glutcb.isSelected(), data.parse(scadtf.getText()),
+									categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
+						} else if (categoriacb.getSelectedItem().toString().equals("Latticini")) {
+							c.upprod(new Prodotto(cod, nometf.getText(), descta.getText(),
+									Double.parseDouble(prezzotf.getText()), provtf.getText(), null,
+									data.parse(mungtf.getText()), glutcb.isSelected(), null,
+									categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
+						} else if (categoriacb.getSelectedItem().toString().equals("Farinacei")) {
+							c.upprod(new Prodotto(cod, nometf.getText(), descta.getText(),
+									Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null,
+									glutcb.isSelected(), null, categoriacb.getSelectedItem().toString(),
+									Integer.parseInt(scortatf.getText())));
+						}
+						clean();
+						c.visAndprod(3);
+						JOptionPane.showMessageDialog(null, "Prodotto Modificato");
+					}
 				} catch (NumberFormatException | SQLException | ParseException e1) {
 					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
 				}
-		  }
+			}
 		});
 	}
 

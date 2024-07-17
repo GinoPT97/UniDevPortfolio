@@ -82,7 +82,8 @@ public class ModificaClienteFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					c.upcliente(new Cliente(cod, nometf.getText(), cognometf.getText(), codfisctf.getText(), emailtf.getText(), indirizzotf.getText(), telefonotf.getText(),null,null));
+					c.upcliente(new Cliente(cod, nometf.getText(), cognometf.getText(), codfisctf.getText(),
+							emailtf.getText(), indirizzotf.getText(), telefonotf.getText(), null, null));
 					clean();
 					c.visAndcl(3);
 					JOptionPane.showMessageDialog(null, "Cliente modificato");
@@ -198,7 +199,7 @@ public class ModificaClienteFrame extends JFrame {
 		titlepanel.add(titlelabel);
 	}
 
-	public ModificaClienteFrame(String title,Controller c) {
+	public ModificaClienteFrame(String title, Controller c) {
 		super(title);
 		this.elementi();
 		this.azioni(c);

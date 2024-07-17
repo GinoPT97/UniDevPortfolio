@@ -27,7 +27,7 @@ import javax.swing.table.TableRowSorter;
 import Model.Prodotto;
 
 public class VisioneProdottiFrame extends JFrame {
-    private Controller c;
+	private Controller c;
 	private JPanel contentPane;
 	private JTable table;
 	private DefaultTableModel model;
@@ -49,15 +49,17 @@ public class VisioneProdottiFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setLocationRelativeTo(null);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
 		JScrollPane scrollPane = new JScrollPane();
 		contentPane.add(scrollPane);
 
 		table = new JTable();
 		model = new DefaultTableModel();
-		Object[] colonne = {"Id","Nome","Descrizione","Prezzo","Provenienza","Raccolta","Mungitura","Glutine","Scadenza","Categoria","Scorta"};
-		//final Object[] rows = new Object[11];
+		Object[] colonne = { "Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine",
+				"Scadenza", "Categoria", "Scorta" };
+		// final Object[] rows = new Object[11];
 		model.setColumnIdentifiers(colonne);
 		table.setModel(model);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -99,25 +101,26 @@ public class VisioneProdottiFrame extends JFrame {
 		c.allprodotti(model);
 
 		searchbutton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        String query = searchtf.getText().trim().toLowerCase();
-		        if (query.isEmpty()) {
-		            // Se la query è vuota, mostra tutti i dati
-		            table.setRowSorter(null); // Rimuove il filtro
-		        } else {
-		            // Applica il filtro sulla tabella
-		            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-		            try {
-		                // Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro case insensitive
-		                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-		            } catch (PatternSyntaxException ex) {
-		                System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
-		                return; // Esci se c'è un errore di sintassi
-		            }
-		            table.setRowSorter(sorter);
-		        }
-		    }
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String query = searchtf.getText().trim().toLowerCase();
+				if (query.isEmpty()) {
+					// Se la query è vuota, mostra tutti i dati
+					table.setRowSorter(null); // Rimuove il filtro
+				} else {
+					// Applica il filtro sulla tabella
+					TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+					try {
+						// Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro
+						// case insensitive
+						sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+					} catch (PatternSyntaxException ex) {
+						System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
+						return; // Esci se c'è un errore di sintassi
+					}
+					table.setRowSorter(sorter);
+				}
+			}
 		});
 
 		addbutton.addActionListener(new ActionListener() {
@@ -132,19 +135,22 @@ public class VisioneProdottiFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int i = table.getSelectedRow();
 				try {
-					if(i>=0) {
+					if (i >= 0) {
 						c.visAndprod(2);
-						c.modprodf.viewprod(new Prodotto(table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
-				                     Double.parseDouble(table.getValueAt(i, 3).toString()), table.getValueAt(i, 4).toString(),
-                                     null,null, Boolean.parseBoolean(table.getValueAt(i, 7).toString()),null,
-                                     table.getValueAt(i, 9).toString(),Integer.parseInt(table.getValueAt(i, 10).toString())));
+						c.modprodf.viewprod(new Prodotto(table.getValueAt(i, 0).toString(),
+								table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+								Double.parseDouble(table.getValueAt(i, 3).toString()),
+								table.getValueAt(i, 4).toString(), null, null,
+								Boolean.parseBoolean(table.getValueAt(i, 7).toString()), null,
+								table.getValueAt(i, 9).toString(),
+								Integer.parseInt(table.getValueAt(i, 10).toString())));
 					} else {
 						JOptionPane.showMessageDialog(null, "Scegli una riga da modificare");
 					}
-				} catch (NumberFormatException  e1 ) {
-					JOptionPane.showMessageDialog(null, "Errore!" + "\n" +  "Tipo di errore : \n" + e1);
+				} catch (NumberFormatException e1) {
+					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : \n" + e1);
 				}
-				}
+			}
 		});
 
 		backbutton.addActionListener(new ActionListener() {
@@ -157,7 +163,8 @@ public class VisioneProdottiFrame extends JFrame {
 
 	public VisioneProdottiFrame(String title, Controller c) throws SQLException {
 		super(title);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(VisioneProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 		this.elementi(c);
 		this.azioni(c);
 	}

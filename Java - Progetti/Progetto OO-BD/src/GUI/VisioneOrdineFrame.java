@@ -45,7 +45,8 @@ public class VisioneOrdineFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 		setLocationRelativeTo(null);
 
 		scrollPane = new JScrollPane();
@@ -53,7 +54,7 @@ public class VisioneOrdineFrame extends JFrame {
 
 		table = new JTable();
 		model = new DefaultTableModel();
-		Object[] colonne = {"Codice Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"};
+		Object[] colonne = { "Codice Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente" };
 		final Object[] rows = new Object[5];
 		model.setColumnIdentifiers(colonne);
 		table.setModel(model);
@@ -92,25 +93,26 @@ public class VisioneOrdineFrame extends JFrame {
 		c.allordini(model);
 
 		searchbutton.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        String query = searchtf.getText().trim().toLowerCase();
-		        if (query.isEmpty()) {
-		            // Se la query è vuota, mostra tutti i dati
-		            table.setRowSorter(null); // Rimuove il filtro
-		        } else {
-		            // Applica il filtro sulla tabella
-		            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-		            try {
-		                // Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro case insensitive
-		                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-		            } catch (PatternSyntaxException ex) {
-		                System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
-		                return; // Esci se c'è un errore di sintassi
-		            }
-		            table.setRowSorter(sorter);
-		        }
-		    }
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String query = searchtf.getText().trim().toLowerCase();
+				if (query.isEmpty()) {
+					// Se la query è vuota, mostra tutti i dati
+					table.setRowSorter(null); // Rimuove il filtro
+				} else {
+					// Applica il filtro sulla tabella
+					TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+					try {
+						// Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro
+						// case insensitive
+						sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+					} catch (PatternSyntaxException ex) {
+						System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
+						return; // Esci se c'è un errore di sintassi
+					}
+					table.setRowSorter(sorter);
+				}
+			}
 		});
 
 		ordinebutton.addActionListener(new ActionListener() {
@@ -128,7 +130,7 @@ public class VisioneOrdineFrame extends JFrame {
 		});
 	}
 
-	public VisioneOrdineFrame(String title,Controller c) throws SQLException {
+	public VisioneOrdineFrame(String title, Controller c) throws SQLException {
 		super(title);
 		this.elementi();
 		this.azioni(c);

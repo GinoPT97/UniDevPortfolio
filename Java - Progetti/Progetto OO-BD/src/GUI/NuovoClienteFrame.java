@@ -55,10 +55,11 @@ public class NuovoClienteFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-						c.newclt(new Cliente("", nometf.getText(), cognometf.getText(), codfisctf.getText(), emailtf.getText(), indirizzotf.getText(), telefonotf.getText(),null,null));
-						c.nuovatessera(nometf.getText(), cognometf.getText(), codfisctf.getText());
-						clean();
-						JOptionPane.showMessageDialog(null, "Cliente e relativa tessera aggiunti");
+					c.newclt(new Cliente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
+							emailtf.getText(), indirizzotf.getText(), telefonotf.getText(), null, null));
+					c.nuovatessera(nometf.getText(), cognometf.getText(), codfisctf.getText());
+					clean();
+					JOptionPane.showMessageDialog(null, "Cliente e relativa tessera aggiunti");
 				} catch (SQLException e1) {
 					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
 				}
@@ -81,7 +82,8 @@ public class NuovoClienteFrame extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setLocationRelativeTo(null);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
 		JPanel buttonpanel = new JPanel();
 		contentPane.add(buttonpanel, BorderLayout.SOUTH);
@@ -177,13 +179,11 @@ public class NuovoClienteFrame extends JFrame {
 		titlepanel.add(titlelabel);
 	}
 
-	public NuovoClienteFrame(String title,Controller c) {
+	public NuovoClienteFrame(String title, Controller c) {
 		super(title);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(NuovoClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
 		this.elementi();
 		this.azioni(c);
 	}
 }
-
-
-
