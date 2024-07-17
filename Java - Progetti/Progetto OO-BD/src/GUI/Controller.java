@@ -311,7 +311,7 @@ public class Controller {
 	public void alltessera(DefaultTableModel model) throws SQLException {
 		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		for (Tessera t : tsjdbc.alltessera()) {
-			Object[] pr = { t.getCodT(), t.getNPunti() };
+			Object[] pr = { t.getCodTessera(), t.getNPunti() };
 			model.insertRow(0, pr);
 		}
 	}
@@ -320,7 +320,7 @@ public class Controller {
 		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		for (Cliente c : cljdbc.getAllCt()) {
 			Object[] pr = { c.getCodCl(), c.getNome(), c.getCognome(), c.getCodFis(), c.getEmail(), c.getInd(),
-					c.getTel(), c.getTessera().getCodT(), c.getTessera().getNPunti() };
+					c.getTel(), c.getTessera().getCodTessera(), c.getTessera().getNPunti() };
 			model.insertRow(0, pr);
 		}
 	}
@@ -337,9 +337,9 @@ public class Controller {
 	public void allordini(DefaultTableModel model) throws SQLException {
 		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		for (Ordine o : ordjdbc.getallordini()) {
-			Cliente ct = cljdbc.getCtByid(o.getIdCt());
-			Dipendente d = dpjdbc.getOneDip(o.getIdDip());
-			Object[] pr = { o.getCodOrd(), o.getAcquisto().toString(), o.getPrezzoT(),
+			Cliente ct = cljdbc.getCtByid(o.getIdCliente());
+			Dipendente d = dpjdbc.getOneDip(o.getIdDipendente());
+			Object[] pr = { o.getCodOrd(), o.getDataAcquisto().toString(), o.getPrezzoTotale(),
 					ct.getCognome() + " " + ct.getNome(), d.getCognome() + " " + d.getNome() };
 			model.insertRow(0, pr);
 		}
@@ -349,11 +349,11 @@ public class Controller {
 		model.setRowCount(0); // Resetta il modello per evitare duplicati
 		String a = "No";
 		for (Prodotto p : prdjdbc.getallprodotti()) {
-			if (p.getGlutine()) {
+			if (p.isGlutine()) {
 				a = "Si";
 			}
-			Object[] pr = { p.getCodProd(), p.getNome(), p.getDscrizione(), p.getPrezzo(), p.getLuogoProv(),
-					p.getDataracc(), p.getDatamung(), a, p.getDatascad(), p.getCategoria(), p.getScorta() };
+			Object[] pr = { p.getCodProd(), p.getNome(), p.getDescrizione(), p.getPrezzo(), p.getLuogoProv(),
+					p.getDataraccolta(), p.getDatamungitura(), a, p.getDatascadenza(), p.getCategoria(), p.getScorta() };
 			model.insertRow(0, pr);
 		}
 	}
