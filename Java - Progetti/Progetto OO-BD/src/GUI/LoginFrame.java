@@ -25,114 +25,100 @@ import javax.swing.border.EmptyBorder;
 
 public class LoginFrame extends JFrame {
     private Controller c;
-	private JPanel contentPane;
-	private JButton logbutt;
-	private JButton clearbutt;
-	private JTextField idtf;
-	private Image backgroundImage;
+    private BackgroundPanel contentPane; // Use BackgroundPanel instead of JPanel
+    private JButton logbutt;
+    private JButton clearbutt;
+    private JTextField idtf;
 
     public void elementi(Controller c) {
-		setBounds(100, 100, 700, 450);
-		contentPane = new JPanel() {
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				if (backgroundImage != null) {
-					g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-				}
-			}
-		};
-		contentPane.setBackground(new Color(238, 238, 238));
-		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		setContentPane(contentPane);
-		setLocationRelativeTo(null);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
+        setBounds(100, 100, 700, 450);
 
-		try {
-			backgroundImage = ImageIO.read(getClass().getResource("/Immagini/ImmLog.jpg"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        contentPane = new BackgroundPanel("/Immagini/ImmLog.jpg"); // Set the background image
+        contentPane.setBackground(new Color(238, 238, 238));
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        setContentPane(contentPane);
+        setLocationRelativeTo(null);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-		JPanel buttonpanel = new JPanel();
-		buttonpanel.setOpaque(false); // Make the panel transparent
-		FlowLayout flowLayout = (FlowLayout) buttonpanel.getLayout();
-		flowLayout.setAlignment(FlowLayout.TRAILING);
+        JPanel buttonpanel = new JPanel();
+        buttonpanel.setOpaque(false); // Make the panel transparent
+        FlowLayout flowLayout = (FlowLayout) buttonpanel.getLayout();
+        flowLayout.setAlignment(FlowLayout.TRAILING);
 
-		JPanel infopanel = new JPanel();
-		infopanel.setOpaque(false); // Make the panel transparent
-		infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
+        JPanel infopanel = new JPanel();
+        infopanel.setOpaque(false); // Make the panel transparent
+        infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
 
-		JPanel titlepanel = new JPanel();
-		titlepanel.setOpaque(false); // Make the panel transparent
-		titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
-		titlepanel.setBackground(new Color(0, 128, 0));
-		titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        JPanel titlepanel = new JPanel();
+        titlepanel.setOpaque(false); // Make the panel transparent
+        titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        titlepanel.setBackground(new Color(0, 128, 0));
+        titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		JLabel titlelabel = new JLabel("");
-		titlelabel.setHorizontalAlignment(SwingConstants.CENTER);
-		titlelabel.setVerticalAlignment(SwingConstants.TOP);
-		titlepanel.add(titlelabel);
-		titlelabel.setText("Ortofrutta 2000");
-		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		contentPane.add(buttonpanel, BorderLayout.SOUTH);
+        JLabel titlelabel = new JLabel("");
+        titlelabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titlelabel.setVerticalAlignment(SwingConstants.TOP);
+        titlepanel.add(titlelabel);
+        titlelabel.setText("Ortofrutta 2000");
+        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        contentPane.setLayout(new BorderLayout(0, 0));
+        contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-		logbutt = new JButton("Login");
-		buttonpanel.add(logbutt);
-		logbutt.setVerticalAlignment(SwingConstants.TOP);
-		logbutt.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					if(c.verifyid(idtf.getText())) {
-						 c.iddip = idtf.getText();
-						 c.logtoutente(2);
-						 idtf.setText("");
-						 JOptionPane.showMessageDialog(contentPane, "Accesso Dipendente");
-					   } else if(idtf.getText().equals("00000")) {
-						   c.logtoutente(1);
-						   idtf.setText("");
-						   JOptionPane.showMessageDialog(contentPane, "Accesso Admin");
-					   } else {
-						   JOptionPane.showMessageDialog(contentPane, "Id errato!");
-						   idtf.setText("");
-					   }
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-				}
-			}
-		});
-		logbutt.setBackground(Color.GREEN);
+        logbutt = new JButton("Login");
+        buttonpanel.add(logbutt);
+        logbutt.setVerticalAlignment(SwingConstants.TOP);
+        logbutt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if(c.verifyid(idtf.getText())) {
+                        c.iddip = idtf.getText();
+                        c.logtoutente(2);
+                        idtf.setText("");
+                        JOptionPane.showMessageDialog(contentPane, "Accesso Dipendente");
+                    } else if(idtf.getText().equals("00000")) {
+                        c.logtoutente(1);
+                        idtf.setText("");
+                        JOptionPane.showMessageDialog(contentPane, "Accesso Admin");
+                    } else {
+                        JOptionPane.showMessageDialog(contentPane, "Id errato!");
+                        idtf.setText("");
+                    }
+                } catch (SQLException e1) {
+                    JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+                }
+            }
+        });
+        logbutt.setBackground(Color.GREEN);
 
-		clearbutt = new JButton("Clear");
-		buttonpanel.add(clearbutt);
-		clearbutt.setVerticalAlignment(SwingConstants.BOTTOM);
-		clearbutt.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				idtf.setText("");
-			}
-		});
-		contentPane.add(infopanel, BorderLayout.CENTER);
-		infopanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        clearbutt = new JButton("Clear");
+        buttonpanel.add(clearbutt);
+        clearbutt.setVerticalAlignment(SwingConstants.BOTTOM);
+        clearbutt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                idtf.setText("");
+            }
+        });
+        contentPane.add(infopanel, BorderLayout.CENTER);
+        infopanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		JLabel idlab = new JLabel("ID :");
-		infopanel.add(idlab);
-		idtf = new JTextField();
-		idtf.setText("00000");
-		infopanel.add(idtf);
-		idtf.setHorizontalAlignment(SwingConstants.CENTER);
-		idtf.setColumns(10);
-		contentPane.add(titlepanel, BorderLayout.NORTH);
+        JLabel idlab = new JLabel("ID :");
+        infopanel.add(idlab);
+        idtf = new JTextField();
+        idtf.setText("00000");
+        infopanel.add(idtf);
+        idtf.setHorizontalAlignment(SwingConstants.CENTER);
+        idtf.setColumns(10);
+        contentPane.add(titlepanel, BorderLayout.NORTH);
     }
 
-	public LoginFrame(String title, Controller c) throws SQLException{
-		super(title);
-		c.connect();
-		this.elementi(c);
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	}
+    public LoginFrame(String title, Controller c) throws SQLException{
+        super(title);
+        c.connect();
+        this.elementi(c);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
 }
 
 
