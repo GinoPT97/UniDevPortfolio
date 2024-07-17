@@ -24,7 +24,13 @@ import JDBCimpl.Dipendenteimpl;
 import JDBCimpl.Ordiniimpl;
 import JDBCimpl.Prodottoimpl;
 import JDBCimpl.Tesseraimpl;
-import Model.*;
+import Model.Articoli;
+import Model.BackgroundPanel;
+import Model.Cliente;
+import Model.Dipendente;
+import Model.Ordine;
+import Model.Prodotto;
+import Model.Tessera;
 
 public class Controller {
     private LoginFrame logf;
@@ -56,165 +62,133 @@ public class Controller {
     public String iddip;
     private Frame lastFrame;  // Variabile per tenere traccia dell'ultimo frame
 
-    public class Controller {
-        private LoginFrame logf;
-        private NuovoProdottoFrame nprodf;
-        private AdminFrame adminf;
-        private DipendenteFrame dipf;
-        private VisioneDipendentiFrame vdipf;
-        public VisioneProdottiFrame vprodf;
-        public ModificaProdottiFrame modprodf;
-        private StatisticheDipendentiFrame statdipf;
-        private PuntiTesseraFrame ptessf;
-        private CarrelloFrame carrf;
-        private VisioneClienteFrame visctf;
-        private NuovoDipendenteFrame ndipf;
-        public ModificaDipendenteFrame updipf;
-        private NuovoClienteFrame nclf;
-        public ModificaClienteFrame upclf;
-        private VisioneOrdineFrame visordf;
-        public RicercaFrame searchf;
-        private DBConnection dbconn;
-        private DBConfiguration config = null;
-        private Connection connection = null;
-        private ClienteJDBC cljdbc = null;
-        private DipendenteJDBC dpjdbc = null;
-        private ProdottoJDBC prdjdbc = null;
-        private OrdiniJDBC ordjdbc = null;
-        private TesseraJDBC tsjdbc = null;
-        private ArticoliJDBC artjdbc = null;
-        public String iddip;
-        private Frame lastFrame;  // Variabile per tenere traccia dell'ultimo frame
+    public Controller() throws SQLException, IOException {
+        logf = new LoginFrame("Login - Ortofrutta", this);
+        adminf = new AdminFrame("Admin Area", this);
+        dipf = new DipendenteFrame("Dipendente Area", this);
+        nprodf = new NuovoProdottoFrame("Nuovo Prodotto", this);
+        ndipf = new NuovoDipendenteFrame("Nuovo Dipendente", this);
+        nclf = new NuovoClienteFrame("Nuovo Cliente", this);
+        vdipf = new VisioneDipendentiFrame("Gestione Dipendenti", this);
+        vprodf = new VisioneProdottiFrame("Gestione Prodotti", this);
+        visctf = new VisioneClienteFrame("Gestione Clienti", this);
+        upclf = new ModificaClienteFrame("Modifica Cliente", this);
+        updipf = new ModificaDipendenteFrame("Modifica Dipendente", this);
+        modprodf = new ModificaProdottiFrame("Modifica Prodotti", this);
+        statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti", this);
+        ptessf = new PuntiTesseraFrame("Punti Tessera", this);
+        carrf = new CarrelloFrame("Carrello", this);
+        visordf = new VisioneOrdineFrame("Visione Ordini", this);
+        searchf = new RicercaFrame("Ricerca Clienti", this);
+        logf.setVisible(true);
+    }
 
-        public Controller() throws SQLException, IOException {
-            logf = new LoginFrame("Login - Ortofrutta", this, createBackgroundPanel("/Immagini/ImmLog.jpg"));
-            adminf = new AdminFrame("Admin Area", this, createBackgroundPanel("/Immagini/ImmAdmin.jpg"));
-            dipf = new DipendenteFrame("Dipendente Area", this, createBackgroundPanel("/Immagini/ImmDip.jpg"));
-            nprodf = new NuovoProdottoFrame("Nuovo Prodotto", this, createBackgroundPanel("/Immagini/ImmNuovoProd.jpg"));
-            ndipf = new NuovoDipendenteFrame("Nuovo Dipendente", this, createBackgroundPanel("/Immagini/ImmNuovoDip.jpg"));
-            nclf = new NuovoClienteFrame("Nuovo Cliente", this, createBackgroundPanel("/Immagini/ImmNuovoCl.jpg"));
-            vdipf = new VisioneDipendentiFrame("Gestione Dipendenti", this, createBackgroundPanel("/Immagini/ImmVisioneDip.jpg"));
-            vprodf = new VisioneProdottiFrame("Gestione Prodotti", this, createBackgroundPanel("/Immagini/ImmVisioneProd.jpg"));
-            visctf = new VisioneClienteFrame("Gestione Clienti", this, createBackgroundPanel("/Immagini/ImmVisioneCl.jpg"));
-            upclf = new ModificaClienteFrame("Modifica Cliente", this, createBackgroundPanel("/Immagini/ImmModificaCl.jpg"));
-            updipf = new ModificaDipendenteFrame("Modifica Dipendente", this, createBackgroundPanel("/Immagini/ImmModificaDip.jpg"));
-            modprodf = new ModificaProdottiFrame("Modifica Prodotti", this, createBackgroundPanel("/Immagini/ImmModificaProd.jpg"));
-            statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti", this, createBackgroundPanel("/Immagini/ImmStatDip.jpg"));
-            ptessf = new PuntiTesseraFrame("Punti Tessera", this, createBackgroundPanel("/Immagini/ImmPuntiTessera.jpg"));
-            carrf = new CarrelloFrame("Carrello", this, createBackgroundPanel("/Immagini/ImmCarrello.jpg"));
-            visordf = new VisioneOrdineFrame("Visione Ordini", this, createBackgroundPanel("/Immagini/ImmVisioneOrd.jpg"));
-            searchf = new RicercaFrame("Ricerca Clienti", this, createBackgroundPanel("/Immagini/ImmRicerca.jpg"));
-            logf.setVisible(true);
+    public BackgroundPanel createBackgroundPanel(String imagePath) {
+        return new BackgroundPanel(imagePath);
+    }
+
+    private void setVisibleFrame(Frame toShow, Frame... toHide) {
+        for (Frame frame : toHide) {
+            frame.setVisible(false);
         }
+        toShow.setVisible(true);
+    }
 
-        private BackgroundPanel createBackgroundPanel(String imagePath) {
-            return new BackgroundPanel(imagePath);
-        }
-
-        private void setVisibleFrame(Frame toShow, Frame... toHide) {
-            for (Frame frame : toHide) {
-                frame.setVisible(false);
-            }
-            toShow.setVisible(true);
-        }
-
-        public void logtoutente(int x) {
-            logf.setVisible(false);
-            if (x == 1) {
-                setVisibleFrame(adminf, dipf);
-            } else if (x == 2) {
-                setVisibleFrame(dipf, adminf);
-            }
-        }
-
-        public void logout(int x) {
-            if (x == 1) {
-                setVisibleFrame(logf, adminf);
-            } else if (x == 2) {
-                setVisibleFrame(logf, dipf);
-            }
-        }
-
-        public void adminAndElem(int x) {
-            lastFrame = adminf;
-            switch (x) {
-                case 1 -> setVisibleFrame(vdipf, adminf);
-                case 2 -> setVisibleFrame(vprodf, adminf);
-                case 3 -> setVisibleFrame(statdipf, adminf);
-                case 4 -> setVisibleFrame(visordf, adminf);
-                case 5 -> setVisibleFrame(adminf, vdipf, vprodf, statdipf, visordf);
-            }
-        }
-
-        public void searchAndElem(int x) {
-            if (x == 1) {
-                lastFrame = (adminf.isVisible()) ? adminf : dipf;
-                setVisibleFrame(searchf, adminf, dipf);
-            } else if (x == 2) {
-                setVisibleFrame(adminf, searchf);
-            } else if (x == 3) {
-                setVisibleFrame(dipf, searchf);
-            }
-        }
-
-        public void visAndCarr(int x) {
-            switch (x) {
-                case 1 -> setVisibleFrame(carrf);
-                case 2 -> setVisibleFrame(visordf, carrf);
-                case 3 -> {
-                    lastFrame = adminf;
-                    setVisibleFrame(adminf, visordf);
-                }
-                case 4 -> {
-                    lastFrame = dipf;
-                    setVisibleFrame(dipf, visordf);
-                }
-            }
-        }
-
-        public void dipAndElem(int x) {
-            lastFrame = dipf;
-            switch (x) {
-                case 1 -> setVisibleFrame(visctf, dipf);
-                case 2 -> setVisibleFrame(ptessf, dipf);
-                case 3 -> setVisibleFrame(visordf, dipf);
-                case 4 -> setVisibleFrame(dipf, ptessf, visctf);
-            }
-        }
-
-        public void visAnddip(int x) {
-            switch (x) {
-                case 1 -> setVisibleFrame(ndipf, vdipf);
-                case 2 -> setVisibleFrame(updipf, vdipf);
-                case 3 -> setVisibleFrame(vdipf, ndipf, updipf);
-            }
-        }
-
-        public void visAndcl(int x) {
-            switch (x) {
-                case 1 -> setVisibleFrame(nclf, visctf);
-                case 2 -> setVisibleFrame(upclf, visctf);
-                case 3 -> setVisibleFrame(visctf, nclf, upclf);
-            }
-        }
-
-        public void visAndprod(int x) {
-            switch (x) {
-                case 1 -> setVisibleFrame(nprodf, vprodf);
-                case 2 -> setVisibleFrame(modprodf, vprodf);
-                case 3 -> setVisibleFrame(vprodf, nprodf, modprodf);
-            }
-        }
-
-        public void returnToLastFrame() {
-            setVisibleFrame(lastFrame, visordf, searchf);
+    public void logtoutente(int x) {
+        logf.setVisible(false);
+        if (x == 1) {
+            setVisibleFrame(adminf, dipf);
+        } else if (x == 2) {
+            setVisibleFrame(dipf, adminf);
         }
     }
 
-	public static void main(String[] args) throws SQLException, IOException {
-		Controller c = new Controller();
-	}
+    public void logout(int x) {
+        if (x == 1) {
+            setVisibleFrame(logf, adminf);
+        } else if (x == 2) {
+            setVisibleFrame(logf, dipf);
+        }
+    }
 
+    public void adminAndElem(int x) {
+        lastFrame = adminf;
+        switch (x) {
+            case 1 -> setVisibleFrame(vdipf, adminf);
+            case 2 -> setVisibleFrame(vprodf, adminf);
+            case 3 -> setVisibleFrame(statdipf, adminf);
+            case 4 -> setVisibleFrame(visordf, adminf);
+            case 5 -> setVisibleFrame(adminf, vdipf, vprodf, statdipf, visordf);
+        }
+    }
+
+    public void searchAndElem(int x) {
+        if (x == 1) {
+            lastFrame = (adminf.isVisible()) ? adminf : dipf;
+            setVisibleFrame(searchf, adminf, dipf);
+        } else if (x == 2) {
+            setVisibleFrame(adminf, searchf);
+        } else if (x == 3) {
+            setVisibleFrame(dipf, searchf);
+        }
+    }
+
+    public void visAndCarr(int x) {
+        switch (x) {
+            case 1 -> setVisibleFrame(carrf);
+            case 2 -> setVisibleFrame(visordf, carrf);
+            case 3 -> {
+                lastFrame = adminf;
+                setVisibleFrame(adminf, visordf);
+            }
+            case 4 -> {
+                lastFrame = dipf;
+                setVisibleFrame(dipf, visordf);
+            }
+        }
+    }
+
+    public void dipAndElem(int x) {
+        lastFrame = dipf;
+        switch (x) {
+            case 1 -> setVisibleFrame(visctf, dipf);
+            case 2 -> setVisibleFrame(ptessf, dipf);
+            case 3 -> setVisibleFrame(visordf, dipf);
+            case 4 -> setVisibleFrame(dipf, ptessf, visctf);
+        }
+    }
+
+    public void visAnddip(int x) {
+        switch (x) {
+            case 1 -> setVisibleFrame(ndipf, vdipf);
+            case 2 -> setVisibleFrame(updipf, vdipf);
+            case 3 -> setVisibleFrame(vdipf, ndipf, updipf);
+        }
+    }
+
+    public void visAndcl(int x) {
+        switch (x) {
+            case 1 -> setVisibleFrame(nclf, visctf);
+            case 2 -> setVisibleFrame(upclf, visctf);
+            case 3 -> setVisibleFrame(visctf, nclf, upclf);
+        }
+    }
+
+    public void visAndprod(int x) {
+        switch (x) {
+            case 1 -> setVisibleFrame(nprodf, vprodf);
+            case 2 -> setVisibleFrame(modprodf, vprodf);
+            case 3 -> setVisibleFrame(vprodf, nprodf, modprodf);
+        }
+    }
+
+    public void returnToLastFrame() {
+        setVisibleFrame(lastFrame, visordf, searchf);
+    }
+
+    public static void main(String[] args) throws SQLException, IOException {
+        Controller c = new Controller();
+    }
 	public void connect() throws SQLException {
 		try {
 			dbconn = DBConnection.getInstance("postgres");

@@ -4,15 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.sql.SQLException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,37 +16,34 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class LoginFrame extends JFrame {
     private Controller c;
-    private BackgroundPanel contentPane; // Use BackgroundPanel instead of JPanel
+    private JPanel contentPane;
     private JButton logbutt;
     private JButton clearbutt;
     private JTextField idtf;
 
     public void elementi(Controller c) {
         setBounds(100, 100, 700, 450);
-
-        contentPane = new BackgroundPanel("/Immagini/ImmLog.jpg"); // Set the background image
-        contentPane.setBackground(new Color(238, 238, 238));
+        contentPane = c.createBackgroundPanel("/Immagini/ImmLog.png"); // Setta l'immagine di sfondo
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         JPanel buttonpanel = new JPanel();
-        buttonpanel.setOpaque(false); // Make the panel transparent
+        buttonpanel.setOpaque(false); // Imposta trasparente per mostrare lo sfondo
         FlowLayout flowLayout = (FlowLayout) buttonpanel.getLayout();
         flowLayout.setAlignment(FlowLayout.TRAILING);
 
         JPanel infopanel = new JPanel();
-        infopanel.setOpaque(false); // Make the panel transparent
+        infopanel.setOpaque(false); // Imposta trasparente per mostrare lo sfondo
         infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
 
         JPanel titlepanel = new JPanel();
-        titlepanel.setOpaque(false); // Make the panel transparent
+        titlepanel.setOpaque(false); // Imposta trasparente per mostrare lo sfondo
         titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
         titlepanel.setBackground(new Color(0, 128, 0));
         titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
@@ -113,12 +106,10 @@ public class LoginFrame extends JFrame {
         contentPane.add(titlepanel, BorderLayout.NORTH);
     }
 
-    public LoginFrame(String title, Controller c) throws SQLException{
+    public LoginFrame(String title, Controller c) throws SQLException {
         super(title);
         c.connect();
         this.elementi(c);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 }
-
 
