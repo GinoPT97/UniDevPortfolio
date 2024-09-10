@@ -1,4 +1,4 @@
-package EserciziBasilari;
+package EserciziIniziali;
 
 import java.util.Scanner;
 

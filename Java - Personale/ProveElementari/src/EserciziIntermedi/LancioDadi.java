@@ -1,4 +1,4 @@
-package Varie;
+package EserciziIntermedi;
 
 import java.util.Scanner;
 
