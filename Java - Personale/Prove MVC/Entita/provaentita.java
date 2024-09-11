@@ -48,7 +48,7 @@ public class provaentita {
     }
     
     public String toString() {
-    	String s = getid() + " " + getnome() + " " + getcontatto() + " " + getcorso() + "";
-		return s;
+    	String pe = getid() + " " + getnome() + " " + getcontatto() + " " + getcorso() + "";
+		return pe;
     }
 }
