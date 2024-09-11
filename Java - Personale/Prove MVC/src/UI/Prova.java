@@ -1,22 +1,25 @@
-package main;
+package UI;
 
 import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.HeadlessException;
-
-import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.text.JTextComponent;
-
-import DBconfig.DBConnection;
-import daoimpl.provadaoimpl;
-import java.awt.event.*;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.*;
-import entita.provaentita;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+import DAOImpl.provadaoimpl;
+import Entita.provaentita;
 
 public class Prova extends JFrame{
     private Controller c;

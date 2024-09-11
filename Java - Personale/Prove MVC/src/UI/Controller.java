@@ -1,14 +1,15 @@
-package main;
+package UI;
 
-import java.sql.*;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 
-import DBconfig.*;
-import daoimpl.provadaoimpl;
-import entita.provaentita;
+import DAOImpl.provadaoimpl;
+import DBconfig.ConnectionException;
+import DBconfig.DBConfig;
+import DBconfig.DBConnection;
+import Entita.provaentita;
 
 public class Controller {
 	private Prova pf;

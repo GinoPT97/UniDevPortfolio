@@ -1,12 +1,13 @@
-package daoimpl;
+package DAOImpl;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.swing.table.DefaultTableModel;
-
-import entita.provaentita;
-import provadao.provadao;
+import DAO.provadao;
+import Entita.provaentita;
 
 public class provadaoimpl implements provadao{
 	

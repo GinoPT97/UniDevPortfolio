@@ -1,12 +1,9 @@
-package provadao;
+package DAO;
 
-import java.util.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
-import javax.swing.table.DefaultTableModel;
-
-import entita.provaentita;
-
-import java.sql.*;
+import Entita.provaentita;
 
 public interface provadao {
 	public ArrayList<provaentita> getAllprova() throws SQLException;

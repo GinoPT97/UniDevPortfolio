@@ -1,4 +1,4 @@
-package entita;
+package Entita;
 
 public class provaentita {
 	private String id;
