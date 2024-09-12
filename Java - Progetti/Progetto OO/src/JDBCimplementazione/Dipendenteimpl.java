@@ -13,113 +13,144 @@ import JDBC.DipendenteJDBC;
 import Model.Dipendente;
 
 public class Dipendenteimpl implements DipendenteJDBC {
-	private PreparedStatement setNewDip, updatedp;
-	private Statement getAllDip, getDipVendite, getDipIntroiti, verifyId, getdip;
-	private ArrayList<Dipendente> diplist = new ArrayList<>();
-	private List<String> ordven = new ArrayList<>();
-	private List<String> ordint = new ArrayList<>();
-	private Dipendente dip;
+    private PreparedStatement setNewDip, updateDip;
+    private Statement getAllDip, getDipVendite, getDipIntroiti, verifyId, getDip;
+    private ArrayList<Dipendente> diplist = new ArrayList<>();
+    private List<String> ordven = new ArrayList<>();
+    private List<String> ordint = new ArrayList<>();
+    private Dipendente dip;
 
-	public Dipendenteimpl(Connection connection) throws SQLException {
-		getAllDip = connection.createStatement();
-		setNewDip = connection
-				.prepareStatement("INSERT INTO dipendente VALUES (NEXTVAL('SCodDipendente'), ?, ?, ?, ?, ?, ?)");
-		updatedp = connection.prepareStatement(
-				"UPDATE dipendente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE coddipendente = ?");
-		getdip = connection.createStatement();
-		verifyId = connection.createStatement();
-		getDipVendite = connection.createStatement();
-		getDipIntroiti = connection.createStatement();
-	}
+    // Costruttore
+    public Dipendenteimpl(Connection connection) throws SQLException {
+        getAllDip = connection.createStatement();
+        setNewDip = connection.prepareStatement(
+                "INSERT INTO dipendente VALUES (NEXTVAL('SCodDipendente'), ?, ?, ?, ?, ?, ?)");
+        updateDip = connection.prepareStatement(
+                "UPDATE dipendente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE coddipendente = ?");
+        getDip = connection.createStatement();
+        verifyId = connection.createStatement();
+        getDipVendite = connection.createStatement();
+        getDipIntroiti = connection.createStatement();
+    }
 
-	@Override
-	public boolean setNewDip(Dipendente dipendente) throws SQLException {
-		setNewDip.setString(1, dipendente.getNome());
-		setNewDip.setString(2, dipendente.getCognome());
-		setNewDip.setString(3, dipendente.getCodFis());
-		setNewDip.setString(4, dipendente.getInd());
-		setNewDip.setString(5, dipendente.getTel());
-		setNewDip.setString(6, dipendente.getEmail());
-		int row = setNewDip.executeUpdate();
-		return row > 0;
-	}
+    @Override
+    public boolean setNewDip(Dipendente dipendente) throws SQLException {
+        setPreparedStatement(setNewDip, dipendente);
+        return setNewDip.executeUpdate() > 0;
+    }
 
-	@Override
-	public boolean verifyID(String id) throws SQLException {
-		ResultSet rs = verifyId.executeQuery("SELECT coddipendente FROM dipendente WHERE coddipendente = '" + id + "'");
-		if (rs.next()) {
-			if (rs.getString("coddipendente").equals(id)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean verifyID(String id) throws SQLException {
+        String query = "SELECT coddipendente FROM dipendente WHERE coddipendente = ?";
+        try (PreparedStatement ps = verifyId.getConnection().prepareStatement(query)) {
+            ps.setString(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
 
-	@Override
-	public ArrayList<Dipendente> getAllDip() throws SQLException {
-		ResultSet rs = getAllDip.executeQuery("SELECT * FROM dipendente ORDER BY cognome DESC");
-		while (rs.next()) {
-			diplist.add(new Dipendente(rs.getString("coddipendente"), rs.getString("nome"), rs.getString("cognome"),
-					rs.getString("codicefiscale"), rs.getString("email"), rs.getString("indirizzo"),
-					rs.getString("telefono")));
-		}
-		rs.close();
-		return diplist;
-	}
+    @Override
+    public ArrayList<Dipendente> getAllDip() throws SQLException {
+        ArrayList<Dipendente> dipendenti = new ArrayList<>();
+        try (ResultSet rs = getAllDip.executeQuery("SELECT * FROM dipendente ORDER BY cognome DESC")) {
+            while (rs.next()) {
+                dipendenti.add(new Dipendente(
+                        rs.getString("coddipendente"),
+                        rs.getString("nome"),
+                        rs.getString("cognome"),
+                        rs.getString("codicefiscale"),
+                        rs.getString("email"),
+                        rs.getString("indirizzo"),
+                        rs.getString("telefono")));
+            }
+        }
+        return dipendenti;
+    }
 
-	@Override
-	public List<String> getDipVendite(Date di, Date df) throws SQLException {
-		ordven.clear();
-		ResultSet rs = getDipVendite.executeQuery("SELECT DISTINCT D.nome, D.cognome, COUNT(O) AS Tordini\n"
-				+ "FROM dipendente AS D, ordine AS O\n"
-				+ "WHERE O.coddipendente = D.coddipendente AND O.dataacquisto >= '" + di + "' AND O.dataacquisto <= '"
-				+ df + "'\n" + "GROUP BY D.nome,D.cognome\n" + "ORDER BY Tordini DESC\n" + "LIMIT 1");
-		while (rs.next()) {
-			ordven.add(rs.getString("nome"));
-			ordven.add(rs.getString("cognome"));
-			ordven.add(rs.getString("Tordini") + "");
-		}
-		rs.close();
-		return ordven;
-	}
+    @Override
+    public List<String> getDipVendite(Date di, Date df) throws SQLException {
+        ordven.clear();
+        String query = "SELECT DISTINCT D.nome, D.cognome, COUNT(O) AS Tordini "
+                + "FROM dipendente AS D, ordine AS O "
+                + "WHERE O.coddipendente = D.coddipendente AND O.dataacquisto BETWEEN ? AND ? "
+                + "GROUP BY D.nome, D.cognome "
+                + "ORDER BY Tordini DESC "
+                + "LIMIT 1";
+        try (PreparedStatement ps = getDipVendite.getConnection().prepareStatement(query)) {
+            ps.setDate(1, di);
+            ps.setDate(2, df);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    ordven.add(rs.getString("nome"));
+                    ordven.add(rs.getString("cognome"));
+                    ordven.add(rs.getString("Tordini"));
+                }
+            }
+        }
+        return ordven;
+    }
 
-	@Override
-	public List<String> getDipIntroiti(Date di, Date df) throws SQLException {
-		ordint.clear();
-		ResultSet rs = getDipIntroiti.executeQuery("SELECT DISTINCT D.nome, D.cognome, SUM(O.prezzototale) AS Sordine\n"
-				+ "FROM dipendente AS D, ordine AS O \n"
-				+ "WHERE O.coddipendente = D.coddipendente AND O.dataacquisto >= '" + di + "' AND O.dataacquisto <= '"
-				+ df + "'\n" + "GROUP BY D.nome,D.cognome\n" + "ORDER BY Sordine DESC\n" + "LIMIT 1");
-		while (rs.next()) {
-			ordint.add(rs.getString("nome"));
-			ordint.add(rs.getString("cognome"));
-			ordint.add(rs.getString("Sordine") + "");
-		}
-		rs.close();
-		return ordint;
-	}
+    @Override
+    public List<String> getDipIntroiti(Date di, Date df) throws SQLException {
+        ordint.clear();
+        String query = "SELECT DISTINCT D.nome, D.cognome, SUM(O.prezzototale) AS Sordine "
+                + "FROM dipendente AS D, ordine AS O "
+                + "WHERE O.coddipendente = D.coddipendente AND O.dataacquisto BETWEEN ? AND ? "
+                + "GROUP BY D.nome, D.cognome "
+                + "ORDER BY Sordine DESC "
+                + "LIMIT 1";
+        try (PreparedStatement ps = getDipIntroiti.getConnection().prepareStatement(query)) {
+            ps.setDate(1, di);
+            ps.setDate(2, df);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    ordint.add(rs.getString("nome"));
+                    ordint.add(rs.getString("cognome"));
+                    ordint.add(rs.getString("Sordine"));
+                }
+            }
+        }
+        return ordint;
+    }
 
-	@Override
-	public boolean updatedipendente(Dipendente dipendente) throws SQLException {
-		updatedp.setString(1, dipendente.getNome());
-		updatedp.setString(2, dipendente.getCognome());
-		updatedp.setString(3, dipendente.getCodFis());
-		updatedp.setString(4, dipendente.getInd());
-		updatedp.setString(5, dipendente.getTel());
-		updatedp.setString(6, dipendente.getEmail());
-		updatedp.setString(7, dipendente.getCodDIP());
-		int row = updatedp.executeUpdate();
-		return row > 0;
-	}
+    @Override
+    public boolean updatedipendente(Dipendente dipendente) throws SQLException {
+        setPreparedStatement(updateDip, dipendente);
+        updateDip.setString(7, dipendente.getCodDIP());
+        return updateDip.executeUpdate() > 0;
+    }
 
-	@Override
-	public Dipendente getOneDip(String id) throws SQLException {
-		ResultSet rs = getdip.executeQuery("SELECT * FROM dipendente WHERE coddipendente = '" + id + "'");
-		while (rs.next()) {
-			dip = new Dipendente(id, rs.getString("nome"), rs.getString("cognome"), rs.getString("codicefiscale"),
-					rs.getString("email"), rs.getString("indirizzo"), rs.getString("telefono"));
-		}
-		rs.close();
-		return dip;
-	}
+    @Override
+    public Dipendente getOneDip(String id) throws SQLException {
+        Dipendente dipendente = null;
+        String query = "SELECT * FROM dipendente WHERE coddipendente = ?";
+        try (PreparedStatement ps = getDip.getConnection().prepareStatement(query)) {
+            ps.setString(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    dipendente = new Dipendente(
+                            id, 
+                            rs.getString("nome"), 
+                            rs.getString("cognome"), 
+                            rs.getString("codicefiscale"), 
+                            rs.getString("email"), 
+                            rs.getString("indirizzo"), 
+                            rs.getString("telefono"));
+                }
+            }
+        }
+        return dipendente;
+    }
+
+    // Metodo di supporto per evitare codice ripetitivo nella preparazione delle query
+    private void setPreparedStatement(PreparedStatement ps, Dipendente dipendente) throws SQLException {
+        ps.setString(1, dipendente.getNome());
+        ps.setString(2, dipendente.getCognome());
+        ps.setString(3, dipendente.getCodFis());
+        ps.setString(4, dipendente.getInd());
+        ps.setString(5, dipendente.getTel());
+        ps.setString(6, dipendente.getEmail());
+    }
 }
+

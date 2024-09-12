@@ -13,44 +13,52 @@ import Model.Cliente;
 
 public class ArticoliImpl implements ArticoliJDBC {
 
-	private Connection connection;
-	private PreparedStatement newarticoli;
-	private Statement searchClient;
+    private Connection connection;
+    private PreparedStatement newArticoli;
+    private Statement searchClient;
 
-	public ArticoliImpl(Connection connection) throws SQLException {
-		this.connection = connection;
-		newarticoli = connection.prepareStatement("INSERT INTO articoliordine VALUES (?, ?, ?, ?, ?, ?)");
-		searchClient = connection.createStatement();
-	}
+    // Costruttore
+    public ArticoliImpl(Connection connection) throws SQLException {
+        this.connection = connection;
+        this.newArticoli = connection.prepareStatement(
+                "INSERT INTO articoliordine (codOrdine, codProdotto, prezzo, numPunti, numeroArticoli, categoria) VALUES (?, ?, ?, ?, ?, ?)");
+        this.searchClient = connection.createStatement();
+    }
 
-	@Override
-	public boolean newordine(Articoli articoli) throws SQLException {
-		newarticoli.setString(1, articoli.getCodOrdine());
-		newarticoli.setString(2, articoli.getCodProdotto());
-		newarticoli.setDouble(3, articoli.getPrezzo());
-		newarticoli.setDouble(4, articoli.getNumPunti());
-		newarticoli.setInt(5, articoli.getNumeroArticoli());
-		newarticoli.setString(6, articoli.getCategoria());
-		int row = newarticoli.executeUpdate();
-		if (row < 1) {
-			return false;
-		} else {
-			return true;
-		}
-	}
+    @Override
+    public boolean newordine(Articoli articoli) throws SQLException {
+        setArticoliPreparedStatement(newArticoli, articoli);
+        return newArticoli.executeUpdate() > 0;
+    }
 
-	@Override
-	public ArrayList<Cliente> SearchClient() throws SQLException {
-		ArrayList<Cliente> clienti = new ArrayList<>();
-		ResultSet rs = searchClient.executeQuery(
-				"SELECT C.codcliente, C.nome, C.cognome, AO.categoria, SUM(AO.numeropunti) AS total_punti "
-						+ "FROM cliente AS C " + "JOIN articoliordine AS AO ON C.codcliente = AO.codcliente "
-						+ "GROUP BY C.codcliente, C.nome, C.cognome, AO.categoria;");
-		while (rs.next()) {
-			clienti.add(new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null,
-					new Articoli(null, null, 0.0, rs.getDouble("total_punti"), 0, rs.getString("categoria"))));
-		}
-		rs.close();
-		return clienti;
-	}
+    @Override
+    public ArrayList<Cliente> SearchClient() throws SQLException {
+        ArrayList<Cliente> clienti = new ArrayList<>();
+        String query = """
+                SELECT C.codcliente, C.nome, C.cognome, AO.categoria, SUM(AO.numeropunti) AS total_punti
+                FROM cliente AS C
+                JOIN articoliordine AS AO ON C.codcliente = AO.codcliente
+                GROUP BY C.codcliente, C.nome, C.cognome, AO.categoria
+                """;
+        try (ResultSet rs = searchClient.executeQuery(query)) {
+            while (rs.next()) {
+                clienti.add(new Cliente(
+                        null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null,
+                        new Articoli(null, null, 0.0, rs.getDouble("total_punti"), 0, rs.getString("categoria"))
+                ));
+            }
+        }
+        return clienti;
+    }
+
+    // Metodo di supporto per riempire il PreparedStatement
+    private void setArticoliPreparedStatement(PreparedStatement ps, Articoli articoli) throws SQLException {
+        ps.setString(1, articoli.getCodOrdine());
+        ps.setString(2, articoli.getCodProdotto());
+        ps.setDouble(3, articoli.getPrezzo());
+        ps.setDouble(4, articoli.getNumPunti());
+        ps.setInt(5, articoli.getNumeroArticoli());
+        ps.setString(6, articoli.getCategoria());
+    }
 }
+
