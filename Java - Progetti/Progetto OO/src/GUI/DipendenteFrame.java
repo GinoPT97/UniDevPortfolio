@@ -2,14 +2,14 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,8 +26,11 @@ public class DipendenteFrame extends JFrame {
 	private JButton tesserabutton;
 	private JLabel titlelab;
 	private JButton searchbutton;
+	private JPanel buttonpanel;
+	private JPanel buttonContainer;
 
 	public void elementi() {
+		// Impostazioni di base del frame
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 450);
 		contentPane = new JPanel();
@@ -37,39 +40,46 @@ public class DipendenteFrame extends JFrame {
 		setLocationRelativeTo(null);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
+		// Pannello del titolo
 		JPanel titlepanel = new JPanel();
 		titlepanel.setBackground(Color.ORANGE);
 		contentPane.add(titlepanel, BorderLayout.WEST);
 		titlepanel.setLayout(new BorderLayout(0, 0));
 
+		// Etichetta del titolo
 		titlelab = new JLabel("Area Dipendenti");
 		titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
-		titlepanel.add(titlelab);
+		titlepanel.add(titlelab, BorderLayout.NORTH);
 
+		// Bottone di logout
 		logoututton = new JButton("Logout");
 		titlepanel.add(logoututton, BorderLayout.SOUTH);
 		logoututton.setBackground(Color.RED);
 
-		JPanel buttonpanel = new JPanel();
-		contentPane.add(buttonpanel, BorderLayout.CENTER); // Modificato per centrare
-		buttonpanel.setLayout(new GridBagLayout()); // Usa GridBagLayout per centrare i bottoni
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = GridBagConstraints.RELATIVE;
-		gbc.insets = new Insets(10, 0, 10, 0); // Spaziatura tra i bottoni
-		gbc.anchor = GridBagConstraints.CENTER;
+		// Pannello per i bottoni centrati
+		buttonpanel = new JPanel();
+		contentPane.add(buttonpanel, BorderLayout.CENTER);
+		buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS)); // Layout verticale per centrare i bottoni
 
+		// Pannello contenitore per i bottoni
+		buttonContainer = new JPanel();
+		buttonContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20)); // Layout con i bottoni centrati e spaziati
+		buttonpanel.add(Box.createVerticalGlue()); // Aggiunge spazio sopra i bottoni
+		buttonpanel.add(buttonContainer); // Aggiunge il pannello contenitore
+		buttonpanel.add(Box.createVerticalGlue()); // Aggiunge spazio sotto i bottoni
+
+		// Creazione e aggiunta dei bottoni al contenitore
 		clientebutton = new JButton("Clienti");
-		buttonpanel.add(clientebutton, gbc);
+		buttonContainer.add(clientebutton);
 
 		searchbutton = new JButton("Ricerca Clienti");
-		buttonpanel.add(searchbutton, gbc);
+		buttonContainer.add(searchbutton);
 
 		tesserabutton = new JButton("Tessera Punti");
-		buttonpanel.add(tesserabutton, gbc);
+		buttonContainer.add(tesserabutton);
 
 		ordineutton = new JButton("Ordine");
-		buttonpanel.add(ordineutton, gbc);
+		buttonContainer.add(ordineutton);
 	}
 
 	public void azioni(Controller c) {

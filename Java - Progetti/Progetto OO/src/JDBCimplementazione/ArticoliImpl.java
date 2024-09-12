@@ -1,4 +1,4 @@
-package JDBCimpl;
+package JDBCimplementazione;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,8 +16,6 @@ public class ArticoliImpl implements ArticoliJDBC {
 	private Connection connection;
 	private PreparedStatement newarticoli;
 	private Statement searchClient;
-	private ArrayList<Articoli> articoli = new ArrayList<>();
-	private ArrayList<Cliente> Cliente = new ArrayList<>();
 
 	public ArticoliImpl(Connection connection) throws SQLException {
 		this.connection = connection;

@@ -22,156 +22,157 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import Model.Articoli;
 import Model.Ordine;
 
 public class CarrelloFrame extends JFrame {
-	private Controller c;
-	private JPanel contentPane;
-	private DefaultTableModel prodmodel = new DefaultTableModel();
-	private DefaultTableModel ordmodel = new DefaultTableModel();
-	private Object[] prodcolonne = { "Id", "Nome", "Prezzo", "Categoria", "Scorta" };
-	private Object[] ordinecolonne = { "Id", "Nome", "Prezzo", "Categoria", "Quantita" };
-	private LocalDate dataod = LocalDate.now();
-	private JPanel bottonpanel;
-	private JPanel prodottopanel;
-	private JPanel ordinepanel;
-	private JPanel centerpanel;
-	private JLabel datalab;
-	private JLabel codfisclab;
-	private JTextField codfisctf;
-	private JButton backbutton;
-	private JButton ordinebutton;
-	private JComboBox<String> categoriacb;
-	private JButton selectbutton;
-	private JLabel quantitalab;
-	private JTextField quantitatf;
-	private JLabel totalelab;
-	private JButton removebutton;
-	private JButton insertbutton;
-	private JTable prodottotable;
-	private JScrollPane prodottiscrollPane;
-	private JTable ordinetable;
-	private JScrollPane ordinescrollPane;
-	private JPanel titlepanel;
-	private JLabel titlelabel;
+    private Controller c;
+    private JPanel contentPane;
+    private DefaultTableModel prodmodel = new DefaultTableModel();
+    private DefaultTableModel ordmodel = new DefaultTableModel();
+    private Object[] prodcolonne = { "Id", "Nome", "Prezzo", "Categoria", "Scorta" };
+    private Object[] ordinecolonne = { "Id", "Nome", "Prezzo", "Categoria", "Quantita" };
+    private LocalDate dataod = LocalDate.now();
+    private JPanel bottonpanel, prodottopanel, ordinepanel, centerpanel, titlepanel;
+    private JLabel datalab, codfisclab, quantitalab, totalelab, titlelabel;
+    private JTextField codfisctf, quantitatf;
+    private JButton backbutton, ordinebutton, selectbutton, removebutton, insertbutton;
+    private JComboBox<String> categoriacb;
+    private JTable prodottotable, ordinetable;
+    private JScrollPane prodottiscrollPane, ordinescrollPane;
 
-	public void elementi() {
-	    // Imposta le proprietà della finestra
-	    setBackground(Color.WHITE);
-	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	    setBounds(100, 100, 1100, 500);
-	    setLocationRelativeTo(null);
-	    setIconImage(Toolkit.getDefaultToolkit().getImage(AdminFrame.class.getResource("/Immagini/ImmIcon.png")));
+    public void elementi() {
+        // Configurazione del frame
+        setBackground(Color.WHITE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setBounds(100, 100, 1100, 500);
+        setLocationRelativeTo(null);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(AdminFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-	    // Inizializza e configura il pannello principale
-	    contentPane = new JPanel();
-	    contentPane.setBackground(Color.WHITE);
-	    contentPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-	    setContentPane(contentPane);
-	    contentPane.setLayout(new BorderLayout(0, 0));
+        // Creazione del pannello principale
+        contentPane = new JPanel();
+        contentPane.setBackground(Color.WHITE);
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        contentPane.setLayout(new BorderLayout(0, 0));
+        setContentPane(contentPane);
 
-	    // Pannello per i bottoni
-	    bottonpanel = new JPanel();
-	    bottonpanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-	    contentPane.add(bottonpanel, BorderLayout.SOUTH);
+        // Pannello del titolo
+        titlepanel = new JPanel();
+        titlepanel.setBackground(new Color(0, 0, 139));
+        contentPane.add(titlepanel, BorderLayout.NORTH);
 
-	    // Etichetta e campo di testo per la data
-	    datalab = new JLabel("Data Odierna : " + dataod);
-	    bottonpanel.add(datalab);
+        titlelabel = new JLabel("Nuovo Ordine");
+        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlelabel.setForeground(Color.WHITE);
+        titlepanel.add(titlelabel);
 
-	    // Etichetta e campo di testo per il codice fiscale
-	    codfisclab = new JLabel("Codice Fiscale Cliente : ");
-	    bottonpanel.add(codfisclab);
+        // Pannello dei bottoni in basso
+        bottonpanel = new JPanel();
+        bottonpanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10)); // FlowLayout centrato
+        contentPane.add(bottonpanel, BorderLayout.SOUTH);
 
-	    codfisctf = new JTextField();
-	    codfisctf.setColumns(15);
-	    bottonpanel.add(codfisctf);
+        // Aggiunta dei componenti al bottonpanel
+        datalab = new JLabel("Data Odierna: " + dataod.toString());
+        bottonpanel.add(datalab);
 
-	    // Pulsante per inserire l'ordine
-	    ordinebutton = new JButton("Inserisci Ordine");
-	    ordinebutton.setBackground(Color.GREEN);
-	    bottonpanel.add(ordinebutton);
+        codfisclab = new JLabel("Codice Fiscale Cliente: ");
+        bottonpanel.add(codfisclab);
 
-	    // Pulsante per tornare indietro
-	    backbutton = new JButton("Indietro");
-	    backbutton.setBackground(Color.RED);
-	    bottonpanel.add(backbutton);
+        codfisctf = new JTextField(16); // Dimensioni abbastanza grandi per il codice fiscale
+        codfisctf.setPreferredSize(new Dimension(200, 25)); // Dimensione aumentata
+        bottonpanel.add(codfisctf);
 
-	    // Pannello per la tabella dei prodotti
-	    prodottopanel = new JPanel();
-	    prodottopanel.setLayout(new BorderLayout());
-	    contentPane.add(prodottopanel, BorderLayout.WEST);
+        ordinebutton = new JButton("Inserisci Ordine");
+        ordinebutton.setBackground(Color.GREEN);
+        ordinebutton.setForeground(Color.WHITE);
+        bottonpanel.add(ordinebutton);
 
-	    // Configura la tabella dei prodotti
-	    prodmodel.setColumnIdentifiers(prodcolonne);
-	    prodottotable = new JTable(prodmodel);
-	    prodottotable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	    prodottiscrollPane = new JScrollPane(prodottotable);
-	    prodottopanel.add(prodottiscrollPane, BorderLayout.CENTER);
+        backbutton = new JButton("Indietro");
+        backbutton.setBackground(Color.RED);
+        backbutton.setForeground(Color.WHITE);
+        bottonpanel.add(backbutton);
 
-	    // Pannello per la tabella degli ordini
-	    ordinepanel = new JPanel();
-	    ordinepanel.setLayout(new BorderLayout());
-	    contentPane.add(ordinepanel, BorderLayout.EAST);
+        // Pannello dei prodotti
+        prodottopanel = new JPanel(new BorderLayout());
+        prodottopanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        contentPane.add(prodottopanel, BorderLayout.WEST);
 
-	    // Configura la tabella degli ordini
-	    ordmodel.setColumnIdentifiers(ordinecolonne);
-	    ordinetable = new JTable(ordmodel);
-	    ordinetable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	    ordinescrollPane = new JScrollPane(ordinetable);
-	    ordinepanel.add(ordinescrollPane, BorderLayout.CENTER);
+        prodottiscrollPane = new JScrollPane();
+        prodottopanel.add(prodottiscrollPane, BorderLayout.CENTER);
 
-	    // Pannello centrale per i controlli
-	    centerpanel = new JPanel();
-	    centerpanel.setLayout(new BoxLayout(centerpanel, BoxLayout.Y_AXIS));
-	    contentPane.add(centerpanel, BorderLayout.CENTER);
+        prodottotable = new JTable();
+        prodmodel.setColumnIdentifiers(prodcolonne);
+        prodottotable.setModel(prodmodel);
+        prodottotable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        prodottiscrollPane.setViewportView(prodottotable);
 
-	    // Combobox per le categorie
-	    categoriacb = new JComboBox<>(new String[]{"Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
-	    centerpanel.add(categoriacb);
+        // Pannello degli ordini
+        ordinepanel = new JPanel(new BorderLayout());
+        ordinepanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        contentPane.add(ordinepanel, BorderLayout.EAST);
 
-	    // Pulsante per selezionare la categoria
-	    selectbutton = new JButton("Seleziona");
-	    centerpanel.add(selectbutton);
+        ordinescrollPane = new JScrollPane();
+        ordinepanel.add(ordinescrollPane, BorderLayout.CENTER);
 
-	    // Etichetta e campo di testo per la quantità
-	    quantitalab = new JLabel("Seleziona Quantita :");
-	    centerpanel.add(quantitalab);
+        ordinetable = new JTable();
+        ordmodel.setColumnIdentifiers(ordinecolonne);
+        ordinetable.setModel(ordmodel);
+        ordinetable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ordinescrollPane.setViewportView(ordinetable);
 
-	    quantitatf = new JTextField();
-	    quantitatf.setColumns(5);
-	    centerpanel.add(quantitatf);
+        // Pannello centrale per controlli
+        centerpanel = new JPanel();
+        centerpanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        centerpanel.setLayout(new BoxLayout(centerpanel, BoxLayout.Y_AXIS)); // Layout verticale per allineare i componenti
+        contentPane.add(centerpanel, BorderLayout.CENTER);
 
-	    // Etichetta per il totale
-	    totalelab = new JLabel("Totale :  0.00");
-	    centerpanel.add(totalelab);
+        // Pannello superiore per ComboBox e bottone Seleziona
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        centerpanel.add(topPanel);
 
-	    // Pulsante per rimuovere un prodotto dall'ordine
-	    removebutton = new JButton("Rimuovi");
-	    removebutton.setBackground(Color.RED);
-	    centerpanel.add(removebutton);
+        categoriacb = new JComboBox<>(new String[]{"Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
+        categoriacb.setMaximumSize(categoriacb.getPreferredSize()); // Si adatta al contenuto
+        topPanel.add(categoriacb);
 
-	    // Pulsante per inserire un prodotto nell'ordine
-	    insertbutton = new JButton("Inserisci ");
-	    insertbutton.setBackground(new Color(0, 153, 255));
-	    centerpanel.add(insertbutton);
+        selectbutton = new JButton("Seleziona");
+        topPanel.add(selectbutton);
 
-	    // Pannello per il titolo
-	    titlepanel = new JPanel();
-	    titlepanel.setBackground(new Color(0, 0, 139));
-	    titlepanel.setPreferredSize(new Dimension(getWidth(), 60));
-	    contentPane.add(titlepanel, BorderLayout.NORTH);
+        // Pannello per la quantità e il totale
+        JPanel middlePanel = new JPanel();
+        middlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        centerpanel.add(middlePanel);
 
-	    // Etichetta del titolo
-	    titlelabel = new JLabel("Nuovo Ordine");
-	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-	    titlelabel.setForeground(Color.WHITE);
-	    titlepanel.add(titlelabel);
-	}
+        quantitalab = new JLabel("Seleziona Quantità:");
+        middlePanel.add(quantitalab);
 
+        quantitatf = new JTextField(5);
+        quantitatf.setPreferredSize(new Dimension(100, 25));
+        middlePanel.add(quantitatf);
+
+        totalelab = new JLabel("Totale: 0.00");
+        totalelab.setFont(new Font("Tahoma", Font.BOLD, 14));
+        middlePanel.add(totalelab);
+
+        // Pannello inferiore per i bottoni
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        centerpanel.add(bottomPanel);
+
+        removebutton = new JButton("Rimuovi");
+        removebutton.setBackground(Color.RED);
+        removebutton.setForeground(Color.WHITE);
+        bottomPanel.add(removebutton);
+
+        insertbutton = new JButton("Inserisci");
+        insertbutton.setBackground(new Color(0, 153, 255));
+        insertbutton.setForeground(Color.WHITE);
+        bottomPanel.add(insertbutton);
+    }
+    
 	public void clean() {
 	    totalelab.setText("Totale :  0.00");
 	    quantitatf.setText("");

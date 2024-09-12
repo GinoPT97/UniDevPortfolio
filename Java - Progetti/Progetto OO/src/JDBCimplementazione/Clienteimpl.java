@@ -1,4 +1,4 @@
-package JDBCimpl;
+package JDBCimplementazione;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
