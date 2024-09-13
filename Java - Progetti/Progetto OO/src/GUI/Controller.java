@@ -22,8 +22,8 @@ import JDBC.TesseraJDBC;
 import JDBCimplementazione.ArticoliImpl;
 import JDBCimplementazione.Clienteimpl;
 import JDBCimplementazione.Dipendenteimpl;
-import JDBCimplementazione.Ordiniimpl;
-import JDBCimplementazione.Prodottoimpl;
+import JDBCimplementazione.OrdiniImpl;
+import JDBCimplementazione.ProdottoImpl;
 import JDBCimplementazione.Tesseraimpl;
 import Model.Articoli;
 import Model.BackgroundPanel;
@@ -212,8 +212,8 @@ public class Controller {
 			config.populateDatabase();
 			cljdbc = new Clienteimpl(connection);
 			dpjdbc = new Dipendenteimpl(connection);
-			prdjdbc = new Prodottoimpl(connection);
-			ordjdbc = new Ordiniimpl(connection);
+			prdjdbc = new ProdottoImpl(connection);
+			ordjdbc = new OrdiniImpl(connection);
 			tsjdbc = new Tesseraimpl(connection);
 			artjdbc = new ArticoliImpl(connection);
 		} catch (SQLException | ConnectionException e) {
