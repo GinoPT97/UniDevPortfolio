@@ -3,22 +3,15 @@ package Model;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.swing.JPanel;
-import javax.swing.SwingWorker;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 public class BackgroundPanel extends JPanel {
     private static final Map<String, Image> imageCache = new ConcurrentHashMap<>(); // Cache delle immagini
