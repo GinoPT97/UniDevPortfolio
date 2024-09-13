@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -32,6 +33,97 @@ public class NuovoDipendenteFrame extends JFrame {
 	private JButton addbutton;
 	private JButton clearbutton;
 	private JButton backbutton;
+	
+	public void elementi() {
+	    // Imposta le proprietà di base della finestra
+	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+	    setBounds(100, 100, 700, 500);
+	    setLocationRelativeTo(null);
+	    setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+
+	    // Imposta il pannello principale e il layout BorderLayout
+	    contentPane = new JPanel();
+	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+	    setContentPane(contentPane);
+	    contentPane.setLayout(new BorderLayout(0, 0));
+
+	    // Pannello dei pulsanti
+	    JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
+
+	    addbutton = new JButton("Aggiungi");
+	    addbutton.setBackground(Color.GREEN);
+	    buttonpanel.add(addbutton);
+
+	    clearbutton = new JButton("Pulisci");
+	    buttonpanel.add(clearbutton);
+
+	    backbutton = new JButton("Indietro");
+	    backbutton.setBackground(Color.RED);
+	    buttonpanel.add(backbutton);
+
+	    // Pannello per gli elementi
+	    JPanel elempanel = new JPanel();
+	    elempanel.setBorder(new EmptyBorder(20, 100, 20, 100));
+	    elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
+	    contentPane.add(elempanel, BorderLayout.CENTER);
+
+	    // Pannello Nome
+	    JPanel nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    elempanel.add(nomepanel);
+	    JLabel nomelab = new JLabel("Nome :");
+	    nomepanel.add(nomelab);
+	    nometf = new JTextField(10);
+	    nomepanel.add(nometf);
+
+	    // Pannello Cognome
+	    JPanel cognomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    elempanel.add(cognomepanel);
+	    JLabel cognomelab = new JLabel("Cognome :");
+	    cognomepanel.add(cognomelab);
+	    cognometf = new JTextField(10);
+	    cognomepanel.add(cognometf);
+
+	    // Pannello Codice Fiscale
+	    JPanel codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    elempanel.add(codfiscpanel);
+	    JLabel codfisclab = new JLabel("Codice Fiscale :");
+	    codfiscpanel.add(codfisclab);
+	    codfisctf = new JTextField(10);
+	    codfiscpanel.add(codfisctf);
+
+	    // Pannello Email
+	    JPanel emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    elempanel.add(emailpanel);
+	    JLabel emaillab = new JLabel("Email :");
+	    emailpanel.add(emaillab);
+	    emailtf = new JTextField(10);
+	    emailpanel.add(emailtf);
+
+	    // Pannello Indirizzo
+	    JPanel indirizzopanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    elempanel.add(indirizzopanel);
+	    JLabel indirizzolab = new JLabel(" Indirizzo : ");
+	    indirizzopanel.add(indirizzolab);
+	    indirizzotf = new JTextField(10);
+	    indirizzopanel.add(indirizzotf);
+
+	    // Pannello Telefono
+	    JPanel telefonopanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    elempanel.add(telefonopanel);
+	    JLabel lblTelefono = new JLabel("Telefono :       +39");
+	    telefonopanel.add(lblTelefono);
+	    telefonotf = new JTextField(10);
+	    telefonopanel.add(telefonotf);
+
+	    // Pannello Titolo
+	    JPanel titlepanel = new JPanel();
+	    titlepanel.setBackground(Color.ORANGE);
+	    contentPane.add(titlepanel, BorderLayout.NORTH);
+	    JLabel titlelabel = new JLabel("Inserimento Nuovo Dipendente");
+	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+	    titlepanel.add(titlelabel);
+	}
 
 	public void clean() {
 		nometf.setText("");
@@ -85,105 +177,6 @@ public class NuovoDipendenteFrame extends JFrame {
 				c.visAnddip(3);
 			}
 		});
-	}
-
-	public void elementi() {
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 500);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setLocationRelativeTo(null);
-		setIconImage(
-				Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
-
-		JPanel buttonpanel = new JPanel();
-		contentPane.add(buttonpanel, BorderLayout.SOUTH);
-
-		addbutton = new JButton("Aggiungi");
-		addbutton.setBackground(Color.GREEN);
-		buttonpanel.add(addbutton);
-
-		clearbutton = new JButton("Pulisci");
-		buttonpanel.add(clearbutton);
-
-		backbutton = new JButton("Indietro");
-		backbutton.setBackground(Color.RED);
-		buttonpanel.add(backbutton);
-
-		JPanel elempanel = new JPanel();
-		elempanel.setBorder(new EmptyBorder(100, 100, 100, 100));
-		contentPane.add(elempanel);
-		elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
-
-		JPanel nomepanel = new JPanel();
-		elempanel.add(nomepanel);
-
-		JLabel nomelab = new JLabel("Nome :");
-		nomepanel.add(nomelab);
-
-		nometf = new JTextField();
-		nometf.setColumns(10);
-		nomepanel.add(nometf);
-
-		JPanel cognomepanel = new JPanel();
-		elempanel.add(cognomepanel);
-
-		JLabel cognomelab = new JLabel("Cognome :");
-		cognomepanel.add(cognomelab);
-
-		cognometf = new JTextField();
-		cognometf.setColumns(10);
-		cognomepanel.add(cognometf);
-
-		JPanel codfiscpanel = new JPanel();
-		elempanel.add(codfiscpanel);
-
-		JLabel codfisclab = new JLabel("Codice Fiscale :");
-		codfiscpanel.add(codfisclab);
-
-		codfisctf = new JTextField();
-		codfisctf.setColumns(10);
-		codfiscpanel.add(codfisctf);
-
-		JPanel emailpanel = new JPanel();
-		elempanel.add(emailpanel);
-
-		JLabel emaillab = new JLabel("Email :");
-		emailpanel.add(emaillab);
-
-		emailtf = new JTextField();
-		emailtf.setColumns(10);
-		emailpanel.add(emailtf);
-
-		JPanel indirizzopanel = new JPanel();
-		elempanel.add(indirizzopanel);
-
-		JLabel indirizzolab = new JLabel(" Indirizzo : ");
-		indirizzopanel.add(indirizzolab);
-
-		indirizzotf = new JTextField();
-		indirizzotf.setColumns(10);
-		indirizzopanel.add(indirizzotf);
-
-		JPanel telefonopanel = new JPanel();
-		elempanel.add(telefonopanel);
-
-		JLabel lblTelefono = new JLabel("Telefono :       +39");
-		telefonopanel.add(lblTelefono);
-
-		telefonotf = new JTextField();
-		telefonotf.setColumns(10);
-		telefonopanel.add(telefonotf);
-
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.ORANGE);
-		contentPane.add(panel, BorderLayout.NORTH);
-
-		JLabel titlelabel = new JLabel("Inserimento Nuovo Dipendente");
-		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-		panel.add(titlelabel);
 	}
 
 	public NuovoDipendenteFrame(String title, Controller c) {

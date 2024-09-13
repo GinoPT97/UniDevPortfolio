@@ -95,24 +95,25 @@ public class PuntiTesseraFrame extends JFrame {
 	}
 
 	public void azioni(Controller c) {
-	    // Aggiungi ActionListener al pulsante di visualizzazione
+	    // Pulsante di visualizzazione
 	    visbutton.addActionListener(e -> {
-	        try {
-	            String id = idtf.getText();
-	            if (id != null && !id.isEmpty()) {
-	                totlab.setText(c.punti(id));
-	            } else {
-	                JOptionPane.showMessageDialog(null, "Inserire l'id della tessera");
+	        String id = idtf.getText().trim();
+	        if (!id.isEmpty()) {
+	            try {
+	                String punti = c.punti(id);
+	                totlab.setText(punti);
+	            } catch (SQLException ex) {
+	                JOptionPane.showMessageDialog(null, "Errore nella comunicazione con il database!\nTipo di errore: " + ex);
 	            }
-	        } catch (SQLException ex) {
-	            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + ex);
+	        } else {
+	            JOptionPane.showMessageDialog(null, "Inserire l'id della tessera.");
 	        }
 	    });
 
-	    // Aggiungi ActionListener al pulsante di pulizia
+	    // Pulsante di pulizia
 	    clearbutton.addActionListener(e -> clean());
 
-	    // Aggiungi ActionListener al pulsante di ritorno
+	    // Pulsante di ritorno
 	    backbutton.addActionListener(e -> {
 	        clean();
 	        c.dipAndElem(4);

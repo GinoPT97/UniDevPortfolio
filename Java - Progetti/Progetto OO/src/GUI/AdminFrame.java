@@ -2,8 +2,12 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -29,7 +34,6 @@ public class AdminFrame extends JFrame {
     private JButton searchbutton;
 
     public void elementi() {
-        // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 400);
         contentPane = new JPanel();
@@ -39,51 +43,58 @@ public class AdminFrame extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(AdminFrame.class.getResource("/Immagini/ImmIcon.png")));
         setLocationRelativeTo(null);
 
-        // Pannello per i bottoni centrati
+        // Pannello per i bottoni
         JPanel buttonpanel = new JPanel();
-        contentPane.add(buttonpanel, BorderLayout.CENTER); 
-        buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS));
+        contentPane.add(buttonpanel, BorderLayout.CENTER);
+        buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS)); // Disposizione verticale
 
-        // Centrare i bottoni utilizzando un pannello per aggiungere spazio
-        JPanel buttonContainer = new JPanel();
-        buttonContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20)); 
-        buttonpanel.add(Box.createVerticalGlue()); 
-        buttonpanel.add(buttonContainer); 
-        buttonpanel.add(Box.createVerticalGlue()); 
+        buttonpanel.add(Box.createVerticalGlue()); // Spazio prima dei bottoni
 
-        // Creazione e aggiunta dei bottoni al contenitore
         dipbutton = new JButton("Dipendenti");
-        buttonContainer.add(dipbutton);
+        dipbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonpanel.add(dipbutton);
+        buttonpanel.add(Box.createVerticalStrut(10));
 
         statistichebutton = new JButton("Statistiche");
-        buttonContainer.add(statistichebutton);
+        statistichebutton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonpanel.add(statistichebutton);
+        buttonpanel.add(Box.createVerticalStrut(10));
 
         searchbutton = new JButton("Ricerca Clienti");
-        buttonContainer.add(searchbutton);
+        searchbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonpanel.add(searchbutton);
+        buttonpanel.add(Box.createVerticalStrut(10));
 
         prodbutton = new JButton("Prodotti");
-        buttonContainer.add(prodbutton);
+        prodbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonpanel.add(prodbutton);
+        buttonpanel.add(Box.createVerticalStrut(10));
 
         visordbutt = new JButton("Ordini");
-        buttonContainer.add(visordbutt);
+        visordbutt.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonpanel.add(visordbutt);
 
-        // Pannello del titolo a sinistra
+        buttonpanel.add(Box.createVerticalGlue()); // Spazio dopo i bottoni
+
+        // Pannello del titolo
         titlepanel = new JPanel();
         titlepanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-        titlepanel.setBackground(new Color(30, 144, 255)); // Impostazione del colore di sfondo
+        titlepanel.setBackground(new Color(30, 144, 255));
         contentPane.add(titlepanel, BorderLayout.WEST);
         titlepanel.setLayout(new BorderLayout(0, 0));
 
         // Etichetta del titolo
         titlelabel = new JLabel("Admin Area");
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlepanel.add(titlelabel, BorderLayout.NORTH);
+        titlelabel.setForeground(Color.BLACK);
+        titlelabel.setHorizontalAlignment(SwingConstants.CENTER); // Allineamento orizzontale al centro
+        titlepanel.add(titlelabel, BorderLayout.CENTER);
 
-        // Bottone di logout nella parte inferiore del pannello
+        // Bottone di logout che occupa l'intera larghezza del pannello
         logoutbutton = new JButton("Logout");
         logoutbutton.setBackground(Color.RED);
-        logoutbutton.setForeground(Color.WHITE); // Testo in bianco per contrasto
-        titlepanel.add(logoutbutton, BorderLayout.SOUTH);
+        logoutbutton.setForeground(Color.WHITE);
+        titlepanel.add(logoutbutton, BorderLayout.SOUTH); // Estende il bottone di logout a tutta la larghezza
     }
 
 	public void azioni(Controller c) {

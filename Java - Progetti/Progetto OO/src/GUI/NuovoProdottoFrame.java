@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.sql.SQLException;
@@ -47,267 +48,202 @@ public class NuovoProdottoFrame extends JFrame {
 	private JTextArea descta;
 	private JCheckBox glutcb;
 	private JComboBox categoriacb;
+	
+	public void elementi() {
+	    // Configurazione della finestra
+	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+	    setBounds(100, 100, 650, 450);
+	    setLocationRelativeTo(null);
+	    setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoProdottoFrame.class.getResource("/Immagini/ImmIcon.png")));
+
+	    // Pannello principale
+	    contentPane = new JPanel();
+	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+	    contentPane.setLayout(new BorderLayout());
+	    setContentPane(contentPane);
+
+	    // Pannello per il contenuto centrale
+	    JPanel elempanel = new JPanel();
+	    elempanel.setBorder(new EmptyBorder(10, 50, 10, 50));
+	    elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
+	    contentPane.add(elempanel, BorderLayout.CENTER);
+
+	    // Nome
+	    JPanel nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    JLabel nomelab = new JLabel("Nome :");
+	    nomepanel.add(nomelab);
+	    nometf = new JTextField(10);
+	    nomepanel.add(nometf);
+	    elempanel.add(nomepanel);
+
+	    // Descrizione
+	    JPanel descrizionepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    JLabel descrlab = new JLabel("Descrizione :");
+	    descrizionepanel.add(descrlab);
+	    descta = new JTextArea(2, 10);
+	    descrizionepanel.add(descta);
+	    elempanel.add(descrizionepanel);
+
+	    // Provenienza
+	    JPanel provenienzapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    JLabel provlab = new JLabel("Provenienza :");
+	    provenienzapanel.add(provlab);
+	    provtf = new JTextField(10);
+	    provenienzapanel.add(provtf);
+	    elempanel.add(provenienzapanel);
+
+	    // Prezzo
+	    JPanel prezzopanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    JLabel prezzolab = new JLabel("Prezzo :");
+	    prezzopanel.add(prezzolab);
+	    prezzotf = new JTextField(10);
+	    prezzopanel.add(prezzotf);
+	    elempanel.add(prezzopanel);
+
+	    // Data Raccolta
+	    JPanel raccoltapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    JLabel racclab = new JLabel("Data Raccolta (YYYY-MM-DD) :");
+	    raccoltapanel.add(racclab);
+	    racctf = new JTextField(10);
+	    racctf.setEditable(false);
+	    raccoltapanel.add(racctf);
+	    elempanel.add(raccoltapanel);
+
+	    // Data Mungitura
+	    JPanel mungiturapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    JLabel munglab = new JLabel("Data Mungitura (YYYY-MM-DD) :");
+	    mungiturapanel.add(munglab);
+	    mungtf = new JTextField(10);
+	    mungtf.setEditable(false);
+	    mungiturapanel.add(mungtf);
+	    elempanel.add(mungiturapanel);
+
+	    // Glutine
+	    JPanel glutinepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    JLabel glutlab = new JLabel("Glutine :");
+	    glutinepanel.add(glutlab);
+	    glutcb = new JCheckBox("Si");
+	    glutcb.setEnabled(false);
+	    glutinepanel.add(glutcb);
+	    elempanel.add(glutinepanel);
+
+	    // Data Scadenza
+	    JPanel scadenzapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    JLabel scadlab = new JLabel("Data Scadenza (YYYY-MM-DD) :");
+	    scadenzapanel.add(scadlab);
+	    scadtf = new JTextField(10);
+	    scadtf.setEditable(false);
+	    scadenzapanel.add(scadtf);
+	    elempanel.add(scadenzapanel);
+
+	    // Scorta
+	    JPanel scortapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    JLabel scortalab = new JLabel("Scorta :");
+	    scortapanel.add(scortalab);
+	    scortatf = new JTextField(10);
+	    scortapanel.add(scortatf);
+	    elempanel.add(scortapanel);
+
+	    // Categoria e pulsante di selezione
+	    JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    categoriacb = new JComboBox<>(new String[] { "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei" });
+	    categoriapanel.add(categoriacb);
+	    selbutton = new JButton("Selezione");
+	    categoriapanel.add(selbutton);
+	    elempanel.add(categoriapanel);
+
+	    // Pannello per i pulsanti di azione
+	    buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    insertbutton = new JButton("Inserisci");
+	    insertbutton.setBackground(Color.GREEN);
+	    buttonpanel.add(insertbutton);
+	    clearbutton = new JButton("Pulisci");
+	    clearbutton.setBackground(Color.WHITE);
+	    buttonpanel.add(clearbutton);
+	    backbutton = new JButton("Indietro");
+	    backbutton.setBackground(Color.RED);
+	    buttonpanel.add(backbutton);
+	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
+
+	    // Pannello per il titolo
+	    JPanel titlepanel = new JPanel();
+	    titlepanel.setBackground(new Color(139, 0, 0));
+	    JLabel titlelabel = new JLabel("Inserimento nuovo prodotto");
+	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+	    titlepanel.add(titlelabel);
+	    contentPane.add(titlepanel, BorderLayout.NORTH);
+	}
 
 	public void clean() {
-		nometf.setText("");
-		descta.setText("");
-		prezzotf.setText("");
-		provtf.setText("");
-		scortatf.setText("");
-		racctf.setText("");
-		mungtf.setText("");
-		scadtf.setText("");
-		glutcb.setSelected(false);
+	    nometf.setText("");
+	    descta.setText("");
+	    prezzotf.setText("");
+	    provtf.setText("");
+	    scortatf.setText("");
+	    racctf.setText("");
+	    mungtf.setText("");
+	    scadtf.setText("");
+	    glutcb.setSelected(false);
 	}
 
 	public void azioni(Controller c) {
-		clearbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				clean();
-			}
-		});
+	    clearbutton.addActionListener(e -> clean());
 
-		backbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				clean();
-				c.visAndprod(3);
-			}
-		});
+	    backbutton.addActionListener(e -> {
+	        clean();
+	        c.visAndprod(3);
+	    });
 
-		insertbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
-				try {
-					if (nometf.getText().equals("") || descta.getText().equals("") || prezzotf.getText().equals("")
-							|| provtf.getText().equals("") || scortatf.getText().equals("")) {
-						JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
-					} else {
-						if (categoriacb.getSelectedItem().toString().equals("Ortofrutticoli")) {
-							c.newprod(new Prodotto("", nometf.getText(), descta.getText(),
-									Double.parseDouble(prezzotf.getText()), provtf.getText(),
-									data.parse(racctf.getText()), null, glutcb.isSelected(), null,
-									categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-						} else if (categoriacb.getSelectedItem().toString().equals("Inscatolati")) {
-							c.newprod(new Prodotto("", nometf.getText(), descta.getText(),
-									Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null,
-									glutcb.isSelected(), data.parse(scadtf.getText()),
-									categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-						} else if (categoriacb.getSelectedItem().toString().equals("Latticini")) {
-							c.newprod(new Prodotto("", nometf.getText(), descta.getText(),
-									Double.parseDouble(prezzotf.getText()), provtf.getText(), null,
-									data.parse(mungtf.getText()), glutcb.isSelected(), null,
-									categoriacb.getSelectedItem().toString(), Integer.parseInt(scortatf.getText())));
-						} else if (categoriacb.getSelectedItem().toString().equals("Farinacei")) {
-							c.newprod(new Prodotto("", nometf.getText(), descta.getText(),
-									Double.parseDouble(prezzotf.getText()), provtf.getText(), null, null,
-									glutcb.isSelected(), null, categoriacb.getSelectedItem().toString(),
-									Integer.parseInt(scortatf.getText())));
-						}
-						clean();
-						JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
-					}
-				} catch (NumberFormatException | SQLException | ParseException e1) {
-					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-				}
-			}
-		});
+	    insertbutton.addActionListener(e -> {
+	        DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
+	        try {
+	            // Verifica che tutti i campi obbligatori siano compilati
+	            if (nometf.getText().isEmpty() || descta.getText().isEmpty() ||
+	                prezzotf.getText().isEmpty() || provtf.getText().isEmpty() ||
+	                scortatf.getText().isEmpty()) {
+	                JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
+	                return;
+	            }
 
-		selbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				int type = categoriacb.getSelectedIndex();
-				switch (type) {
-				case 0:
-					racctf.setEditable(true);
-					mungtf.setEditable(false);
-					scadtf.setEditable(false);
-					glutcb.setEnabled(false);
-					break;
-				case 1:
-					racctf.setEditable(false);
-					mungtf.setEditable(false);
-					scadtf.setEditable(true);
-					glutcb.setEnabled(false);
-					break;
-				case 2:
-					racctf.setEditable(false);
-					mungtf.setEditable(true);
-					scadtf.setEditable(false);
-					glutcb.setEnabled(false);
-					break;
-				case 3:
-					racctf.setEditable(false);
-					mungtf.setEditable(false);
-					scadtf.setEditable(false);
-					glutcb.setEnabled(true);
-					break;
-				}
-			}
-		});
+	            // Prepara i dati da salvare in base alla categoria selezionata
+	            String categoria = categoriacb.getSelectedItem().toString();
+	            Prodotto prodotto = new Prodotto(
+	                "", nometf.getText(), descta.getText(),
+	                Double.parseDouble(prezzotf.getText()), provtf.getText(),
+	                categoria.equals("Ortofrutticoli") ? data.parse(racctf.getText()) : null,
+	                categoria.equals("Latticini") ? data.parse(mungtf.getText()) : null,
+	                glutcb.isSelected(),
+	                categoria.equals("Inscatolati") ? data.parse(scadtf.getText()) : null,
+	                categoria, Integer.parseInt(scortatf.getText())
+	            );
 
-		descta.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if (descta.getText().length() >= 500) {
-					e.consume();
-				}
-			}
+	            // Salva il prodotto e mostra un messaggio di successo
+	            c.newprod(prodotto);
+	            clean();
+	            JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
 
-			@Override
-			public void keyPressed(KeyEvent e) {
-			}
+	        } catch (NumberFormatException | SQLException | ParseException e1) {
+	            JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+	        }
+	    });
 
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-		});
-	}
+	    selbutton.addActionListener(event -> {
+	        // Abilita o disabilita i campi in base alla categoria selezionata
+	        int type = categoriacb.getSelectedIndex();
+	        racctf.setEditable(type == 0);
+	        mungtf.setEditable(type == 2);
+	        scadtf.setEditable(type == 1);
+	        glutcb.setEnabled(type == 3);
+	    });
 
-	public void elementi() {
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setBounds(100, 100, 650, 450);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setLocationRelativeTo(null);
-		setIconImage(
-				Toolkit.getDefaultToolkit().getImage(NuovoProdottoFrame.class.getResource("/Immagini/ImmIcon.png")));
-
-		JPanel elempanel = new JPanel();
-		elempanel.setBorder(new EmptyBorder(10, 50, 10, 50));
-		contentPane.add(elempanel, BorderLayout.CENTER);
-		elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
-
-		JPanel nomepanel = new JPanel();
-		elempanel.add(nomepanel);
-
-		JLabel nomelab = new JLabel("Nome :");
-		nomepanel.add(nomelab);
-
-		nometf = new JTextField();
-		nometf.setColumns(10);
-		nomepanel.add(nometf);
-
-		JPanel descrizionepanel = new JPanel();
-		elempanel.add(descrizionepanel);
-		descrizionepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-
-		JLabel descrlab = new JLabel("Descrizione :");
-		descrizionepanel.add(descrlab);
-
-		descta = new JTextArea();
-		descta.setRows(2);
-		descta.setColumns(10);
-		descrizionepanel.add(descta);
-
-		JPanel provenienzapanel = new JPanel();
-		elempanel.add(provenienzapanel);
-
-		JLabel provlab = new JLabel("Provenienza :");
-		provenienzapanel.add(provlab);
-
-		provtf = new JTextField();
-		provtf.setColumns(10);
-		provenienzapanel.add(provtf);
-
-		JPanel prezzopanel = new JPanel();
-		elempanel.add(prezzopanel);
-
-		JLabel prezzolab = new JLabel("Prezzo :");
-		prezzopanel.add(prezzolab);
-
-		prezzotf = new JTextField();
-		prezzotf.setColumns(10);
-		prezzopanel.add(prezzotf);
-
-		JPanel raccoltapanel = new JPanel();
-		elempanel.add(raccoltapanel);
-
-		JLabel racclab = new JLabel("Data Raccolta (YYYY-MM-DD) :");
-		raccoltapanel.add(racclab);
-
-		racctf = new JTextField();
-		racctf.setEditable(false);
-		racctf.setColumns(10);
-		raccoltapanel.add(racctf);
-
-		JPanel mungiturapanel = new JPanel();
-		elempanel.add(mungiturapanel);
-
-		JLabel munglab = new JLabel("Data Mungitura (YYYY-MM-DD)  :");
-		mungiturapanel.add(munglab);
-
-		mungtf = new JTextField();
-		mungtf.setEditable(false);
-		mungtf.setColumns(10);
-		mungiturapanel.add(mungtf);
-
-		JPanel glutinepanel = new JPanel();
-		elempanel.add(glutinepanel);
-
-		JLabel glutlab = new JLabel("Glutine :");
-		glutinepanel.add(glutlab);
-
-		glutcb = new JCheckBox("Si");
-		glutcb.setEnabled(false);
-		glutinepanel.add(glutcb);
-
-		JPanel scadenzapanel = new JPanel();
-		elempanel.add(scadenzapanel);
-
-		JLabel scadlab = new JLabel("Data Scadenza (YYYY-MM-DD)  :");
-		scadenzapanel.add(scadlab);
-
-		scadtf = new JTextField();
-		scadtf.setEditable(false);
-		scadtf.setColumns(10);
-		scadenzapanel.add(scadtf);
-
-		JPanel scortapanel = new JPanel();
-		elempanel.add(scortapanel);
-
-		JLabel scortalab = new JLabel("Scorta :");
-		scortapanel.add(scortalab);
-
-		scortatf = new JTextField();
-		scortatf.setColumns(10);
-		scortapanel.add(scortatf);
-
-		JPanel categoriapanel = new JPanel();
-		elempanel.add(categoriapanel);
-
-		categoriacb = new JComboBox(new String[] { "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei" });
-		categoriapanel.add(categoriacb);
-
-		selbutton = new JButton("Selezione");
-		categoriapanel.add(selbutton);
-
-		buttonpanel = new JPanel();
-		contentPane.add(buttonpanel, BorderLayout.SOUTH);
-
-		insertbutton = new JButton("Inserisci");
-		insertbutton.setBackground(Color.GREEN);
-		buttonpanel.add(insertbutton);
-
-		clearbutton = new JButton("Pulisci");
-		clearbutton.setBackground(Color.WHITE);
-		buttonpanel.add(clearbutton);
-
-		backbutton = new JButton("Indietro");
-		backbutton.setBackground(Color.RED);
-		buttonpanel.add(backbutton);
-
-		JPanel titlepanel = new JPanel();
-		titlepanel.setBackground(new Color(139, 0, 0));
-		contentPane.add(titlepanel, BorderLayout.NORTH);
-
-		JLabel titlelabel = new JLabel("Inserimento nuovo prodotto");
-		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-		titlepanel.add(titlelabel);
+	    descta.addKeyListener(new KeyAdapter() {
+	        @Override
+	        public void keyTyped(KeyEvent e) {
+	            if (descta.getText().length() >= 500) {
+	                e.consume();
+	            }
+	        }
+	    });
 	}
 
 	public NuovoProdottoFrame(String title, Controller c) {

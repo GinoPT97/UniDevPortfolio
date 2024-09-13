@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -50,153 +51,160 @@ public class ModificaClienteFrame extends JFrame {
 	private JPanel titlepanel;
 	private JLabel titlelabel;
 
-	public void clean() {
-		nometf.setText("");
-		cognometf.setText("");
-		codfisctf.setText("");
-		indirizzotf.setText("");
-		emailtf.setText("");
-		telefonotf.setText("");
-	}
-
-	public void viewct(Cliente ce) {
-		cod = ce.getCodCl();
-		nometf.setText(ce.getNome());
-		cognometf.setText(ce.getCognome());
-		codfisctf.setText(ce.getCodFis());
-		indirizzotf.setText(ce.getInd());
-		emailtf.setText(ce.getEmail());
-		telefonotf.setText(ce.getTel());
-	}
-
-	public void azioni(Controller c) {
-		backbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				clean();
-				c.visAndcl(3);
-			}
-		});
-
-		addbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					c.upcliente(new Cliente(cod, nometf.getText(), cognometf.getText(), codfisctf.getText(),
-							emailtf.getText(), indirizzotf.getText(), telefonotf.getText(), null, null));
-					clean();
-					c.visAndcl(3);
-					JOptionPane.showMessageDialog(null, "Cliente modificato");
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-				}
-			}
-		});
-
-		clearbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				clean();
-			}
-		});
-	}
 
 	public void elementi() {
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 500);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setLocationRelativeTo(null);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
+	    // Impostazioni di base del frame
+	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+	    setBounds(100, 100, 700, 500);
+	    setLocationRelativeTo(null);
+	    setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-		buttonpanel = new JPanel();
-		contentPane.add(buttonpanel, BorderLayout.SOUTH);
+	    // Pannello principale
+	    contentPane = new JPanel();
+	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+	    contentPane.setLayout(new BorderLayout(0, 0));
+	    setContentPane(contentPane);
 
-		addbutton = new JButton("Inserisci");
-		addbutton.setBackground(Color.BLUE);
-		buttonpanel.add(addbutton);
+	    // Pannello del titolo
+	    titlepanel = new JPanel();
+	    titlepanel.setBackground(new Color(107, 142, 35));
+	    titlelabel = new JLabel("Modifica Cliente");
+	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+	    titlelabel.setForeground(Color.WHITE); // Colore del testo bianco per contrasto
+	    titlepanel.add(titlelabel);
+	    contentPane.add(titlepanel, BorderLayout.NORTH);
 
-		clearbutton = new JButton("Pulisci");
-		buttonpanel.add(clearbutton);
+	    // Pannello per i bottoni
+	    buttonpanel = new JPanel();
+	    buttonpanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); // Layout centrato con spaziatura
+	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-		backbutton = new JButton("Indietro");
-		buttonpanel.add(backbutton);
-		backbutton.setBackground(Color.RED);
+	    // Bottone Inserisci
+	    addbutton = new JButton("Inserisci");
+	    addbutton.setBackground(Color.BLUE);
+	    addbutton.setForeground(Color.WHITE); // Colore del testo bianco per contrasto
+	    buttonpanel.add(addbutton);
 
-		elempanel = new JPanel();
-		elempanel.setBorder(new EmptyBorder(100, 100, 100, 100));
-		contentPane.add(elempanel);
-		elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
+	    // Bottone Pulisci
+	    clearbutton = new JButton("Pulisci");
+	    buttonpanel.add(clearbutton);
 
-		nomepanel = new JPanel();
-		elempanel.add(nomepanel);
+	    // Bottone Indietro
+	    backbutton = new JButton("Indietro");
+	    backbutton.setBackground(Color.RED);
+	    backbutton.setForeground(Color.WHITE); // Colore del testo bianco per contrasto
+	    buttonpanel.add(backbutton);
 
-		nomelab = new JLabel("Nome :");
-		nomepanel.add(nomelab);
+	    // Pannello per gli elementi di input
+	    elempanel = new JPanel();
+	    elempanel.setBorder(new EmptyBorder(20, 50, 20, 50)); // Padding migliorato
+	    elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS)); // Layout verticale per gli input
+	    contentPane.add(elempanel, BorderLayout.CENTER);
 
-		nometf = new JTextField();
-		nometf.setColumns(10);
-		nomepanel.add(nometf);
+	    // Nome
+	    nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+	    nomelab = new JLabel("Nome :");
+	    nomepanel.add(nomelab);
+	    nometf = new JTextField(10);
+	    nomepanel.add(nometf);
+	    elempanel.add(nomepanel);
 
-		cognomepanel = new JPanel();
-		elempanel.add(cognomepanel);
+	    // Cognome
+	    cognomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    cognomelab = new JLabel("Cognome :");
+	    cognomepanel.add(cognomelab);
+	    cognometf = new JTextField(10);
+	    cognomepanel.add(cognometf);
+	    elempanel.add(cognomepanel);
 
-		cognomelab = new JLabel("Cognome :");
-		cognomepanel.add(cognomelab);
+	    // Codice Fiscale
+	    codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+	    codfisclab = new JLabel("Codice Fiscale :");
+	    codfiscpanel.add(codfisclab);
+	    codfisctf = new JTextField(10);
+	    codfiscpanel.add(codfisctf);
+	    elempanel.add(codfiscpanel);
 
-		cognometf = new JTextField();
-		cognometf.setColumns(10);
-		cognomepanel.add(cognometf);
+	    // Email
+	    emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+	    emaillab = new JLabel("Email :");
+	    emailpanel.add(emaillab);
+	    emailtf = new JTextField(10);
+	    emailpanel.add(emailtf);
+	    elempanel.add(emailpanel);
 
-		codfiscpanel = new JPanel();
-		elempanel.add(codfiscpanel);
+	    // Indirizzo
+	    indirizzopanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Allineamento centrato
+	    indirizzolab = new JLabel("Indirizzo :");
+	    indirizzopanel.add(indirizzolab);
+	    indirizzotf = new JTextField(10);
+	    indirizzopanel.add(indirizzotf);
+	    elempanel.add(indirizzopanel);
 
-		codfisclab = new JLabel("Codice Fiscale :");
-		codfiscpanel.add(codfisclab);
+	    // Telefono
+	    telefonopanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Allineamento centrato
+	    lblTelefono = new JLabel("Telefono : +39");
+	    telefonopanel.add(lblTelefono);
+	    telefonotf = new JTextField(10);
+	    telefonopanel.add(telefonotf);
+	    elempanel.add(telefonopanel);
+	}
 
-		codfisctf = new JTextField();
-		codfisctf.setColumns(10);
-		codfiscpanel.add(codfisctf);
+	// Metodo per pulire i campi di input
+	public void clean() {
+	    nometf.setText("");
+	    cognometf.setText("");
+	    codfisctf.setText("");
+	    indirizzotf.setText("");
+	    emailtf.setText("");
+	    telefonotf.setText("");
+	}
 
-		emailpanel = new JPanel();
-		elempanel.add(emailpanel);
+	// Metodo per visualizzare i dati di un cliente nei rispettivi campi
+	public void viewct(Cliente ce) {
+	    cod = ce.getCodCl();
+	    nometf.setText(ce.getNome());
+	    cognometf.setText(ce.getCognome());
+	    codfisctf.setText(ce.getCodFis());
+	    indirizzotf.setText(ce.getInd());
+	    emailtf.setText(ce.getEmail());
+	    telefonotf.setText(ce.getTel());
+	}
 
-		emaillab = new JLabel("Email :");
-		emailpanel.add(emaillab);
+	// Metodo per aggiungere le azioni ai bottoni
+	public void azioni(Controller c) {
+	    // Bottone per tornare indietro
+	    backbutton.addActionListener(e -> {
+	        clean();
+	        c.visAndcl(3); // Visualizza la vista con indice 3
+	    });
 
-		emailtf = new JTextField();
-		emailtf.setColumns(10);
-		emailpanel.add(emailtf);
+	    // Bottone per aggiornare un cliente
+	    addbutton.addActionListener(e -> {
+	        try {
+	            // Aggiorna il cliente con i dati inseriti nei JTextField
+	            Cliente clienteAggiornato = new Cliente(
+	                cod, 
+	                nometf.getText(), 
+	                cognometf.getText(), 
+	                codfisctf.getText(),
+	                emailtf.getText(), 
+	                indirizzotf.getText(), 
+	                telefonotf.getText(), 
+	                null, 
+	                null
+	            );
+	            c.upcliente(clienteAggiornato); // Aggiorna il cliente nel controller
+	            clean(); // Pulisce i campi dopo l'aggiornamento
+	            c.visAndcl(3); // Torna alla vista con indice 3
+	            JOptionPane.showMessageDialog(null, "Cliente modificato");
+	        } catch (SQLException e1) {
+	            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage());
+	        }
+	    });
 
-		indirizzopanel = new JPanel();
-		elempanel.add(indirizzopanel);
-
-		indirizzolab = new JLabel(" Indirizzo : ");
-		indirizzopanel.add(indirizzolab);
-
-		indirizzotf = new JTextField();
-		indirizzotf.setColumns(10);
-		indirizzopanel.add(indirizzotf);
-
-		telefonopanel = new JPanel();
-		elempanel.add(telefonopanel);
-
-		lblTelefono = new JLabel("Telefono :       +39");
-		telefonopanel.add(lblTelefono);
-
-		telefonotf = new JTextField();
-		telefonotf.setColumns(10);
-		telefonopanel.add(telefonotf);
-
-		titlepanel = new JPanel();
-		titlepanel.setBackground(new Color(107, 142, 35));
-		contentPane.add(titlepanel, BorderLayout.NORTH);
-
-		titlelabel = new JLabel("Modifica Cliente");
-		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-		titlepanel.add(titlelabel);
+	    // Bottone per pulire i campi
+	    clearbutton.addActionListener(e -> clean());
 	}
 
 	public ModificaClienteFrame(String title, Controller c) {
