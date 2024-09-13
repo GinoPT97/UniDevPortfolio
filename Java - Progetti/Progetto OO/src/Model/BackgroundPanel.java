@@ -11,58 +11,78 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class BackgroundPanel extends JPanel {
-	private static Map<String, Image> imageCache = new HashMap<>(); // Cache delle immagini
-	private Image backgroundImage;
-	private boolean isImageLoaded = false;
+    private static final Map<String, Image> imageCache = new ConcurrentHashMap<>(); // Cache delle immagini
+    private Image backgroundImage;
+    private boolean isImageLoaded = false;
+    private final String imagePath;
 
-	public BackgroundPanel(String imagePath) {
-		backgroundImage = imageCache.get(imagePath);
-		if (backgroundImage != null) {
-			isImageLoaded = true;
-			repaint();
-		} else {
-			loadBackgroundImage(imagePath);
-		}
-	}
+    public BackgroundPanel(String imagePath) {
+        this.imagePath = imagePath;
+        backgroundImage = imageCache.get(imagePath);
+        if (backgroundImage != null) {
+            isImageLoaded = true;
+            repaint();
+        } else {
+            loadBackgroundImage();
+        }
+    }
 
-	private void loadBackgroundImage(String imagePath) {
-		new SwingWorker<Image, Void>() {
-			@Override
-			protected Image doInBackground() throws Exception {
-				URL imageURL = getClass().getClassLoader().getResource(imagePath);
-				if (imageURL == null) {
-					throw new IllegalArgumentException("L'immagine non è stata trovata: " + imagePath);
-				}
-				return ImageIO.read(imageURL);
-			}
+    private void loadBackgroundImage() {
+        SwingUtilities.invokeLater(() -> new SwingWorker<Image, Void>() {
+            @Override
+            protected Image doInBackground() {
+                try {
+                    URL imageURL = getClass().getClassLoader().getResource(imagePath);
+                    if (imageURL == null) {
+                        throw new IllegalArgumentException("L'immagine non è stata trovata: " + imagePath);
+                    }
+                    return ImageIO.read(imageURL);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
 
-			@Override
-			protected void done() {
-				try {
-					backgroundImage = get();
-					if (backgroundImage != null) {
-						imageCache.put(imagePath, backgroundImage); // Memorizza l'immagine nella cache
-						isImageLoaded = true;
-						repaint();
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}.execute();
-	}
+            @Override
+            protected void done() {
+                try {
+                    backgroundImage = get();
+                    if (backgroundImage != null) {
+                        imageCache.put(imagePath, backgroundImage); // Memorizza l'immagine nella cache
+                        isImageLoaded = true;
+                        repaint();
+                    } else {
+                        // Gestisci l'errore se l'immagine non è stata caricata
+                        System.err.println("Errore nel caricamento dell'immagine: " + imagePath);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute());
+    }
 
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		if (isImageLoaded && backgroundImage != null) {
-			// Disegna l'immagine ridimensionata per adattarsi al pannello
-			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-		} else {
-			// Placeholder: colore di sfondo o immagine di segnaposto
-			g.setColor(Color.LIGHT_GRAY);
-			g.fillRect(0, 0, getWidth(), getHeight());
-		}
-	}
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (isImageLoaded && backgroundImage != null) {
+            // Disegna l'immagine ridimensionata per adattarsi al pannello
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        } else {
+            // Placeholder: colore di sfondo o immagine di segnaposto
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+    }
 }
+

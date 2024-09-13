@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.sql.SQLException;
@@ -40,61 +41,63 @@ public class VisioneDipendentiFrame extends JFrame {
 	private JTextField searchtf;
 
 	public void elementi() {
-		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(VisioneDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
-		setBounds(100, 100, 850, 500);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setLocationRelativeTo(null);
+	    // Imposta le proprietà della finestra principale
+	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+	    setIconImage(Toolkit.getDefaultToolkit()
+	            .getImage(VisioneDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
+	    setBounds(100, 100, 850, 500);
+	    setLocationRelativeTo(null);
 
-		scrollPane = new JScrollPane();
-		contentPane.add(scrollPane);
+	    // Crea e configura il pannello principale con layout BorderLayout
+	    contentPane = new JPanel(new BorderLayout());
+	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+	    setContentPane(contentPane);
 
-		table = new JTable();
-		model = new DefaultTableModel();
-		Object[] colonne = { "Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono" };
-		final Object[] rows = new Object[7];
-		model.setColumnIdentifiers(colonne);
-		table.setModel(model);
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		scrollPane.setViewportView(table);
+	    // Crea e configura la tabella con scroll pane
+	    model = new DefaultTableModel(
+	            new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
+	    table = new JTable(model);
+	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		titlepanel = new JPanel();
-		titlepanel.setBackground(Color.ORANGE);
-		contentPane.add(titlepanel, BorderLayout.NORTH);
+	    JScrollPane scrollPane = new JScrollPane(table);
+	    contentPane.add(scrollPane, BorderLayout.CENTER);
 
-		titlelab = new JLabel("Amministrazione Dipendenti");
-		titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
-		titlepanel.add(titlelab);
+	    // Crea e configura il pannello del titolo
+	    JPanel titlepanel = new JPanel();
+	    titlepanel.setBackground(Color.ORANGE);
+	    JLabel titlelab = new JLabel("Amministrazione Dipendenti");
+	    titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
+	    titlepanel.add(titlelab);
+	    contentPane.add(titlepanel, BorderLayout.NORTH);
 
-		buttonpanel = new JPanel();
-		contentPane.add(buttonpanel, BorderLayout.SOUTH);
+	    // Crea e configura il pannello dei bottoni
+	    JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-		searchtf = new JTextField();
-		buttonpanel.add(searchtf);
-		searchtf.setColumns(10);
+	    searchtf = new JTextField(10);
+	    buttonpanel.add(searchtf);
 
-		searchbutton = new JButton("Cerca");
-		searchbutton.setBackground(new Color(107, 142, 35));
-		buttonpanel.add(searchbutton);
+	    searchbutton = new JButton("Cerca");
+	    searchbutton.setBackground(new Color(107, 142, 35));
+	    buttonpanel.add(searchbutton);
 
-		addbutton = new JButton("Aggiungi");
-		addbutton.setBackground(Color.GREEN);
-		buttonpanel.add(addbutton);
+	    addbutton = new JButton("Aggiungi");
+	    addbutton.setBackground(Color.GREEN);
+	    buttonpanel.add(addbutton);
 
-		updatebutton = new JButton("Modifica");
-		updatebutton.setBackground(new Color(70, 130, 180));
-		buttonpanel.add(updatebutton);
+	    updatebutton = new JButton("Modifica");
+	    updatebutton.setBackground(new Color(70, 130, 180));
+	    buttonpanel.add(updatebutton);
 
-		backbutton = new JButton("Indietro");
-		backbutton.setBackground(Color.RED);
-		buttonpanel.add(backbutton);
+	    backbutton = new JButton("Indietro");
+	    backbutton.setBackground(Color.RED);
+	    buttonpanel.add(backbutton);
 	}
 
 	public void azioni(Controller c) throws SQLException {
+		
+		c.alldipendenti(model);
+		
 	    // Listener per il pulsante di ricerca
 	    searchbutton.addActionListener(e -> {
 	        String query = searchtf.getText().trim().toLowerCase();
@@ -149,7 +152,6 @@ public class VisioneDipendentiFrame extends JFrame {
 	public VisioneDipendentiFrame(String title, Controller c) throws SQLException {
 		super(title);
 		this.elementi();
-		c.alldipendenti(model);
 		this.azioni(c);
 	}
 }
