@@ -37,6 +37,57 @@ public class VisioneClienteFrame extends JFrame {
 	private JTextField searchtf;
 	private JButton searchbutton;
 
+	public VisioneClienteFrame(String title, Controller c) throws SQLException {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
+
+	public void azioni(Controller c) throws SQLException {
+	    // Carica i dati iniziali nella tabella
+	    c.allcliente(model);
+
+	    // Aggiungi ActionListener al pulsante di ricerca
+	    searchbutton.addActionListener(e -> {
+	        String query = searchtf.getText().trim().toLowerCase();
+	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+	        if (query.isEmpty()) {
+	            // Se la query è vuota, mostra tutti i dati
+	            table.setRowSorter(null); // Rimuove il filtro
+	        } else {
+	            try {
+	                // Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro case insensitive
+	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+	                table.setRowSorter(sorter);
+	            } catch (PatternSyntaxException ex) {
+	                JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+	            }
+	        }
+	    });
+
+	    // Aggiungi ActionListener al pulsante di aggiunta
+	    addbutton.addActionListener(e -> c.visAndcl(1));
+
+	    // Aggiungi ActionListener al pulsante di aggiornamento
+	    updatebutton.addActionListener(e -> {
+	        int selectedRow = table.getSelectedRow();
+	        if (selectedRow >= 0) {
+	            String[] clienteData = new String[7];
+	            for (int i = 0; i < clienteData.length; i++) {
+	                clienteData[i] = table.getValueAt(selectedRow, i).toString();
+	            }
+	            Cliente cliente = new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null);
+	            c.visAndcl(2);
+	            c.upclf.viewct(cliente);
+	        } else {
+	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
+	        }
+	    });
+
+	    // Aggiungi ActionListener al pulsante di ritorno
+	    backbutton.addActionListener(e -> c.dipAndElem(4));
+	}
+
 	public void elementi() {
 	    // Imposta le proprietà della finestra principale
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -88,56 +139,5 @@ public class VisioneClienteFrame extends JFrame {
 	    backbutton = new JButton("Indietro");
 	    backbutton.setBackground(Color.RED);
 	    buttonpanel.add(backbutton);
-	}
-
-	public void azioni(Controller c) throws SQLException {
-	    // Carica i dati iniziali nella tabella
-	    c.allcliente(model);
-
-	    // Aggiungi ActionListener al pulsante di ricerca
-	    searchbutton.addActionListener(e -> {
-	        String query = searchtf.getText().trim().toLowerCase();
-	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-	        if (query.isEmpty()) {
-	            // Se la query è vuota, mostra tutti i dati
-	            table.setRowSorter(null); // Rimuove il filtro
-	        } else {
-	            try {
-	                // Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro case insensitive
-	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-	                table.setRowSorter(sorter);
-	            } catch (PatternSyntaxException ex) {
-	                JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-	            }
-	        }
-	    });
-
-	    // Aggiungi ActionListener al pulsante di aggiunta
-	    addbutton.addActionListener(e -> c.visAndcl(1));
-
-	    // Aggiungi ActionListener al pulsante di aggiornamento
-	    updatebutton.addActionListener(e -> {
-	        int selectedRow = table.getSelectedRow();
-	        if (selectedRow >= 0) {
-	            String[] clienteData = new String[7];
-	            for (int i = 0; i < clienteData.length; i++) {
-	                clienteData[i] = table.getValueAt(selectedRow, i).toString();
-	            }
-	            Cliente cliente = new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null);
-	            c.visAndcl(2);
-	            c.upclf.viewct(cliente);
-	        } else {
-	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
-	        }
-	    });
-
-	    // Aggiungi ActionListener al pulsante di ritorno
-	    backbutton.addActionListener(e -> c.dipAndElem(4));
-	}
-
-	public VisioneClienteFrame(String title, Controller c) throws SQLException {
-		super(title);
-		this.elementi();
-		this.azioni(c);
 	}
 }

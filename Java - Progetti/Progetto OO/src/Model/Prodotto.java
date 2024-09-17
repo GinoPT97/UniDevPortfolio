@@ -30,88 +30,88 @@ public class Prodotto {
 		this.scorta = scorta;
 	}
 
+	public String getCategoria() {
+		return categoria;
+	}
+
 	public String getCodProd() {
 		return codprodotto;
-	}
-
-	public void setCodProd(String codprodotto) {
-		this.codprodotto = codprodotto;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getDescrizione() {
-		return descrizione;
-	}
-
-	public void setDescrizione(String descrizione) {
-		this.descrizione = descrizione;
-	}
-
-	public String getLuogoProv() {
-		return luogoprov;
-	}
-
-	public void setLuogoProv(String luogoprov) {
-		this.luogoprov = luogoprov;
 	}
 
 	public Date getDatamungitura() {
 		return datamungitura;
 	}
 
-	public void setDatamungitura(Date datamungitura) {
-		this.datamungitura = datamungitura;
+	public Date getDataraccolta() {
+		return dataraccolta;
 	}
 
 	public Date getDatascadenza() {
 		return datascadenza;
 	}
 
-	public void setDatascadenza(Date datascadenza) {
-		this.datascadenza = datascadenza;
+	public String getDescrizione() {
+		return descrizione;
 	}
 
-	public Date getDataraccolta() {
-		return dataraccolta;
+	public String getLuogoProv() {
+		return luogoprov;
 	}
 
-	public void setDataraccolta(Date dataraccolta) {
-		this.dataraccolta = dataraccolta;
+	public String getNome() {
+		return nome;
 	}
 
 	public double getPrezzo() {
 		return prezzo;
 	}
 
-	public void setPrezzo(double prezzo) {
-		this.prezzo = prezzo;
+	public int getScorta() {
+		return scorta;
 	}
 
 	public boolean isGlutine() {
 		return glutine;
 	}
 
-	public void setGlutine(boolean glutine) {
-		this.glutine = glutine;
-	}
-
-	public String getCategoria() {
-		return categoria;
-	}
-
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
 
-	public int getScorta() {
-		return scorta;
+	public void setCodProd(String codprodotto) {
+		this.codprodotto = codprodotto;
+	}
+
+	public void setDatamungitura(Date datamungitura) {
+		this.datamungitura = datamungitura;
+	}
+
+	public void setDataraccolta(Date dataraccolta) {
+		this.dataraccolta = dataraccolta;
+	}
+
+	public void setDatascadenza(Date datascadenza) {
+		this.datascadenza = datascadenza;
+	}
+
+	public void setDescrizione(String descrizione) {
+		this.descrizione = descrizione;
+	}
+
+	public void setGlutine(boolean glutine) {
+		this.glutine = glutine;
+	}
+
+	public void setLuogoProv(String luogoprov) {
+		this.luogoprov = luogoprov;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public void setPrezzo(double prezzo) {
+		this.prezzo = prezzo;
 	}
 
 	public void setScorta(int scorta) {

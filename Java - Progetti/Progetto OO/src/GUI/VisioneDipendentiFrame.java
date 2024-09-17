@@ -40,6 +40,67 @@ public class VisioneDipendentiFrame extends JFrame {
 	private JButton searchbutton;
 	private JTextField searchtf;
 
+	public VisioneDipendentiFrame(String title, Controller c) throws SQLException {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
+
+	public void azioni(Controller c) throws SQLException {
+
+		c.alldipendenti(model);
+
+	    // Listener per il pulsante di ricerca
+	    searchbutton.addActionListener(e -> {
+	        String query = searchtf.getText().trim().toLowerCase();
+	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+	        if (query.isEmpty()) {
+	            // Se la query è vuota, mostra tutti i dati
+	            table.setRowSorter(null); // Rimuove il filtro
+	        } else {
+	            try {
+	                // Applica il filtro sulla tabella con flag case insensitive
+	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+	            } catch (PatternSyntaxException ex) {
+	                System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
+	                return; // Esci se c'è un errore di sintassi
+	            }
+	            table.setRowSorter(sorter);
+	        }
+	    });
+
+	    // Listener per il pulsante di aggiunta
+	    addbutton.addActionListener(e -> c.visAnddip(1));
+
+	    // Listener per il pulsante di ritorno
+	    backbutton.addActionListener(e -> {
+	        c.visAnddip(3); // Mostra la vista dei dipendenti
+	    });
+
+	    // Listener per il pulsante di aggiornamento
+	    updatebutton.addActionListener(e -> {
+	        int i = table.getSelectedRow();
+	        if (i >= 0) {
+	            // Se una riga è selezionata, aggiorna il dipendente
+	            c.visAnddip(2);
+	            c.updipf.viewdip(new Dipendente(
+	                table.getValueAt(i, 0).toString(),
+	                table.getValueAt(i, 1).toString(),
+	                table.getValueAt(i, 2).toString(),
+	                table.getValueAt(i, 3).toString(),
+	                table.getValueAt(i, 4).toString(),
+	                table.getValueAt(i, 5).toString(),
+	                table.getValueAt(i, 6).toString()
+	            ));
+	        } else {
+	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare");
+	        }
+	    });
+
+	    // Listener per il pulsante di ritorno alla schermata admin
+	    backbutton.addActionListener(e -> c.adminAndElem(5));
+	}
+
 	public void elementi() {
 	    // Imposta le proprietà della finestra principale
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -92,66 +153,5 @@ public class VisioneDipendentiFrame extends JFrame {
 	    backbutton = new JButton("Indietro");
 	    backbutton.setBackground(Color.RED);
 	    buttonpanel.add(backbutton);
-	}
-
-	public void azioni(Controller c) throws SQLException {
-		
-		c.alldipendenti(model);
-		
-	    // Listener per il pulsante di ricerca
-	    searchbutton.addActionListener(e -> {
-	        String query = searchtf.getText().trim().toLowerCase();
-	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-	        if (query.isEmpty()) {
-	            // Se la query è vuota, mostra tutti i dati
-	            table.setRowSorter(null); // Rimuove il filtro
-	        } else {
-	            try {
-	                // Applica il filtro sulla tabella con flag case insensitive
-	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-	            } catch (PatternSyntaxException ex) {
-	                System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
-	                return; // Esci se c'è un errore di sintassi
-	            }
-	            table.setRowSorter(sorter);
-	        }
-	    });
-
-	    // Listener per il pulsante di aggiunta
-	    addbutton.addActionListener(e -> c.visAnddip(1));
-
-	    // Listener per il pulsante di ritorno
-	    backbutton.addActionListener(e -> {
-	        c.visAnddip(3); // Mostra la vista dei dipendenti
-	    });
-
-	    // Listener per il pulsante di aggiornamento
-	    updatebutton.addActionListener(e -> {
-	        int i = table.getSelectedRow();
-	        if (i >= 0) {
-	            // Se una riga è selezionata, aggiorna il dipendente
-	            c.visAnddip(2);
-	            c.updipf.viewdip(new Dipendente(
-	                table.getValueAt(i, 0).toString(),
-	                table.getValueAt(i, 1).toString(),
-	                table.getValueAt(i, 2).toString(),
-	                table.getValueAt(i, 3).toString(),
-	                table.getValueAt(i, 4).toString(),
-	                table.getValueAt(i, 5).toString(),
-	                table.getValueAt(i, 6).toString()
-	            ));
-	        } else {
-	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare");
-	        }
-	    });
-	    
-	    // Listener per il pulsante di ritorno alla schermata admin
-	    backbutton.addActionListener(e -> c.adminAndElem(5));
-	}
-
-	public VisioneDipendentiFrame(String title, Controller c) throws SQLException {
-		super(title);
-		this.elementi();
-		this.azioni(c);
 	}
 }

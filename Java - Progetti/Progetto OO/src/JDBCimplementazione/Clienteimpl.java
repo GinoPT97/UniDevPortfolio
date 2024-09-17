@@ -32,31 +32,31 @@ public class Clienteimpl implements ClienteJDBC {
     }
 
     @Override
-    public boolean setNewCt(Cliente cliente) throws SQLException {
-        // Evita la duplicazione di codice, popola la query con i dati del cliente
-        setPreparedStatement(setNewCt, cliente);
-        return setNewCt.executeUpdate() > 0;
-    }
-
-    @Override
     public ArrayList<Cliente> getAllCt() throws SQLException {
         ArrayList<Cliente> clienti = new ArrayList<>();
         try (ResultSet rs = getAllCt.executeQuery(
                 "SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC")) {
             while (rs.next()) {
                 clienti.add(new Cliente(
-                        rs.getString("codcliente"), 
-                        rs.getString("nome"), 
-                        rs.getString("cognome"), 
-                        rs.getString("codicefiscale"), 
-                        rs.getString("email"), 
-                        rs.getString("indirizzo"), 
-                        rs.getString("telefono"), 
-                        new Tessera(rs.getString("codtessera"), rs.getInt("numeropunti"), null), 
+                        rs.getString("codcliente"),
+                        rs.getString("nome"),
+                        rs.getString("cognome"),
+                        rs.getString("codicefiscale"),
+                        rs.getString("email"),
+                        rs.getString("indirizzo"),
+                        rs.getString("telefono"),
+                        new Tessera(rs.getString("codtessera"), rs.getInt("numeropunti"), null),
                         null));
             }
         }
         return clienti;
+    }
+
+    @Override
+    public Cliente getCtByid(String idCt) throws SQLException {
+        try (ResultSet rs = idCl.executeQuery("SELECT nome, cognome FROM cliente WHERE codcliente = '" + idCt + "'")) {
+            return rs.next() ? new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null, null) : null;
+        }
     }
 
     @Override
@@ -70,13 +70,6 @@ public class Clienteimpl implements ClienteJDBC {
     }
 
     @Override
-    public boolean updateCliente(Cliente cliente) throws SQLException {
-        setPreparedStatement(updateCl, cliente);
-        updateCl.setString(7, cliente.getCodCl());
-        return updateCl.executeUpdate() > 0;
-    }
-
-    @Override
     public String getIdCt(String codicefiscale) throws SQLException {
         try (ResultSet rs = idCl.executeQuery("SELECT codcliente FROM cliente WHERE codicefiscale = '" + codicefiscale + "'")) {
             return rs.next() ? rs.getString("codcliente") : null;
@@ -84,10 +77,10 @@ public class Clienteimpl implements ClienteJDBC {
     }
 
     @Override
-    public Cliente getCtByid(String idCt) throws SQLException {
-        try (ResultSet rs = idCl.executeQuery("SELECT nome, cognome FROM cliente WHERE codcliente = '" + idCt + "'")) {
-            return rs.next() ? new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null, null) : null;
-        }
+    public boolean setNewCt(Cliente cliente) throws SQLException {
+        // Evita la duplicazione di codice, popola la query con i dati del cliente
+        setPreparedStatement(setNewCt, cliente);
+        return setNewCt.executeUpdate() > 0;
     }
 
     // Metodo di supporto per evitare codice ripetitivo nella preparazione delle query
@@ -98,6 +91,13 @@ public class Clienteimpl implements ClienteJDBC {
         ps.setString(4, cliente.getInd());
         ps.setString(5, cliente.getTel());
         ps.setString(6, cliente.getEmail());
+    }
+
+    @Override
+    public boolean updateCliente(Cliente cliente) throws SQLException {
+        setPreparedStatement(updateCl, cliente);
+        updateCl.setString(7, cliente.getCodCl());
+        return updateCl.executeUpdate() > 0;
     }
 }
 

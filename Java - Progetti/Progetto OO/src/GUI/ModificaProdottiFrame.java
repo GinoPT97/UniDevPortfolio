@@ -43,7 +43,68 @@ public class ModificaProdottiFrame extends JFrame {
     private JButton updatebutton;
     private JButton clearbutton;
 
-    public void elementi() {
+    public ModificaProdottiFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
+
+	public void azioni(Controller c) {
+	    backbutton.addActionListener(e -> {
+	        clean();
+	        c.visAndprod(3);
+	    });
+
+	    clearbutton.addActionListener(e -> clean());
+
+	    updatebutton.addActionListener(e -> {
+	        DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
+	        try {
+	            // Verifica se tutti i campi obbligatori sono compilati
+	            if (nometf.getText().isEmpty() || descta.getText().isEmpty() || prezzotf.getText().isEmpty()
+	                    || provtf.getText().isEmpty() || scortatf.getText().isEmpty()) {
+	                JOptionPane.showMessageDialog(this, "Inserisci tutti i campi obbligatori", "Errore", JOptionPane.WARNING_MESSAGE);
+	                return;
+	            }
+
+				// Crea il prodotto in base alla categoria selezionata
+	            Prodotto prodotto = new Prodotto(
+	                cod,
+	                nometf.getText(),
+	                descta.getText(),
+	                Double.parseDouble(prezzotf.getText()),
+	                provtf.getText(),
+	                "Ortofrutticoli".equals(categoriacb.getSelectedItem().toString()) ? data.parse(racctf.getText()) : null,
+	                "Latticini".equals(categoriacb.getSelectedItem().toString()) ? data.parse(mungtf.getText()) : null,
+	                glutcb.isSelected(),
+	                "Inscatolati".equals(categoriacb.getSelectedItem().toString()) ? data.parse(scadtf.getText()) : null,
+	                categoriacb.getSelectedItem().toString(),
+	                Integer.parseInt(scortatf.getText())
+	            );
+
+	            c.upprod(prodotto);
+	            clean();
+	            c.visAndprod(3);
+	            JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
+	        } catch (NumberFormatException | SQLException | ParseException ex) {
+	            JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+	        }
+	    });
+	}
+
+	public void clean() {
+	    nometf.setText("");
+	    descta.setText("");
+	    prezzotf.setText("");
+	    provtf.setText("");
+	    scortatf.setText("");
+	    racctf.setText("");
+	    mungtf.setText("");
+	    scadtf.setText("");
+	    glutcb.setSelected(false);
+	}
+
+	public void elementi() {
         // Impostazioni base della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 650, 450);
@@ -157,7 +218,7 @@ public class ModificaProdottiFrame extends JFrame {
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         panel.add(titlelabel);
     }
-    
+
 	public void viewprod(Prodotto pe) {
 	    cod = pe.getCodProd();
 	    nometf.setText(pe.getNome());
@@ -184,66 +245,5 @@ public class ModificaProdottiFrame extends JFrame {
 	            categoriacb.setSelectedIndex(-1); // O gestione alternativa se la categoria non è riconosciuta
 	            break;
 	    }
-	}
-
-	public void clean() {
-	    nometf.setText("");
-	    descta.setText("");
-	    prezzotf.setText("");
-	    provtf.setText("");
-	    scortatf.setText("");
-	    racctf.setText("");
-	    mungtf.setText("");
-	    scadtf.setText("");
-	    glutcb.setSelected(false);
-	}
-
-	public void azioni(Controller c) {
-	    backbutton.addActionListener(e -> {
-	        clean();
-	        c.visAndprod(3);
-	    });
-
-	    clearbutton.addActionListener(e -> clean());
-
-	    updatebutton.addActionListener(e -> {
-	        DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
-	        try {
-	            // Verifica se tutti i campi obbligatori sono compilati
-	            if (nometf.getText().isEmpty() || descta.getText().isEmpty() || prezzotf.getText().isEmpty()
-	                    || provtf.getText().isEmpty() || scortatf.getText().isEmpty()) {
-	                JOptionPane.showMessageDialog(this, "Inserisci tutti i campi obbligatori", "Errore", JOptionPane.WARNING_MESSAGE);
-	                return;
-	            }
-
-				// Crea il prodotto in base alla categoria selezionata
-	            Prodotto prodotto = new Prodotto(
-	                cod,
-	                nometf.getText(),
-	                descta.getText(),
-	                Double.parseDouble(prezzotf.getText()),
-	                provtf.getText(),
-	                "Ortofrutticoli".equals(categoriacb.getSelectedItem().toString()) ? data.parse(racctf.getText()) : null,
-	                "Latticini".equals(categoriacb.getSelectedItem().toString()) ? data.parse(mungtf.getText()) : null,
-	                glutcb.isSelected(),
-	                "Inscatolati".equals(categoriacb.getSelectedItem().toString()) ? data.parse(scadtf.getText()) : null,
-	                categoriacb.getSelectedItem().toString(),
-	                Integer.parseInt(scortatf.getText())
-	            );
-
-	            c.upprod(prodotto);
-	            clean();
-	            c.visAndprod(3);
-	            JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
-	        } catch (NumberFormatException | SQLException | ParseException ex) {
-	            JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-	        }
-	    });
-	}
-
-	public ModificaProdottiFrame(String title, Controller c) {
-		super(title);
-		this.elementi();
-		this.azioni(c);
 	}
 }

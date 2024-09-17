@@ -45,7 +45,85 @@ public class NuovoProdottoFrame extends JFrame {
 	private JTextArea descta;
 	private JCheckBox glutcb;
 	private JComboBox categoriacb;
-	
+
+	public NuovoProdottoFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
+
+	public void azioni(Controller c) {
+	    clearbutton.addActionListener(e -> clean());
+
+	    backbutton.addActionListener(e -> {
+	        clean();
+	        c.visAndprod(3);
+	    });
+
+	    insertbutton.addActionListener(e -> {
+	        DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
+	        try {
+	            // Verifica che tutti i campi obbligatori siano compilati
+	            if (nometf.getText().isEmpty() || descta.getText().isEmpty() ||
+	                prezzotf.getText().isEmpty() || provtf.getText().isEmpty() ||
+	                scortatf.getText().isEmpty()) {
+	                JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
+	                return;
+	            }
+
+	            // Prepara i dati da salvare in base alla categoria selezionata
+	            String categoria = categoriacb.getSelectedItem().toString();
+	            Prodotto prodotto = new Prodotto(
+	                "", nometf.getText(), descta.getText(),
+	                Double.parseDouble(prezzotf.getText()), provtf.getText(),
+	                categoria.equals("Ortofrutticoli") ? data.parse(racctf.getText()) : null,
+	                categoria.equals("Latticini") ? data.parse(mungtf.getText()) : null,
+	                glutcb.isSelected(),
+	                categoria.equals("Inscatolati") ? data.parse(scadtf.getText()) : null,
+	                categoria, Integer.parseInt(scortatf.getText())
+	            );
+
+	            // Salva il prodotto e mostra un messaggio di successo
+	            c.newprod(prodotto);
+	            clean();
+	            JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
+
+	        } catch (NumberFormatException | SQLException | ParseException e1) {
+	            JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+	        }
+	    });
+
+	    selbutton.addActionListener(event -> {
+	        // Abilita o disabilita i campi in base alla categoria selezionata
+	        int type = categoriacb.getSelectedIndex();
+	        racctf.setEditable(type == 0);
+	        mungtf.setEditable(type == 2);
+	        scadtf.setEditable(type == 1);
+	        glutcb.setEnabled(type == 3);
+	    });
+
+	    descta.addKeyListener(new KeyAdapter() {
+	        @Override
+	        public void keyTyped(KeyEvent e) {
+	            if (descta.getText().length() >= 500) {
+	                e.consume();
+	            }
+	        }
+	    });
+	}
+
+	public void clean() {
+	    nometf.setText("");
+	    descta.setText("");
+	    prezzotf.setText("");
+	    provtf.setText("");
+	    scortatf.setText("");
+	    racctf.setText("");
+	    mungtf.setText("");
+	    scadtf.setText("");
+	    glutcb.setSelected(false);
+	}
+
 	public void elementi() {
 	    // Configurazione della finestra
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -169,83 +247,5 @@ public class NuovoProdottoFrame extends JFrame {
 	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
 	    titlepanel.add(titlelabel);
 	    contentPane.add(titlepanel, BorderLayout.NORTH);
-	}
-
-	public void clean() {
-	    nometf.setText("");
-	    descta.setText("");
-	    prezzotf.setText("");
-	    provtf.setText("");
-	    scortatf.setText("");
-	    racctf.setText("");
-	    mungtf.setText("");
-	    scadtf.setText("");
-	    glutcb.setSelected(false);
-	}
-
-	public void azioni(Controller c) {
-	    clearbutton.addActionListener(e -> clean());
-
-	    backbutton.addActionListener(e -> {
-	        clean();
-	        c.visAndprod(3);
-	    });
-
-	    insertbutton.addActionListener(e -> {
-	        DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
-	        try {
-	            // Verifica che tutti i campi obbligatori siano compilati
-	            if (nometf.getText().isEmpty() || descta.getText().isEmpty() ||
-	                prezzotf.getText().isEmpty() || provtf.getText().isEmpty() ||
-	                scortatf.getText().isEmpty()) {
-	                JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
-	                return;
-	            }
-
-	            // Prepara i dati da salvare in base alla categoria selezionata
-	            String categoria = categoriacb.getSelectedItem().toString();
-	            Prodotto prodotto = new Prodotto(
-	                "", nometf.getText(), descta.getText(),
-	                Double.parseDouble(prezzotf.getText()), provtf.getText(),
-	                categoria.equals("Ortofrutticoli") ? data.parse(racctf.getText()) : null,
-	                categoria.equals("Latticini") ? data.parse(mungtf.getText()) : null,
-	                glutcb.isSelected(),
-	                categoria.equals("Inscatolati") ? data.parse(scadtf.getText()) : null,
-	                categoria, Integer.parseInt(scortatf.getText())
-	            );
-
-	            // Salva il prodotto e mostra un messaggio di successo
-	            c.newprod(prodotto);
-	            clean();
-	            JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
-
-	        } catch (NumberFormatException | SQLException | ParseException e1) {
-	            JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-	        }
-	    });
-
-	    selbutton.addActionListener(event -> {
-	        // Abilita o disabilita i campi in base alla categoria selezionata
-	        int type = categoriacb.getSelectedIndex();
-	        racctf.setEditable(type == 0);
-	        mungtf.setEditable(type == 2);
-	        scadtf.setEditable(type == 1);
-	        glutcb.setEnabled(type == 3);
-	    });
-
-	    descta.addKeyListener(new KeyAdapter() {
-	        @Override
-	        public void keyTyped(KeyEvent e) {
-	            if (descta.getText().length() >= 500) {
-	                e.consume();
-	            }
-	        }
-	    });
-	}
-
-	public NuovoProdottoFrame(String title, Controller c) {
-		super(title);
-		this.elementi();
-		this.azioni(c);
 	}
 }

@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.sql.SQLException;
 
@@ -29,6 +28,43 @@ public class PuntiTesseraFrame extends JFrame {
 	private JPanel requestpanel;
 	private JPanel rispanel;
 
+	public PuntiTesseraFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
+
+	public void azioni(Controller c) {
+	    // Pulsante di visualizzazione
+	    visbutton.addActionListener(e -> {
+	        String id = idtf.getText().trim();
+	        if (!id.isEmpty()) {
+	            try {
+	                String punti = c.punti(id);
+	                totlab.setText(punti);
+	            } catch (SQLException ex) {
+	                JOptionPane.showMessageDialog(null, "Errore nella comunicazione con il database!\nTipo di errore: " + ex);
+	            }
+	        } else {
+	            JOptionPane.showMessageDialog(null, "Inserire l'id della tessera.");
+	        }
+	    });
+
+	    // Pulsante di pulizia
+	    clearbutton.addActionListener(e -> clean());
+
+	    // Pulsante di ritorno
+	    backbutton.addActionListener(e -> {
+	        clean();
+	        c.dipAndElem(4);
+	    });
+	}
+
+	void clean() {
+		idtf.setText("");
+		totlab.setText("0.00");
+	}
+
 	public void elementi() {
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 850, 450);
@@ -50,7 +86,7 @@ public class PuntiTesseraFrame extends JFrame {
 
 	    // Pannello dei bottoni
 	    JPanel buttonPanel = new JPanel();
-	    buttonPanel.setLayout((LayoutManager) new FlowLayout(FlowLayout.RIGHT, 10, 10)); // Allineamento a destra con padding
+	    buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // Allineamento a destra con padding
 	    contentPane.add(buttonPanel, BorderLayout.SOUTH);
 
 	    visbutton = new JButton("Visualizza");
@@ -87,42 +123,5 @@ public class PuntiTesseraFrame extends JFrame {
 	    totlab = new JLabel("0.00");
 	    rispanel.add(totLabel);
 	    rispanel.add(totlab);
-	}
-
-	void clean() {
-		idtf.setText("");
-		totlab.setText("0.00");
-	}
-
-	public void azioni(Controller c) {
-	    // Pulsante di visualizzazione
-	    visbutton.addActionListener(e -> {
-	        String id = idtf.getText().trim();
-	        if (!id.isEmpty()) {
-	            try {
-	                String punti = c.punti(id);
-	                totlab.setText(punti);
-	            } catch (SQLException ex) {
-	                JOptionPane.showMessageDialog(null, "Errore nella comunicazione con il database!\nTipo di errore: " + ex);
-	            }
-	        } else {
-	            JOptionPane.showMessageDialog(null, "Inserire l'id della tessera.");
-	        }
-	    });
-
-	    // Pulsante di pulizia
-	    clearbutton.addActionListener(e -> clean());
-
-	    // Pulsante di ritorno
-	    backbutton.addActionListener(e -> {
-	        clean();
-	        c.dipAndElem(4);
-	    });
-	}
-
-	public PuntiTesseraFrame(String title, Controller c) {
-		super(title);
-		this.elementi();
-		this.azioni(c);
 	}
 }

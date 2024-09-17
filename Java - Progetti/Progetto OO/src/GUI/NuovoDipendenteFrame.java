@@ -33,7 +33,67 @@ public class NuovoDipendenteFrame extends JFrame {
 	private JButton addbutton;
 	private JButton clearbutton;
 	private JButton backbutton;
-	
+
+	public NuovoDipendenteFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
+
+	public void azioni(Controller c) {
+		addbutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
+							emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
+					clean();
+					JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+				}
+			}
+		});
+
+		addbutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
+							emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
+					clean();
+					JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+				}
+			}
+		});
+
+		clearbutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clean();
+			}
+		});
+
+		backbutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clean();
+				c.visAnddip(3);
+			}
+		});
+	}
+
+	public void clean() {
+		nometf.setText("");
+		cognometf.setText("");
+		codfisctf.setText("");
+		indirizzotf.setText("");
+		emailtf.setText("");
+		telefonotf.setText("");
+	}
+
 	public void elementi() {
 	    // Imposta le proprietà di base della finestra
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -123,65 +183,5 @@ public class NuovoDipendenteFrame extends JFrame {
 	    JLabel titlelabel = new JLabel("Inserimento Nuovo Dipendente");
 	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
 	    titlepanel.add(titlelabel);
-	}
-
-	public void clean() {
-		nometf.setText("");
-		cognometf.setText("");
-		codfisctf.setText("");
-		indirizzotf.setText("");
-		emailtf.setText("");
-		telefonotf.setText("");
-	}
-
-	public void azioni(Controller c) {
-		addbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
-							emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
-					clean();
-					JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-				}
-			}
-		});
-
-		addbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
-							emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
-					clean();
-					JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-				}
-			}
-		});
-
-		clearbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				clean();
-			}
-		});
-
-		backbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				clean();
-				c.visAnddip(3);
-			}
-		});
-	}
-
-	public NuovoDipendenteFrame(String title, Controller c) {
-		super(title);
-		this.elementi();
-		this.azioni(c);
 	}
 }

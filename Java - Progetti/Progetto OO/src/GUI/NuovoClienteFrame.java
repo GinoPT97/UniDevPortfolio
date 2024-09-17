@@ -31,13 +31,58 @@ public class NuovoClienteFrame extends JFrame {
 	private JButton addbutton;
 	private JButton clearbutton;
 	private JButton backbutton;
-	
+
+	public NuovoClienteFrame(String title, Controller c) {
+		super(title);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
+		this.elementi();
+		this.azioni(c);
+	}
+
+
+    public void azioni(Controller c) {
+        // Azione per il bottone "Indietro"
+        backbutton.addActionListener(e -> {
+            clean();
+            c.visAndcl(3);
+        });
+
+        // Azione per il bottone "Aggiungi"
+        addbutton.addActionListener(e -> {
+            try {
+                // Creazione del nuovo cliente e tessera
+                Cliente newCliente = new Cliente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
+                        emailtf.getText(), indirizzotf.getText(), telefonotf.getText(), null, null);
+                c.newclt(newCliente);
+                c.nuovatessera(nometf.getText(), cognometf.getText(), codfisctf.getText());
+                clean();
+                JOptionPane.showMessageDialog(null, "Cliente e relativa tessera aggiunti");
+            } catch (SQLException e1) {
+                // Gestione dell'errore
+                JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+            }
+        });
+
+        // Azione per il bottone "Pulisci"
+        clearbutton.addActionListener(e -> clean());
+    }
+
+    public void clean() {
+        // Pulizia dei campi di testo
+        nometf.setText("");
+        cognometf.setText("");
+        codfisctf.setText("");
+        indirizzotf.setText("");
+        emailtf.setText("");
+        telefonotf.setText("");
+    }
+
 	public void elementi() {
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 700, 500);
 	    setLocationRelativeTo(null);
 	    setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
-	    
+
 	    // Impostazione del contenuto e del layout principale
 	    contentPane = new JPanel(new BorderLayout(0, 0));
 	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -113,50 +158,5 @@ public class NuovoClienteFrame extends JFrame {
 	    JLabel titlelabel = new JLabel("Inserimento Nuovo Utente");
 	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
 	    titlepanel.add(titlelabel);
-	}
-
-
-    public void clean() {
-        // Pulizia dei campi di testo
-        nometf.setText("");
-        cognometf.setText("");
-        codfisctf.setText("");
-        indirizzotf.setText("");
-        emailtf.setText("");
-        telefonotf.setText("");
-    }
-
-    public void azioni(Controller c) {
-        // Azione per il bottone "Indietro"
-        backbutton.addActionListener(e -> {
-            clean();
-            c.visAndcl(3);
-        });
-
-        // Azione per il bottone "Aggiungi"
-        addbutton.addActionListener(e -> {
-            try {
-                // Creazione del nuovo cliente e tessera
-                Cliente newCliente = new Cliente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
-                        emailtf.getText(), indirizzotf.getText(), telefonotf.getText(), null, null);
-                c.newclt(newCliente);
-                c.nuovatessera(nometf.getText(), cognometf.getText(), codfisctf.getText());
-                clean();
-                JOptionPane.showMessageDialog(null, "Cliente e relativa tessera aggiunti");
-            } catch (SQLException e1) {
-                // Gestione dell'errore
-                JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-            }
-        });
-
-        // Azione per il bottone "Pulisci"
-        clearbutton.addActionListener(e -> clean());
-    }
-
-	public NuovoClienteFrame(String title, Controller c) {
-		super(title);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
-		this.elementi();
-		this.azioni(c);
 	}
 }

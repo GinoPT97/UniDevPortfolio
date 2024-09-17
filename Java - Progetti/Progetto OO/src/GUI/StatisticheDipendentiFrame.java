@@ -60,6 +60,93 @@ public class StatisticheDipendentiFrame extends JFrame {
 
 
 
+    public StatisticheDipendentiFrame(String title, Controller c) throws SQLException {
+	          super(title);
+	          setIconImage(Toolkit.getDefaultToolkit().getImage(StatisticheDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
+	          this.elementi();
+	          this.azioni(c);
+	   }
+
+    private void azioni(Controller c) throws SQLException {
+        oldDate = c.OldDate();
+
+        // Gestione del pulsante selezione
+        selectButton.addActionListener(e -> {
+            finalTF.setText(dataod.toString());
+            String selectedPeriod = (String) periodoCB.getSelectedItem();
+            String startDate = oldDate;
+
+            switch (selectedPeriod) {
+                case "3 mesi":
+                    startDate = dataod.minusMonths(3).toString();
+                    break;
+                case "6 mesi":
+                    startDate = dataod.minusMonths(6).toString();
+                    break;
+                case "9 mesi":
+                    startDate = dataod.minusMonths(9).toString();
+                    break;
+                case "12 mesi":
+                    startDate = dataod.minusMonths(12).toString();
+                    break;
+                case "Tutti":
+                    break; // Start date remains as oldDate
+            }
+            startTF.setText(startDate);
+        });
+
+        // Gestione del pulsante cerca
+        searchButton.addActionListener(e -> {
+            String startText = startTF.getText();
+            String finalText = finalTF.getText();
+
+            if (startText.isEmpty() || finalText.isEmpty()) {
+                showMessage("Inserire le date di ricerca!");
+                return;
+            }
+
+            try {
+                java.sql.Date di = java.sql.Date.valueOf(startText);
+                java.sql.Date df = java.sql.Date.valueOf(finalText);
+
+                ordInt = c.introitidip(di, df);
+                ordVen = c.venditedip(di, df);
+
+                if (ordInt.isEmpty() || ordVen.isEmpty()) {
+                    showMessage("In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
+                    clean();
+                } else {
+                    populateFields(ordInt, nomeIntroitiTF, cognomeIntroitiTF, introitiTF);
+                    populateFields(ordVen, nomeVenditeTF, cognomeVenditeTF, venditeTF);
+                }
+            } catch (SQLException e1) {
+                showMessage("Errore!\nTipo di errore: " + e1);
+            } catch (IllegalArgumentException e2) {
+                showMessage("Le date inserite non sono valide. Utilizzare il formato yyyy-MM-dd.");
+            }
+        });
+
+        // Gestione del pulsante pulisci
+        clearButton.addActionListener(e -> clean());
+
+        // Gestione del pulsante indietro
+        backButton.addActionListener(e -> {
+            clean();
+            c.adminAndElem(5);
+        });
+    }
+
+    private void clean() {
+        startTF.setText("");
+        finalTF.setText("");
+        nomeIntroitiTF.setText("");
+        cognomeIntroitiTF.setText("");
+        nomeVenditeTF.setText("");
+        cognomeVenditeTF.setText("");
+        introitiTF.setText("");
+        venditeTF.setText("");
+    }
+
     private void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 870, 450);
@@ -82,7 +169,7 @@ public class StatisticheDipendentiFrame extends JFrame {
         searchPanel.setBorder(BorderFactory.createTitledBorder("Ricerca"));
         GroupLayout searchLayout = new GroupLayout(searchPanel);
         searchPanel.setLayout(searchLayout);
-        
+
         periodoLab = new JLabel("Periodo ricerca (YYYY-MM-DD)");
         startLab = new JLabel("Da : ");
         startTF = new JTextField(10); // Ridotto il numero di colonne
@@ -238,102 +325,15 @@ public class StatisticheDipendentiFrame extends JFrame {
         contentPane.add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void azioni(Controller c) throws SQLException {
-        oldDate = c.OldDate();
-
-        // Gestione del pulsante selezione
-        selectButton.addActionListener(e -> {
-            finalTF.setText(dataod.toString());
-            String selectedPeriod = (String) periodoCB.getSelectedItem();
-            String startDate = oldDate;
-
-            switch (selectedPeriod) {
-                case "3 mesi":
-                    startDate = dataod.minusMonths(3).toString();
-                    break;
-                case "6 mesi":
-                    startDate = dataod.minusMonths(6).toString();
-                    break;
-                case "9 mesi":
-                    startDate = dataod.minusMonths(9).toString();
-                    break;
-                case "12 mesi":
-                    startDate = dataod.minusMonths(12).toString();
-                    break;
-                case "Tutti":
-                    break; // Start date remains as oldDate
-            }
-            startTF.setText(startDate);
-        });
-
-        // Gestione del pulsante cerca
-        searchButton.addActionListener(e -> {
-            String startText = startTF.getText();
-            String finalText = finalTF.getText();
-
-            if (startText.isEmpty() || finalText.isEmpty()) {
-                showMessage("Inserire le date di ricerca!");
-                return;
-            }
-
-            try {
-                java.sql.Date di = java.sql.Date.valueOf(startText);
-                java.sql.Date df = java.sql.Date.valueOf(finalText);
-
-                ordInt = c.introitidip(di, df);
-                ordVen = c.venditedip(di, df);
-
-                if (ordInt.isEmpty() || ordVen.isEmpty()) {
-                    showMessage("In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
-                    clean();
-                } else {
-                    populateFields(ordInt, nomeIntroitiTF, cognomeIntroitiTF, introitiTF);
-                    populateFields(ordVen, nomeVenditeTF, cognomeVenditeTF, venditeTF);
-                }
-            } catch (SQLException e1) {
-                showMessage("Errore!\nTipo di errore: " + e1);
-            } catch (IllegalArgumentException e2) {
-                showMessage("Le date inserite non sono valide. Utilizzare il formato yyyy-MM-dd.");
-            }
-        });
-
-        // Gestione del pulsante pulisci
-        clearButton.addActionListener(e -> clean());
-
-        // Gestione del pulsante indietro
-        backButton.addActionListener(e -> {
-            clean();
-            c.adminAndElem(5);
-        });
-    }
-
-    private void showMessage(String message) {
-        JOptionPane.showMessageDialog(null, message);
-    }
-
     private void populateFields(List<String> data, JTextField nomeTF, JTextField cognomeTF, JTextField valoreTF) {
         nomeTF.setText(data.get(0));
         cognomeTF.setText(data.get(1));
         valoreTF.setText(data.get(2));
     }
 
-    private void clean() {
-        startTF.setText("");
-        finalTF.setText("");
-        nomeIntroitiTF.setText("");
-        cognomeIntroitiTF.setText("");
-        nomeVenditeTF.setText("");
-        cognomeVenditeTF.setText("");
-        introitiTF.setText("");
-        venditeTF.setText("");
-    }
-
-   public StatisticheDipendentiFrame(String title, Controller c) throws SQLException {
-          super(title);
-          setIconImage(Toolkit.getDefaultToolkit().getImage(StatisticheDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
-          this.elementi();
-          this.azioni(c);
-   }
+   private void showMessage(String message) {
+    JOptionPane.showMessageDialog(null, message);
+}
 }
 
 

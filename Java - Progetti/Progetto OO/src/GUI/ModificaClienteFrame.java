@@ -50,6 +50,58 @@ public class ModificaClienteFrame extends JFrame {
 	private JLabel titlelabel;
 
 
+	public ModificaClienteFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
+
+	// Metodo per aggiungere le azioni ai bottoni
+	public void azioni(Controller c) {
+	    // Bottone per tornare indietro
+	    backbutton.addActionListener(e -> {
+	        clean();
+	        c.visAndcl(3); // Visualizza la vista con indice 3
+	    });
+
+	    // Bottone per aggiornare un cliente
+	    addbutton.addActionListener(e -> {
+	        try {
+	            // Aggiorna il cliente con i dati inseriti nei JTextField
+	            Cliente clienteAggiornato = new Cliente(
+	                cod,
+	                nometf.getText(),
+	                cognometf.getText(),
+	                codfisctf.getText(),
+	                emailtf.getText(),
+	                indirizzotf.getText(),
+	                telefonotf.getText(),
+	                null,
+	                null
+	            );
+	            c.upcliente(clienteAggiornato); // Aggiorna il cliente nel controller
+	            clean(); // Pulisce i campi dopo l'aggiornamento
+	            c.visAndcl(3); // Torna alla vista con indice 3
+	            JOptionPane.showMessageDialog(null, "Cliente modificato");
+	        } catch (SQLException e1) {
+	            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage());
+	        }
+	    });
+
+	    // Bottone per pulire i campi
+	    clearbutton.addActionListener(e -> clean());
+	}
+
+	// Metodo per pulire i campi di input
+	public void clean() {
+	    nometf.setText("");
+	    cognometf.setText("");
+	    codfisctf.setText("");
+	    indirizzotf.setText("");
+	    emailtf.setText("");
+	    telefonotf.setText("");
+	}
+
 	public void elementi() {
 	    // Impostazioni di base del frame
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -100,7 +152,7 @@ public class ModificaClienteFrame extends JFrame {
 	    contentPane.add(elempanel, BorderLayout.CENTER);
 
 	    // Nome
-	    nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+	    nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    nomelab = new JLabel("Nome :");
 	    nomepanel.add(nomelab);
 	    nometf = new JTextField(10);
@@ -116,7 +168,7 @@ public class ModificaClienteFrame extends JFrame {
 	    elempanel.add(cognomepanel);
 
 	    // Codice Fiscale
-	    codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+	    codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    codfisclab = new JLabel("Codice Fiscale :");
 	    codfiscpanel.add(codfisclab);
 	    codfisctf = new JTextField(10);
@@ -124,7 +176,7 @@ public class ModificaClienteFrame extends JFrame {
 	    elempanel.add(codfiscpanel);
 
 	    // Email
-	    emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+	    emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    emaillab = new JLabel("Email :");
 	    emailpanel.add(emaillab);
 	    emailtf = new JTextField(10);
@@ -148,16 +200,6 @@ public class ModificaClienteFrame extends JFrame {
 	    elempanel.add(telefonopanel);
 	}
 
-	// Metodo per pulire i campi di input
-	public void clean() {
-	    nometf.setText("");
-	    cognometf.setText("");
-	    codfisctf.setText("");
-	    indirizzotf.setText("");
-	    emailtf.setText("");
-	    telefonotf.setText("");
-	}
-
 	// Metodo per visualizzare i dati di un cliente nei rispettivi campi
 	public void viewct(Cliente ce) {
 	    cod = ce.getCodCl();
@@ -167,47 +209,5 @@ public class ModificaClienteFrame extends JFrame {
 	    indirizzotf.setText(ce.getInd());
 	    emailtf.setText(ce.getEmail());
 	    telefonotf.setText(ce.getTel());
-	}
-
-	// Metodo per aggiungere le azioni ai bottoni
-	public void azioni(Controller c) {
-	    // Bottone per tornare indietro
-	    backbutton.addActionListener(e -> {
-	        clean();
-	        c.visAndcl(3); // Visualizza la vista con indice 3
-	    });
-
-	    // Bottone per aggiornare un cliente
-	    addbutton.addActionListener(e -> {
-	        try {
-	            // Aggiorna il cliente con i dati inseriti nei JTextField
-	            Cliente clienteAggiornato = new Cliente(
-	                cod, 
-	                nometf.getText(), 
-	                cognometf.getText(), 
-	                codfisctf.getText(),
-	                emailtf.getText(), 
-	                indirizzotf.getText(), 
-	                telefonotf.getText(), 
-	                null, 
-	                null
-	            );
-	            c.upcliente(clienteAggiornato); // Aggiorna il cliente nel controller
-	            clean(); // Pulisce i campi dopo l'aggiornamento
-	            c.visAndcl(3); // Torna alla vista con indice 3
-	            JOptionPane.showMessageDialog(null, "Cliente modificato");
-	        } catch (SQLException e1) {
-	            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage());
-	        }
-	    });
-
-	    // Bottone per pulire i campi
-	    clearbutton.addActionListener(e -> clean());
-	}
-
-	public ModificaClienteFrame(String title, Controller c) {
-		super(title);
-		this.elementi();
-		this.azioni(c);
 	}
 }

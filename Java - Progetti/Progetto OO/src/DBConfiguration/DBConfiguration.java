@@ -18,33 +18,6 @@ public class DBConfiguration {
 		return !(connection == null);
 	}
 
-	// Verifica l'esistenza delle tabelle
-	private boolean tableExists(String table_name) throws SQLException {
-		DatabaseMetaData metadata = connection.getMetaData();
-		ResultSet tables = metadata.getTables(null, null, table_name, null);
-		if (tables.next()) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	// Verifica l'esistenza delle sequenze
-	private boolean sequenceExists(String sequence_name) throws SQLException {
-		Statement st = connection.createStatement();
-		String sql = "SELECT c.relname FROM pg_class c WHERE c.relkind = 'S'"; // Query che ritorna il nome delle
-																				// sequenze create dall'utente; fonte:
-																				// https://stackoverflow.com/questions/1493262/list-all-sequences-in-a-postgres-db-8-1-with-sql
-		ResultSet rs = st.executeQuery(sql);
-		while (rs.next()) {
-			if (sequence_name.equals(rs.getString(1))) {
-
-			}
-			return true;
-		}
-		return false;
-	}
-
 	// Crea le sequenze per autogenerare le chiavi primarie di tutte le relazioni
 	public int createSequences() throws ConnectionException, SQLException {
 		int result = -1;
@@ -69,6 +42,38 @@ public class DBConfiguration {
 			} catch (SQLException ex) {
 				System.out.println("SQL Exception in Creation Sequence : " + ex);
 			}
+		}
+		return result;
+	}
+
+	public int createTableArticoliOrdine() throws ConnectionException {
+		int result = -1;
+
+		if (connectionExists()) {
+			try {
+				Statement st = connection.createStatement();
+				if (!tableExists("ARTICOLIORDINE")) {
+					String sql = "CREATE TABLE ARTICOLIORDINE (\n"
+							+ "CodOrdine VARCHAR(5) NOT NULL CHECK(CodOrdine ~* '^[0-9]+$'),\n"
+							+ "CodProdotto VARCHAR(5) NOT NULL CHECK(CodProdotto ~* '^[0-9]+$'),\n"
+							+ "CodCliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n"
+							+ "Prezzo NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00),\n"
+							+ "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00), \n"
+							+ "NumeroArticoli INT NOT NULL,\n" + "Categoria TIPOLOGIA,\n"
+							+ "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"
+							+ "CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"
+							+ "CONSTRAINT ArtocoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"
+							+ " );";
+					result = st.executeUpdate(sql);
+					st.close();
+				} else {
+					System.out.println("Table 'ARTICOLIORDINE' already exists!");
+				}
+			} catch (SQLException ex) {
+				System.out.println("SQL Exception found in creation table 'ARTICOLIORDINE': " + ex);
+			}
+		} else {
+			throw new ConnectionException("A connection must exists!");
 		}
 		return result;
 	}
@@ -141,29 +146,32 @@ public class DBConfiguration {
 		return result;
 	}
 
-	public int createTableTessera() throws ConnectionException {
+	public int createTableOrdine() throws ConnectionException {
 		int result = -1;
 
 		if (connectionExists()) {
 			try {
 				Statement st = connection.createStatement();
 
-				if (!tableExists("tessera")) {
-					String sql = "CREATE TABLE tessera(\n"
-							+ " codtessera VARCHAR(5) PRIMARY KEY, CHECK(codtessera ~* '^[0-9]+$'),\n"
-							+ " numeropunti real NOT NULL DEFAULT 0.00,\n"
-							+ " codcliente VARCHAR(5) NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
-							+ " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
-							+ " ON UPDATE CASCADE \n" + " ON DELETE CASCADE \n " + " );";
+				if (!tableExists("ordine")) {
+					String sql = "CREATE TABLE ordine(\n" + " codordine VARCHAR(5) NOT NULL, \n"
+							+ " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
+							+ " dataacquisto date NOT NULL, \n"
+							+ " codcliente VARCHAR(5) NOT NULL CHECK (codcliente ~* '^[0-9]+$'), \n"
+							+ " coddipendente VARCHAR(5) NOT NULL CHECK (coddipendente ~* '^[0-9]+$'), \n"
+							+ " CONSTRAINT ordinepk PRIMARY KEY (codordine), \n"
+							+ " CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente) ON UPDATE CASCADE ON DELETE NO ACTION, \n "
+							+ " CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente) ON UPDATE CASCADE ON DELETE NO ACTION\n "
+							+ " );";
 
 					result = st.executeUpdate(sql);
 					st.close();
 
 				} else {
-					System.out.println("Table Tessera already exists!");
+					System.out.println("Table Ordine already exists!");
 				}
 			} catch (SQLException ex) {
-				System.out.println("SQL Exception in creation table Tessera : " + ex);
+				System.out.println("SQL Exception in creation table Ordine : " + ex);
 			}
 		} else {
 			throw new ConnectionException("A connection must exist!");
@@ -208,69 +216,34 @@ public class DBConfiguration {
 		return result;
 	}
 
-	public int createTableOrdine() throws ConnectionException {
+	public int createTableTessera() throws ConnectionException {
 		int result = -1;
 
 		if (connectionExists()) {
 			try {
 				Statement st = connection.createStatement();
 
-				if (!tableExists("ordine")) {
-					String sql = "CREATE TABLE ordine(\n" + " codordine VARCHAR(5) NOT NULL, \n"
-							+ " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
-							+ " dataacquisto date NOT NULL, \n"
-							+ " codcliente VARCHAR(5) NOT NULL CHECK (codcliente ~* '^[0-9]+$'), \n"
-							+ " coddipendente VARCHAR(5) NOT NULL CHECK (coddipendente ~* '^[0-9]+$'), \n"
-							+ " CONSTRAINT ordinepk PRIMARY KEY (codordine), \n"
-							+ " CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente) ON UPDATE CASCADE ON DELETE NO ACTION, \n "
-							+ " CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente) ON UPDATE CASCADE ON DELETE NO ACTION\n "
-							+ " );";
+				if (!tableExists("tessera")) {
+					String sql = "CREATE TABLE tessera(\n"
+							+ " codtessera VARCHAR(5) PRIMARY KEY, CHECK(codtessera ~* '^[0-9]+$'),\n"
+							+ " numeropunti real NOT NULL DEFAULT 0.00,\n"
+							+ " codcliente VARCHAR(5) NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
+							+ " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
+							+ " ON UPDATE CASCADE \n" + " ON DELETE CASCADE \n " + " );";
 
 					result = st.executeUpdate(sql);
 					st.close();
 
 				} else {
-					System.out.println("Table Ordine already exists!");
+					System.out.println("Table Tessera already exists!");
 				}
 			} catch (SQLException ex) {
-				System.out.println("SQL Exception in creation table Ordine : " + ex);
+				System.out.println("SQL Exception in creation table Tessera : " + ex);
 			}
 		} else {
 			throw new ConnectionException("A connection must exist!");
 		}
 
-		return result;
-	}
-
-	public int createTableArticoliOrdine() throws ConnectionException {
-		int result = -1;
-
-		if (connectionExists()) {
-			try {
-				Statement st = connection.createStatement();
-				if (!tableExists("ARTICOLIORDINE")) {
-					String sql = "CREATE TABLE ARTICOLIORDINE (\n"
-							+ "CodOrdine VARCHAR(5) NOT NULL CHECK(CodOrdine ~* '^[0-9]+$'),\n"
-							+ "CodProdotto VARCHAR(5) NOT NULL CHECK(CodProdotto ~* '^[0-9]+$'),\n"
-							+ "CodCliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n"
-							+ "Prezzo NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00),\n"
-							+ "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00), \n"
-							+ "NumeroArticoli INT NOT NULL,\n" + "Categoria TIPOLOGIA,\n"
-							+ "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"
-							+ "CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"
-							+ "CONSTRAINT ArtocoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"
-							+ " );";
-					result = st.executeUpdate(sql);
-					st.close();
-				} else {
-					System.out.println("Table 'ARTICOLIORDINE' already exists!");
-				}
-			} catch (SQLException ex) {
-				System.out.println("SQL Exception found in creation table 'ARTICOLIORDINE': " + ex);
-			}
-		} else {
-			throw new ConnectionException("A connection must exists!");
-		}
 		return result;
 	}
 
@@ -426,5 +399,32 @@ public class DBConfiguration {
 	    }
 
 	    return result;
+	}
+
+	// Verifica l'esistenza delle sequenze
+	private boolean sequenceExists(String sequence_name) throws SQLException {
+		Statement st = connection.createStatement();
+		String sql = "SELECT c.relname FROM pg_class c WHERE c.relkind = 'S'"; // Query che ritorna il nome delle
+																				// sequenze create dall'utente; fonte:
+																				// https://stackoverflow.com/questions/1493262/list-all-sequences-in-a-postgres-db-8-1-with-sql
+		ResultSet rs = st.executeQuery(sql);
+		while (rs.next()) {
+			if (sequence_name.equals(rs.getString(1))) {
+
+			}
+			return true;
+		}
+		return false;
+	}
+
+	// Verifica l'esistenza delle tabelle
+	private boolean tableExists(String table_name) throws SQLException {
+		DatabaseMetaData metadata = connection.getMetaData();
+		ResultSet tables = metadata.getTables(null, null, table_name, null);
+		if (tables.next()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

@@ -29,7 +29,57 @@ public class AdminFrame extends JFrame {
     private JLabel titlelabel;
     private JButton searchbutton;
 
-    public void elementi() {
+    public AdminFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
+
+	public void azioni(Controller c) {
+		logoutbutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.logout(1);
+			}
+		});
+
+		dipbutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.adminAndElem(1);
+			}
+		});
+
+		prodbutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.adminAndElem(2);
+			}
+		});
+
+		statistichebutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.adminAndElem(3);
+			}
+		});
+
+		visordbutt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.adminAndElem(4);
+			}
+		});
+
+		searchbutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.searchAndElem(1);
+			}
+		});
+	}
+
+	public void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 400);
         contentPane = new JPanel();
@@ -92,56 +142,6 @@ public class AdminFrame extends JFrame {
         logoutbutton.setForeground(Color.WHITE);
         titlepanel.add(logoutbutton, BorderLayout.SOUTH); // Estende il bottone di logout a tutta la larghezza
     }
-
-	public void azioni(Controller c) {
-		logoutbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.logout(1);
-			}
-		});
-
-		dipbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.adminAndElem(1);
-			}
-		});
-
-		prodbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.adminAndElem(2);
-			}
-		});
-
-		statistichebutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.adminAndElem(3);
-			}
-		});
-
-		visordbutt.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.adminAndElem(4);
-			}
-		});
-
-		searchbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.searchAndElem(1);
-			}
-		});
-	}
-
-	public AdminFrame(String title, Controller c) {
-		super(title);
-		this.elementi();
-		this.azioni(c);
-	}
 }
 
 

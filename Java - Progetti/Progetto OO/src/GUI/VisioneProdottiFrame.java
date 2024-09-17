@@ -39,6 +39,67 @@ public class VisioneProdottiFrame extends JFrame {
 	private JButton searchbutton;
 	private JTextField searchtf;
 
+	public VisioneProdottiFrame(String title, Controller c) throws SQLException {
+		super(title);
+		this.elementi(c);
+		this.azioni(c);
+	}
+
+	public void azioni(Controller c) throws SQLException {
+	    c.allprodotti(model);
+
+	    // Gestione della ricerca
+	    searchbutton.addActionListener(e -> {
+	        String query = searchtf.getText().trim().toLowerCase();
+	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+	        if (query.isEmpty()) {
+	            table.setRowSorter(null); // Rimuove il filtro se la query è vuota
+	        } else {
+	            try {
+	                // Applica il filtro case insensitive
+	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+	                table.setRowSorter(sorter);
+	            } catch (PatternSyntaxException ex) {
+	                JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(),
+	                                              "Errore", JOptionPane.ERROR_MESSAGE);
+	            }
+	        }
+	    });
+
+	    // Gestione del pulsante Aggiungi
+	    addbutton.addActionListener(e -> c.visAndprod(1));
+
+	    // Gestione del pulsante Modifica
+	    updatebutton.addActionListener(e -> {
+	        int i = table.getSelectedRow();
+	        if (i >= 0) {
+	            try {
+	                String codice = table.getValueAt(i, 0).toString();
+	                String nome = table.getValueAt(i, 1).toString();
+	                String descrizione = table.getValueAt(i, 2).toString();
+	                double prezzo = Double.parseDouble(table.getValueAt(i, 3).toString());
+	                String categoria = table.getValueAt(i, 4).toString();
+	                boolean disponibile = Boolean.parseBoolean(table.getValueAt(i, 7).toString());
+	                String fornitore = table.getValueAt(i, 9).toString();
+	                int quantita = Integer.parseInt(table.getValueAt(i, 10).toString());
+
+	                Prodotto prodotto = new Prodotto(codice, nome, descrizione, prezzo, categoria, null, null, disponibile, null, fornitore, quantita);
+	                c.visAndprod(2);
+	                c.modprodf.viewprod(prodotto);
+	            } catch (NumberFormatException ex) {
+	                JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(),
+	                                              "Errore", JOptionPane.ERROR_MESSAGE);
+	            }
+	        } else {
+	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare",
+	                                          "Attenzione", JOptionPane.WARNING_MESSAGE);
+	        }
+	    });
+
+	    // Gestione del pulsante Indietro
+	    backbutton.addActionListener(e -> c.adminAndElem(5));
+	}
+
 	public void elementi(Controller c) throws SQLException {
 	    // Imposta le caratteristiche di base della finestra
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -102,66 +163,5 @@ public class VisioneProdottiFrame extends JFrame {
 	    backbutton.setBackground(Color.RED);
 	    backbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
 	    buttonpanel.add(backbutton);
-	}
-
-	public void azioni(Controller c) throws SQLException {
-	    c.allprodotti(model);
-
-	    // Gestione della ricerca
-	    searchbutton.addActionListener(e -> {
-	        String query = searchtf.getText().trim().toLowerCase();
-	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-	        if (query.isEmpty()) {
-	            table.setRowSorter(null); // Rimuove il filtro se la query è vuota
-	        } else {
-	            try {
-	                // Applica il filtro case insensitive
-	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-	                table.setRowSorter(sorter);
-	            } catch (PatternSyntaxException ex) {
-	                JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(), 
-	                                              "Errore", JOptionPane.ERROR_MESSAGE);
-	            }
-	        }
-	    });
-
-	    // Gestione del pulsante Aggiungi
-	    addbutton.addActionListener(e -> c.visAndprod(1));
-
-	    // Gestione del pulsante Modifica
-	    updatebutton.addActionListener(e -> {
-	        int i = table.getSelectedRow();
-	        if (i >= 0) {
-	            try {
-	                String codice = table.getValueAt(i, 0).toString();
-	                String nome = table.getValueAt(i, 1).toString();
-	                String descrizione = table.getValueAt(i, 2).toString();
-	                double prezzo = Double.parseDouble(table.getValueAt(i, 3).toString());
-	                String categoria = table.getValueAt(i, 4).toString();
-	                boolean disponibile = Boolean.parseBoolean(table.getValueAt(i, 7).toString());
-	                String fornitore = table.getValueAt(i, 9).toString();
-	                int quantita = Integer.parseInt(table.getValueAt(i, 10).toString());
-
-	                Prodotto prodotto = new Prodotto(codice, nome, descrizione, prezzo, categoria, null, null, disponibile, null, fornitore, quantita);
-	                c.visAndprod(2);
-	                c.modprodf.viewprod(prodotto);
-	            } catch (NumberFormatException ex) {
-	                JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(), 
-	                                              "Errore", JOptionPane.ERROR_MESSAGE);
-	            }
-	        } else {
-	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", 
-	                                          "Attenzione", JOptionPane.WARNING_MESSAGE);
-	        }
-	    });
-
-	    // Gestione del pulsante Indietro
-	    backbutton.addActionListener(e -> c.adminAndElem(5));
-	}
-
-	public VisioneProdottiFrame(String title, Controller c) throws SQLException {
-		super(title);
-		this.elementi(c);
-		this.azioni(c);
 	}
 }

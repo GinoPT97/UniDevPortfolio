@@ -21,40 +21,40 @@ public class Ordine {
 		return codordine;
 	}
 
-	public void setCodOrd(String codordine) {
-		this.codordine = codordine;
-	}
-
 	public Date getDataAcquisto() {
 		return datacquisto;
-	}
-
-	public void setDataAcquisto(Date datacquisto) {
-		this.datacquisto = datacquisto;
-	}
-
-	public double getPrezzoTotale() {
-		return prezzotot;
-	}
-
-	public void setPrezzoTotale(double prezzotot) {
-		this.prezzotot = prezzotot;
 	}
 
 	public String getIdCliente() {
 		return idct;
 	}
 
-	public void setIdCliente(String idct) {
-		this.idct = idct;
-	}
-
 	public String getIdDipendente() {
 		return iddip;
 	}
 
+	public double getPrezzoTotale() {
+		return prezzotot;
+	}
+
+	public void setCodOrd(String codordine) {
+		this.codordine = codordine;
+	}
+
+	public void setDataAcquisto(Date datacquisto) {
+		this.datacquisto = datacquisto;
+	}
+
+	public void setIdCliente(String idct) {
+		this.idct = idct;
+	}
+
 	public void setIdDipendente(String iddip) {
 		this.iddip = iddip;
+	}
+
+	public void setPrezzoTotale(double prezzotot) {
+		this.prezzotot = prezzotot;
 	}
 
 	@Override
