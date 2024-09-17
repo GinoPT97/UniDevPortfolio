@@ -15,20 +15,20 @@ public class Tessera {
 		return codtessera;
 	}
 
-	public int getNPunti() {
-		return npunti;
-	}
-
-	public Cliente getProprietario() {
-		return proprietario;
-	}
-
 	public void setCodTessera(String codtessera) {
 		this.codtessera = codtessera;
 	}
 
+	public int getNPunti() {
+		return npunti;
+	}
+
 	public void setNPunti(int npunti) {
 		this.npunti = npunti;
+	}
+
+	public Cliente getProprietario() {
+		return proprietario;
 	}
 
 	public void setProprietario(Cliente proprietario) {

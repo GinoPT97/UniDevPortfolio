@@ -35,68 +35,15 @@ public class RicercaFrame extends JFrame {
 	private JButton searchbutton;
 	private JComboBox<String> punticb;
 
-	public RicercaFrame(String title, Controller c) throws SQLException {
-		super(title);
-		this.elementi();
-		this.azioni(c);
-	}
-
-	public void azioni(Controller c) throws SQLException {
-	    // Popola la tabella inizialmente
-	    c.ClientSearch(searchmodel);
-
-	    // Gestione del click sul pulsante di ricerca
-	    searchbutton.addActionListener(e -> {
-	        String categoriaSelezionata = (String) categoriacb.getSelectedItem();
-	        String intervalloPunti = (String) punticb.getSelectedItem();
-
-	        // Lista per i filtri
-	        List<RowFilter<Object, Object>> filters = new ArrayList<>();
-
-	        // Filtro basato sulla categoria
-	        if (!"Tutti".equals(categoriaSelezionata)) {
-	            filters.add(RowFilter.regexFilter(categoriaSelezionata, 2));
-	        }
-
-	        // Filtro basato sull'intervallo di punti
-	        RowFilter<Object, Object> puntiFilter = switch (intervalloPunti) {
-	            case "0-500" -> RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 3);
-	            case "501-1000" -> RowFilter.andFilter(List.of(
-	                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3),
-	                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3)
-	            ));
-	            case "1001-5000" -> RowFilter.andFilter(List.of(
-	                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3),
-	                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3)
-	            ));
-	            case ">5000" -> RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 3);
-	            default -> null;
-	        };
-
-	        if (puntiFilter != null) {
-	            filters.add(puntiFilter);
-	        }
-
-	        // Applica i filtri se presenti
-	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
-	        sorter.setRowFilter(filters.isEmpty() ? null : RowFilter.andFilter(filters));
-	        searchtable.setRowSorter(sorter);
-	    });
-
-	    // Gestione del click sul pulsante "Indietro"
-	    backbutton.addActionListener(e -> c.returnToLastFrame());
-	}
-
-
 	public void elementi() {
 	    // Imposta l'icona del frame
 	    setIconImage(Toolkit.getDefaultToolkit().getImage(RicercaFrame.class.getResource("/Immagini/ImmIcon.png")));
-
+	    
 	    // Configura le impostazioni di base del frame
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 904, 433);
 	    setLocationRelativeTo(null);
-
+	    
 	    // Inizializza e configura il pannello principale
 	    contentPane = new JPanel();
 	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -150,6 +97,59 @@ public class RicercaFrame extends JFrame {
 
 	    // Configura le colonne della tabella
 	    searchmodel.setColumnIdentifiers(searchcolonne);
+	}
+
+	public void azioni(Controller c) throws SQLException {
+	    // Popola la tabella inizialmente
+	    c.ClientSearch(searchmodel);
+
+	    // Gestione del click sul pulsante di ricerca
+	    searchbutton.addActionListener(e -> {
+	        String categoriaSelezionata = (String) categoriacb.getSelectedItem();
+	        String intervalloPunti = (String) punticb.getSelectedItem();
+
+	        // Lista per i filtri
+	        List<RowFilter<Object, Object>> filters = new ArrayList<>();
+
+	        // Filtro basato sulla categoria
+	        if (!"Tutti".equals(categoriaSelezionata)) {
+	            filters.add(RowFilter.regexFilter(categoriaSelezionata, 2));
+	        }
+
+	        // Filtro basato sull'intervallo di punti
+	        RowFilter<Object, Object> puntiFilter = switch (intervalloPunti) {
+	            case "0-500" -> RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 3);
+	            case "501-1000" -> RowFilter.andFilter(List.of(
+	                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3),
+	                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3)
+	            ));
+	            case "1001-5000" -> RowFilter.andFilter(List.of(
+	                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3),
+	                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3)
+	            ));
+	            case ">5000" -> RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 3);
+	            default -> null;
+	        };
+
+	        if (puntiFilter != null) {
+	            filters.add(puntiFilter);
+	        }
+
+	        // Applica i filtri se presenti
+	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
+	        sorter.setRowFilter(filters.isEmpty() ? null : RowFilter.andFilter(filters));
+	        searchtable.setRowSorter(sorter);
+	    });
+
+	    // Gestione del click sul pulsante "Indietro"
+	    backbutton.addActionListener(e -> c.returnToLastFrame());
+	}
+
+
+	public RicercaFrame(String title, Controller c) throws SQLException {
+		super(title);
+		this.elementi();
+		this.azioni(c);
 	}
 }
 

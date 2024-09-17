@@ -24,52 +24,52 @@ public class Dipendente {
 		return coddipendente;
 	}
 
-	public String getCodFis() {
-		return codicefiscale;
-	}
-
-	public String getCognome() {
-		return cognome;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getInd() {
-		return indirizzo;
+	public void setCodDIP(String coddipendente) {
+		this.coddipendente = coddipendente;
 	}
 
 	public String getNome() {
 		return nome;
 	}
 
-	public String getTel() {
-		return telefono;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
-	public void setCodDIP(String coddipendente) {
-		this.coddipendente = coddipendente;
-	}
-
-	public void setCodFis(String codicefiscale) {
-		this.codicefiscale = codicefiscale;
+	public String getCognome() {
+		return cognome;
 	}
 
 	public void setCognome(String cognome) {
 		this.cognome = cognome;
 	}
 
+	public String getCodFis() {
+		return codicefiscale;
+	}
+
+	public void setCodFis(String codicefiscale) {
+		this.codicefiscale = codicefiscale;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getInd() {
+		return indirizzo;
 	}
 
 	public void setInd(String indirizzo) {
 		this.indirizzo = indirizzo;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public String getTel() {
+		return telefono;
 	}
 
 	public void setTel(String telefono) {

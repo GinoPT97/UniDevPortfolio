@@ -25,6 +25,17 @@ public class OrdiniImpl implements OrdiniJDBC {
         this.currentCodStmt = connection.createStatement();
     }
 
+    // Metodo per inserire un nuovo ordine
+    @Override
+    public boolean newordine(Ordine ordine) throws SQLException {
+        newOrdineStmt.setDouble(1, ordine.getPrezzoTotale());
+        newOrdineStmt.setDate(2, ordine.getDataAcquisto());
+        newOrdineStmt.setString(3, ordine.getIdCliente());
+        newOrdineStmt.setString(4, ordine.getIdDipendente());
+        
+        return newOrdineStmt.executeUpdate() > 0; // Restituisce true se l'inserimento ha avuto successo
+    }
+
     // Metodo per recuperare tutti gli ordini
     @Override
     public ArrayList<Ordine> getallordini() throws SQLException {
@@ -43,18 +54,6 @@ public class OrdiniImpl implements OrdiniJDBC {
         return ordiniList;
     }
 
-    // Metodo per ottenere il valore corrente del codice ordine
-    @Override
-    public String getCurrentCod() throws SQLException {
-        String query = "SELECT currval('SCodOrdine') AS codordine";
-        try (ResultSet rs = currentCodStmt.executeQuery(query)) {
-            if (rs.next()) {
-                return rs.getString("codordine");
-            }
-        }
-        return null;
-    }
-
     // Metodo per ottenere la data più vecchia degli ordini
     @Override
     public String getOldDate() throws SQLException {
@@ -70,15 +69,16 @@ public class OrdiniImpl implements OrdiniJDBC {
         return null;
     }
 
-    // Metodo per inserire un nuovo ordine
+    // Metodo per ottenere il valore corrente del codice ordine
     @Override
-    public boolean newordine(Ordine ordine) throws SQLException {
-        newOrdineStmt.setDouble(1, ordine.getPrezzoTotale());
-        newOrdineStmt.setDate(2, ordine.getDataAcquisto());
-        newOrdineStmt.setString(3, ordine.getIdCliente());
-        newOrdineStmt.setString(4, ordine.getIdDipendente());
-
-        return newOrdineStmt.executeUpdate() > 0; // Restituisce true se l'inserimento ha avuto successo
+    public String getCurrentCod() throws SQLException {
+        String query = "SELECT currval('SCodOrdine') AS codordine";
+        try (ResultSet rs = currentCodStmt.executeQuery(query)) {
+            if (rs.next()) {
+                return rs.getString("codordine");
+            }
+        }
+        return null;
     }
 }
 

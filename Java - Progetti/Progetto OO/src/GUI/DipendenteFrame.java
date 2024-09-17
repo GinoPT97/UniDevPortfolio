@@ -30,49 +30,6 @@ public class DipendenteFrame extends JFrame {
 	private JPanel buttonpanel;
 	private JPanel buttonContainer;
 
-	public DipendenteFrame(String title, Controller c) {
-		super(title);
-		this.elementi();
-		this.azioni(c);
-	}
-
-	public void azioni(Controller c) {
-		logoututton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.logout(2);
-			}
-		});
-
-		clientebutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.dipAndElem(1);
-			}
-		});
-
-		tesserabutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.dipAndElem(2);
-			}
-		});
-
-		ordineutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.dipAndElem(3);
-			}
-		});
-
-		searchbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.searchAndElem(1);
-			}
-		});
-	}
-
 	public void elementi() {
 	    // Impostazioni di base del frame
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -126,5 +83,48 @@ public class DipendenteFrame extends JFrame {
 
 	    ordineutton = new JButton("Ordine");
 	    buttonContainer.add(ordineutton);
+	}
+	
+	public void azioni(Controller c) {
+		logoututton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.logout(2);
+			}
+		});
+
+		clientebutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.dipAndElem(1);
+			}
+		});
+
+		tesserabutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.dipAndElem(2);
+			}
+		});
+
+		ordineutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.dipAndElem(3);
+			}
+		});
+
+		searchbutton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.searchAndElem(1);
+			}
+		});
+	}
+
+	public DipendenteFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
 	}
 }

@@ -29,21 +29,32 @@ public class ProdottoImpl implements ProdottoJDBC {
         this.getCategoriaStmt = connection.createStatement();
     }
 
-    // Metodo ausiliario per creare un oggetto Prodotto da un ResultSet
-    private Prodotto createProdottoFromResultSet(ResultSet rs) throws SQLException {
-        return new Prodotto(
-            rs.getString("codprodotto"),
-            rs.getString("nome"),
-            rs.getString("descrizione"),
-            rs.getDouble("prezzo"),
-            rs.getString("luogoprovenienza"),
-            rs.getDate("dataraccolta"),
-            rs.getDate("datamungitura"),
-            rs.getBoolean("glutine"),
-            rs.getDate("datascadenza"),
-            rs.getString("categoria"),
-            rs.getInt("scorta")
-        );
+    // Metodo per inserire un nuovo prodotto
+    @Override
+    public boolean setNewProdotto(Prodotto prodotto) throws SQLException {
+        setCommonProdottoFields(setNewProdottoStmt, prodotto);
+        setNewProdottoStmt.setInt(10, prodotto.getScorta());
+
+        return setNewProdottoStmt.executeUpdate() > 0;
+    }
+
+    // Metodo per aggiornare un prodotto esistente
+    @Override
+    public boolean updateProdotto(Prodotto prodotto) throws SQLException {
+        setCommonProdottoFields(updateProdottoStmt, prodotto);
+        updateProdottoStmt.setInt(10, prodotto.getScorta());
+        updateProdottoStmt.setString(11, prodotto.getCodProd());
+
+        return updateProdottoStmt.executeUpdate() > 0;
+    }
+
+    // Metodo per aggiornare le scorte di un prodotto
+    @Override
+    public boolean updateScorte(int x, String codprod) throws SQLException {
+        updateScorteStmt.setInt(1, x);
+        updateScorteStmt.setString(2, codprod);
+
+        return updateScorteStmt.executeUpdate() > 0;
     }
 
     // Metodo per ottenere tutti i prodotti
@@ -106,31 +117,20 @@ public class ProdottoImpl implements ProdottoJDBC {
         stmt.setString(9, prodotto.getCategoria());
     }
 
-    // Metodo per inserire un nuovo prodotto
-    @Override
-    public boolean setNewProdotto(Prodotto prodotto) throws SQLException {
-        setCommonProdottoFields(setNewProdottoStmt, prodotto);
-        setNewProdottoStmt.setInt(10, prodotto.getScorta());
-
-        return setNewProdottoStmt.executeUpdate() > 0;
-    }
-
-    // Metodo per aggiornare un prodotto esistente
-    @Override
-    public boolean updateProdotto(Prodotto prodotto) throws SQLException {
-        setCommonProdottoFields(updateProdottoStmt, prodotto);
-        updateProdottoStmt.setInt(10, prodotto.getScorta());
-        updateProdottoStmt.setString(11, prodotto.getCodProd());
-
-        return updateProdottoStmt.executeUpdate() > 0;
-    }
-
-    // Metodo per aggiornare le scorte di un prodotto
-    @Override
-    public boolean updateScorte(int x, String codprod) throws SQLException {
-        updateScorteStmt.setInt(1, x);
-        updateScorteStmt.setString(2, codprod);
-
-        return updateScorteStmt.executeUpdate() > 0;
+    // Metodo ausiliario per creare un oggetto Prodotto da un ResultSet
+    private Prodotto createProdottoFromResultSet(ResultSet rs) throws SQLException {
+        return new Prodotto(
+            rs.getString("codprodotto"),
+            rs.getString("nome"),
+            rs.getString("descrizione"),
+            rs.getDouble("prezzo"),
+            rs.getString("luogoprovenienza"),
+            rs.getDate("dataraccolta"),
+            rs.getDate("datamungitura"),
+            rs.getBoolean("glutine"),
+            rs.getDate("datascadenza"),
+            rs.getString("categoria"),
+            rs.getInt("scorta")
+        );
     }
 }

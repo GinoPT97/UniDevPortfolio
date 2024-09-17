@@ -18,52 +18,52 @@ public class Articoli {
 		this.categoria = categoria;
 	}
 
-	public String getCategoria() {
-		return categoria;
-	}
-
 	public String getCodOrdine() {
 		return codOrdine;
-	}
-
-	public String getCodProdotto() {
-		return codProdotto;
-	}
-
-	public int getNumeroArticoli() {
-		return numeroArticoli;
-	}
-
-	public double getNumPunti() {
-		return numPunti;
-	}
-
-	public double getPrezzo() {
-		return prezzo;
-	}
-
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
 	}
 
 	public void setCodOrdine(String codOrdine) {
 		this.codOrdine = codOrdine;
 	}
 
+	public String getCodProdotto() {
+		return codProdotto;
+	}
+
 	public void setCodProdotto(String codProdotto) {
 		this.codProdotto = codProdotto;
 	}
 
-	public void setNumeroArticoli(int numeroArticoli) {
-		this.numeroArticoli = numeroArticoli;
+	public double getPrezzo() {
+		return prezzo;
+	}
+
+	public void setPrezzo(double prezzo) {
+		this.prezzo = prezzo;
+	}
+
+	public double getNumPunti() {
+		return numPunti;
 	}
 
 	public void setNumPunti(double numPunti) {
 		this.numPunti = numPunti;
 	}
 
-	public void setPrezzo(double prezzo) {
-		this.prezzo = prezzo;
+	public int getNumeroArticoli() {
+		return numeroArticoli;
+	}
+
+	public void setNumeroArticoli(int numeroArticoli) {
+		this.numeroArticoli = numeroArticoli;
+	}
+
+	public String getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
 	}
 
 	@Override

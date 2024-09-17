@@ -9,29 +9,11 @@ import java.sql.SQLException;
  */
 public class DBConnection {
 	public static DBConnection instance;
-	/**
-	 * Restituisce l'istanza singleton della classe DBConnection. Se l'istanza è
-	 * nulla o la connessione è chiusa, viene creata una nuova istanza.
-	 *
-	 * @param db il nome del database
-	 * @return l'istanza singleton di DBConnection
-	 * @throws SQLException se si verifica un errore di accesso al database
-	 */
-	public static DBConnection getInstance(String db) throws SQLException {
-		if (instance == null) {
-			instance = new DBConnection(db);
-		} else if (instance.getConnection().isClosed()) {
-			instance = new DBConnection(db);
-		}
-
-		return instance;
-	}
 	private Connection connection = null;
 	private final String USERNAME = "postgres";
 	private final String PASSWORD = "admin";
 	private final String IP = "localhost";
 	private final String PORT = "5432";
-
 	private String url = "jdbc:postgresql://" + IP + ":" + PORT + "/";
 
 	/**
@@ -59,5 +41,23 @@ public class DBConnection {
 	 */
 	public Connection getConnection() {
 		return connection;
+	}
+
+	/**
+	 * Restituisce l'istanza singleton della classe DBConnection. Se l'istanza è
+	 * nulla o la connessione è chiusa, viene creata una nuova istanza.
+	 *
+	 * @param db il nome del database
+	 * @return l'istanza singleton di DBConnection
+	 * @throws SQLException se si verifica un errore di accesso al database
+	 */
+	public static DBConnection getInstance(String db) throws SQLException {
+		if (instance == null) {
+			instance = new DBConnection(db);
+		} else if (instance.getConnection().isClosed()) {
+			instance = new DBConnection(db);
+		}
+
+		return instance;
 	}
 }

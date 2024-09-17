@@ -49,50 +49,6 @@ public class ModificaDipendenteFrame extends JFrame {
 	private JPanel titlepanel;
 	private JLabel titlelabel;
 
-	public ModificaDipendenteFrame(String title, Controller c) {
-		super(title);
-		this.elementi();
-		this.azioni(c);
-	}
-
-	public void azioni(Controller c) {
-	    backbutton.addActionListener(e -> {
-	        clean();
-	        c.visAnddip(3);
-	    });
-
-	    addbutton.addActionListener(e -> {
-	        try {
-	            Dipendente dipendente = new Dipendente(
-	                cod,
-	                nometf.getText(),
-	                cognometf.getText(),
-	                codfisctf.getText(),
-	                emailtf.getText(),
-	                indirizzotf.getText(),
-	                telefonotf.getText()
-	            );
-	            c.updip(dipendente);
-	            clean();
-	            c.visAnddip(3);
-	            JOptionPane.showMessageDialog(this, "Dipendente modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
-	        } catch (SQLException e1) {
-	            JOptionPane.showMessageDialog(this, "Errore!" + "\n" + "Tipo di errore: " + e1, "Errore", JOptionPane.ERROR_MESSAGE);
-	        }
-	    });
-
-	    clearbutton.addActionListener(e -> clean());
-	}
-
-	public void clean() {
-	    nometf.setText("");
-	    cognometf.setText("");
-	    codfisctf.setText("");
-	    indirizzotf.setText("");
-	    emailtf.setText("");
-	    telefonotf.setText("");
-	}
-
 	public void elementi() {
 	    // Impostazioni di base del frame
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -189,6 +145,15 @@ public class ModificaDipendenteFrame extends JFrame {
 	    telefonopanel.add(telefonotf);
 	    elempanel.add(telefonopanel);
 	}
+	
+	public void clean() {
+	    nometf.setText("");
+	    cognometf.setText("");
+	    codfisctf.setText("");
+	    indirizzotf.setText("");
+	    emailtf.setText("");
+	    telefonotf.setText("");
+	}
 
 	public void viewdip(Dipendente de) {
 	    cod = de.getCodDIP();
@@ -198,5 +163,40 @@ public class ModificaDipendenteFrame extends JFrame {
 	    indirizzotf.setText(de.getInd());
 	    emailtf.setText(de.getEmail());
 	    telefonotf.setText(de.getTel());
+	}
+
+	public void azioni(Controller c) {
+	    backbutton.addActionListener(e -> {
+	        clean();
+	        c.visAnddip(3);
+	    });
+
+	    addbutton.addActionListener(e -> {
+	        try {
+	            Dipendente dipendente = new Dipendente(
+	                cod, 
+	                nometf.getText(), 
+	                cognometf.getText(), 
+	                codfisctf.getText(),
+	                emailtf.getText(), 
+	                indirizzotf.getText(), 
+	                telefonotf.getText()
+	            );
+	            c.updip(dipendente);
+	            clean();
+	            c.visAnddip(3);
+	            JOptionPane.showMessageDialog(this, "Dipendente modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
+	        } catch (SQLException e1) {
+	            JOptionPane.showMessageDialog(this, "Errore!" + "\n" + "Tipo di errore: " + e1, "Errore", JOptionPane.ERROR_MESSAGE);
+	        }
+	    });
+
+	    clearbutton.addActionListener(e -> clean());
+	}
+
+	public ModificaDipendenteFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
 	}
 }

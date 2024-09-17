@@ -38,44 +38,6 @@ public class VisioneOrdineFrame extends JFrame {
 	private JButton searchbutton;
 	private JTextField searchtf;
 
-	public VisioneOrdineFrame(String title, Controller c) throws SQLException {
-		super(title);
-		this.elementi();
-		this.azioni(c);
-	}
-
-	public void azioni(Controller c) throws SQLException {
-	    // Carica tutti gli ordini nel modello della tabella
-	    c.allordini(model);
-
-	    // Configura il pulsante di ricerca
-	    searchbutton.addActionListener(e -> {
-	        String query = searchtf.getText().trim().toLowerCase();
-	        if (query.isEmpty()) {
-	            // Se la query è vuota, mostra tutti i dati
-	            table.setRowSorter(null); // Rimuove il filtro
-	        } else {
-	            // Applica il filtro sulla tabella
-	            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-	            try {
-	                // Imposta il filtro della tabella con la query
-	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-	            } catch (PatternSyntaxException ex) {
-	                // Mostra un messaggio di errore se la sintassi dell'espressione regolare è errata
-	                JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(), "Errore di Filtro", JOptionPane.ERROR_MESSAGE);
-	                return; // Esci se c'è un errore di sintassi
-	            }
-	            table.setRowSorter(sorter);
-	        }
-	    });
-
-	    // Configura il pulsante di ordine
-	    ordinebutton.addActionListener(e -> c.visAndCarr(1));
-
-	    // Configura il pulsante di ritorno
-	    backbutton.addActionListener(e -> c.visAndCarr(3));
-	}
-
 	public void elementi() {
 	    // Imposta le proprietà del frame
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -127,5 +89,43 @@ public class VisioneOrdineFrame extends JFrame {
 	    backbutton = new JButton("Indietro");
 	    backbutton.setBackground(Color.RED);
 	    buttonpanel.add(backbutton);
+	}
+
+	public void azioni(Controller c) throws SQLException {
+	    // Carica tutti gli ordini nel modello della tabella
+	    c.allordini(model);
+
+	    // Configura il pulsante di ricerca
+	    searchbutton.addActionListener(e -> {
+	        String query = searchtf.getText().trim().toLowerCase();
+	        if (query.isEmpty()) {
+	            // Se la query è vuota, mostra tutti i dati
+	            table.setRowSorter(null); // Rimuove il filtro
+	        } else {
+	            // Applica il filtro sulla tabella
+	            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+	            try {
+	                // Imposta il filtro della tabella con la query
+	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+	            } catch (PatternSyntaxException ex) {
+	                // Mostra un messaggio di errore se la sintassi dell'espressione regolare è errata
+	                JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(), "Errore di Filtro", JOptionPane.ERROR_MESSAGE);
+	                return; // Esci se c'è un errore di sintassi
+	            }
+	            table.setRowSorter(sorter);
+	        }
+	    });
+
+	    // Configura il pulsante di ordine
+	    ordinebutton.addActionListener(e -> c.visAndCarr(1));
+
+	    // Configura il pulsante di ritorno
+	    backbutton.addActionListener(e -> c.visAndCarr(3));
+	}
+
+	public VisioneOrdineFrame(String title, Controller c) throws SQLException {
+		super(title);
+		this.elementi();
+		this.azioni(c);
 	}
 }

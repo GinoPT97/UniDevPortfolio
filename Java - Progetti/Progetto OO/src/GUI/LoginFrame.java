@@ -25,12 +25,6 @@ public class LoginFrame extends JFrame {
 	private JButton clearbutt;
 	private JTextField idtf;
 
-	public LoginFrame(String title, Controller c) throws SQLException {
-		super(title);
-		c.connect();
-		this.elementi(c);
-	}
-
 	public void elementi(Controller c) {
 		setBounds(100, 100, 700, 450);
 		contentPane = new JPanel();
@@ -107,5 +101,11 @@ public class LoginFrame extends JFrame {
 		idtf.setHorizontalAlignment(SwingConstants.CENTER);
 		idtf.setColumns(10);
 		contentPane.add(titlepanel, BorderLayout.NORTH);
+	}
+
+	public LoginFrame(String title, Controller c) throws SQLException {
+		super(title);
+		c.connect();
+		this.elementi(c);
 	}
 }
