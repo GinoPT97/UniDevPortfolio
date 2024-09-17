@@ -34,9 +34,6 @@ import Model.Prodotto;
 import Model.Tessera;
 
 public class Controller {
-	public static void main(String[] args) throws SQLException, IOException {
-		Controller c = new Controller();
-	}
 	private LoginFrame logf;
 	private NuovoProdottoFrame nprodf;
 	private AdminFrame adminf;
@@ -65,7 +62,6 @@ public class Controller {
 	private ArticoliJDBC artjdbc = null;
 	public String iddip;
 	private DefaultTableModel model;
-
 	private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
 
 	public Controller() throws SQLException, IOException {
@@ -89,6 +85,39 @@ public class Controller {
 		logf.setVisible(true);
 	}
 
+	public JPanel createBackgroundPanel(String imagePath) {
+		return new BackgroundPanel(imagePath);
+	}
+
+	public void returnToLastFrame() {
+	    // Mostra l'ultimo frame visibile e nasconde searchf e visordf
+	    setVisibleFrame(lastFrame, searchf, visordf);
+	}
+
+	private void setVisibleFrame(Frame toShow, Frame... toHide) {
+	    // Nasconde tutti i frame nella lista toHide
+	    for (Frame frame : toHide) {
+	        if (frame != null) {
+	            frame.setVisible(false);
+	        }
+	    }
+	    // Mostra il frame specificato da toShow
+	    if (toShow != null) {
+	        toShow.setVisible(true);
+	    }
+	}
+
+	public void logtoutente(int x) {
+	    logf.setVisible(false); // Nasconde il frame di login
+	    // Mostra il frame adminf o dipf in base al valore di x
+	    setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
+	}
+
+	public void logout(int x) {
+	    // Mostra il frame di login e nasconde adminf o dipf in base al valore di x
+	    setVisibleFrame(logf, (x == 1) ? adminf : dipf);
+	}
+
 	public void adminAndElem(int x) {
 	    lastFrame = adminf; // Salva l'ultimo frame visibile come adminf
 	    // Mostra il frame corrispondente a x e nasconde gli altri
@@ -101,84 +130,69 @@ public class Controller {
 	    }
 	}
 
-	// Popola il modello della tabella con tutti i clienti
-    public void allcliente(DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni cliente
-        for (Cliente c : cljdbc.getAllCt()) {
-            Object[] pr = { c.getCodCl(), c.getNome(), c.getCognome(), c.getCodFis(), c.getEmail(), c.getInd(),
-                    c.getTel(), c.getTessera().getCodTessera(), c.getTessera().getNPunti() };
-            model.addRow(pr); // Aggiungi riga al modello
-        }
-    }
+	public void searchAndElem(int x) {
+	    // Salva l'ultimo frame visibile come adminf o dipf
+	    lastFrame = (adminf.isVisible()) ? adminf : dipf;
+	    // Mostra il frame di ricerca e nasconde adminf o dipf in base al valore di x
+	    switch (x) {
+	        case 1 -> setVisibleFrame(searchf, adminf, dipf);
+	        case 2 -> setVisibleFrame(adminf, searchf);
+	        case 3 -> setVisibleFrame(dipf, searchf);
+	    }
+	}
 
-	// Popola il modello della tabella con tutti i dipendenti
-    public void alldipendenti(DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni dipendente
-        for (Dipendente d : dpjdbc.getAllDip()) {
-            Object[] rowData = { d.getCodDIP(), d.getNome(), d.getCognome(), d.getCodFis(), d.getEmail(), d.getInd(),
-                    d.getTel() };
-            model.addRow(rowData); // Aggiungi riga al modello
-        }
-    }
+	public void visAndCarr(int x) {
+	    // Salva l'ultimo frame visibile prima di cambiare
+        lastFrame = (adminf.isVisible()) ? adminf : dipf;
+	    switch (x) {
+	        case 1 -> setVisibleFrame(carrf);
+	        case 2 -> setVisibleFrame(visordf, carrf);
+	        case 3 -> setVisibleFrame(lastFrame, visordf);
+	    }
+	}
 
-	// Popola il modello della tabella con tutti gli ordini
-    public void allordini(DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni ordine
-        for (Ordine o : ordjdbc.getallordini()) {
-            Cliente ct = cljdbc.getCtByid(o.getIdCliente());
-            Dipendente d = dpjdbc.getOneDip(o.getIdDipendente());
-            Object[] pr = { o.getCodOrd(), o.getDataAcquisto().toString(), o.getPrezzoTotale(),
-                    ct.getCognome() + " " + ct.getNome(), d.getCognome() + " " + d.getNome() };
-            model.addRow(pr); // Aggiungi riga al modello
-        }
-    }
+	public void dipAndElem(int x) {
+	    lastFrame = dipf; // Salva l'ultimo frame visibile come dipf
+	    // Mostra il frame corrispondente a x e nasconde dipf se presente
+	    switch (x) {
+	        case 1 -> setVisibleFrame(visctf, dipf);
+	        case 2 -> setVisibleFrame(ptessf, dipf);
+	        case 3 -> setVisibleFrame(visordf, dipf);
+	        case 4 -> setVisibleFrame(dipf, ptessf, visctf);
+	    }
+	}
 
-	// Popola il modello della tabella con tutti i prodotti
-    public void allprodotti(DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni prodotto
-        for (Prodotto p : prdjdbc.getallprodotti()) {
-            String glutenStatus = p.isGlutine() ? "Si" : "No"; // Determina se il prodotto contiene glutine
-            Object[] pr = { p.getCodProd(), p.getNome(), p.getDescrizione(), p.getPrezzo(), p.getLuogoProv(),
-                    p.getDataraccolta(), p.getDatamungitura(), glutenStatus, p.getDatascadenza(), p.getCategoria(),
-                    p.getScorta() };
-            model.addRow(pr); // Aggiungi riga al modello
-        }
-    }
+	public void visAnddip(int x) {
+	    // Mostra il frame corrispondente a x e nasconde gli altri
+	    switch (x) {
+	        case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
+	        case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
+	        case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
+	    }
+	}
 
-	// Popola il modello della tabella con tutte le tessere
-    public void alltessera(DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni tessera
-        for (Tessera t : tsjdbc.alltessera()) {
-            Object[] pr = { t.getCodTessera(), t.getNPunti() };
-            model.addRow(pr); // Aggiungi riga al modello
-        }
-    }
+	public void visAndcl(int x) {
+	    // Mostra il frame corrispondente a x e nasconde gli altri
+	    switch (x) {
+	        case 1 -> setVisibleFrame(nclf, visctf);
+	        case 2 -> setVisibleFrame(upclf, visctf);
+	        case 3 -> setVisibleFrame(visctf, nclf, upclf);
+	    }
+	}
 
-	// Popola il modello della tabella con i prodotti per categoria
-    public void categoriaprodotti(String c, DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni prodotto nella categoria specificata
-        for (Prodotto p : prdjdbc.getbycategoria(c)) {
-            Object[] pr = { p.getCodProd(), p.getNome(), p.getPrezzo(), p.getCategoria(), p.getScorta() };
-            model.addRow(pr); // Aggiungi riga al modello
-        }
-    }
+	public void visAndprod(int x) {
+	    // Mostra il frame corrispondente a x e nasconde gli altri
+	    switch (x) {
+	        case 1 -> setVisibleFrame(nprodf, vprodf);
+	        case 2 -> setVisibleFrame(modprodf, vprodf);
+	        case 3 -> setVisibleFrame(vprodf, nprodf, modprodf);
+	    }
+	}
 
-	// Popola il modello della tabella con i dati dei clienti
-    public void ClientSearch(DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni cliente trovato
-        for (Cliente c : artjdbc.SearchClient()) {
-            Object[] pr = { c.getNome(), c.getCognome(), c.getArticoliOrdini().getCategoria(),
-                    c.getArticoliOrdini().getNumPunti() };
-            model.addRow(pr); // Aggiungi riga al modello
-        }
-    }
+
+	public static void main(String[] args) throws SQLException, IOException {
+		Controller c = new Controller();
+	}
 
 	public void connect() throws SQLException {
 		try {
@@ -208,56 +222,9 @@ public class Controller {
 		}
 	}
 
-	public JPanel createBackgroundPanel(String imagePath) {
-		return new BackgroundPanel(imagePath);
-	}
-
-	// Restituisce il codice dell'ordine corrente
-    public String CurrOrd() throws SQLException {
-        return ordjdbc.getCurrentCod();
-    }
-
-
-	public void dipAndElem(int x) {
-	    lastFrame = dipf; // Salva l'ultimo frame visibile come dipf
-	    // Mostra il frame corrispondente a x e nasconde dipf se presente
-	    switch (x) {
-	        case 1 -> setVisibleFrame(visctf, dipf);
-	        case 2 -> setVisibleFrame(ptessf, dipf);
-	        case 3 -> setVisibleFrame(visordf, dipf);
-	        case 4 -> setVisibleFrame(dipf, ptessf, visctf);
-	    }
-	}
-
-	// Restituisce l'ID del cliente associato a un codice fiscale
-    public String getct(String codfisc) throws SQLException {
-        return cljdbc.getIdCt(codfisc);
-    }
-
-    // Restituisce l'introito dei dipendenti per un intervallo di date
-    public List<String> introitidip(Date di, Date df) throws SQLException {
-        return dpjdbc.getDipIntroiti(di, df);
-    }
-
-    public void logout(int x) {
-	    // Mostra il frame di login e nasconde adminf o dipf in base al valore di x
-	    setVisibleFrame(logf, (x == 1) ? adminf : dipf);
-	}
-
-    public void logtoutente(int x) {
-	    logf.setVisible(false); // Nasconde il frame di login
-	    // Mostra il frame adminf o dipf in base al valore di x
-	    setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
-	}
-
-    // Aggiunge nuovi articoli a un ordine
-    public boolean newarticoli(Articoli articoli) throws SQLException {
-        return artjdbc.newordine(articoli);
-    }
-
-    // Aggiunge un nuovo cliente al database
-    public boolean newclt(Cliente ct) throws SQLException {
-        return cljdbc.setNewCt(ct);
+    // Verifica se l'ID è presente nel database
+    public boolean verifyid(String ID) throws SQLException {
+        return dpjdbc.verifyID(ID);
     }
 
     // Aggiunge un nuovo dipendente al database
@@ -265,9 +232,29 @@ public class Controller {
         return dpjdbc.setNewDip(dip);
     }
 
+    // Aggiunge un nuovo cliente al database
+    public boolean newclt(Cliente ct) throws SQLException {
+        return cljdbc.setNewCt(ct);
+    }
+
     // Aggiunge un nuovo prodotto al database
     public boolean newprod(Prodotto pe) throws SQLException {
         return prdjdbc.setNewProdotto(pe);
+    }
+
+    // Restituisce i punti associati a un codice tessera
+    public String punti(String codt) throws SQLException {
+        return tsjdbc.getpuntit(codt);
+    }
+
+    // Restituisce l'introito dei dipendenti per un intervallo di date
+    public List<String> introitidip(Date di, Date df) throws SQLException {
+        return dpjdbc.getDipIntroiti(di, df);
+    }
+
+    // Restituisce le vendite dei dipendenti per un intervallo di date
+    public List<String> venditedip(Date di, Date df) throws SQLException {
+        return dpjdbc.getDipVendite(di, df);
     }
 
     // Aggiunge una nuova tessera associata a un cliente
@@ -276,53 +263,9 @@ public class Controller {
         return tsjdbc.newtessera(cljdbc.getCtByNCCF(a, b, c));
     }
 
-    // Aggiunge un nuovo ordine al database
-    public boolean nuovoordine(Ordine ordine) throws SQLException {
-        return ordjdbc.newordine(ordine);
-    }
-
-    // Restituisce la data dell'ultimo ordine
-    public String OldDate() throws SQLException {
-        return ordjdbc.getOldDate();
-    }
-
-    // Restituisce i punti associati a un codice tessera
-    public String punti(String codt) throws SQLException {
-        return tsjdbc.getpuntit(codt);
-    }
-
-    public void returnToLastFrame() {
-	    // Mostra l'ultimo frame visibile e nasconde searchf e visordf
-	    setVisibleFrame(lastFrame, searchf, visordf);
-	}
-
-    public void searchAndElem(int x) {
-	    // Salva l'ultimo frame visibile come adminf o dipf
-	    lastFrame = (adminf.isVisible()) ? adminf : dipf;
-	    // Mostra il frame di ricerca e nasconde adminf o dipf in base al valore di x
-	    switch (x) {
-	        case 1 -> setVisibleFrame(searchf, adminf, dipf);
-	        case 2 -> setVisibleFrame(adminf, searchf);
-	        case 3 -> setVisibleFrame(dipf, searchf);
-	    }
-	}
-
-    private void setVisibleFrame(Frame toShow, Frame... toHide) {
-	    // Nasconde tutti i frame nella lista toHide
-	    for (Frame frame : toHide) {
-	        if (frame != null) {
-	            frame.setVisible(false);
-	        }
-	    }
-	    // Mostra il frame specificato da toShow
-	    if (toShow != null) {
-	        toShow.setVisible(true);
-	    }
-	}
-
-    // Aggiorna le informazioni di un cliente
-    public boolean upcliente(Cliente ce) throws SQLException {
-        return cljdbc.updateCliente(ce);
+    // Aggiorna le informazioni di un prodotto
+    public boolean upprod(Prodotto pe) throws SQLException {
+        return prdjdbc.updateProdotto(pe);
     }
 
     // Aggiorna le informazioni di un dipendente
@@ -330,14 +273,14 @@ public class Controller {
         return dpjdbc.updatedipendente(de);
     }
 
-    // Aggiorna le informazioni di un prodotto
-    public boolean upprod(Prodotto pe) throws SQLException {
-        return prdjdbc.updateProdotto(pe);
+    // Aggiorna le informazioni di un cliente
+    public boolean upcliente(Cliente ce) throws SQLException {
+        return cljdbc.updateCliente(ce);
     }
 
-    // Aggiorna i punti associati a un cliente
-    public boolean uppunti(String codcl, double d) throws SQLException {
-        return tsjdbc.updatepunti(codcl, d);
+    // Restituisce l'ID del cliente associato a un codice fiscale
+    public String getct(String codfisc) throws SQLException {
+        return cljdbc.getIdCt(codfisc);
     }
 
     // Aggiorna le scorte di un prodotto
@@ -345,52 +288,109 @@ public class Controller {
         return prdjdbc.updateScorte(x, s);
     }
 
-    // Restituisce le vendite dei dipendenti per un intervallo di date
-    public List<String> venditedip(Date di, Date df) throws SQLException {
-        return dpjdbc.getDipVendite(di, df);
+    // Aggiorna i punti associati a un cliente
+    public boolean uppunti(String codcl, double d) throws SQLException {
+        return tsjdbc.updatepunti(codcl, d);
     }
 
-    // Verifica se l'ID è presente nel database
-    public boolean verifyid(String ID) throws SQLException {
-        return dpjdbc.verifyID(ID);
+    // Aggiunge un nuovo ordine al database
+    public boolean nuovoordine(Ordine ordine) throws SQLException {
+        return ordjdbc.newordine(ordine);
     }
 
-    public void visAndCarr(int x) {
-	    // Salva l'ultimo frame visibile prima di cambiare
-        lastFrame = (adminf.isVisible()) ? adminf : dipf;
-	    switch (x) {
-	        case 1 -> setVisibleFrame(carrf);
-	        case 2 -> setVisibleFrame(visordf, carrf);
-	        case 3 -> setVisibleFrame(lastFrame, visordf);
-	    }
-	}
+    // Aggiunge nuovi articoli a un ordine
+    public boolean newarticoli(Articoli articoli) throws SQLException {
+        return artjdbc.newordine(articoli);
+    }
 
-    public void visAndcl(int x) {
-	    // Mostra il frame corrispondente a x e nasconde gli altri
-	    switch (x) {
-	        case 1 -> setVisibleFrame(nclf, visctf);
-	        case 2 -> setVisibleFrame(upclf, visctf);
-	        case 3 -> setVisibleFrame(visctf, nclf, upclf);
-	    }
-	}
+    // Restituisce la data dell'ultimo ordine
+    public String OldDate() throws SQLException {
+        return ordjdbc.getOldDate();
+    }
 
-    public void visAnddip(int x) {
-	    // Mostra il frame corrispondente a x e nasconde gli altri
-	    switch (x) {
-	        case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
-	        case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
-	        case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
-	    }
-	}
+    // Restituisce il codice dell'ordine corrente
+    public String CurrOrd() throws SQLException {
+        return ordjdbc.getCurrentCod();
+    }
 
-    public void visAndprod(int x) {
-	    // Mostra il frame corrispondente a x e nasconde gli altri
-	    switch (x) {
-	        case 1 -> setVisibleFrame(nprodf, vprodf);
-	        case 2 -> setVisibleFrame(modprodf, vprodf);
-	        case 3 -> setVisibleFrame(vprodf, nprodf, modprodf);
-	    }
-	}
+    // Popola il modello della tabella con i dati dei clienti
+    public void ClientSearch(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
+        // Aggiungi righe per ogni cliente trovato
+        for (Cliente c : artjdbc.SearchClient()) {
+            Object[] pr = { c.getNome(), c.getCognome(), c.getArticoliOrdini().getCategoria(),
+                    c.getArticoliOrdini().getNumPunti() };
+            model.addRow(pr); // Aggiungi riga al modello
+        }
+    }
+
+    // Popola il modello della tabella con i prodotti per categoria
+    public void categoriaprodotti(String c, DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
+        // Aggiungi righe per ogni prodotto nella categoria specificata
+        for (Prodotto p : prdjdbc.getbycategoria(c)) {
+            Object[] pr = { p.getCodProd(), p.getNome(), p.getPrezzo(), p.getCategoria(), p.getScorta() };
+            model.addRow(pr); // Aggiungi riga al modello
+        }
+    }
+
+    // Popola il modello della tabella con tutte le tessere
+    public void alltessera(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
+        // Aggiungi righe per ogni tessera
+        for (Tessera t : tsjdbc.alltessera()) {
+            Object[] pr = { t.getCodTessera(), t.getNPunti() };
+            model.addRow(pr); // Aggiungi riga al modello
+        }
+    }
+
+    // Popola il modello della tabella con tutti i clienti
+    public void allcliente(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
+        // Aggiungi righe per ogni cliente
+        for (Cliente c : cljdbc.getAllCt()) {
+            Object[] pr = { c.getCodCl(), c.getNome(), c.getCognome(), c.getCodFis(), c.getEmail(), c.getInd(),
+                    c.getTel(), c.getTessera().getCodTessera(), c.getTessera().getNPunti() };
+            model.addRow(pr); // Aggiungi riga al modello
+        }
+    }
+
+    // Popola il modello della tabella con tutti i dipendenti
+    public void alldipendenti(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
+        // Aggiungi righe per ogni dipendente
+        for (Dipendente d : dpjdbc.getAllDip()) {
+            Object[] rowData = { d.getCodDIP(), d.getNome(), d.getCognome(), d.getCodFis(), d.getEmail(), d.getInd(),
+                    d.getTel() };
+            model.addRow(rowData); // Aggiungi riga al modello
+        }
+    }
+
+    // Popola il modello della tabella con tutti gli ordini
+    public void allordini(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
+        // Aggiungi righe per ogni ordine
+        for (Ordine o : ordjdbc.getallordini()) {
+            Cliente ct = cljdbc.getCtByid(o.getIdCliente());
+            Dipendente d = dpjdbc.getOneDip(o.getIdDipendente());
+            Object[] pr = { o.getCodOrd(), o.getDataAcquisto().toString(), o.getPrezzoTotale(),
+                    ct.getCognome() + " " + ct.getNome(), d.getCognome() + " " + d.getNome() };
+            model.addRow(pr); // Aggiungi riga al modello
+        }
+    }
+
+    // Popola il modello della tabella con tutti i prodotti
+    public void allprodotti(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
+        // Aggiungi righe per ogni prodotto
+        for (Prodotto p : prdjdbc.getallprodotti()) {
+            String glutenStatus = p.isGlutine() ? "Si" : "No"; // Determina se il prodotto contiene glutine
+            Object[] pr = { p.getCodProd(), p.getNome(), p.getDescrizione(), p.getPrezzo(), p.getLuogoProv(),
+                    p.getDataraccolta(), p.getDatamungitura(), glutenStatus, p.getDatascadenza(), p.getCategoria(),
+                    p.getScorta() };
+            model.addRow(pr); // Aggiungi riga al modello
+        }
+    }
 }
 
 
