@@ -15,39 +15,40 @@ public class provaentita {
         this.corso = corso;
     }
 
-    public String getid() {
-        return id;
-    }
-
-    public void setid(String id) {
-        this.id = id;
-    }
-
-    public String getnome() {
-        return nome;
-    }
-
-    public void setnome(String nome) {
-        this.nome = nome;
-    }
-
     public String getcontatto() {
         return contatto;
-    }
-
-    public void setcontatto(String contatto) {
-        this.contatto = contatto;
     }
 
     public String getcorso() {
         return corso;
     }
 
+    public String getid() {
+        return id;
+    }
+
+    public String getnome() {
+        return nome;
+    }
+
+    public void setcontatto(String contatto) {
+        this.contatto = contatto;
+    }
+
     public void setcorso(String corso) {
         this.corso = corso;
     }
-    
-    public String toString() {
+
+    public void setid(String id) {
+        this.id = id;
+    }
+
+    public void setnome(String nome) {
+        this.nome = nome;
+    }
+
+    @Override
+	public String toString() {
     	String pe = getid() + " " + getnome() + " " + getcontatto() + " " + getcorso() + "";
 		return pe;
     }

@@ -4,41 +4,6 @@ import java.util.Scanner;
 
 public class LancioDadi {
 
-    // Attributi
-    final int numerolanci = 10000;
-    int[] lanci = new int [numerolanci];
-
-
-
-    public LancioDadi()
-    {
-        // lanci[] = new int [numeroLanci];
-        //lanci = new int [numerolanci];   //vettori
-
-    }
-
-    public void lanciaDado()
-    {
-        for (int i=0; i<numerolanci; ++i)
-        {
-            lanci[i] = 1 + (int)((7-1) * Math.random());  //genera un numero casuale fra 1 e 6
-        }
-    }
-
-    public int contaNumero(int numeroDaContare)
-    {
-        int i, cont = 0;
-
-        for (i=0; i<numerolanci; ++i)
-        {
-            if (lanci[i]==numeroDaContare)
-            {
-                cont = cont + 1;
-            }
-        }
-        return cont;
-    }
-
     public static void main (String[] args)
     {
         String scelta;
@@ -70,5 +35,40 @@ public class LancioDadi {
             System.out.println("Vuoi giocare ancora? (s/n)");
             scelta = in.next();
         } while(scelta.equals("s")  || scelta.equals("S"));
+    }
+    // Attributi
+    final int numerolanci = 10000;
+
+
+
+    int[] lanci = new int [numerolanci];
+
+    public LancioDadi()
+    {
+        // lanci[] = new int [numeroLanci];
+        //lanci = new int [numerolanci];   //vettori
+
+    }
+
+    public int contaNumero(int numeroDaContare)
+    {
+        int i, cont = 0;
+
+        for (i=0; i<numerolanci; ++i)
+        {
+            if (lanci[i]==numeroDaContare)
+            {
+                cont = cont + 1;
+            }
+        }
+        return cont;
+    }
+
+    public void lanciaDado()
+    {
+        for (int i=0; i<numerolanci; ++i)
+        {
+            lanci[i] = 1 + (int)((7-1) * Math.random());  //genera un numero casuale fra 1 e 6
+        }
     }
 }

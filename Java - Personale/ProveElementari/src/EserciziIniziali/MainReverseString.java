@@ -6,6 +6,15 @@ public class MainReverseString {
 
 	static Scanner input = new Scanner(System.in);
 
+	public static void main(String[] args) {
+		System.out.println("Inserisci una frase : ");
+        String stringa = input.nextLine();
+
+        System.out.println("La stringa inversa è " + reverseString(stringa));
+
+        input.close();
+	}
+
 	public static String reverseString(String str){
 
         if( str.length() == 0 ) {
@@ -15,14 +24,5 @@ public class MainReverseString {
 		}
 
     }
-
-	public static void main(String[] args) {
-		System.out.println("Inserisci una frase : ");
-        String stringa = input.nextLine();
-
-        System.out.println("La stringa inversa è " + reverseString(stringa));
-
-        input.close();
-	}
 
 }

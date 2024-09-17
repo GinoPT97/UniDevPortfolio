@@ -6,17 +6,7 @@ public class MainFattoriale {
 
 	static Scanner input = new Scanner(System.in); // input
 
-	public static int FattorialeRicorsivo(int n) {
-
-        if( n <= 1) {
-			return 1;
-		} else {
-			return n * FattorialeRicorsivo( n - 1 );
-		}
-
-    }
-
-    public static int FattorialeIterativo(int n){
+	public static int FattorialeIterativo(int n){
         int result = 1;
 
         for (int i = 1; i <= n; i++) {
@@ -24,6 +14,16 @@ public class MainFattoriale {
 		}
 
         return result;
+    }
+
+    public static int FattorialeRicorsivo(int n) {
+
+        if( n <= 1) {
+			return 1;
+		} else {
+			return n * FattorialeRicorsivo( n - 1 );
+		}
+
     }
 
 	public static void main(String[] args) {

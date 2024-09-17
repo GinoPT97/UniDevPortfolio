@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
 import DAOImpl.provadaoimpl;
@@ -37,51 +38,51 @@ public class Prova extends JFrame{
     public Prova(String s,Controller c) throws SQLException  {
 		this.getContentPane().setBackground(new Color(30, 144, 255));
 		this.setBounds(100, 100, 600, 450);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.getContentPane().setLayout(null);
 		c.connect();
-		
+
 		JLabel idlab = new JLabel("ID :");
 		idlab.setBounds(61, 69, 45, 13);
 		this.getContentPane().add(idlab);
-		
+
 		idtf = new JTextField();
 		idtf.setBounds(116, 66, 96, 19);
 		this.getContentPane().add(idtf);
 		idtf.setColumns(10);
 		idtf.setEditable(false);
-		
+
 		JLabel namelab = new JLabel("Nome :");
 		namelab.setBounds(61, 104, 45, 13);
 		this.getContentPane().add(namelab);
-		
+
 		nometf = new JTextField();
 		nometf.setBounds(116, 101, 96, 19);
 		this.getContentPane().add(nometf);
 		nometf.setColumns(10);
-		
+
 		JLabel contattolab = new JLabel("Contatto :");
 		contattolab.setBounds(49, 138, 57, 13);
 		this.getContentPane().add(contattolab);
-		
+
 		contattotf = new JTextField();
 		contattotf.setBounds(116, 135, 96, 19);
 		this.getContentPane().add(contattotf);
 		contattotf.setColumns(10);
-		
+
 		JLabel corsolab = new JLabel("Corso :");
 		corsolab.setBounds(61, 173, 45, 13);
 		this.getContentPane().add(corsolab);
-		
+
 		corsotf = new JTextField();
 		corsotf.setBounds(116, 170, 96, 19);
 		this.getContentPane().add(corsotf);
 		corsotf.setColumns(10);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(262, 68, 314, 335);
 		this.getContentPane().add(scrollPane);
-		
+
 		table = new JTable();
 		model = new DefaultTableModel();
 		Object[] colonne = {"ID", "Nome","Contatti","Corso"};
@@ -100,16 +101,17 @@ public class Prova extends JFrame{
 		  }
 		});
 		c.getAllProve(model);
-		
+
 		JButton addbutt = new JButton("Aggiungi");
 		addbutt.setForeground(Color.GREEN);
-		
+
 		addbutt.setBounds(25, 280, 85, 21);
 		this.getContentPane().add(addbutt);
-		
+
 		JButton updatebutt = new JButton("Modifica");
 		updatebutt.setForeground(Color.ORANGE);
 		updatebutt.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int i = table.getSelectedRow();
 				if(i>=0) {
@@ -131,10 +133,11 @@ public class Prova extends JFrame{
 		});
 		updatebutt.setBounds(141, 280, 85, 21);
 		this.getContentPane().add(updatebutt);
-		
+
 		JButton delatebutt = new JButton("Elimina");
 		delatebutt.setForeground(Color.RED);
 		delatebutt.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int i = table.getSelectedRow();
 				try {
@@ -152,17 +155,18 @@ public class Prova extends JFrame{
 		});
 		delatebutt.setBounds(25, 337, 85, 21);
 		this.getContentPane().add(delatebutt);
-		
+
 		JButton clearbutt = new JButton("Clear");
 		clearbutt.setBackground(Color.WHITE);
 		clearbutt.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				clean();
 			}
 		});
 		clearbutt.setBounds(141, 337, 85, 21);
 		this.getContentPane().add(clearbutt);
-		
+
 		txtProgettinoDiProva = new JTextField();
 		txtProgettinoDiProva.setEditable(false);
 		txtProgettinoDiProva.setBackground(new Color(0, 128, 128));
@@ -172,7 +176,7 @@ public class Prova extends JFrame{
 		getContentPane().add(txtProgettinoDiProva);
 		txtProgettinoDiProva.setColumns(10);
     }
-    
+
     public void clean() {
     	idtf.setText("");
 		nometf.setText("");

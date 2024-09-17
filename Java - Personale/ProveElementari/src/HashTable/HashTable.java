@@ -4,8 +4,19 @@ import java.util.LinkedList;
 
 // Classe dell'hashtable
 public class HashTable<K, V> {
+    // Classe Entry per memorizzare coppie chiave-valore
+    private static class Entry<K, V> {
+        K key;
+        V value;
+
+        public Entry(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
     private static final int DEFAULT_CAPACITY = 10;
     private LinkedList<Entry<K, V>>[] table;
+
     private int size;
 
     // Costruttore
@@ -17,6 +28,20 @@ public class HashTable<K, V> {
     public HashTable(int capacity) {
         this.table = new LinkedList[capacity];
         this.size = 0;
+    }
+
+    // Metodo per recuperare un elemento
+    public V get(K key) {
+        int index = hash(key);
+        LinkedList<Entry<K, V>> list = table[index];
+        if (list != null) {
+            for (Entry<K, V> entry : list) {
+                if (entry.key.equals(key)) {
+                    return entry.value;
+                }
+            }
+        }
+        return null; // Chiave non trovata
     }
 
     // Funzione di hash
@@ -44,20 +69,6 @@ public class HashTable<K, V> {
         size++;
     }
 
-    // Metodo per recuperare un elemento
-    public V get(K key) {
-        int index = hash(key);
-        LinkedList<Entry<K, V>> list = table[index];
-        if (list != null) {
-            for (Entry<K, V> entry : list) {
-                if (entry.key.equals(key)) {
-                    return entry.value;
-                }
-            }
-        }
-        return null; // Chiave non trovata
-    }
-
     // Metodo per rimuovere un elemento
     public void remove(K key) {
         int index = hash(key);
@@ -71,17 +82,6 @@ public class HashTable<K, V> {
     // Metodo per ottenere la dimensione della hashtable
     public int size() {
         return size;
-    }
-
-    // Classe Entry per memorizzare coppie chiave-valore
-    private static class Entry<K, V> {
-        K key;
-        V value;
-
-        public Entry(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
     }
 }
 

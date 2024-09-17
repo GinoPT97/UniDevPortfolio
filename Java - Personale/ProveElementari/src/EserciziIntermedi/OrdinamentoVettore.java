@@ -7,11 +7,24 @@ public class OrdinamentoVettore {
 	// Importa la classe Scanner dal package java.util per consentire l'input da tastiera
 	static Scanner input = new Scanner(System.in);
 
-	// Definisci una funzione di scambio che scambia due elementi in un array dato gli indici
-	public static void swap(int[] array, int i, int j) {
-	    int temp = array[i];
-	    array[i] = array[j];
-	    array[j] = temp;
+	// Metodo principale (main) del programma
+	public static void main(String[] args) {
+	    // Dichiarazione e inizializzazione di un array di interi di dimensione 10
+	    int[] vettore = new int[10];
+
+	    // Ciclo per l'input da tastiera degli elementi dell'array
+	    for (int i = 0; i < vettore.length; i++) {
+	        System.out.print("Inserisci il valore dell'elemento " + i + ": ");
+	        vettore[i] = input.nextInt();
+	    }
+
+	    // Chiamata alla funzione di ordinamento per ordinare l'array in modo crescente
+	    Ordinamento(vettore);
+
+	    // Stampa gli elementi dell'array ordinato
+	    for (int element : vettore) {
+			System.out.println(element);
+		}
 	}
 
 	// Implementa la funzione di ordinamento che utilizza l'algoritmo di ordinamento a bolle
@@ -39,23 +52,10 @@ public class OrdinamentoVettore {
 	    }
 	}
 
-	// Metodo principale (main) del programma
-	public static void main(String[] args) {
-	    // Dichiarazione e inizializzazione di un array di interi di dimensione 10
-	    int[] vettore = new int[10];
-
-	    // Ciclo per l'input da tastiera degli elementi dell'array
-	    for (int i = 0; i < vettore.length; i++) {
-	        System.out.print("Inserisci il valore dell'elemento " + i + ": ");
-	        vettore[i] = input.nextInt();
-	    }
-
-	    // Chiamata alla funzione di ordinamento per ordinare l'array in modo crescente
-	    Ordinamento(vettore);
-
-	    // Stampa gli elementi dell'array ordinato
-	    for (int element : vettore) {
-			System.out.println(element);
-		}
+	// Definisci una funzione di scambio che scambia due elementi in un array dato gli indici
+	public static void swap(int[] array, int i, int j) {
+	    int temp = array[i];
+	    array[i] = array[j];
+	    array[j] = temp;
 	}
 }

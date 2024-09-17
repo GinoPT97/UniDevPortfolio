@@ -3,8 +3,18 @@ package HashTable;
 import java.util.LinkedList;
 
 public class HashTable2<K, V> {
+    private static class Entry<K, V> {
+        K key;
+        V value;
+
+        public Entry(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
     private static final int DEFAULT_CAPACITY = 10;
     private LinkedList<Entry<K, V>>[] table;
+
     private int size;
 
     public HashTable2() {
@@ -14,6 +24,19 @@ public class HashTable2<K, V> {
     public HashTable2(int capacity) {
         this.table = new LinkedList[capacity];
         this.size = 0;
+    }
+
+    public V get(K key) {
+        int index = hash(key);
+        LinkedList<Entry<K, V>> list = table[index];
+        if (list != null) {
+            for (Entry<K, V> entry : list) {
+                if (entry.key.equals(key)) {
+                    return entry.value;
+                }
+            }
+        }
+        return null;
     }
 
     private int hash(K key) {
@@ -39,19 +62,6 @@ public class HashTable2<K, V> {
         size++;
     }
 
-    public V get(K key) {
-        int index = hash(key);
-        LinkedList<Entry<K, V>> list = table[index];
-        if (list != null) {
-            for (Entry<K, V> entry : list) {
-                if (entry.key.equals(key)) {
-                    return entry.value;
-                }
-            }
-        }
-        return null;
-    }
-
     public void remove(K key) {
         int index = hash(key);
         LinkedList<Entry<K, V>> list = table[index];
@@ -63,15 +73,5 @@ public class HashTable2<K, V> {
 
     public int size() {
         return size;
-    }
-
-    private static class Entry<K, V> {
-        K key;
-        V value;
-
-        public Entry(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
     }
 }

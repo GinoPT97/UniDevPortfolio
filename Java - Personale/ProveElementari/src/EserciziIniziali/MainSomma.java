@@ -6,14 +6,6 @@ public class MainSomma {
 
 	static Scanner risposta = new Scanner(System.in);
 
-	public static int somma (int addendo1, int addendo2) {
-        return addendo1 + addendo2;
-    }
-
-    public static String somma(String addendo1, String addendo2) {
-     return addendo1 + addendo2;
-    }
-
 	public static void main(String[] args) {
 
         System.out.println("Cosa vuoi sommare? 1-numeri....2-stringhe");
@@ -44,5 +36,13 @@ public class MainSomma {
         }
         risposta.close();
 	}
+
+    public static int somma (int addendo1, int addendo2) {
+        return addendo1 + addendo2;
+    }
+
+	public static String somma(String addendo1, String addendo2) {
+     return addendo1 + addendo2;
+    }
 
 }

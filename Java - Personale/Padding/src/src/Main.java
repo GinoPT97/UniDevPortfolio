@@ -16,9 +16,6 @@ import javax.swing.border.EmptyBorder;
 
 public class Main extends JFrame {
 
-	private JPanel contentPane;
-	private JTextField dimension;
-
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -32,6 +29,9 @@ public class Main extends JFrame {
 			}
 		});
 	}
+	private JPanel contentPane;
+
+	private JTextField dimension;
 
 
 	public Main() {
