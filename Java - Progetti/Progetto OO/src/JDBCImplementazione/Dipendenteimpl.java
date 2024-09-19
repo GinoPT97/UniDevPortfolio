@@ -1,4 +1,4 @@
-package JDBCimplementazione;
+package JDBCImplementazione;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -15,11 +15,9 @@ import Model.Dipendente;
 public class Dipendenteimpl implements DipendenteJDBC {
     private PreparedStatement setNewDip, updateDip;
     private Statement getAllDip, getDipVendite, getDipIntroiti, verifyId, getDip;
-    private ArrayList<Dipendente> diplist = new ArrayList<>();
     private List<String> ordven = new ArrayList<>();
     private List<String> ordint = new ArrayList<>();
-    private Dipendente dip;
-
+    
     // Costruttore
     public Dipendenteimpl(Connection connection) throws SQLException {
         getAllDip = connection.createStatement();

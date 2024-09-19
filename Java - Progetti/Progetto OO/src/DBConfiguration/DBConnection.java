@@ -4,9 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * La classe DBConnection rappresenta una connessione a un database PostgreSQL.
- */
+// La classe DBConnection rappresenta una connessione a un database PostgreSQL.
+
 public class DBConnection {
 	public static DBConnection instance;
 	private Connection connection = null;
@@ -16,13 +15,8 @@ public class DBConnection {
 	private final String PORT = "5432";
 	private String url = "jdbc:postgresql://" + IP + ":" + PORT + "/";
 
-	/**
-	 * Costruisce un nuovo oggetto DBConnection con il nome del database
-	 * specificato.
-	 *
-	 * @param db il nome del database
-	 * @throws SQLException se si verifica un errore di accesso al database
-	 */
+	// Costruisce un nuovo oggetto DBConnection con il nome del database specificato.
+	
 	private DBConnection(String db) throws SQLException {
 
 		try {
@@ -34,11 +28,8 @@ public class DBConnection {
 
 	}
 
-	/**
-	 * Restituisce la connessione al database.
-	 *
-	 * @return la connessione al database
-	 */
+	// Restituisce la connessione al database.
+	
 	public Connection getConnection() {
 		return connection;
 	}
@@ -46,10 +37,6 @@ public class DBConnection {
 	/**
 	 * Restituisce l'istanza singleton della classe DBConnection. Se l'istanza è
 	 * nulla o la connessione è chiusa, viene creata una nuova istanza.
-	 *
-	 * @param db il nome del database
-	 * @return l'istanza singleton di DBConnection
-	 * @throws SQLException se si verifica un errore di accesso al database
 	 */
 	public static DBConnection getInstance(String db) throws SQLException {
 		if (instance == null) {

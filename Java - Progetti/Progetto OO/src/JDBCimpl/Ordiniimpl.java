@@ -13,16 +13,16 @@ import Model.Ordine;
 
 public class Ordiniimpl implements OrdiniJDBC {
 	private Connection connection;
-	private PreparedStatement newordine, allordine, newarticoli;
-	private Statement olddate, currCod;
+	private PreparedStatement newordine, allordine;
+	private Statement currCod;
 	private ArrayList<Ordine> ord = new ArrayList<>();
 
 	public Ordiniimpl(Connection connection) throws SQLException {
 		this.connection = connection;
 		newordine = connection.prepareStatement("INSERT INTO ordine VALUES (NEXTVAL('SCodOrdine'),?,?,?,?)");
-		newarticoli = connection.prepareStatement("INSERT INTO articoliordine VALUES (NEXTVAL(?,?,?,?)");
+		connection.prepareStatement("INSERT INTO articoliordine VALUES (NEXTVAL(?,?,?,?)");
 		allordine = connection.prepareStatement("SELECT * FROM ordine ORDER BY dataacquisto DESC");
-		olddate = connection.createStatement();
+		connection.createStatement();
 		currCod = connection.createStatement();
 	}
 

@@ -29,22 +29,6 @@ public class DBConfiguration {
 		}
 	}
 
-	// Verifica l'esistenza delle sequenze
-	private boolean sequenceExists(String sequence_name) throws SQLException {
-		Statement st = connection.createStatement();
-		String sql = "SELECT c.relname FROM pg_class c WHERE c.relkind = 'S'"; // Query che ritorna il nome delle
-																				// sequenze create dall'utente; fonte:
-																				// https://stackoverflow.com/questions/1493262/list-all-sequences-in-a-postgres-db-8-1-with-sql
-		ResultSet rs = st.executeQuery(sql);
-		while (rs.next()) {
-			if (sequence_name.equals(rs.getString(1))) {
-
-			}
-			return true;
-		}
-		return false;
-	}
-
 	// Crea le sequenze per autogenerare le chiavi primarie di tutte le relazioni
 	public int createSequences() throws ConnectionException, SQLException {
 		int result = -1;

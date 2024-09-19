@@ -13,14 +13,9 @@ import Model.Cliente;
 
 public class ArticoliImpl implements ArticoliJDBC {
 
-	private Connection connection;
 	private PreparedStatement newarticoli;
 	private Statement searchClient;
-	private ArrayList<Articoli> articoli = new ArrayList<>();
-	private ArrayList<Cliente> Cliente = new ArrayList<>();
-
 	public ArticoliImpl(Connection connection) throws SQLException {
-		this.connection = connection;
 		newarticoli = connection.prepareStatement("INSERT INTO articoliordine VALUES (?, ?, ?, ?, ?, ?)");
 		searchClient = connection.createStatement();
 	}

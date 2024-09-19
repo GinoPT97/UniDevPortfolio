@@ -11,13 +11,11 @@ import Model.Cliente;
 import Model.Tessera;
 
 public class Tesseraimpl implements TesseraJDBC {
-	private Connection connection;
 	private PreparedStatement newtessera, getpuntit, alltessera, uppunti;
 	private ArrayList<Tessera> tess = new ArrayList<>();
 	private String s;
 
 	public Tesseraimpl(Connection connection) throws SQLException {
-		this.connection = connection;
 		newtessera = connection.prepareStatement("INSERT INTO tessera VALUES (NEXTVAL('SCodTessera'),?,?)");
 		getpuntit = connection.prepareStatement("SELECT numeropunti FROM tessera WHERE codtessera = ?");
 		alltessera = connection.prepareStatement(

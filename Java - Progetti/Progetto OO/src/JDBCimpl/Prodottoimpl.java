@@ -11,14 +11,12 @@ import JDBC.ProdottoJDBC;
 import Model.Prodotto;
 
 public class Prodottoimpl implements ProdottoJDBC {
-	private Connection connection;
 	private PreparedStatement setNewProdotto, getallprodotti, updateprodotto, upscorte;
 	private Statement getcategoria;
 	private ArrayList<Prodotto> prod = new ArrayList<>();
 	private ArrayList<Prodotto> prodc = new ArrayList<>();
 
 	public Prodottoimpl(Connection connection) throws SQLException {
-		this.connection = connection;
 		getallprodotti = connection.prepareStatement("SELECT * FROM prodotto ORDER BY nome DESC");
 		setNewProdotto = connection.prepareStatement(
 				"INSERT INTO prodotto VALUES (NEXTVAL('SCodProdotto'), ?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, CAST(? AS TIPOLOGIA), ?)");

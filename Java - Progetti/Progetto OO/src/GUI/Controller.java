@@ -19,12 +19,12 @@ import JDBC.DipendenteJDBC;
 import JDBC.OrdiniJDBC;
 import JDBC.ProdottoJDBC;
 import JDBC.TesseraJDBC;
-import JDBCimplementazione.ArticoliImpl;
-import JDBCimplementazione.Clienteimpl;
-import JDBCimplementazione.Dipendenteimpl;
-import JDBCimplementazione.OrdiniImpl;
-import JDBCimplementazione.ProdottoImpl;
-import JDBCimplementazione.Tesseraimpl;
+import JDBCImplementazione.ArticoliImpl;
+import JDBCImplementazione.Clienteimpl;
+import JDBCImplementazione.Dipendenteimpl;
+import JDBCImplementazione.OrdiniImpl;
+import JDBCImplementazione.ProdottoImpl;
+import JDBCImplementazione.Tesseraimpl;
 import Model.Articoli;
 import Model.BackgroundPanel;
 import Model.Cliente;
@@ -61,7 +61,6 @@ public class Controller {
 	private TesseraJDBC tsjdbc = null;
 	private ArticoliJDBC artjdbc = null;
 	public String iddip;
-	private DefaultTableModel model;
 	private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
 
 	public Controller() throws SQLException, IOException {
@@ -392,6 +391,9 @@ public class Controller {
         }
     }
 }
+
+
+
 
 
 

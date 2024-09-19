@@ -12,7 +12,6 @@ import Model.Cliente;
 import Model.Tessera;
 
 public class Clienteimpl implements ClienteJDBC {
-	private Connection connection;
 	private PreparedStatement setNewCt, cercacl, updatecl;
 	private Statement getAllCt, idcl;
 	private ArrayList<Cliente> ctTot = new ArrayList<>();
@@ -20,7 +19,6 @@ public class Clienteimpl implements ClienteJDBC {
 	private String id = null;
 
 	public Clienteimpl(Connection connection) throws SQLException {
-		this.connection = connection;
 		getAllCt = connection.createStatement();
 		cercacl = connection.prepareStatement(
 				"SELECT codcliente FROM cliente WHERE nome = ? AND cognome = ? AND codicefiscale = ?");
