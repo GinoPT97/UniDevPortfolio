@@ -15,10 +15,6 @@ public class Clienteimpl implements ClienteJDBC {
     private Connection connection;
     private PreparedStatement setNewCt, cercaCl, updateCl;
     private Statement getAllCt, idCl;
-    private ArrayList<Cliente> ctTot = new ArrayList<>();
-    private Cliente ct;
-    private String id = null;
-
     // Costruttore
     public Clienteimpl(Connection connection) throws SQLException {
         this.connection = connection;
