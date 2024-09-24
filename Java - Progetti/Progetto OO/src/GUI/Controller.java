@@ -141,12 +141,15 @@ public class Controller {
 	}
 
 	public void visAndCarr(int x) {
-	    // Salva l'ultimo frame visibile prima di cambiare
-        lastFrame = (adminf.isVisible()) ? adminf : dipf;
+	    // Verifica quale frame è visibile, se adminf è visibile lo assegna come lastFrame, altrimenti dipf
+	    if (adminf.isVisible()) lastFrame = adminf;
+	    else if (dipf.isVisible()) lastFrame = dipf;
+	    
+	    // Usa uno switch per gestire la visibilità dei frame
 	    switch (x) {
-	        case 1 -> setVisibleFrame(carrf);
-	        case 2 -> setVisibleFrame(visordf, carrf);
-	        case 3 -> setVisibleFrame(lastFrame, visordf);
+	        case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
+	        case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
+	        case 3 -> setVisibleFrame(lastFrame, visordf); // Torna al frame precedente e nasconde il frame ordine
 	    }
 	}
 

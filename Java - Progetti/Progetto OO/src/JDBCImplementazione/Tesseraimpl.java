@@ -13,11 +13,10 @@ import Model.Tessera;
 public class Tesseraimpl implements TesseraJDBC {
 
     // Costanti per le query SQL
-    private static final String INSERT_TESSERA = "INSERT INTO tessera VALUES (NEXTVAL('SCodTessera'),?,?)";
-    private static final String SELECT_PUNTI = "SELECT numeropunti FROM tessera WHERE codtessera = ?";
-    private static final String SELECT_ALL_TESSERE = 
-        "SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC";
-    private static final String UPDATE_PUNTI = "UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = ?";
+    private static final String AddTessera = "INSERT INTO tessera VALUES (NEXTVAL('SCodTessera'),?,?)";
+    private static final String getPunti = "SELECT numeropunti FROM tessera WHERE codtessera = ?";
+    private static final String AllTessere= "SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC";
+    private static final String UpdatePunti = "UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = ?";
 
     private Connection connection;
     private PreparedStatement newtesseraStmt, getpuntitStmt, alltesseraStmt, uppuntiStmt;
@@ -25,10 +24,10 @@ public class Tesseraimpl implements TesseraJDBC {
     public Tesseraimpl(Connection connection) throws SQLException {
         this.connection = connection;
         // Preparazione delle query
-        newtesseraStmt = connection.prepareStatement(INSERT_TESSERA);
-        getpuntitStmt = connection.prepareStatement(SELECT_PUNTI);
-        alltesseraStmt = connection.prepareStatement(SELECT_ALL_TESSERE);
-        uppuntiStmt = connection.prepareStatement(UPDATE_PUNTI);
+        newtesseraStmt = connection.prepareStatement(AddTessera);
+        getpuntitStmt = connection.prepareStatement(getPunti);
+        alltesseraStmt = connection.prepareStatement(AllTessere);
+        uppuntiStmt = connection.prepareStatement(UpdatePunti);
     }
 
     @Override

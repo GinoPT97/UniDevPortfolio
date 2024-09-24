@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -19,7 +17,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class DipendenteFrame extends JFrame {
-	private Controller c;
 	private JPanel contentPane;
 	private JButton logoututton;
 	private JButton clientebutton;
@@ -84,42 +81,22 @@ public class DipendenteFrame extends JFrame {
 	    ordineutton = new JButton("Ordine");
 	    buttonContainer.add(ordineutton);
 	}
-	
+
 	public void azioni(Controller c) {
-		logoututton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.logout(2);
-			}
-		});
+	    // Listener per il pulsante di logout, chiama il metodo logout del Controller con parametro 2
+	    logoututton.addActionListener(e -> c.logout(2));
 
-		clientebutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.dipAndElem(1);
-			}
-		});
+	    // Listener per il pulsante cliente, chiama il metodo dipAndElem del Controller con parametro 1
+	    clientebutton.addActionListener(e -> c.dipAndElem(1));
 
-		tesserabutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.dipAndElem(2);
-			}
-		});
+	    // Listener per il pulsante tessera, chiama il metodo dipAndElem del Controller con parametro 2
+	    tesserabutton.addActionListener(e -> c.dipAndElem(2));
 
-		ordineutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.dipAndElem(3);
-			}
-		});
+	    // Listener per il pulsante ordine, chiama il metodo dipAndElem del Controller con parametro 3
+	    ordineutton.addActionListener(e -> c.dipAndElem(3));
 
-		searchbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.searchAndElem(1);
-			}
-		});
+	    // Listener per il pulsante di ricerca, chiama il metodo searchAndElem del Controller con parametro 1
+	    searchbutton.addActionListener(e -> c.searchAndElem(1));
 	}
 
 	public DipendenteFrame(String title, Controller c) {

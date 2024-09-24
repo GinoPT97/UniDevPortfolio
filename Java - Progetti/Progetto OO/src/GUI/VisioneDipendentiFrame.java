@@ -30,13 +30,9 @@ public class VisioneDipendentiFrame extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
 	private DefaultTableModel model;
-	private JScrollPane scrollPane;
-	private JPanel titlepanel;
-	private JPanel buttonpanel;
 	private JButton backbutton;
 	private JButton addbutton;
 	private JButton updatebutton;
-	private JLabel titlelab;
 	private JButton searchbutton;
 	private JTextField searchtf;
 
@@ -119,11 +115,6 @@ public class VisioneDipendentiFrame extends JFrame {
 
 	    // Listener per il pulsante di aggiunta
 	    addbutton.addActionListener(e -> c.visAnddip(1));
-
-	    // Listener per il pulsante di ritorno
-	    backbutton.addActionListener(e -> {
-	        c.visAnddip(3); // Mostra la vista dei dipendenti
-	    });
 
 	    // Listener per il pulsante di aggiornamento
 	    updatebutton.addActionListener(e -> {
