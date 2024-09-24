@@ -135,48 +135,30 @@ public class NuovoDipendenteFrame extends JFrame {
 	}
 
 	public void azioni(Controller c) {
-		addbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
-							emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
-					clean();
-					JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-				}
-			}
-		});
+	    // Listener per il bottone di aggiunta di un nuovo dipendente
+	    addbutton.addActionListener(e -> {
+	        try {
+	            // Crea un nuovo oggetto Dipendente utilizzando i valori dei campi di testo
+	            c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
+	                    emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
+	            // Pulisce i campi di input
+	            clean();
+	            // Mostra un messaggio di successo
+	            JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
+	        } catch (SQLException e1) {
+	            // Mostra un messaggio di errore in caso di eccezione
+	            JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+	        }
+	    });
 
-		addbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
-							emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
-					clean();
-					JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-				}
-			}
-		});
+	    // Listener per il bottone di pulizia dei campi di input
+	    clearbutton.addActionListener(e -> clean());
 
-		clearbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				clean();
-			}
-		});
-
-		backbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				clean();
-				c.visAnddip(3);
-			}
-		});
+	    // Listener per il bottone di ritorno alla schermata precedente
+	    backbutton.addActionListener(e -> {
+	        clean(); // Pulisce i campi di input
+	        c.visAnddip(3); // Passa alla schermata dipendenti
+	    });
 	}
 
 	public NuovoDipendenteFrame(String title, Controller c) {

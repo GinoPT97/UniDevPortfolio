@@ -44,7 +44,7 @@ public class NuovoProdottoFrame extends JFrame {
 	private JTextField scortatf;
 	private JTextArea descta;
 	private JCheckBox glutcb;
-	private JComboBox categoriacb;
+	private JComboBox<String> categoriacb;
 	
 	public void elementi() {
 	    // Configurazione della finestra

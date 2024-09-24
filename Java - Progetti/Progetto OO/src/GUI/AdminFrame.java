@@ -93,49 +93,25 @@ public class AdminFrame extends JFrame {
         titlepanel.add(logoutbutton, BorderLayout.SOUTH); // Estende il bottone di logout a tutta la larghezza
     }
 
-	public void azioni(Controller c) {
-		logoutbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.logout(1);
-			}
-		});
+    public void azioni(Controller c) {
+        // Listener per il bottone di logout che richiama il metodo logout nel Controller
+        logoutbutton.addActionListener(e -> c.logout(1));
 
-		dipbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.adminAndElem(1);
-			}
-		});
+        // Listener per il bottone dipendenti che richiama il metodo adminAndElem con parametro 1
+        dipbutton.addActionListener(e -> c.adminAndElem(1));
 
-		prodbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.adminAndElem(2);
-			}
-		});
+        // Listener per il bottone prodotti che richiama il metodo adminAndElem con parametro 2
+        prodbutton.addActionListener(e -> c.adminAndElem(2));
 
-		statistichebutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.adminAndElem(3);
-			}
-		});
+        // Listener per il bottone statistiche che richiama il metodo adminAndElem con parametro 3
+        statistichebutton.addActionListener(e -> c.adminAndElem(3));
 
-		visordbutt.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.adminAndElem(4);
-			}
-		});
+        // Listener per il bottone visione ordini che richiama il metodo adminAndElem con parametro 4
+        visordbutt.addActionListener(e -> c.adminAndElem(4));
 
-		searchbutton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				c.searchAndElem(1);
-			}
-		});
-	}
+        // Listener per il bottone ricerca che richiama il metodo searchAndElem con parametro 1
+        searchbutton.addActionListener(e -> c.searchAndElem(1));
+    }
 
 	public AdminFrame(String title, Controller c) {
 		super(title);

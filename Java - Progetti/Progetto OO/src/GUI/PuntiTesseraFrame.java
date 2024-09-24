@@ -95,28 +95,35 @@ public class PuntiTesseraFrame extends JFrame {
 	}
 
 	public void azioni(Controller c) {
-	    // Pulsante di visualizzazione
+	    // Listener per il pulsante di visualizzazione dei punti
 	    visbutton.addActionListener(e -> {
+	        // Ottiene l'ID dalla JTextField e rimuove gli spazi bianchi
 	        String id = idtf.getText().trim();
+
+	        // Controlla se l'ID non è vuoto
 	        if (!id.isEmpty()) {
 	            try {
+	                // Richiama il metodo punti nel Controller per ottenere i punti
 	                String punti = c.punti(id);
+	                // Aggiorna l'etichetta con i punti ottenuti
 	                totlab.setText(punti);
 	            } catch (SQLException ex) {
+	                // Gestisce l'eccezione SQL mostrando un messaggio di errore
 	                JOptionPane.showMessageDialog(null, "Errore nella comunicazione con il database!\nTipo di errore: " + ex);
 	            }
 	        } else {
+	            // Mostra un messaggio se l'ID è vuoto
 	            JOptionPane.showMessageDialog(null, "Inserire l'id della tessera.");
 	        }
 	    });
 
-	    // Pulsante di pulizia
+	    // Listener per il pulsante di pulizia che ripristina i campi di input
 	    clearbutton.addActionListener(e -> clean());
 
-	    // Pulsante di ritorno
+	    // Listener per il pulsante di ritorno che pulisce i campi e torna alla vista precedente
 	    backbutton.addActionListener(e -> {
-	        clean();
-	        c.dipAndElem(4);
+	        clean(); // Pulisce i campi
+	        c.dipAndElem(4); // Torna alla vista dei dipendenti
 	    });
 	}
 
