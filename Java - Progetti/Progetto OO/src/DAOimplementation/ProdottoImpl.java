@@ -1,4 +1,4 @@
-package JDBCImplementazione;
+package DAOimplementation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

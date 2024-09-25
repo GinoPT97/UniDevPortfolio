@@ -8,8 +8,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
+import DAOimplementation.ArticoliImpl;
+import DAOimplementation.Clienteimpl;
+import DAOimplementation.Dipendenteimpl;
+import DAOimplementation.OrdiniImpl;
+import DAOimplementation.ProdottoImpl;
+import DAOimplementation.Tesseraimpl;
 import DBConfiguration.ConnectionException;
 import DBConfiguration.DBConfiguration;
 import DBConfiguration.DBConnection;
@@ -19,12 +26,6 @@ import JDBC.DipendenteJDBC;
 import JDBC.OrdiniJDBC;
 import JDBC.ProdottoJDBC;
 import JDBC.TesseraJDBC;
-import JDBCImplementazione.ArticoliImpl;
-import JDBCImplementazione.Clienteimpl;
-import JDBCImplementazione.Dipendenteimpl;
-import JDBCImplementazione.OrdiniImpl;
-import JDBCImplementazione.ProdottoImpl;
-import JDBCImplementazione.Tesseraimpl;
 import Model.Articoli;
 import Model.BackgroundPanel;
 import Model.Cliente;
@@ -192,9 +193,24 @@ public class Controller {
 	}
 
 
-	public static void main(String[] args) throws SQLException, IOException {
+	/*public static void main(String[] args) throws SQLException, IOException {
 		Controller c = new Controller();
+	}*/
+	
+	public static void main(String[] args) {
+	    // Imposta l'aspetto dell'interfaccia utente a "swing"
+	    SwingUtilities.invokeLater(() -> {
+	        try {
+	            // Crea un'istanza del Controller, che gestirà i frame
+	            Controller c = new Controller();
+	            // Avvia il frame di login
+	            c.logf.setVisible(true);
+	        } catch (SQLException | IOException e) {
+	            e.printStackTrace(); // Stampa eventuali eccezioni
+	        }
+	    });
 	}
+
 
 	public void connect() throws SQLException {
 		try {
