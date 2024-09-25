@@ -26,7 +26,6 @@ import javax.swing.table.TableRowSorter;
 import Model.Dipendente;
 
 public class VisioneDipendentiFrame extends JFrame {
-
 	private JPanel contentPane;
 	private JTable table;
 	private DefaultTableModel model;

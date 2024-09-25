@@ -18,14 +18,12 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class PuntiTesseraFrame extends JFrame {
-
 	private JPanel contentPane;
 	private JTextField idtf;
 	private JButton backbutton;
 	private JButton clearbutton;
 	private JButton visbutton;
 	private JLabel totlab;
-	private JLabel titlelab;
 	private JPanel requestpanel;
 	private JPanel rispanel;
 

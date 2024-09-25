@@ -22,43 +22,16 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class StatisticheDipendentiFrame extends JFrame {
-    private Controller c;
+    // Definizione dei componenti principali dell'interfaccia
     private JPanel contentPane;
-    private String[] datacb = { "3 mesi", "6 mesi", "9 mesi", "12 mesi", "Tutti" };
-    private LocalDate dataod = LocalDate.now();
-    private JPanel searchPanel;
-    private JPanel introitiPanel;
-    private JPanel venditePanel;
-    private JPanel buttonPanel;
-    private JButton selectButton;
+    private String[] datacb = { "3 mesi", "6 mesi", "9 mesi", "12 mesi", "Tutti" }; // Opzioni per il JComboBox
+    private LocalDate dataod = LocalDate.now(); // Data corrente
+    private JPanel searchPanel, introitiPanel, venditePanel, buttonPanel, titlePanel;
+    private JButton selectButton, backButton, clearButton, searchButton;
     private JComboBox<String> periodoCB;
-    private JLabel periodoLab;
-    private JLabel cognomeVenditeLab;
-    private JButton backButton;
-    private JButton clearButton;
-    private JButton searchButton;
-    private JPanel titlePanel;
-    private JLabel titleLabel;
-    private JLabel startLab;
-    private JTextField startTF;
-    private JTextField finalTF;
-    private JLabel finalLab;
-    private JTextField nomeIntroitiTF;
-    private JLabel nomeLab;
-    private JLabel cognomeLab;
-    private JTextField cognomeIntroitiTF;
-    private JLabel introitiValLab;
-    private JTextField introitiTF;
-    private JTextField nomeVenditeTF;
-    private JLabel nomeVenditeLab;
-    private JTextField cognomeVenditeTF;
-    private JLabel venditeValLab;
-    private JTextField venditeTF;
-    private List<String> ordVen;
-    private List<String> ordInt;
-    private String oldDate = null;
-
-
+    private JLabel periodoLab, cognomeVenditeLab, titleLabel, startLab, finalLab, nomeLab, cognomeLab, introitiValLab, nomeVenditeLab, venditeValLab;
+    private JTextField startTF, finalTF, nomeIntroitiTF, cognomeIntroitiTF, introitiTF, nomeVenditeTF, cognomeVenditeTF, venditeTF;
+    private List<String> ordVen, ordInt;
 
     private void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -68,6 +41,7 @@ public class StatisticheDipendentiFrame extends JFrame {
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(10, 10));
         setLocationRelativeTo(null);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(StatisticheDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello del titolo
         titlePanel = new JPanel();
@@ -239,61 +213,55 @@ public class StatisticheDipendentiFrame extends JFrame {
     }
 
     private void azioni(Controller c) throws SQLException {
-        oldDate = c.OldDate();
+        String oldDate = c.OldDate(); // Recupero della data più vecchia dal controller
 
         // Gestione del pulsante selezione
         selectButton.addActionListener(e -> {
-            finalTF.setText(dataod.toString());
+            finalTF.setText(dataod.toString()); // Imposta la data corrente come data finale
             String selectedPeriod = (String) periodoCB.getSelectedItem();
-            String startDate = oldDate;
-
-            switch (selectedPeriod) {
-                case "3 mesi":
-                    startDate = dataod.minusMonths(3).toString();
-                    break;
-                case "6 mesi":
-                    startDate = dataod.minusMonths(6).toString();
-                    break;
-                case "9 mesi":
-                    startDate = dataod.minusMonths(9).toString();
-                    break;
-                case "12 mesi":
-                    startDate = dataod.minusMonths(12).toString();
-                    break;
-                case "Tutti":
-                    break; // Start date remains as oldDate
-            }
-            startTF.setText(startDate);
+            String startDate = switch (selectedPeriod) {
+                case "3 mesi" -> dataod.minusMonths(3).toString();
+                case "6 mesi" -> dataod.minusMonths(6).toString();
+                case "9 mesi" -> dataod.minusMonths(9).toString();
+                case "12 mesi" -> dataod.minusMonths(12).toString();
+                case "Tutti" -> oldDate; // Se "Tutti", la data di inizio resta quella più vecchia
+                default -> oldDate;
+            };
+            startTF.setText(startDate); // Imposta la data di inizio calcolata
         });
 
         // Gestione del pulsante cerca
         searchButton.addActionListener(e -> {
-            String startText = startTF.getText();
-            String finalText = finalTF.getText();
-
-            if (startText.isEmpty() || finalText.isEmpty()) {
-                showMessage("Inserire le date di ricerca!");
+            if (startTF.getText().isEmpty() || finalTF.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Inserire le date di ricerca!");
                 return;
             }
 
             try {
-                java.sql.Date di = java.sql.Date.valueOf(startText);
-                java.sql.Date df = java.sql.Date.valueOf(finalText);
+                // Conversione delle stringhe nei campi di testo in Date
+                java.sql.Date di = java.sql.Date.valueOf(startTF.getText());
+                java.sql.Date df = java.sql.Date.valueOf(finalTF.getText());
 
+                // Recupero dei dati dal Controller
                 ordInt = c.introitidip(di, df);
                 ordVen = c.venditedip(di, df);
 
                 if (ordInt.isEmpty() || ordVen.isEmpty()) {
-                    showMessage("In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
-                    clean();
+                    JOptionPane.showMessageDialog(null, "In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
+                    clean(); // Pulizia dei campi se non ci sono risultati
                 } else {
-                    populateFields(ordInt, nomeIntroitiTF, cognomeIntroitiTF, introitiTF);
-                    populateFields(ordVen, nomeVenditeTF, cognomeVenditeTF, venditeTF);
+                    // Popolamento dei campi con i dati ottenuti
+                    nomeIntroitiTF.setText(ordInt.get(0));   // Imposta il nome nel campo introiti
+                    cognomeIntroitiTF.setText(ordInt.get(1)); // Imposta il cognome nel campo introiti
+                    introitiTF.setText(ordInt.get(2));        // Imposta il valore introiti
+                    nomeVenditeTF.setText(ordVen.get(0));     // Imposta il nome nel campo vendite
+                    cognomeVenditeTF.setText(ordVen.get(1));  // Imposta il cognome nel campo vendite
+                    venditeTF.setText(ordVen.get(2));         // Imposta il valore vendite
                 }
             } catch (SQLException e1) {
-                showMessage("Errore!\nTipo di errore: " + e1);
+                JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1);
             } catch (IllegalArgumentException e2) {
-                showMessage("Le date inserite non sono valide. Utilizzare il formato yyyy-MM-dd.");
+                JOptionPane.showMessageDialog(null, "Le date inserite non sono valide. Utilizzare il formato yyyy-MM-dd.");
             }
         });
 
@@ -303,18 +271,8 @@ public class StatisticheDipendentiFrame extends JFrame {
         // Gestione del pulsante indietro
         backButton.addActionListener(e -> {
             clean();
-            c.adminAndElem(5);
+            c.adminAndElem(5); // Esegue l'azione specifica nel controller
         });
-    }
-
-    private void showMessage(String message) {
-        JOptionPane.showMessageDialog(null, message);
-    }
-
-    private void populateFields(List<String> data, JTextField nomeTF, JTextField cognomeTF, JTextField valoreTF) {
-        nomeTF.setText(data.get(0));
-        cognomeTF.setText(data.get(1));
-        valoreTF.setText(data.get(2));
     }
 
     private void clean() {
@@ -330,7 +288,6 @@ public class StatisticheDipendentiFrame extends JFrame {
 
    public StatisticheDipendentiFrame(String title, Controller c) throws SQLException {
           super(title);
-          setIconImage(Toolkit.getDefaultToolkit().getImage(StatisticheDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
           this.elementi();
           this.azioni(c);
    }

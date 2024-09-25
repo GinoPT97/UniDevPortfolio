@@ -20,7 +20,6 @@ import javax.swing.border.EmptyBorder;
 import Model.Dipendente;
 
 public class ModificaDipendenteFrame extends JFrame {
-	private Controller c;
 	private JPanel contentPane;
 	private String cod;
 	private JPanel buttonpanel;

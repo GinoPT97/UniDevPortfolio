@@ -25,7 +25,6 @@ import javax.swing.table.TableRowSorter;
 import Model.Prodotto;
 
 public class VisioneProdottiFrame extends JFrame {
-	private Controller c;
 	private JPanel contentPane;
 	private JTable table;
 	private DefaultTableModel model;

@@ -26,7 +26,6 @@ import javax.swing.border.EmptyBorder;
 import Model.Prodotto;
 
 public class ModificaProdottiFrame extends JFrame {
-    private Controller c;
     private JPanel contentPane;
     private String cod;  // Variabile globale per il codice prodotto
     private JTextField nometf;

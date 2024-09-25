@@ -20,7 +20,6 @@ import javax.swing.border.EmptyBorder;
 import Model.Cliente;
 
 public class NuovoClienteFrame extends JFrame {
-	private Controller c;
 	private JPanel contentPane;
 	private JTextField nometf;
 	private JTextField cognometf;

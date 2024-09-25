@@ -24,7 +24,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 public class VisioneOrdineFrame extends JFrame {
-
 	private JPanel contentPane;
 	private JTable table;
 	private DefaultTableModel model;
@@ -34,7 +33,6 @@ public class VisioneOrdineFrame extends JFrame {
 	private JButton backbutton;
 	private JLabel titleabel;
 	private JButton ordinebutton;
-	public int x;
 	private JButton searchbutton;
 	private JTextField searchtf;
 

@@ -28,7 +28,6 @@ import javax.swing.border.EmptyBorder;
 import Model.Prodotto;
 
 public class NuovoProdottoFrame extends JFrame {
-	private Controller c;
 	private JPanel contentPane;
 	private JPanel buttonpanel;
 	private JButton backbutton;

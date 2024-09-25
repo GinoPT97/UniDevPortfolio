@@ -26,14 +26,12 @@ import javax.swing.table.TableRowSorter;
 import Model.Cliente;
 
 public class VisioneClienteFrame extends JFrame {
-
 	private JPanel contentPane;
 	private JTable table;
 	private DefaultTableModel model;
 	private JButton backbutton;
 	private JButton addbutton;
 	private JButton updatebutton;
-	private JLabel titlelab;
 	private JTextField searchtf;
 	private JButton searchbutton;
 

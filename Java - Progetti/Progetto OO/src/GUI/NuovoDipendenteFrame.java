@@ -22,7 +22,6 @@ import javax.swing.border.EmptyBorder;
 import Model.Dipendente;
 
 public class NuovoDipendenteFrame extends JFrame {
-	private Controller c;
 	private JPanel contentPane;
 	private JTextField nometf;
 	private JTextField cognometf;

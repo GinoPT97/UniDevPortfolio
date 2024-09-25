@@ -25,7 +25,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 public class RicercaFrame extends JFrame {
-
 	private JPanel contentPane;
 	private JTable searchtable;
 	private JComboBox<String> categoriacb;
