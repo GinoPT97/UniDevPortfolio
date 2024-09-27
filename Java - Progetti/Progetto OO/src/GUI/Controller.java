@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.io.IOException;
 import java.sql.Connection;
@@ -193,24 +194,16 @@ public class Controller {
 	}
 
 
-	/*public static void main(String[] args) throws SQLException, IOException {
-		Controller c = new Controller();
-	}*/
-	
 	public static void main(String[] args) {
-	    // Imposta l'aspetto dell'interfaccia utente a "swing"
-	    SwingUtilities.invokeLater(() -> {
+	    // Utilizza EventQueue per garantire che l'app venga eseguita nel thread dell'EDT
+	    EventQueue.invokeLater(() -> {
 	        try {
-	            // Crea un'istanza del Controller, che gestirà i frame
 	            Controller c = new Controller();
-	            // Avvia il frame di login
-	            c.logf.setVisible(true);
 	        } catch (SQLException | IOException e) {
-	            e.printStackTrace(); // Stampa eventuali eccezioni
+	            e.printStackTrace();
 	        }
 	    });
 	}
-
 
 	public void connect() throws SQLException {
 		try {
@@ -397,17 +390,35 @@ public class Controller {
         }
     }
 
-    // Popola il modello della tabella con tutti i prodotti
+ // Popola il modello della tabella con tutti i prodotti
     public void allprodotti(DefaultTableModel model) throws SQLException {
         model.setRowCount(0); // Resetta il modello per evitare duplicati
         // Aggiungi righe per ogni prodotto
         for (Prodotto p : prdjdbc.getallprodotti()) {
             String glutenStatus = p.isGlutine() ? "Si" : "No"; // Determina se il prodotto contiene glutine
-            Object[] pr = { p.getCodProd(), p.getNome(), p.getDescrizione(), p.getPrezzo(), p.getLuogoProv(),
-                    p.getDataraccolta(), p.getDatamungitura(), glutenStatus, p.getDatascadenza(), p.getCategoria(),
-                    p.getScorta() };
+            
+            // Controlla ogni campo per verificare se è nullo o vuoto e lo sostituisce con ---
+            Object[] pr = {
+                checkNull(p.getCodProd()),        // Codice prodotto
+                checkNull(p.getNome()),           // Nome
+                checkNull(p.getDescrizione()),    // Descrizione
+                checkNull(p.getPrezzo()),         // Prezzo
+                checkNull(p.getLuogoProv()),      // Luogo di provenienza
+                checkNull(p.getDataraccolta()),   // Data di raccolta
+                checkNull(p.getDatamungitura()),  // Data di mungitura
+                glutenStatus,                     // Stato glutine
+                checkNull(p.getDatascadenza()),   // Data di scadenza
+                checkNull(p.getCategoria()),      // Categoria
+                checkNull(p.getScorta())          // Scorta
+            };
+            
             model.addRow(pr); // Aggiungi riga al modello
         }
+    }
+
+    // Metodo di supporto per verificare se un campo è nullo o vuoto
+    private String checkNull(Object value) {
+        return (value == null || value.toString().trim().isEmpty()) ? "---" : value.toString();
     }
 }
 
