@@ -1,4 +1,4 @@
-package DAOimplementation;
+package DAOImplementation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import JDBC.ProdottoJDBC;
+import DAOInterface.ProdottoJDBC;
 import Model.Prodotto;
 
 public class ProdottoImpl implements ProdottoJDBC {

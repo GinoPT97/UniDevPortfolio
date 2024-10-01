@@ -1,4 +1,4 @@
-package JDBC;
+package DAOInterface;
 
 import java.sql.Date;
 import java.sql.SQLException;

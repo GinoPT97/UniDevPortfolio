@@ -121,9 +121,9 @@ public class VisioneClienteFrame extends JFrame {
 	            for (int i = 0; i < clienteData.length; i++) {
 	                clienteData[i] = table.getValueAt(selectedRow, i).toString();
 	            }
-	            Cliente cliente = new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null);
+
 	            c.visAndcl(2);
-	            c.upclf.viewct(cliente);
+	            c.upclf.viewct(new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null));
 	        } else {
 	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
 	        }

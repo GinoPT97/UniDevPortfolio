@@ -25,142 +25,148 @@ import javax.swing.table.TableRowSorter;
 import Model.Prodotto;
 
 public class VisioneProdottiFrame extends JFrame {
-	private JPanel contentPane;
-	private JTable table;
-	private DefaultTableModel model;
-	public Prodotto pe;
-	private JPanel titlepanel;
-	private JPanel buttonpanel;
-	private JButton backbutton;
-	private JButton updatebutton;
-	private JButton addbutton;
-	private JLabel titlelabel;
-	private JButton searchbutton;
-	private JTextField searchtf;
+    private JPanel contentPane;
+    private JTable table;
+    private DefaultTableModel model;
+    public Prodotto pe;
+    private JPanel titlepanel;
+    private JPanel buttonpanel;
+    private JButton backbutton;
+    private JButton updatebutton;
+    private JButton addbutton;
+    private JLabel titlelabel;
+    private JButton searchbutton;
+    private JTextField searchtf;
 
-	public void elementi(Controller c) throws SQLException {
-	    // Imposta le caratteristiche di base della finestra
-	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	    setBounds(100, 100, 900, 500);
-	    setLocationRelativeTo(null);
-	    setIconImage(Toolkit.getDefaultToolkit()
-	            .getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+    public void elementi(Controller c) throws SQLException {
+        // Imposta le caratteristiche di base della finestra
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setBounds(100, 100, 900, 500);
+        setLocationRelativeTo(null);
+        setIconImage(Toolkit.getDefaultToolkit()
+                .getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-	    // Imposta il contenitore principale e il layout
-	    contentPane = new JPanel();
-	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-	    setContentPane(contentPane);
-	    contentPane.setLayout(new BorderLayout(0, 0));
+        // Imposta il contenitore principale e il layout
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        setContentPane(contentPane);
+        contentPane.setLayout(new BorderLayout(0, 0));
 
-	    // Crea e aggiungi la JScrollPane per la tabella
-	    JScrollPane scrollPane = new JScrollPane();
-	    contentPane.add(scrollPane, BorderLayout.CENTER);
+        // Crea e aggiungi la JScrollPane per la tabella
+        JScrollPane scrollPane = new JScrollPane();
+        contentPane.add(scrollPane, BorderLayout.CENTER);
 
-	    // Crea e configura la JTable
-	    table = new JTable();
-	    model = new DefaultTableModel();
-	    Object[] colonne = { "Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta" };
-	    model.setColumnIdentifiers(colonne);
-	    table.setModel(model);
-	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	    scrollPane.setViewportView(table);
+        // Crea e configura la JTable
+        table = new JTable();
+        model = new DefaultTableModel();
+        Object[] colonne = { "Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta" };
+        model.setColumnIdentifiers(colonne);
+        table.setModel(model);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        scrollPane.setViewportView(table);
 
-	    // Crea e configura il pannello del titolo
-	    titlepanel = new JPanel();
-	    titlepanel.setBackground(new Color(128, 0, 0));
-	    contentPane.add(titlepanel, BorderLayout.NORTH);
+        // Crea e configura il pannello del titolo
+        titlepanel = new JPanel();
+        titlepanel.setBackground(new Color(128, 0, 0));
+        contentPane.add(titlepanel, BorderLayout.NORTH);
 
-	    titlelabel = new JLabel("Amministrazione Prodotti");
-	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-	    titlelabel.setForeground(Color.WHITE); // Migliora la visibilità del testo
-	    titlepanel.add(titlelabel);
+        titlelabel = new JLabel("Amministrazione Prodotti");
+        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlelabel.setForeground(Color.WHITE); // Migliora la visibilità del testo
+        titlepanel.add(titlelabel);
 
-	    // Crea e configura il pannello dei pulsanti
-	    buttonpanel = new JPanel();
-	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
+        // Crea e configura il pannello dei pulsanti
+        buttonpanel = new JPanel();
+        contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-	    searchtf = new JTextField(10);
-	    buttonpanel.add(searchtf);
+        searchtf = new JTextField(10);
+        buttonpanel.add(searchtf);
 
-	    searchbutton = new JButton("Cerca");
-	    searchbutton.setBackground(new Color(46, 139, 87));
-	    searchbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
-	    buttonpanel.add(searchbutton);
+        searchbutton = new JButton("Cerca");
+        searchbutton.setBackground(new Color(46, 139, 87));
+        searchbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
+        buttonpanel.add(searchbutton);
 
-	    addbutton = new JButton("Aggiungi");
-	    addbutton.setBackground(Color.GREEN);
-	    addbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
-	    buttonpanel.add(addbutton);
+        addbutton = new JButton("Aggiungi");
+        addbutton.setBackground(Color.GREEN);
+        addbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
+        buttonpanel.add(addbutton);
 
-	    updatebutton = new JButton("Modifica");
-	    updatebutton.setBackground(new Color(70, 130, 180));
-	    updatebutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
-	    buttonpanel.add(updatebutton);
+        updatebutton = new JButton("Modifica");
+        updatebutton.setBackground(new Color(70, 130, 180));
+        updatebutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
+        buttonpanel.add(updatebutton);
 
-	    backbutton = new JButton("Indietro");
-	    backbutton.setBackground(Color.RED);
-	    backbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
-	    buttonpanel.add(backbutton);
-	}
+        backbutton = new JButton("Indietro");
+        backbutton.setBackground(Color.RED);
+        backbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
+        buttonpanel.add(backbutton);
+    }
 
-	public void azioni(Controller c) throws SQLException {
-	    c.allprodotti(model);
+    public void azioni(Controller c) throws SQLException {
+        // Popola la tabella con i prodotti all'avvio
+        c.allprodotti(model);
 
-	    // Gestione della ricerca
-	    searchbutton.addActionListener(e -> {
-	        String query = searchtf.getText().trim().toLowerCase();
-	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-	        if (query.isEmpty()) {
-	            table.setRowSorter(null); // Rimuove il filtro se la query è vuota
-	        } else {
-	            try {
-	                // Applica il filtro case insensitive
-	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-	                table.setRowSorter(sorter);
-	            } catch (PatternSyntaxException ex) {
-	                JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(), 
-	                                              "Errore", JOptionPane.ERROR_MESSAGE);
-	            }
-	        }
-	    });
+        // Gestione della ricerca
+        searchbutton.addActionListener(e -> {
+            String query = searchtf.getText().trim().toLowerCase(); // Rimuove spazi e converte in minuscolo
+            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model); // Crea un sorter per la tabella
+            if (query.isEmpty()) {
+                table.setRowSorter(null); // Se la ricerca è vuota, rimuove il filtro
+            } else {
+                try {
+                    // Applica il filtro case insensitive alla tabella
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query)); 
+                    table.setRowSorter(sorter); // Applica il sorter
+                } catch (PatternSyntaxException ex) {
+                    // Gestione dell'errore di sintassi dell'espressione regolare
+                    JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(), 
+                                                  "Errore", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
-	    // Gestione del pulsante Aggiungi
-	    addbutton.addActionListener(e -> c.visAndprod(1));
+        // Gestione del pulsante Aggiungi
+        addbutton.addActionListener(e -> c.visAndprod(1)); // Richiama il metodo per aggiungere un prodotto
 
-	    // Gestione del pulsante Modifica
-	    updatebutton.addActionListener(e -> {
-	        int i = table.getSelectedRow();
-	        if (i >= 0) {
-	            try {
-	                String codice = table.getValueAt(i, 0).toString();
-	                String nome = table.getValueAt(i, 1).toString();
-	                String descrizione = table.getValueAt(i, 2).toString();
-	                double prezzo = Double.parseDouble(table.getValueAt(i, 3).toString());
-	                String categoria = table.getValueAt(i, 4).toString();
-	                boolean disponibile = Boolean.parseBoolean(table.getValueAt(i, 7).toString());
-	                String fornitore = table.getValueAt(i, 9).toString();
-	                int quantita = Integer.parseInt(table.getValueAt(i, 10).toString());
+        // Gestione del pulsante Modifica
+        updatebutton.addActionListener(e -> {
+            int i = table.getSelectedRow(); // Ottiene la riga selezionata
+            if (i >= 0) {
+                try {
+                    // Estrai i valori dalla riga selezionata e crea un oggetto Prodotto
+                    String codice = table.getValueAt(i, 0).toString();
+                    String nome = table.getValueAt(i, 1).toString();
+                    String descrizione = table.getValueAt(i, 2).toString();
+                    double prezzo = Double.parseDouble(table.getValueAt(i, 3).toString());
+                    String categoria = table.getValueAt(i, 4).toString();
+                    boolean disponibile = Boolean.parseBoolean(table.getValueAt(i, 7).toString());
+                    String fornitore = table.getValueAt(i, 9).toString();
+                    int quantita = Integer.parseInt(table.getValueAt(i, 10).toString());
 
-	                Prodotto prodotto = new Prodotto(codice, nome, descrizione, prezzo, categoria, null, null, disponibile, null, fornitore, quantita);
-	                c.visAndprod(2);
-	                c.modprodf.viewprod(prodotto);
-	            } catch (NumberFormatException ex) {
-	                JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(), 
-	                                              "Errore", JOptionPane.ERROR_MESSAGE);
-	            }
-	        } else {
-	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", 
-	                                          "Attenzione", JOptionPane.WARNING_MESSAGE);
-	        }
-	    });
+                    // Richiama la finestra di modifica con i dati del prodotto selezionato
+                    c.visAndprod(2); 
+                    c.modprodf.viewprod(new Prodotto(codice, nome, descrizione, prezzo, categoria, null, null, disponibile, null, fornitore, quantita)); // Visualizza i dettagli del prodotto da modificare
+                } catch (NumberFormatException ex) {
+                    // Gestione dell'errore di formato numerico
+                    JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(), 
+                                                  "Errore", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                // Messaggio di avviso se non viene selezionata nessuna riga
+                JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", 
+                                              "Attenzione", JOptionPane.WARNING_MESSAGE);
+            }
+        });
 
-	    // Gestione del pulsante Indietro
-	    backbutton.addActionListener(e -> c.adminAndElem(5));
-	}
+        // Gestione del pulsante Indietro
+        backbutton.addActionListener(e -> c.adminAndElem(5)); // Richiama il metodo per tornare alla schermata principale
+    }
 
-	public VisioneProdottiFrame(String title, Controller c) throws SQLException {
-		super(title);
-		this.elementi(c);
-		this.azioni(c);
-	}
+    public VisioneProdottiFrame(String title, Controller c) throws SQLException {
+        super(title);
+        this.elementi(c);
+        this.azioni(c);
+    }
 }
+

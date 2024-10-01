@@ -1,4 +1,4 @@
-package DAOimplementation;
+package DAOImplementation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-import JDBC.OrdiniJDBC;
+import DAOInterface.OrdiniJDBC;
 import Model.Ordine;
 
 public class OrdiniImpl implements OrdiniJDBC {

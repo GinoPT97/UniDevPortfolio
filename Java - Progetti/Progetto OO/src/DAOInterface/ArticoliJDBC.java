@@ -1,4 +1,4 @@
-package JDBC;
+package DAOInterface;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

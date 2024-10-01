@@ -1,12 +1,13 @@
-package JDBC;
+package DAOInterface;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import Model.Cliente;
 import Model.Tessera;
 
 public interface TesseraJDBC {
-	public boolean newtessera(String codcl) throws SQLException;
+	public boolean newtessera(String cliente) throws SQLException;
 
 	public ArrayList<Tessera> alltessera() throws SQLException;
 

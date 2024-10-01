@@ -1,4 +1,4 @@
-package DAOimplementation;
+package DAOImplementation;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import JDBC.DipendenteJDBC;
+import DAOInterface.DipendenteJDBC;
 import Model.Dipendente;
 
 public class Dipendenteimpl implements DipendenteJDBC {

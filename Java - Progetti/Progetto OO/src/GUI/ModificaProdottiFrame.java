@@ -5,10 +5,13 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ItemEvent;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -22,6 +25,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 
 import Model.Prodotto;
 
@@ -198,24 +202,50 @@ public class ModificaProdottiFrame extends JFrame {
 	}
 
 	public void azioni(Controller c) {
+	    // Gestione del pulsante "Indietro"
 	    backbutton.addActionListener(e -> {
-	        clean();
-	        c.visAndprod(3);
+	        clean(); // Pulisce i campi
+	        c.visAndprod(3); // Torna alla schermata precedente
 	    });
 
-	    clearbutton.addActionListener(e -> clean());
+	    // Gestione del pulsante "Pulisci"
+	    clearbutton.addActionListener(e -> clean()); // Pulisce i campi
 
+	    // Gestione della selezione della categoria tramite JComboBox
+	    categoriacb.addItemListener(e -> {
+	        if (e.getStateChange() == ItemEvent.SELECTED) {
+	            String selectedCategory = (String) categoriacb.getSelectedItem();
+
+	            // Mappa campi legati alla categoria
+	            Map<String, JTextField> categoryFields = Map.of(
+	                "Ortofrutticoli", racctf,
+	                "Latticini", mungtf,
+	                "Inscatolati", scadtf
+	            );
+
+	            // Disabilita tutti i campi relativi alle categorie
+	            categoryFields.values().forEach(field -> field.setEnabled(false));
+
+	            // Abilita solo il campo pertinente alla categoria selezionata
+	            JTextField fieldToEnable = categoryFields.get(selectedCategory);
+	            if (fieldToEnable != null) {
+	                fieldToEnable.setEnabled(true);
+	            }
+	        }
+	    });
+
+	    // Gestione del pulsante "Inserisci/Modifica"
 	    updatebutton.addActionListener(e -> {
 	        DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
 	        try {
-	            // Verifica se tutti i campi obbligatori sono compilati
-	            if (nometf.getText().isEmpty() || descta.getText().isEmpty() || prezzotf.getText().isEmpty()
-	                    || provtf.getText().isEmpty() || scortatf.getText().isEmpty()) {
+	            // Verifica se i campi obbligatori sono compilati
+	            List<JTextComponent> mandatoryFields = List.of(nometf, descta, prezzotf, provtf, scortatf);
+	            if (mandatoryFields.stream().anyMatch(field -> field.getText().isEmpty())) {
 	                JOptionPane.showMessageDialog(this, "Inserisci tutti i campi obbligatori", "Errore", JOptionPane.WARNING_MESSAGE);
 	                return;
 	            }
 
-				// Crea il prodotto in base alla categoria selezionata
+	            // Crea il prodotto in base alla categoria selezionata
 	            Prodotto prodotto = new Prodotto(
 	                cod,
 	                nometf.getText(),
@@ -230,9 +260,10 @@ public class ModificaProdottiFrame extends JFrame {
 	                Integer.parseInt(scortatf.getText())
 	            );
 
+	            // Aggiorna il prodotto
 	            c.upprod(prodotto);
-	            clean();
-	            c.visAndprod(3);
+	            clean(); // Pulisce i campi dopo l'aggiornamento
+	            c.visAndprod(3); // Torna alla schermata precedente
 	            JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
 	        } catch (NumberFormatException | SQLException | ParseException ex) {
 	            JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);

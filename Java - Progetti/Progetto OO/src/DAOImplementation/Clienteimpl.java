@@ -1,4 +1,4 @@
-package DAOimplementation;
+package DAOImplementation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import JDBC.ClienteJDBC;
+import DAOInterface.ClienteJDBC;
 import Model.Cliente;
 import Model.Tessera;
 
@@ -61,7 +61,10 @@ public class Clienteimpl implements ClienteJDBC {
         cercaCl.setString(2, cognome);
         cercaCl.setString(3, codicefiscale);
         try (ResultSet rs = cercaCl.executeQuery()) {
-            return rs.next() ? rs.getString("codcliente") : null;
+            if (rs.next())
+				return rs.getString("codcliente");
+			else
+				return null;
         }
     }
 

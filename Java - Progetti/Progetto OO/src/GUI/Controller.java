@@ -7,26 +7,28 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
-import DAOimplementation.ArticoliImpl;
-import DAOimplementation.Clienteimpl;
-import DAOimplementation.Dipendenteimpl;
-import DAOimplementation.OrdiniImpl;
-import DAOimplementation.ProdottoImpl;
-import DAOimplementation.Tesseraimpl;
+import DAOImplementation.ArticoliImpl;
+import DAOImplementation.Clienteimpl;
+import DAOImplementation.Dipendenteimpl;
+import DAOImplementation.OrdiniImpl;
+import DAOImplementation.ProdottoImpl;
+import DAOImplementation.Tesseraimpl;
+import DAOInterface.ArticoliJDBC;
+import DAOInterface.ClienteJDBC;
+import DAOInterface.DipendenteJDBC;
+import DAOInterface.OrdiniJDBC;
+import DAOInterface.ProdottoJDBC;
+import DAOInterface.TesseraJDBC;
 import DBConfiguration.ConnectionException;
 import DBConfiguration.DBConfiguration;
 import DBConfiguration.DBConnection;
-import JDBC.ArticoliJDBC;
-import JDBC.ClienteJDBC;
-import JDBC.DipendenteJDBC;
-import JDBC.OrdiniJDBC;
-import JDBC.ProdottoJDBC;
-import JDBC.TesseraJDBC;
 import Model.Articoli;
 import Model.BackgroundPanel;
 import Model.Cliente;
@@ -62,6 +64,10 @@ public class Controller {
 	private OrdiniJDBC ordjdbc = null;
 	private TesseraJDBC tsjdbc = null;
 	private ArticoliJDBC artjdbc = null;
+	private DefaultTableModel clienteModel;
+	private DefaultTableModel dipModel;
+	private DefaultTableModel prodModel;
+	private DefaultTableModel ordModel;
 	public String iddip;
 	private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
 
@@ -192,7 +198,6 @@ public class Controller {
 	        case 3 -> setVisibleFrame(vprodf, nprodf, modprodf);
 	    }
 	}
-
 
 	public static void main(String[] args) {
 	    // Utilizza EventQueue per garantire che l'app venga eseguita nel thread dell'EDT
