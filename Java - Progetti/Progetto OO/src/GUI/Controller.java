@@ -7,11 +7,8 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 import DAOImplementation.ArticoliImpl;

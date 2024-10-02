@@ -3,7 +3,6 @@ package DAOInterface;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Model.Cliente;
 import Model.Tessera;
 
 public interface TesseraJDBC {
