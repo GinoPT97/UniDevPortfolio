@@ -40,7 +40,7 @@ public class Controller {
 	private AdminFrame adminf;
 	private DipendenteFrame dipf;
 	private VisioneDipendentiFrame vdipf;
-	private VisioneProdottiFrame vprodf;
+	public VisioneProdottiFrame vprodf;
 	public ModificaProdottiFrame modprodf;
 	private StatisticheDipendentiFrame statdipf;
 	private PuntiTesseraFrame ptessf;
@@ -51,7 +51,7 @@ public class Controller {
 	private NuovoClienteFrame nclf;
 	public ModificaClienteFrame upclf;
 	private VisioneOrdineFrame visordf;
-	private RicercaFrame searchf;
+	public RicercaFrame searchf;
 	private DBConnection dbconn;
 	private DBConfiguration config = null;
 	private Connection connection = null;
@@ -61,10 +61,10 @@ public class Controller {
 	private OrdiniJDBC ordjdbc = null;
 	private TesseraJDBC tsjdbc = null;
 	private ArticoliJDBC artjdbc = null;
-	public DefaultTableModel clienteModel;
-	public DefaultTableModel dipModel;
-	public DefaultTableModel prodModel;
-	public DefaultTableModel ordModel;
+	private DefaultTableModel clienteModel;
+	private DefaultTableModel dipModel;
+	private DefaultTableModel prodModel;
+	private DefaultTableModel ordModel;
 	public String iddip;
 	private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
 
@@ -358,43 +358,43 @@ public class Controller {
     }
 
     // Popola il modello della tabella con tutti i clienti
-    public void allcliente(DefaultTableModel clienteModel) throws SQLException {
-    	clienteModel.setRowCount(0); // Resetta il modello per evitare duplicati
+    public void allcliente(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
         // Aggiungi righe per ogni cliente
         for (Cliente c : cljdbc.getAllCt()) {
             Object[] pr = { c.getCodCl(), c.getNome(), c.getCognome(), c.getCodFis(), c.getEmail(), c.getInd(),
                     c.getTel(), c.getTessera().getCodTessera(), c.getTessera().getNPunti() };
-            clienteModel.addRow(pr); // Aggiungi riga al modello
+            model.addRow(pr); // Aggiungi riga al modello
         }
     }
 
     // Popola il modello della tabella con tutti i dipendenti
-    public void alldipendenti(DefaultTableModel dipModel) throws SQLException {
-        dipModel.setRowCount(0); // Resetta il modello per evitare duplicati
+    public void alldipendenti(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
         // Aggiungi righe per ogni dipendente
         for (Dipendente d : dpjdbc.getAllDip()) {
             Object[] rowData = { d.getCodDIP(), d.getNome(), d.getCognome(), d.getCodFis(), d.getEmail(), d.getInd(),
                     d.getTel() };
-            dipModel.addRow(rowData); // Aggiungi riga al modello
+            model.addRow(rowData); // Aggiungi riga al modello
         }
     }
 
     // Popola il modello della tabella con tutti gli ordini
-    public void allordini(DefaultTableModel ordModel) throws SQLException {
-        ordModel.setRowCount(0); // Resetta il modello per evitare duplicati
+    public void allordini(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
         // Aggiungi righe per ogni ordine
         for (Ordine o : ordjdbc.getallordini()) {
             Cliente ct = cljdbc.getCtByid(o.getIdCliente());
             Dipendente d = dpjdbc.getOneDip(o.getIdDipendente());
             Object[] pr = { o.getCodOrd(), o.getDataAcquisto().toString(), o.getPrezzoTotale(),
                     ct.getCognome() + " " + ct.getNome(), d.getCognome() + " " + d.getNome() };
-            ordModel.addRow(pr); // Aggiungi riga al modello
+            model.addRow(pr); // Aggiungi riga al modello
         }
     }
 
  // Popola il modello della tabella con tutti i prodotti
-    public void allprodotti(DefaultTableModel prodModel) throws SQLException {
-        prodModel.setRowCount(0); // Resetta il modello per evitare duplicati
+    public void allprodotti(DefaultTableModel model) throws SQLException {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
         // Aggiungi righe per ogni prodotto
         for (Prodotto p : prdjdbc.getallprodotti()) {
             String glutenStatus = p.isGlutine() ? "Si" : "No"; // Determina se il prodotto contiene glutine
@@ -414,7 +414,7 @@ public class Controller {
                 checkNull(p.getScorta())          // Scorta
             };
             
-            prodModel.addRow(pr); // Aggiungi riga al modello
+            model.addRow(pr); // Aggiungi riga al modello
         }
     }
 
