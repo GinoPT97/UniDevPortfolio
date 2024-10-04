@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -136,8 +137,7 @@ public class NuovoClienteFrame extends JFrame {
         addbutton.addActionListener(e -> {
             try {
                 // Creazione del nuovo cliente e tessera
-                Cliente newCliente = new Cliente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
-                        emailtf.getText(), indirizzotf.getText(), telefonotf.getText(), null, null);
+                Cliente newCliente = new Cliente("", nometf.getText(), cognometf.getText(), codfisctf.getText(), emailtf.getText(), indirizzotf.getText(), telefonotf.getText(), null, null);
                 c.newclt(newCliente);
                 c.nuovatessera(nometf.getText(), cognometf.getText(), codfisctf.getText());
                 clean();
