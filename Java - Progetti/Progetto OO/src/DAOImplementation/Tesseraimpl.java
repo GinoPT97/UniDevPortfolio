@@ -60,7 +60,7 @@ public class Tesseraimpl implements TesseraJDBC {
                     rs.getString("codtessera"),
                     rs.getInt("numeropunti"),
                     new Cliente(
-                        null, 
+                        null,
                         rs.getString("nome"),
                         rs.getString("cognome"),
                         rs.getString("codicefiscale"),

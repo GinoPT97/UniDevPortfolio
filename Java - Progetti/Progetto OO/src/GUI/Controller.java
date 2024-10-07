@@ -250,7 +250,6 @@ public class Controller {
         return cljdbc.setNewCt(ct);
     }
 
-
     // Aggiunge un nuovo prodotto al database
     public boolean newprod(Prodotto pe) throws SQLException {
         return prdjdbc.setNewProdotto(pe);

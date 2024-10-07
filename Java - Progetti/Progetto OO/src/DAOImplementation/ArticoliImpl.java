@@ -12,7 +12,6 @@ import Model.Articoli;
 import Model.Cliente;
 
 public class ArticoliImpl implements ArticoliJDBC {
-
     private Connection connection;
     private PreparedStatement newArticoli;
     private Statement searchClient;
