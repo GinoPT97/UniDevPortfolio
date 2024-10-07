@@ -144,7 +144,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	    telefonopanel.add(telefonotf);
 	    elempanel.add(telefonopanel);
 	}
-	
+
 	public void clean() {
 	    nometf.setText("");
 	    cognometf.setText("");
@@ -174,17 +174,17 @@ public class ModificaDipendenteFrame extends JFrame {
 	        try {
 	            // Crea un nuovo oggetto Dipendente utilizzando i valori dai JTextField
 	            Dipendente dipendente = new Dipendente(
-	                cod, 
-	                nometf.getText(), 
-	                cognometf.getText(), 
+	                cod,
+	                nometf.getText(),
+	                cognometf.getText(),
 	                codfisctf.getText(),
-	                emailtf.getText(), 
-	                indirizzotf.getText(), 
+	                emailtf.getText(),
+	                indirizzotf.getText(),
 	                telefonotf.getText()
 	            );
 	            // Aggiorna il dipendente nel database
 	            c.updip(dipendente);
-	            
+
 	            // Aggiorna il modello della tabella dei dipendenti
 	            for (int i = 0; i < c.dipModel.getRowCount(); i++) {
 	                if (c.dipModel.getValueAt(i, 0).equals(dipendente.getCodDIP())) { // Assumendo che il codice dipendente sia il primo elemento

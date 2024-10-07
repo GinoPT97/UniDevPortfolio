@@ -171,7 +171,7 @@ public class CarrelloFrame extends JFrame {
         insertbutton.setForeground(Color.WHITE);
         bottomPanel.add(insertbutton);
     }
-    
+
 	public void clean() {
 	    totalelab.setText("Totale :  0.00");
 	    quantitatf.setText("");

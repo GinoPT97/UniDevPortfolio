@@ -44,7 +44,7 @@ public class NuovoProdottoFrame extends JFrame {
 	private JTextArea descta;
 	private JCheckBox glutcb;
 	private JComboBox<String> categoriacb;
-	
+
 	public void elementi() {
 	    // Configurazione della finestra
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

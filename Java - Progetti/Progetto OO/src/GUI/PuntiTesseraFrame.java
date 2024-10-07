@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.sql.SQLException;
 
@@ -48,7 +47,7 @@ public class PuntiTesseraFrame extends JFrame {
 
 	    // Pannello dei bottoni
 	    JPanel buttonPanel = new JPanel();
-	    buttonPanel.setLayout((LayoutManager) new FlowLayout(FlowLayout.RIGHT, 10, 10)); // Allineamento a destra con padding
+	    buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10)); // Allineamento a destra con padding
 	    contentPane.add(buttonPanel, BorderLayout.SOUTH);
 
 	    visbutton = new JButton("Visualizza");

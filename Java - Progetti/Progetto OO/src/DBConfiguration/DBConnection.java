@@ -16,7 +16,7 @@ public class DBConnection {
 	private String url = "jdbc:postgresql://" + IP + ":" + PORT + "/";
 
 	// Costruisce un nuovo oggetto DBConnection con il nome del database specificato.
-	
+
 	private DBConnection(String db) throws SQLException {
 
 		try {
@@ -29,7 +29,7 @@ public class DBConnection {
 	}
 
 	// Restituisce la connessione al database.
-	
+
 	public Connection getConnection() {
 		return connection;
 	}

@@ -87,9 +87,9 @@ public class VisioneDipendentiFrame extends JFrame {
 	}
 
 	public void azioni(Controller c) throws SQLException {
-		
+
 		c.alldipendenti();
-		
+
 	    // Listener per il pulsante di ricerca
 	    searchbutton.addActionListener(e -> {
 	        String query = searchtf.getText().trim().toLowerCase();
@@ -131,7 +131,7 @@ public class VisioneDipendentiFrame extends JFrame {
 	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare");
 	        }
 	    });
-	    
+
 	    // Listener per il pulsante di ritorno alla schermata admin
 	    backbutton.addActionListener(e -> c.adminAndElem(5));
 	}

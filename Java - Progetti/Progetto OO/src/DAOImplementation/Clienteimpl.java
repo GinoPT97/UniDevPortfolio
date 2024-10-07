@@ -41,14 +41,14 @@ public class Clienteimpl implements ClienteJDBC {
                 "SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC")) {
             while (rs.next()) {
                 clienti.add(new Cliente(
-                        rs.getString("codcliente"), 
-                        rs.getString("nome"), 
-                        rs.getString("cognome"), 
-                        rs.getString("codicefiscale"), 
-                        rs.getString("email"), 
-                        rs.getString("indirizzo"), 
-                        rs.getString("telefono"), 
-                        new Tessera(rs.getString("codtessera"), rs.getInt("numeropunti"), null), 
+                        rs.getString("codcliente"),
+                        rs.getString("nome"),
+                        rs.getString("cognome"),
+                        rs.getString("codicefiscale"),
+                        rs.getString("email"),
+                        rs.getString("indirizzo"),
+                        rs.getString("telefono"),
+                        new Tessera(rs.getString("codtessera"), rs.getInt("numeropunti"), null),
                         null));
             }
         }
@@ -61,10 +61,11 @@ public class Clienteimpl implements ClienteJDBC {
         cercaCl.setString(2, cognome);
         cercaCl.setString(3, codicefiscale);
         try (ResultSet rs = cercaCl.executeQuery()) {
-            if (rs.next())
+            if (rs.next()) {
 				return rs.getString("codcliente");
-			else
+			} else {
 				return null;
+			}
         }
     }
 

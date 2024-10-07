@@ -32,7 +32,7 @@ public class OrdiniImpl implements OrdiniJDBC {
         newOrdineStmt.setDate(2, ordine.getDataAcquisto());
         newOrdineStmt.setString(3, ordine.getIdCliente());
         newOrdineStmt.setString(4, ordine.getIdDipendente());
-        
+
         return newOrdineStmt.executeUpdate() > 0; // Restituisce true se l'inserimento ha avuto successo
     }
 

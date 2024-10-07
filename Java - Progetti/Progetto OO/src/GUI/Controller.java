@@ -148,9 +148,12 @@ public class Controller {
 
 	public void visAndCarr(int x) {
 	    // Verifica quale frame è visibile, se adminf è visibile lo assegna come lastFrame, altrimenti dipf
-	    if (adminf.isVisible()) lastFrame = adminf;
-	    else if (dipf.isVisible()) lastFrame = dipf;
-	    
+	    if (adminf.isVisible()) {
+			lastFrame = adminf;
+		} else if (dipf.isVisible()) {
+			lastFrame = dipf;
+		}
+
 	    // Usa uno switch per gestire la visibilità dei frame
 	    switch (x) {
 	        case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
@@ -207,7 +210,7 @@ public class Controller {
 	        }
 	    });
 	}
-	
+
 	// Metodo generico per popolare il modello della tabella
 	private <T> void populateTable(List<T> items, DefaultTableModel model, Function<T, Object[]> mapper) {
 	    model.setRowCount(0); // Resetta il modello per evitare duplicati
@@ -215,7 +218,7 @@ public class Controller {
 	        model.addRow(mapper.apply(item)); // Aggiungi riga al modello
 	    }
 	}
-	
+
     // Metodo di supporto per verificare se un campo è nullo o vuoto
     private String checkNull(Object value) {
         return (value == null || value.toString().trim().isEmpty()) ? "---" : value.toString();

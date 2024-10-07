@@ -30,7 +30,7 @@ public class NuovoDipendenteFrame extends JFrame {
 	private JButton addbutton;
 	private JButton clearbutton;
 	private JButton backbutton;
-	
+
 	public void elementi() {
 	    // Imposta le proprietà di base della finestra
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -137,12 +137,12 @@ public class NuovoDipendenteFrame extends JFrame {
 	        try {
 	            // Crea un nuovo oggetto Dipendente utilizzando i valori dei campi di testo
 	            Dipendente newDipendente = new Dipendente(
-	                "", 
-	                nometf.getText(), 
-	                cognometf.getText(), 
+	                "",
+	                nometf.getText(),
+	                cognometf.getText(),
 	                codfisctf.getText(),
-	                emailtf.getText(), 
-	                indirizzotf.getText(), 
+	                emailtf.getText(),
+	                indirizzotf.getText(),
 	                telefonotf.getText()
 	            );
 	            c.newdip(newDipendente); // Aggiungi il dipendente al database

@@ -30,13 +30,13 @@ public class NuovoClienteFrame extends JFrame {
 	private JButton addbutton;
 	private JButton clearbutton;
 	private JButton backbutton;
-	
+
 	public void elementi() {
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 700, 500);
 	    setLocationRelativeTo(null);
 	    setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
-	    
+
 	    // Impostazione del contenuto e del layout principale
 	    contentPane = new JPanel(new BorderLayout(0, 0));
 	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -137,14 +137,14 @@ public class NuovoClienteFrame extends JFrame {
             try {
                 // Creazione del nuovo cliente con i dati dai JTextField
                 Cliente newCliente = new Cliente(
-                    "", 
-                    nometf.getText(), 
-                    cognometf.getText(), 
+                    "",
+                    nometf.getText(),
+                    cognometf.getText(),
                     codfisctf.getText(),
-                    emailtf.getText(), 
-                    indirizzotf.getText(), 
-                    telefonotf.getText(), 
-                    null, 
+                    emailtf.getText(),
+                    indirizzotf.getText(),
+                    telefonotf.getText(),
+                    null,
                     null
                 );
 

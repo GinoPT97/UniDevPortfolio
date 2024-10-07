@@ -37,12 +37,12 @@ public class RicercaFrame extends JFrame {
 	public void elementi() {
 	    // Imposta l'icona del frame
 	    setIconImage(Toolkit.getDefaultToolkit().getImage(RicercaFrame.class.getResource("/Immagini/ImmIcon.png")));
-	    
+
 	    // Configura le impostazioni di base del frame
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 904, 433);
 	    setLocationRelativeTo(null);
-	    
+
 	    // Inizializza e configura il pannello principale
 	    contentPane = new JPanel();
 	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));

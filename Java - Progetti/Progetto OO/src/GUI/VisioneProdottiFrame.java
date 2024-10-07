@@ -112,11 +112,11 @@ public class VisioneProdottiFrame extends JFrame {
             } else {
                 try {
                     // Applica il filtro case insensitive alla tabella
-                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query)); 
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
                     table.setRowSorter(sorter); // Applica il sorter
                 } catch (PatternSyntaxException ex) {
                     // Gestione dell'errore di sintassi dell'espressione regolare
-                    JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(), 
+                    JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(),
                                                   "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -141,16 +141,16 @@ public class VisioneProdottiFrame extends JFrame {
                     int quantita = Integer.parseInt(table.getValueAt(i, 10).toString());
 
                     // Richiama la finestra di modifica con i dati del prodotto selezionato
-                    c.visAndprod(2); 
+                    c.visAndprod(2);
                     c.modprodf.viewprod(new Prodotto(codice, nome, descrizione, prezzo, categoria, null, null, disponibile, null, fornitore, quantita)); // Visualizza i dettagli del prodotto da modificare
                 } catch (NumberFormatException ex) {
                     // Gestione dell'errore di formato numerico
-                    JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(), 
+                    JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(),
                                                   "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 // Messaggio di avviso se non viene selezionata nessuna riga
-                JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", 
+                JOptionPane.showMessageDialog(null, "Scegli una riga da modificare",
                                               "Attenzione", JOptionPane.WARNING_MESSAGE);
             }
         });
