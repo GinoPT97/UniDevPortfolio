@@ -26,7 +26,6 @@ import javax.swing.table.TableRowSorter;
 public class VisioneOrdineFrame extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
-	private DefaultTableModel model;
 	private JScrollPane scrollPane;
 	private JPanel buttonpanel;
 	private JPanel titlepanel;
@@ -36,7 +35,7 @@ public class VisioneOrdineFrame extends JFrame {
 	private JButton searchbutton;
 	private JTextField searchtf;
 
-	public void elementi() {
+	public void elementi(Controller c) {
 	    // Imposta le proprietà del frame
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 1000, 450);
@@ -62,10 +61,7 @@ public class VisioneOrdineFrame extends JFrame {
 	    contentPane.add(scrollPane, BorderLayout.CENTER);
 
 	    table = new JTable();
-	    model = new DefaultTableModel();
-	    Object[] colonne = { "Codice Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente" };
-	    model.setColumnIdentifiers(colonne);
-	    table.setModel(model);
+	    table.setModel(c.prodModel);
 	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	    scrollPane.setViewportView(table);
 
@@ -91,7 +87,7 @@ public class VisioneOrdineFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 	    // Carica tutti gli ordini nel modello della tabella
-	    c.allordini(model);
+	    c.allordini();
 
 	    // Configura il pulsante di ricerca
 	    searchbutton.addActionListener(e -> {
@@ -101,7 +97,7 @@ public class VisioneOrdineFrame extends JFrame {
 	            table.setRowSorter(null); // Rimuove il filtro
 	        } else {
 	            // Applica il filtro sulla tabella
-	            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+	            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel);
 	            try {
 	                // Imposta il filtro della tabella con la query
 	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
@@ -123,7 +119,7 @@ public class VisioneOrdineFrame extends JFrame {
 
 	public VisioneOrdineFrame(String title, Controller c) throws SQLException {
 		super(title);
-		this.elementi();
+		this.elementi(c);
 		this.azioni(c);
 	}
 }

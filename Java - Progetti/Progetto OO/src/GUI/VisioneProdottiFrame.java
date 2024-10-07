@@ -27,7 +27,6 @@ import Model.Prodotto;
 public class VisioneProdottiFrame extends JFrame {
     private JPanel contentPane;
     private JTable table;
-    private DefaultTableModel model;
     public Prodotto pe;
     private JPanel titlepanel;
     private JPanel buttonpanel;
@@ -58,10 +57,7 @@ public class VisioneProdottiFrame extends JFrame {
 
         // Crea e configura la JTable
         table = new JTable();
-        model = new DefaultTableModel();
-        Object[] colonne = { "Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta" };
-        model.setColumnIdentifiers(colonne);
-        table.setModel(model);
+        table.setModel(c.prodModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(table);
 
@@ -105,12 +101,12 @@ public class VisioneProdottiFrame extends JFrame {
 
     public void azioni(Controller c) throws SQLException {
         // Popola la tabella con i prodotti all'avvio
-        c.allprodotti(model);
+        c.allprodotti();
 
         // Gestione della ricerca
         searchbutton.addActionListener(e -> {
             String query = searchtf.getText().trim().toLowerCase(); // Rimuove spazi e converte in minuscolo
-            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model); // Crea un sorter per la tabella
+            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel); // Crea un sorter per la tabella
             if (query.isEmpty()) {
                 table.setRowSorter(null); // Se la ricerca è vuota, rimuove il filtro
             } else {

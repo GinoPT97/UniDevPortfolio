@@ -28,14 +28,13 @@ import Model.Dipendente;
 public class VisioneDipendentiFrame extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
-	private DefaultTableModel model;
 	private JButton backbutton;
 	private JButton addbutton;
 	private JButton updatebutton;
 	private JButton searchbutton;
 	private JTextField searchtf;
 
-	public void elementi() {
+	public void elementi(Controller c) {
 	    // Imposta le proprietà della finestra principale
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setIconImage(Toolkit.getDefaultToolkit()
@@ -49,9 +48,7 @@ public class VisioneDipendentiFrame extends JFrame {
 	    setContentPane(contentPane);
 
 	    // Crea e configura la tabella con scroll pane
-	    model = new DefaultTableModel(
-	            new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
-	    table = new JTable(model);
+	    table = new JTable(c.dipModel);
 	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 	    JScrollPane scrollPane = new JScrollPane(table);
@@ -91,12 +88,12 @@ public class VisioneDipendentiFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 		
-		c.alldipendenti(model);
+		c.alldipendenti();
 		
 	    // Listener per il pulsante di ricerca
 	    searchbutton.addActionListener(e -> {
 	        String query = searchtf.getText().trim().toLowerCase();
-	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.dipModel);
 	        if (query.isEmpty()) {
 	            // Se la query è vuota, mostra tutti i dati
 	            table.setRowSorter(null); // Rimuove il filtro
@@ -141,7 +138,7 @@ public class VisioneDipendentiFrame extends JFrame {
 
 	public VisioneDipendentiFrame(String title, Controller c) throws SQLException {
 		super(title);
-		this.elementi();
+		this.elementi(c);
 		this.azioni(c);
 	}
 }

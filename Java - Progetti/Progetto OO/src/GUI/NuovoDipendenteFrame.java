@@ -136,15 +136,34 @@ public class NuovoDipendenteFrame extends JFrame {
 	    addbutton.addActionListener(e -> {
 	        try {
 	            // Crea un nuovo oggetto Dipendente utilizzando i valori dei campi di testo
-	            c.newdip(new Dipendente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
-	                    emailtf.getText(), indirizzotf.getText(), telefonotf.getText()));
+	            Dipendente newDipendente = new Dipendente(
+	                "", 
+	                nometf.getText(), 
+	                cognometf.getText(), 
+	                codfisctf.getText(),
+	                emailtf.getText(), 
+	                indirizzotf.getText(), 
+	                telefonotf.getText()
+	            );
+	            c.newdip(newDipendente); // Aggiungi il dipendente al database
+
+	            // Aggiunta del dipendente al modello
+	            c.dipModel.addRow(new Object[]{
+	                newDipendente.getNome(),
+	                newDipendente.getCognome(),
+	                newDipendente.getCodFis(),
+	                newDipendente.getEmail(),
+	                newDipendente.getInd(),
+	                newDipendente.getTel()
+	            });
+
 	            // Pulisce i campi di input
 	            clean();
 	            // Mostra un messaggio di successo
 	            JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
 	        } catch (SQLException e1) {
 	            // Mostra un messaggio di errore in caso di eccezione
-	            JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+	            JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1.getMessage());
 	        }
 	    });
 
@@ -157,6 +176,7 @@ public class NuovoDipendenteFrame extends JFrame {
 	        c.visAnddip(3); // Passa alla schermata dipendenti
 	    });
 	}
+
 
 	public NuovoDipendenteFrame(String title, Controller c) {
 		super(title);

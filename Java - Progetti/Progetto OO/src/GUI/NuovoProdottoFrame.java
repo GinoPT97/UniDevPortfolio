@@ -213,8 +213,20 @@ public class NuovoProdottoFrame extends JFrame {
 	                categoria, Integer.parseInt(scortatf.getText())
 	            );
 
-	            // Salva il prodotto e mostra un messaggio di successo
+	            // Salva il prodotto nel database
 	            c.newprod(prodotto);
+
+	            // Aggiungi il prodotto anche al modello della tabella
+	            c.prodModel.addRow(new Object[]{
+	                prodotto.getNome(),
+	                prodotto.getDescrizione(),
+	                prodotto.getPrezzo(),
+	                prodotto.getLuogoProv(),
+	                prodotto.getCategoria(),
+	                prodotto.getScorta()
+	            });
+
+	            // Pulisci i campi e mostra un messaggio di successo
 	            clean();
 	            JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
 

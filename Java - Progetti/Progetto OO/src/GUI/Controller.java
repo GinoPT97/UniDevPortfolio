@@ -63,9 +63,9 @@ public class Controller {
 	private TesseraJDBC tsjdbc = null;
 	private ArticoliJDBC artjdbc = null;
 	public DefaultTableModel clienteModel = new DefaultTableModel(new Object[]{"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"}, 0);
-	public DefaultTableModel dipModel;
-	public DefaultTableModel prodModel;
-	public DefaultTableModel ordModel;
+	public DefaultTableModel dipModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
+	public DefaultTableModel prodModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"}, 0);
+	public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Codice Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
 	public String iddip;
 	private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
 
@@ -389,7 +389,7 @@ public class Controller {
     }
 
     // Popola il modello della tabella con tutti i dipendenti
-    public void alldipendenti(DefaultTableModel dipModel) throws SQLException {
+    public void alldipendenti() throws SQLException {
         List<Dipendente> dipendenti = dpjdbc.getAllDip();
         populateTable(dipendenti, dipModel, d -> new Object[]{
                 d.getCodDIP(),
@@ -403,7 +403,7 @@ public class Controller {
     }
 
     // Popola il modello della tabella con tutti gli ordini
-    public void allordini(DefaultTableModel ordModel) throws SQLException {
+    public void allordini() throws SQLException {
         List<Ordine> ordini = ordjdbc.getallordini();
         populateTable(ordini, ordModel, o -> {
             Cliente ct = null;
@@ -426,7 +426,7 @@ public class Controller {
     }
 
     // Popola il modello della tabella con tutti i prodotti
-    public void allprodotti(DefaultTableModel prodModel) throws SQLException {
+    public void allprodotti() throws SQLException {
         List<Prodotto> prodotti = prdjdbc.getallprodotti();
         populateTable(prodotti, prodModel, p -> {
             String glutenStatus = p.isGlutine() ? "Si" : "No"; // Determina se il prodotto contiene glutine

@@ -172,6 +172,7 @@ public class ModificaDipendenteFrame extends JFrame {
 
 	    addbutton.addActionListener(e -> {
 	        try {
+	            // Crea un nuovo oggetto Dipendente utilizzando i valori dai JTextField
 	            Dipendente dipendente = new Dipendente(
 	                cod, 
 	                nometf.getText(), 
@@ -181,9 +182,24 @@ public class ModificaDipendenteFrame extends JFrame {
 	                indirizzotf.getText(), 
 	                telefonotf.getText()
 	            );
+	            // Aggiorna il dipendente nel database
 	            c.updip(dipendente);
-	            clean();
-	            c.visAnddip(3);
+	            
+	            // Aggiorna il modello della tabella dei dipendenti
+	            for (int i = 0; i < c.dipModel.getRowCount(); i++) {
+	                if (c.dipModel.getValueAt(i, 0).equals(dipendente.getCodDIP())) { // Assumendo che il codice dipendente sia il primo elemento
+	                	c.dipModel.setValueAt(dipendente.getNome(), i, 1);
+	                	c.dipModel.setValueAt(dipendente.getCognome(), i, 2);
+	                	c.dipModel.setValueAt(dipendente.getCodFis(), i, 3);
+	                	c.dipModel.setValueAt(dipendente.getEmail(), i, 4);
+	                	c.dipModel.setValueAt(dipendente.getInd(), i, 5);
+	                	c.dipModel.setValueAt(dipendente.getTel(), i, 6);
+	                    break; // Esci dal ciclo dopo aver trovato e aggiornato la riga
+	                }
+	            }
+
+	            clean(); // Pulisce i campi di input
+	            c.visAnddip(3); // Torna alla vista con indice 3
 	            JOptionPane.showMessageDialog(this, "Dipendente modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
 	        } catch (SQLException e1) {
 	            JOptionPane.showMessageDialog(this, "Errore!" + "\n" + "Tipo di errore: " + e1, "Errore", JOptionPane.ERROR_MESSAGE);

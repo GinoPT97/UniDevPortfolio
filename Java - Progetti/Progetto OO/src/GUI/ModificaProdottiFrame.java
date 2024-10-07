@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -227,7 +228,7 @@ public class ModificaProdottiFrame extends JFrame {
 	            categoryFields.values().forEach(field -> field.setEnabled(false));
 
 	            // Abilita solo il campo pertinente alla categoria selezionata
-	            JTextField fieldToEnable = categoryFields.get(selectedCategory);
+	            JTextField fieldToEnable = categoryFields.getOrDefault(selectedCategory, null);
 	            if (fieldToEnable != null) {
 	                fieldToEnable.setEnabled(true);
 	            }
@@ -236,7 +237,7 @@ public class ModificaProdottiFrame extends JFrame {
 
 	    // Gestione del pulsante "Inserisci/Modifica"
 	    updatebutton.addActionListener(e -> {
-	        DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
+	        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	        try {
 	            // Verifica se i campi obbligatori sono compilati
 	            List<JTextComponent> mandatoryFields = List.of(nometf, descta, prezzotf, provtf, scortatf);
@@ -245,35 +246,63 @@ public class ModificaProdottiFrame extends JFrame {
 	                return;
 	            }
 
-	            // Crea il prodotto in base alla categoria selezionata
+	            // Crea il prodotto
 	            Prodotto prodotto = new Prodotto(
 	                cod,
 	                nometf.getText(),
 	                descta.getText(),
 	                Double.parseDouble(prezzotf.getText()),
 	                provtf.getText(),
-	                "Ortofrutticoli".equals(categoriacb.getSelectedItem().toString()) ? data.parse(racctf.getText()) : null,
-	                "Latticini".equals(categoriacb.getSelectedItem().toString()) ? data.parse(mungtf.getText()) : null,
+	                "Ortofrutticoli".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(racctf.getText()) : null,
+	                "Latticini".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(mungtf.getText()) : null,
 	                glutcb.isSelected(),
-	                "Inscatolati".equals(categoriacb.getSelectedItem().toString()) ? data.parse(scadtf.getText()) : null,
+	                "Inscatolati".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(scadtf.getText()) : null,
 	                categoriacb.getSelectedItem().toString(),
 	                Integer.parseInt(scortatf.getText())
 	            );
 
-	            // Aggiorna il prodotto
-	            c.upprod(prodotto);
+	            // Cerca la riga corrispondente nel modello
+	            int rowIndex = IntStream.range(0, c.prodModel.getRowCount())
+	                                    .filter(i -> c.prodModel.getValueAt(i, 0).equals(cod))
+	                                    .findFirst().orElse(-1);
+
+	            if (rowIndex != -1) {
+	                // Aggiorna i valori nella riga corrispondente del modello
+	                Object[] updatedValues = {
+	                    prodotto.getNome(),
+	                    prodotto.getDescrizione(),
+	                    prodotto.getPrezzo(),
+	                    prodotto.getLuogoProv(),
+	                    prodotto.getCategoria(),
+	                    prodotto.getScorta(),
+	                    prodotto.getDataraccolta() != null ? dateFormat.format(prodotto.getDataraccolta()) : null,
+	                    prodotto.getDatamungitura() != null ? dateFormat.format(prodotto.getDatamungitura()) : null,
+	                    prodotto.getDatascadenza() != null ? dateFormat.format(prodotto.getDatascadenza()) : null
+	                };
+
+	                for (int col = 1; col < updatedValues.length; col++) {
+	                    c.prodModel.setValueAt(updatedValues[col - 1], rowIndex, col);
+	                }
+
+	                JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
+	            } else {
+	                JOptionPane.showMessageDialog(this, "Prodotto non trovato!", "Errore", JOptionPane.ERROR_MESSAGE);
+	            }
+
 	            clean(); // Pulisce i campi dopo l'aggiornamento
 	            c.visAndprod(3); // Torna alla schermata precedente
-	            JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
-	        } catch (NumberFormatException | SQLException | ParseException ex) {
+	        } catch (NumberFormatException | ParseException ex) {
 	            JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 	        }
 	    });
 	}
 
-	public ModificaProdottiFrame(String title, Controller c) {
+	public ModificaProdottiFrame(String title, Controller c) throws SQLException {
 		super(title);
 		this.elementi();
 		this.azioni(c);
 	}
 }
+
+
+

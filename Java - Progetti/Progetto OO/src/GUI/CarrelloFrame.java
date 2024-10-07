@@ -29,7 +29,6 @@ import Model.Articoli;
 import Model.Ordine;
 
 public class CarrelloFrame extends JFrame {
-    private Controller c;
     private JPanel contentPane;
     private DefaultTableModel prodmodel = new DefaultTableModel();
     private DefaultTableModel ordmodel = new DefaultTableModel();
