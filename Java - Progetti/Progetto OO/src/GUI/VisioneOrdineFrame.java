@@ -61,7 +61,7 @@ public class VisioneOrdineFrame extends JFrame {
 	    contentPane.add(scrollPane, BorderLayout.CENTER);
 
 	    table = new JTable();
-	    table.setModel(c.prodModel);
+	    table.setModel(c.ordModel);
 	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	    scrollPane.setViewportView(table);
 
@@ -97,7 +97,7 @@ public class VisioneOrdineFrame extends JFrame {
 	            table.setRowSorter(null); // Rimuove il filtro
 	        } else {
 	            // Applica il filtro sulla tabella
-	            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel);
+	            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.ordModel);
 	            try {
 	                // Imposta il filtro della tabella con la query
 	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
