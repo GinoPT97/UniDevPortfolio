@@ -99,7 +99,7 @@ public class ModificaClienteFrame extends JFrame {
 	    contentPane.add(elempanel, BorderLayout.CENTER);
 
 	    // Nome
-	    nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
 	    nomelab = new JLabel("Nome :");
 	    nomepanel.add(nomelab);
 	    nometf = new JTextField(10);
@@ -115,7 +115,7 @@ public class ModificaClienteFrame extends JFrame {
 	    elempanel.add(cognomepanel);
 
 	    // Codice Fiscale
-	    codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
 	    codfisclab = new JLabel("Codice Fiscale :");
 	    codfiscpanel.add(codfisclab);
 	    codfisctf = new JTextField(10);
@@ -123,7 +123,7 @@ public class ModificaClienteFrame extends JFrame {
 	    elempanel.add(codfiscpanel);
 
 	    // Email
-	    emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	    emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
 	    emaillab = new JLabel("Email :");
 	    emailpanel.add(emaillab);
 	    emailtf = new JTextField(10);
@@ -181,17 +181,33 @@ public class ModificaClienteFrame extends JFrame {
 	        try {
 	            // Aggiorna il cliente con i dati inseriti nei JTextField
 	            Cliente clienteAggiornato = new Cliente(
-	                cod,
-	                nometf.getText(),
-	                cognometf.getText(),
+	                cod, 
+	                nometf.getText(), 
+	                cognometf.getText(), 
 	                codfisctf.getText(),
-	                emailtf.getText(),
-	                indirizzotf.getText(),
-	                telefonotf.getText(),
-	                null,
+	                emailtf.getText(), 
+	                indirizzotf.getText(), 
+	                telefonotf.getText(), 
+	                null, 
 	                null
 	            );
-	            c.upcliente(clienteAggiornato); // Aggiorna il cliente nel controller
+
+	            // Aggiorna il cliente nel database
+	            c.upcliente(clienteAggiornato); 
+
+	            // Aggiorna la riga corrispondente nel modello
+	            for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
+	                if (c.clienteModel.getValueAt(i, 0).equals(clienteAggiornato.getCodCl())) { // Assumendo che il codice cliente sia il primo elemento
+	                    c.clienteModel.setValueAt(clienteAggiornato.getNome(), i, 1);
+	                    c.clienteModel.setValueAt(clienteAggiornato.getCognome(), i, 2);
+	                    c.clienteModel.setValueAt(clienteAggiornato.getCodFis(), i, 3);
+	                    c.clienteModel.setValueAt(clienteAggiornato.getEmail(), i, 4);
+	                    c.clienteModel.setValueAt(clienteAggiornato.getInd(), i, 5);
+	                    c.clienteModel.setValueAt(clienteAggiornato.getTel(), i, 6);
+	                    break; // Esci dal ciclo dopo aver trovato e aggiornato la riga
+	                }
+	            }
+
 	            clean(); // Pulisce i campi dopo l'aggiornamento
 	            c.visAndcl(3); // Torna alla vista con indice 3
 	            JOptionPane.showMessageDialog(null, "Cliente modificato");
@@ -210,3 +226,4 @@ public class ModificaClienteFrame extends JFrame {
 		this.azioni(c);
 	}
 }
+

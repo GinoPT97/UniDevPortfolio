@@ -28,14 +28,13 @@ import Model.Cliente;
 public class VisioneClienteFrame extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
-	private DefaultTableModel model;
 	private JButton backbutton;
 	private JButton addbutton;
 	private JButton updatebutton;
 	private JTextField searchtf;
 	private JButton searchbutton;
 
-	public void elementi() {
+	public void elementi(Controller c) {
 	    // Imposta le proprietà della finestra principale
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 850, 450);
@@ -48,8 +47,7 @@ public class VisioneClienteFrame extends JFrame {
 	    setContentPane(contentPane);
 
 	    // Crea e configura la tabella con scroll pane
-	    model = new DefaultTableModel(new Object[]{"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"}, 0);
-	    table = new JTable(model);
+	    table = new JTable(c.clienteModel);
 	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 	    JScrollPane scrollPane = new JScrollPane(table);
@@ -90,12 +88,12 @@ public class VisioneClienteFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 	    // Carica i dati iniziali nella tabella
-	    c.allcliente(model);
+	    c.allcliente();
 
 	    // Aggiungi ActionListener al pulsante di ricerca
 	    searchbutton.addActionListener(e -> {
 	        String query = searchtf.getText().trim().toLowerCase();
-	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.clienteModel);
 	        if (query.isEmpty()) {
 	            // Se la query è vuota, mostra tutti i dati
 	            table.setRowSorter(null); // Rimuove il filtro
@@ -135,7 +133,7 @@ public class VisioneClienteFrame extends JFrame {
 
 	public VisioneClienteFrame(String title, Controller c) throws SQLException {
 		super(title);
-		this.elementi();
+		this.elementi(c);
 		this.azioni(c);
 	}
 }

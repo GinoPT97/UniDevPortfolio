@@ -144,7 +144,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	    telefonopanel.add(telefonotf);
 	    elempanel.add(telefonopanel);
 	}
-
+	
 	public void clean() {
 	    nometf.setText("");
 	    cognometf.setText("");
@@ -173,12 +173,12 @@ public class ModificaDipendenteFrame extends JFrame {
 	    addbutton.addActionListener(e -> {
 	        try {
 	            Dipendente dipendente = new Dipendente(
-	                cod,
-	                nometf.getText(),
-	                cognometf.getText(),
+	                cod, 
+	                nometf.getText(), 
+	                cognometf.getText(), 
 	                codfisctf.getText(),
-	                emailtf.getText(),
-	                indirizzotf.getText(),
+	                emailtf.getText(), 
+	                indirizzotf.getText(), 
 	                telefonotf.getText()
 	            );
 	            c.updip(dipendente);

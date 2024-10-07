@@ -30,13 +30,13 @@ public class NuovoClienteFrame extends JFrame {
 	private JButton addbutton;
 	private JButton clearbutton;
 	private JButton backbutton;
-
+	
 	public void elementi() {
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 700, 500);
 	    setLocationRelativeTo(null);
 	    setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
-
+	    
 	    // Impostazione del contenuto e del layout principale
 	    contentPane = new JPanel(new BorderLayout(0, 0));
 	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -135,22 +135,48 @@ public class NuovoClienteFrame extends JFrame {
         // Azione per il bottone "Aggiungi"
         addbutton.addActionListener(e -> {
             try {
-                // Creazione del nuovo cliente e tessera
-                Cliente newCliente = new Cliente("", nometf.getText(), cognometf.getText(), codfisctf.getText(),
-                        emailtf.getText(), indirizzotf.getText(), telefonotf.getText(), null, null);
-                c.newclt(newCliente);
+                // Creazione del nuovo cliente con i dati dai JTextField
+                Cliente newCliente = new Cliente(
+                    "", 
+                    nometf.getText(), 
+                    cognometf.getText(), 
+                    codfisctf.getText(),
+                    emailtf.getText(), 
+                    indirizzotf.getText(), 
+                    telefonotf.getText(), 
+                    null, 
+                    null
+                );
+
+                // Aggiunta del nuovo cliente nel controller
+                c.newclt(newCliente);  // Aggiungi cliente nel database
+
+                // Aggiunta della tessera per il nuovo cliente
                 c.nuovatessera(nometf.getText(), cognometf.getText(), codfisctf.getText());
-                clean();
+
+                // Aggiunta del cliente al modello
+                c.clienteModel.addRow(new Object[]{
+                    newCliente.getCodCl(), // Assumendo che tu abbia il codice cliente
+                    newCliente.getNome(),
+                    newCliente.getCognome(),
+                    newCliente.getCodFis(),
+                    newCliente.getEmail(),
+                    newCliente.getInd(),
+                    newCliente.getTel()
+                });
+
+                clean(); // Pulisce i campi dopo l'aggiunta
                 JOptionPane.showMessageDialog(null, "Cliente e relativa tessera aggiunti");
             } catch (SQLException e1) {
                 // Gestione dell'errore
-                JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+                JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore: " + e1.getMessage());
             }
         });
 
         // Azione per il bottone "Pulisci"
         clearbutton.addActionListener(e -> clean());
     }
+
 
 	public NuovoClienteFrame(String title, Controller c) {
 		super(title);

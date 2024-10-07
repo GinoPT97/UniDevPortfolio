@@ -17,7 +17,7 @@ public class Dipendenteimpl implements DipendenteJDBC {
     private Statement getAllDip, getDipVendite, getDipIntroiti, verifyId, getDip;
     private List<String> ordven = new ArrayList<>();
     private List<String> ordint = new ArrayList<>();
-
+    
     // Costruttore
     public Dipendenteimpl(Connection connection) throws SQLException {
         getAllDip = connection.createStatement();
@@ -128,12 +128,12 @@ public class Dipendenteimpl implements DipendenteJDBC {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     dipendente = new Dipendente(
-                            id,
-                            rs.getString("nome"),
-                            rs.getString("cognome"),
-                            rs.getString("codicefiscale"),
-                            rs.getString("email"),
-                            rs.getString("indirizzo"),
+                            id, 
+                            rs.getString("nome"), 
+                            rs.getString("cognome"), 
+                            rs.getString("codicefiscale"), 
+                            rs.getString("email"), 
+                            rs.getString("indirizzo"), 
                             rs.getString("telefono"));
                 }
             }

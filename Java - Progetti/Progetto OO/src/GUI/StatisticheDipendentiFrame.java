@@ -56,7 +56,7 @@ public class StatisticheDipendentiFrame extends JFrame {
         searchPanel.setBorder(BorderFactory.createTitledBorder("Ricerca"));
         GroupLayout searchLayout = new GroupLayout(searchPanel);
         searchPanel.setLayout(searchLayout);
-
+        
         periodoLab = new JLabel("Periodo ricerca (YYYY-MM-DD)");
         startLab = new JLabel("Da : ");
         startTF = new JTextField(10); // Ridotto il numero di colonne

@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
@@ -61,7 +62,7 @@ public class Controller {
 	private OrdiniJDBC ordjdbc = null;
 	private TesseraJDBC tsjdbc = null;
 	private ArticoliJDBC artjdbc = null;
-	public DefaultTableModel clienteModel;
+	public DefaultTableModel clienteModel = new DefaultTableModel(new Object[]{"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"}, 0);
 	public DefaultTableModel dipModel;
 	public DefaultTableModel prodModel;
 	public DefaultTableModel ordModel;
@@ -147,12 +148,9 @@ public class Controller {
 
 	public void visAndCarr(int x) {
 	    // Verifica quale frame è visibile, se adminf è visibile lo assegna come lastFrame, altrimenti dipf
-	    if (adminf.isVisible()) {
-			lastFrame = adminf;
-		} else if (dipf.isVisible()) {
-			lastFrame = dipf;
-		}
-
+	    if (adminf.isVisible()) lastFrame = adminf;
+	    else if (dipf.isVisible()) lastFrame = dipf;
+	    
 	    // Usa uno switch per gestire la visibilità dei frame
 	    switch (x) {
 	        case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
@@ -209,6 +207,19 @@ public class Controller {
 	        }
 	    });
 	}
+	
+	// Metodo generico per popolare il modello della tabella
+	private <T> void populateTable(List<T> items, DefaultTableModel model, Function<T, Object[]> mapper) {
+	    model.setRowCount(0); // Resetta il modello per evitare duplicati
+	    for (T item : items) {
+	        model.addRow(mapper.apply(item)); // Aggiungi riga al modello
+	    }
+	}
+	
+    // Metodo di supporto per verificare se un campo è nullo o vuoto
+    private String checkNull(Object value) {
+        return (value == null || value.toString().trim().isEmpty()) ? "---" : value.toString();
+    }
 
 	public void connect() throws SQLException {
 		try {
@@ -329,101 +340,110 @@ public class Controller {
         return ordjdbc.getCurrentCod();
     }
 
-    // Popola il modello della tabella con i dati dei clienti
+ // Popola il modello della tabella con i dati dei clienti
     public void ClientSearch(DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni cliente trovato
-        for (Cliente c : artjdbc.SearchClient()) {
-            Object[] pr = { c.getNome(), c.getCognome(), c.getArticoliOrdini().getCategoria(),
-                    c.getArticoliOrdini().getNumPunti() };
-            model.addRow(pr); // Aggiungi riga al modello
-        }
+        List<Cliente> clienti = artjdbc.SearchClient();
+        populateTable(clienti, model, c -> new Object[]{
+                c.getNome(),
+                c.getCognome(),
+                c.getArticoliOrdini().getCategoria(),
+                c.getArticoliOrdini().getNumPunti()
+        });
     }
 
     // Popola il modello della tabella con i prodotti per categoria
     public void categoriaprodotti(String c, DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni prodotto nella categoria specificata
-        for (Prodotto p : prdjdbc.getbycategoria(c)) {
-            Object[] pr = { p.getCodProd(), p.getNome(), p.getPrezzo(), p.getCategoria(), p.getScorta() };
-            model.addRow(pr); // Aggiungi riga al modello
-        }
+        List<Prodotto> prodotti = prdjdbc.getbycategoria(c);
+        populateTable(prodotti, model, p -> new Object[]{
+                p.getCodProd(),
+                p.getNome(),
+                p.getPrezzo(),
+                p.getCategoria(),
+                p.getScorta()
+        });
     }
 
     // Popola il modello della tabella con tutte le tessere
     public void alltessera(DefaultTableModel model) throws SQLException {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni tessera
-        for (Tessera t : tsjdbc.alltessera()) {
-            Object[] pr = { t.getCodTessera(), t.getNPunti() };
-            model.addRow(pr); // Aggiungi riga al modello
-        }
+        List<Tessera> tessere = tsjdbc.alltessera();
+        populateTable(tessere, model, t -> new Object[]{
+                t.getCodTessera(),
+                t.getNPunti()
+        });
     }
 
     // Popola il modello della tabella con tutti i clienti
-    public void allcliente(DefaultTableModel clienteModel) throws SQLException {
-    	clienteModel.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni cliente
-        for (Cliente c : cljdbc.getAllCt()) {
-            Object[] pr = { c.getCodCl(), c.getNome(), c.getCognome(), c.getCodFis(), c.getEmail(), c.getInd(),
-                    c.getTel(), c.getTessera().getCodTessera(), c.getTessera().getNPunti() };
-            clienteModel.addRow(pr); // Aggiungi riga al modello
-        }
+    public void allcliente() throws SQLException {
+        List<Cliente> clienti = cljdbc.getAllCt();
+        populateTable(clienti, clienteModel, c -> new Object[]{
+                c.getCodCl(),
+                c.getNome(),
+                c.getCognome(),
+                c.getCodFis(),
+                c.getEmail(),
+                c.getInd(),
+                c.getTel(),
+                c.getTessera().getCodTessera(),
+                c.getTessera().getNPunti()
+        });
     }
 
     // Popola il modello della tabella con tutti i dipendenti
     public void alldipendenti(DefaultTableModel dipModel) throws SQLException {
-        dipModel.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni dipendente
-        for (Dipendente d : dpjdbc.getAllDip()) {
-            Object[] rowData = { d.getCodDIP(), d.getNome(), d.getCognome(), d.getCodFis(), d.getEmail(), d.getInd(),
-                    d.getTel() };
-            dipModel.addRow(rowData); // Aggiungi riga al modello
-        }
+        List<Dipendente> dipendenti = dpjdbc.getAllDip();
+        populateTable(dipendenti, dipModel, d -> new Object[]{
+                d.getCodDIP(),
+                d.getNome(),
+                d.getCognome(),
+                d.getCodFis(),
+                d.getEmail(),
+                d.getInd(),
+                d.getTel()
+        });
     }
 
     // Popola il modello della tabella con tutti gli ordini
     public void allordini(DefaultTableModel ordModel) throws SQLException {
-        ordModel.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni ordine
-        for (Ordine o : ordjdbc.getallordini()) {
-            Cliente ct = cljdbc.getCtByid(o.getIdCliente());
-            Dipendente d = dpjdbc.getOneDip(o.getIdDipendente());
-            Object[] pr = { o.getCodOrd(), o.getDataAcquisto().toString(), o.getPrezzoTotale(),
-                    ct.getCognome() + " " + ct.getNome(), d.getCognome() + " " + d.getNome() };
-            ordModel.addRow(pr); // Aggiungi riga al modello
-        }
-    }
-
- // Popola il modello della tabella con tutti i prodotti
-    public void allprodotti(DefaultTableModel prodModel) throws SQLException {
-        prodModel.setRowCount(0); // Resetta il modello per evitare duplicati
-        // Aggiungi righe per ogni prodotto
-        for (Prodotto p : prdjdbc.getallprodotti()) {
-            String glutenStatus = p.isGlutine() ? "Si" : "No"; // Determina se il prodotto contiene glutine
-
-            // Controlla ogni campo per verificare se è nullo o vuoto e lo sostituisce con ---
-            Object[] pr = {
-                checkNull(p.getCodProd()),        // Codice prodotto
-                checkNull(p.getNome()),           // Nome
-                checkNull(p.getDescrizione()),    // Descrizione
-                checkNull(p.getPrezzo()),         // Prezzo
-                checkNull(p.getLuogoProv()),      // Luogo di provenienza
-                checkNull(p.getDataraccolta()),   // Data di raccolta
-                checkNull(p.getDatamungitura()),  // Data di mungitura
-                glutenStatus,                     // Stato glutine
-                checkNull(p.getDatascadenza()),   // Data di scadenza
-                checkNull(p.getCategoria()),      // Categoria
-                checkNull(p.getScorta())          // Scorta
+        List<Ordine> ordini = ordjdbc.getallordini();
+        populateTable(ordini, ordModel, o -> {
+            Cliente ct = null;
+            Dipendente d = null;
+			try {
+				d = dpjdbc.getOneDip(o.getIdDipendente());
+				ct = cljdbc.getCtByid(o.getIdCliente());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            return new Object[]{
+                    o.getCodOrd(),
+                    o.getDataAcquisto().toString(),
+                    o.getPrezzoTotale(),
+                    ct.getCognome() + " " + ct.getNome(),
+                    d.getCognome() + " " + d.getNome()
             };
-
-            prodModel.addRow(pr); // Aggiungi riga al modello
-        }
+        });
     }
 
-    // Metodo di supporto per verificare se un campo è nullo o vuoto
-    private String checkNull(Object value) {
-        return (value == null || value.toString().trim().isEmpty()) ? "---" : value.toString();
+    // Popola il modello della tabella con tutti i prodotti
+    public void allprodotti(DefaultTableModel prodModel) throws SQLException {
+        List<Prodotto> prodotti = prdjdbc.getallprodotti();
+        populateTable(prodotti, prodModel, p -> {
+            String glutenStatus = p.isGlutine() ? "Si" : "No"; // Determina se il prodotto contiene glutine
+            return new Object[]{
+                    checkNull(p.getCodProd()),
+                    checkNull(p.getNome()),
+                    checkNull(p.getDescrizione()),
+                    checkNull(p.getPrezzo()),
+                    checkNull(p.getLuogoProv()),
+                    checkNull(p.getDataraccolta()),
+                    checkNull(p.getDatamungitura()),
+                    glutenStatus,
+                    checkNull(p.getDatascadenza()),
+                    checkNull(p.getCategoria()),
+                    checkNull(p.getScorta())
+            };
+        });
     }
 }
 
