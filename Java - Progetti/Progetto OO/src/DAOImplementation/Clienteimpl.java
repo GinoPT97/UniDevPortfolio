@@ -14,7 +14,7 @@ import Model.Tessera;
 public class Clienteimpl implements ClienteJDBC {
     private PreparedStatement setNewCt, cercaCl, updateCl;
     private Statement getAllCt, idCl;
-    
+
     // Costruttore
     public Clienteimpl(Connection connection) throws SQLException {
         getAllCt = connection.createStatement();

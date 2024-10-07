@@ -29,7 +29,6 @@ import Model.Articoli;
 import Model.Ordine;
 
 public class CarrelloFrame extends JFrame {
-    private Controller c;
     private JPanel contentPane;
     private DefaultTableModel prodmodel = new DefaultTableModel();
     private DefaultTableModel ordmodel = new DefaultTableModel();
@@ -172,7 +171,7 @@ public class CarrelloFrame extends JFrame {
         insertbutton.setForeground(Color.WHITE);
         bottomPanel.add(insertbutton);
     }
-    
+
 	public void clean() {
 	    totalelab.setText("Totale :  0.00");
 	    quantitatf.setText("");

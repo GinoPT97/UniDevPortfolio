@@ -99,7 +99,7 @@ public class ModificaClienteFrame extends JFrame {
 	    contentPane.add(elempanel, BorderLayout.CENTER);
 
 	    // Nome
-	    nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+	    nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    nomelab = new JLabel("Nome :");
 	    nomepanel.add(nomelab);
 	    nometf = new JTextField(10);
@@ -115,7 +115,7 @@ public class ModificaClienteFrame extends JFrame {
 	    elempanel.add(cognomepanel);
 
 	    // Codice Fiscale
-	    codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+	    codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    codfisclab = new JLabel("Codice Fiscale :");
 	    codfiscpanel.add(codfisclab);
 	    codfisctf = new JTextField(10);
@@ -123,7 +123,7 @@ public class ModificaClienteFrame extends JFrame {
 	    elempanel.add(codfiscpanel);
 
 	    // Email
-	    emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); 
+	    emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    emaillab = new JLabel("Email :");
 	    emailpanel.add(emaillab);
 	    emailtf = new JTextField(10);
@@ -181,14 +181,14 @@ public class ModificaClienteFrame extends JFrame {
 	        try {
 	            // Aggiorna il cliente con i dati inseriti nei JTextField
 	            Cliente clienteAggiornato = new Cliente(
-	                cod, 
-	                nometf.getText(), 
-	                cognometf.getText(), 
+	                cod,
+	                nometf.getText(),
+	                cognometf.getText(),
 	                codfisctf.getText(),
-	                emailtf.getText(), 
-	                indirizzotf.getText(), 
-	                telefonotf.getText(), 
-	                null, 
+	                emailtf.getText(),
+	                indirizzotf.getText(),
+	                telefonotf.getText(),
+	                null,
 	                null
 	            );
 	            c.upcliente(clienteAggiornato); // Aggiorna il cliente nel controller

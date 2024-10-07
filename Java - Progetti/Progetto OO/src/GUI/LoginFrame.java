@@ -19,7 +19,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 public class LoginFrame extends JFrame {
-	private Controller c;
 	private JPanel contentPane;
 	private JButton logbutt;
 	private JButton clearbutt;

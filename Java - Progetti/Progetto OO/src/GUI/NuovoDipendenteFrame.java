@@ -30,7 +30,7 @@ public class NuovoDipendenteFrame extends JFrame {
 	private JButton addbutton;
 	private JButton clearbutton;
 	private JButton backbutton;
-	
+
 	public void elementi() {
 	    // Imposta le proprietà di base della finestra
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

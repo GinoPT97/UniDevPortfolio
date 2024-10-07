@@ -147,9 +147,12 @@ public class Controller {
 
 	public void visAndCarr(int x) {
 	    // Verifica quale frame è visibile, se adminf è visibile lo assegna come lastFrame, altrimenti dipf
-	    if (adminf.isVisible()) lastFrame = adminf;
-	    else if (dipf.isVisible()) lastFrame = dipf;
-	    
+	    if (adminf.isVisible()) {
+			lastFrame = adminf;
+		} else if (dipf.isVisible()) {
+			lastFrame = dipf;
+		}
+
 	    // Usa uno switch per gestire la visibilità dei frame
 	    switch (x) {
 	        case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
@@ -398,7 +401,7 @@ public class Controller {
         // Aggiungi righe per ogni prodotto
         for (Prodotto p : prdjdbc.getallprodotti()) {
             String glutenStatus = p.isGlutine() ? "Si" : "No"; // Determina se il prodotto contiene glutine
-            
+
             // Controlla ogni campo per verificare se è nullo o vuoto e lo sostituisce con ---
             Object[] pr = {
                 checkNull(p.getCodProd()),        // Codice prodotto
@@ -413,7 +416,7 @@ public class Controller {
                 checkNull(p.getCategoria()),      // Categoria
                 checkNull(p.getScorta())          // Scorta
             };
-            
+
             prodModel.addRow(pr); // Aggiungi riga al modello
         }
     }

@@ -160,7 +160,7 @@ public class ModificaProdottiFrame extends JFrame {
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         panel.add(titlelabel);
     }
-    
+
 	public void viewprod(Prodotto pe) {
 	    cod = pe.getCodProd();
 	    nometf.setText(pe.getNome());
