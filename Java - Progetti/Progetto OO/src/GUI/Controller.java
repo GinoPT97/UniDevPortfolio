@@ -44,7 +44,6 @@ public class Controller {
 	private VisioneProdottiFrame vprodf;
 	public ModificaProdottiFrame modprodf;
 	private StatisticheDipendentiFrame statdipf;
-	private PuntiTesseraFrame ptessf;
 	private CarrelloFrame carrf;
 	private VisioneClienteFrame visctf;
 	private NuovoDipendenteFrame ndipf;
@@ -66,7 +65,6 @@ public class Controller {
 	public DefaultTableModel dipModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
 	public DefaultTableModel prodModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"}, 0);
 	public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Codice Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
-	public DefaultTableModel tesseraModel;
 	public String iddip;
 	private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
 
@@ -84,7 +82,6 @@ public class Controller {
 		updipf = new ModificaDipendenteFrame("Modifica Dipendente", this);
 		modprodf = new ModificaProdottiFrame("Modifica Prodotti", this);
 		statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti", this);
-		ptessf = new PuntiTesseraFrame("Punti Tessera", this);
 		carrf = new CarrelloFrame("Carrello", this);
 		visordf = new VisioneOrdineFrame("Visione Ordini", this);
 		searchf = new RicercaFrame("Ricerca Clienti", this);
@@ -167,10 +164,10 @@ public class Controller {
 	    lastFrame = dipf; // Salva l'ultimo frame visibile come dipf
 	    // Mostra il frame corrispondente a x e nasconde dipf se presente
 	    switch (x) {
-	        case 1 -> setVisibleFrame(visctf, dipf);
-	        case 2 -> setVisibleFrame(ptessf, dipf);
-	        case 3 -> setVisibleFrame(visordf, dipf);
-	        case 4 -> setVisibleFrame(dipf, ptessf, visctf);
+	        case 1 -> setVisibleFrame(visctf, dipf); // Mostra il frame per i clienti
+	        case 2 -> setVisibleFrame(visordf, dipf); // Mostra il frame per gli ordini
+	        case 3 -> setVisibleFrame(dipf, visctf); // Mostra il frame per dipendenti e clienti
+	        //default -> System.out.println("Opzione non valida."); // Opzionale: gestire l'input non valido
 	    }
 	}
 
@@ -344,7 +341,7 @@ public class Controller {
         return ordjdbc.getCurrentCod();
     }
 
- // Popola il modello della tabella con i dati dei clienti
+    // Popola il modello della tabella con i dati dei clienti
     public void ClientSearch(DefaultTableModel model) throws SQLException {
         List<Cliente> clienti = artjdbc.SearchClient();
         populateTable(clienti, model, c -> new Object[]{
@@ -367,98 +364,81 @@ public class Controller {
         });
     }
 
- // Popola il modello della tabella con tutte le tessere
-    public void alltessera() throws SQLException {
-        List<Tessera> tessere = tsjdbc.alltessera(); // Recupera tutte le tessere
-        populateTable(tessere, tesseraModel, t -> new Object[]{
-                checkNull(t.getCodTessera()), // Controlla se il codice tessera è nullo o vuoto
-                checkNull(t.getNPunti()) // Controlla se i punti sono nulli o vuoti
-        });
-    }
-
-    // Popola il modello della tabella con tutti i clienti
-    public void allcliente() throws SQLException {
-        List<Cliente> clienti = cljdbc.getAllCt(); // Recupera tutti i clienti
+    public void allCliente() throws SQLException {
+        List<Cliente> clienti = cljdbc.getAllCt();
         populateTable(clienti, clienteModel, c -> new Object[]{
-                checkNull(c.getCodCl()), 
-                checkNull(c.getNome()), 
-                checkNull(c.getCognome()), 
-                checkNull(c.getCodFis()), 
-                checkNull(c.getEmail()), 
-                checkNull(c.getInd()), 
-                checkNull(c.getTel()), 
-                checkNull(c.getTessera() != null ? c.getTessera().getCodTessera() : null), // Gestisce il caso in cui tessera è null
-                checkNull(c.getTessera() != null ? c.getTessera().getNPunti() : null) // Gestisce il caso in cui tessera è null
+            checkNull(c.getCodCl()), 
+            checkNull(c.getNome()), 
+            checkNull(c.getCognome()), 
+            checkNull(c.getCodFis()), 
+            checkNull(c.getEmail()), 
+            checkNull(c.getInd()), 
+            checkNull(c.getTel()), 
+            checkNull(c.getTessera() != null ? c.getTessera().getCodTessera() : null), 
+            checkNull(c.getTessera() != null ? c.getTessera().getNPunti() : null)
         });
     }
 
-    // Popola il modello della tabella con tutti i dipendenti
-    public void alldipendenti() throws SQLException {
-        List<Dipendente> dipendenti = dpjdbc.getAllDip(); // Recupera tutti i dipendenti
+    public void allDipendenti() throws SQLException {
+        List<Dipendente> dipendenti = dpjdbc.getAllDip();
         populateTable(dipendenti, dipModel, d -> new Object[]{
-                checkNull(d.getCodDIP()), 
-                checkNull(d.getNome()), 
-                checkNull(d.getCognome()), 
-                checkNull(d.getCodFis()), 
-                checkNull(d.getEmail()), 
-                checkNull(d.getInd()), 
-                checkNull(d.getTel())
+            checkNull(d.getCodDIP()), 
+            checkNull(d.getNome()), 
+            checkNull(d.getCognome()), 
+            checkNull(d.getCodFis()), 
+            checkNull(d.getEmail()), 
+            checkNull(d.getInd()), 
+            checkNull(d.getTel())
         });
     }
 
-    // Popola il modello della tabella con tutti gli ordini
-    public void allordini() throws SQLException {
-        List<Ordine> ordini = ordjdbc.getallordini(); // Recupera tutti gli ordini
+    public void allOrdini() throws SQLException {
+        List<Ordine> ordini = ordjdbc.getallordini();
         populateTable(ordini, ordModel, o -> {
-            // Inizializza i nomi del cliente e del dipendente come "N/A"
-            String clienteNome = "N/A"; 
-            String dipendenteNome = "N/A"; 
+            String clienteNome = "N/A";
+            String dipendenteNome = "N/A";
             
             try {
-                // Recupera il dipendente e il cliente associati all'ordine
                 Dipendente d = dpjdbc.getOneDip(o.getIdDipendente());
                 Cliente ct = cljdbc.getCtByid(o.getIdCliente());
-
-                // Controlla se ct e d non sono null prima di accedere ai loro metodi
                 dipendenteNome = checkNull(d != null ? d.getCognome() + " " + d.getNome() : null);
                 clienteNome = checkNull(ct != null ? ct.getCognome() + " " + ct.getNome() : null);
             } catch (SQLException e) {
-                e.printStackTrace(); // Gestisci l'errore in modo appropriato
+                e.printStackTrace();
             }
             
-            // Restituisce un array di oggetti per la riga della tabella
             return new Object[]{
-                    checkNull(o.getCodOrd()), // Controlla se il codice ordine è nullo o vuoto
-                    checkNull(o.getDataAcquisto()), // Controlla se la data di acquisto è nulla
-                    checkNull(o.getPrezzoTotale()), // Controlla se il prezzo totale è nullo
-                    clienteNome,
-                    dipendenteNome
+                checkNull(o.getCodOrd()), 
+                checkNull(o.getDataAcquisto()), 
+                checkNull(o.getPrezzoTotale()), 
+                clienteNome, 
+                dipendenteNome
             };
         });
     }
 
-    // Popola il modello della tabella con tutti i prodotti
-    public void allprodotti() throws SQLException {
-        List<Prodotto> prodotti = prdjdbc.getallprodotti(); // Recupera tutti i prodotti
+    public void allProdotti() throws SQLException {
+        List<Prodotto> prodotti = prdjdbc.getallprodotti();
         populateTable(prodotti, prodModel, p -> {
-            String glutenStatus = p.isGlutine() ? "Si" : "No"; // Determina se il prodotto contiene glutine
+            String glutenStatus = p.isGlutine() ? "Si" : "No";
             
             return new Object[]{
-                    checkNull(p.getCodProd()), 
-                    checkNull(p.getNome()), 
-                    checkNull(p.getDescrizione()), 
-                    checkNull(p.getPrezzo()), 
-                    checkNull(p.getLuogoProv()), 
-                    checkNull(p.getDataraccolta()), 
-                    checkNull(p.getDatamungitura()), 
-                    glutenStatus, 
-                    checkNull(p.getDatascadenza()), 
-                    checkNull(p.getCategoria()), 
-                    checkNull(p.getScorta())
+                checkNull(p.getCodProd()), 
+                checkNull(p.getNome()), 
+                checkNull(p.getDescrizione()), 
+                checkNull(p.getPrezzo()), 
+                checkNull(p.getLuogoProv()), 
+                checkNull(p.getDataraccolta()), 
+                checkNull(p.getDatamungitura()), 
+                glutenStatus, 
+                checkNull(p.getDatascadenza()), 
+                checkNull(p.getCategoria()), 
+                checkNull(p.getScorta())
             };
         });
     }
 }
+
 
 
 

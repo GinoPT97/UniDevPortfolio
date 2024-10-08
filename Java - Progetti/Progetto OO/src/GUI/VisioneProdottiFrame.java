@@ -101,7 +101,7 @@ public class VisioneProdottiFrame extends JFrame {
 
     public void azioni(Controller c) throws SQLException {
         // Popola la tabella con i prodotti all'avvio
-        c.allprodotti();
+        c.allProdotti();
 
         // Gestione della ricerca
         searchbutton.addActionListener(e -> {

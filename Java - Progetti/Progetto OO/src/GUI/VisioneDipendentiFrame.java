@@ -88,7 +88,7 @@ public class VisioneDipendentiFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 
-		c.alldipendenti();
+		c.allDipendenti();
 
 	    // Listener per il pulsante di ricerca
 	    searchbutton.addActionListener(e -> {

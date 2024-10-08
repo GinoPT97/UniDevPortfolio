@@ -87,7 +87,7 @@ public class VisioneOrdineFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 	    // Carica tutti gli ordini nel modello della tabella
-	    c.allordini();
+	    c.allOrdini();
 
 	    // Configura il pulsante di ricerca
 	    searchbutton.addActionListener(e -> {

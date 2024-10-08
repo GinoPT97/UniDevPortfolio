@@ -198,7 +198,7 @@ public class CarrelloFrame extends JFrame {
 	        try {
 	            String categoria = (String) categoriacb.getSelectedItem();
 	            if (categoria != null) {
-	                c.categoriaprodotti(categoria, prodmodel); // Popola il modello con i prodotti per la categoria selezionata
+	                c.categoriaprodotti(categoria, c.prodModel); // Popola il modello con i prodotti per la categoria selezionata
 	            }
 	        } catch (SQLException e1) {
 	            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: \n" + e1.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);

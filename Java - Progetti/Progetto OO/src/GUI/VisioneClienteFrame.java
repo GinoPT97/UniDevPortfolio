@@ -88,7 +88,7 @@ public class VisioneClienteFrame extends JFrame {
 
 	public void azioni(Controller c) throws SQLException {
 	    // Carica i dati iniziali nella tabella
-	    c.allcliente();
+	    c.allCliente();
 
 	    // Aggiungi ActionListener al pulsante di ricerca
 	    searchbutton.addActionListener(e -> {
