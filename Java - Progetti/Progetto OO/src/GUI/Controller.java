@@ -93,7 +93,7 @@ public class Controller {
 
 	public void returnToLastFrame() {
 	    // Mostra l'ultimo frame visibile e nasconde searchf e visordf
-	    setVisibleFrame(lastFrame, searchf, visordf);
+	    setVisibleFrame(lastFrame, searchf, visordf, vprodf);
 	}
 
 	private void setVisibleFrame(Frame toShow, Frame... toHide) {
@@ -132,6 +132,17 @@ public class Controller {
 	    }
 	}
 
+	public void dipAndElem(int x) {
+	    lastFrame = dipf; // Salva l'ultimo frame visibile come dipf
+	    // Mostra il frame corrispondente a x e nasconde dipf se presente
+	    switch (x) {
+	        case 1 -> setVisibleFrame(visctf, dipf); // Mostra il frame per i clienti
+	        case 2 -> setVisibleFrame(visordf, dipf); // Mostra il frame per gli ordini
+	        case 3 -> setVisibleFrame(dipf, visctf); // Mostra il frame per dipendenti e clienti
+	        case 4 -> setVisibleFrame(vprodf, dipf); // Aggiunto: Mostra il frame per la gestione prodotti
+	    }
+	}
+
 	public void searchAndElem(int x) {
 	    // Salva l'ultimo frame visibile come adminf o dipf
 	    lastFrame = (adminf.isVisible()) ? adminf : dipf;
@@ -156,16 +167,6 @@ public class Controller {
 	        case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
 	        case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
 	        case 3 -> setVisibleFrame(lastFrame, visordf); // Torna al frame precedente e nasconde il frame ordine
-	    }
-	}
-
-	public void dipAndElem(int x) {
-	    lastFrame = dipf; // Salva l'ultimo frame visibile come dipf
-	    // Mostra il frame corrispondente a x e nasconde dipf se presente
-	    switch (x) {
-	        case 1 -> setVisibleFrame(visctf, dipf); // Mostra il frame per i clienti
-	        case 2 -> setVisibleFrame(visordf, dipf); // Mostra il frame per gli ordini
-	        case 3 -> setVisibleFrame(dipf, visctf); // Mostra il frame per dipendenti e clienti
 	    }
 	}
 

@@ -192,7 +192,7 @@ public class CarrelloFrame extends JFrame {
 	}
 
 	public void azioni(Controller c) throws SQLException {
-	    // Assegna l'ActionListener per il pulsante di selezione categoria
+	    // Pulsante di selezione categoria
 	    selectbutton.addActionListener(e -> {
 	        prodmodel.setRowCount(0); // Resetta il modello della tabella dei prodotti
 	        try {
@@ -201,74 +201,83 @@ public class CarrelloFrame extends JFrame {
 	                c.categoriaprodotti(categoria, c.prodModel); // Popola il modello con i prodotti per la categoria selezionata
 	            }
 	        } catch (SQLException e1) {
-	            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: \n" + e1.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+	            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 	        }
 	    });
 
-	    // Assegna l'ActionListener per il pulsante di inserimento
+	    // Pulsante di inserimento
 	    insertbutton.addActionListener(e -> {
-	        int i = prodottotable.getSelectedRow();
+	        int selectedRow = prodottotable.getSelectedRow();
 	        String quantitaText = quantitatf.getText();
 
-	        // Verifica le condizioni di errore e visualizza i messaggi appropriati
-	        if (i == -1) {
-	            JOptionPane.showMessageDialog(null, "Seleziona un prodotto!" + (quantitaText.isEmpty() ? " e la quantita'!" : ""));
-	        } else if (quantitaText.isEmpty()) {
-	            JOptionPane.showMessageDialog(null, "Seleziona la quantita'!");
-	        } else {
-	            try {
-	                int quantita = Integer.parseInt(quantitaText);
-	                int scorte = Integer.parseInt(prodmodel.getValueAt(i, 4).toString());
+	        if (selectedRow == -1) {
+	            JOptionPane.showMessageDialog(null, "Seleziona un prodotto!" + (quantitaText.isEmpty() ? " e la quantità!" : ""));
+	            return;
+	        }
 
-	                if (scorte < quantita) {
-	                    JOptionPane.showMessageDialog(null, "Scorte insufficienti!");
-	                } else {
-	                    // Aggiunge il prodotto e la quantita' alla tabella degli ordini
-	                    Object[] p = { prodmodel.getValueAt(i, 0), prodmodel.getValueAt(i, 1), prodmodel.getValueAt(i, 2),
-	                                   prodmodel.getValueAt(i, 3), quantitaText };
-	                    ordmodel.addRow(p);
-	                    quantitatf.setText(""); // Resetta il campo di testo della quantita'
-	                    totale(); // Aggiorna il totale
-	                }
-	            } catch (NumberFormatException ex) {
-	                JOptionPane.showMessageDialog(null, "Quantità non valida!", "Errore", JOptionPane.ERROR_MESSAGE);
+	        if (quantitaText.isEmpty()) {
+	            JOptionPane.showMessageDialog(null, "Seleziona la quantità!");
+	            return;
+	        }
+
+	        try {
+	            int quantita = Integer.parseInt(quantitaText);
+	            int scorte = Integer.parseInt(prodmodel.getValueAt(selectedRow, 4).toString());
+
+	            if (scorte < quantita) {
+	                JOptionPane.showMessageDialog(null, "Scorte insufficienti!");
+	            } else {
+	                // Aggiunge il prodotto e la quantità alla tabella degli ordini
+	                Object[] p = {
+	                    prodmodel.getValueAt(selectedRow, 0),
+	                    prodmodel.getValueAt(selectedRow, 1),
+	                    prodmodel.getValueAt(selectedRow, 2),
+	                    prodmodel.getValueAt(selectedRow, 3),
+	                    quantitaText
+	                };
+	                c.ordModel.addRow(p); // Aggiorna il modello ordini dal controller
+	                quantitatf.setText(""); // Resetta il campo di testo della quantità
+	                totale(); // Aggiorna il totale
 	            }
+	        } catch (NumberFormatException ex) {
+	            JOptionPane.showMessageDialog(null, "Quantità non valida!", "Errore", JOptionPane.ERROR_MESSAGE);
 	        }
 	    });
 
-	    // Assegna l'ActionListener per il pulsante di rimozione
+	    // Pulsante di rimozione
 	    removebutton.addActionListener(e -> {
 	        int selectedRow = ordinetable.getSelectedRow();
 	        if (selectedRow != -1) {
-	            ordmodel.removeRow(selectedRow); // Rimuove la riga selezionata dalla tabella degli ordini
+	            c.ordModel.removeRow(selectedRow); // Rimuove la riga selezionata dalla tabella degli ordini
 	            totale(); // Aggiorna il totale
 	        } else {
 	            JOptionPane.showMessageDialog(null, "Seleziona una riga da rimuovere!");
 	        }
 	    });
 
-	    // Assegna l'ActionListener per il pulsante di ritorno
+	    // Pulsante di ritorno
 	    backbutton.addActionListener(e -> c.visAndCarr(2));
 
-	    // Assegna l'ActionListener per il pulsante di ordine
+	    // Pulsante di ordine
 	    ordinebutton.addActionListener(e -> {
 	        try {
 	            java.sql.Date sd = java.sql.Date.valueOf(dataod);
 	            String idCliente = c.getct(codfisctf.getText());
 	            String idDipendente = c.iddip;
 	            double totaleOrdine = totale();
+
 	            Ordine ordine = new Ordine("", sd, totaleOrdine, idCliente, idDipendente);
+	            c.nuovoordine(ordine); // Crea un nuovo ordine nel database
 
-	            c.nuovoordine(ordine);
+	            // Aggiorna i dettagli dell'ordine
+	            for (int j = 0; j < c.ordModel.getRowCount(); j++) {
+	                int quantita = Integer.parseInt(c.ordModel.getValueAt(j, 4).toString());
+	                String codiceProdotto = c.ordModel.getValueAt(j, 0).toString();
+	                double prezzoUnitario = Double.parseDouble(c.ordModel.getValueAt(j, 2).toString());
 
-	            for (int j = 0; j < ordmodel.getRowCount(); j++) {
-	                int quantita = Integer.parseInt(ordmodel.getValueAt(j, 4).toString());
-	                String codiceProdotto = ordmodel.getValueAt(j, 0).toString();
-	                double prezzoUnitario = Double.parseDouble(ordmodel.getValueAt(j, 2).toString());
-
-	                c.upscorte(quantita, codiceProdotto);
-	                Articoli articoli = new Articoli(c.CurrOrd(), idCliente, prezzoUnitario, prezzoUnitario * quantita, quantita, ordmodel.getValueAt(j, 3).toString());
-	                c.newarticoli(articoli);
+	                c.upscorte(quantita, codiceProdotto); // Aggiorna le scorte
+	                Articoli articoli = new Articoli(c.CurrOrd(), idCliente, prezzoUnitario, prezzoUnitario * quantita, quantita, c.ordModel.getValueAt(j, 3).toString());
+	                c.newarticoli(articoli); // Aggiunge articoli all'ordine
 	            }
 
 	            c.uppunti(idCliente, totaleOrdine); // Aggiorna i punti del cliente
@@ -281,6 +290,7 @@ public class CarrelloFrame extends JFrame {
 	        }
 	    });
 	}
+
 
 	public CarrelloFrame(String title, Controller c) throws SQLException {
 		super(title);

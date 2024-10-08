@@ -156,7 +156,7 @@ public class VisioneProdottiFrame extends JFrame {
         });
 
         // Gestione del pulsante Indietro
-        backbutton.addActionListener(e -> c.adminAndElem(5)); // Richiama il metodo per tornare alla schermata principale
+        backbutton.addActionListener(e -> c.returnToLastFrame()); // Torna all'ultimo frame visibile
     }
 
     public VisioneProdottiFrame(String title, Controller c) throws SQLException {

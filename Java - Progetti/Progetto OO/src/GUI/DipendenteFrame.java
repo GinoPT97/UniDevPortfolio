@@ -25,6 +25,7 @@ public class DipendenteFrame extends JFrame {
     private JLabel titlelab;
     private JButton searchbutton;
     private JPanel buttonpanel;
+    private JButton prodButton;
 
     public void elementi() {
         // Impostazioni di base del frame
@@ -80,9 +81,15 @@ public class DipendenteFrame extends JFrame {
         ordineutton.setAlignmentX(Component.CENTER_ALIGNMENT); // Centra il pulsante
         buttonpanel.add(ordineutton);
 
+        buttonpanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spazio tra i bottoni
+
+        // Nuovo bottone per la gestione dei prodotti
+        prodButton = new JButton("Prodotti");
+        prodButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Centra il pulsante
+        buttonpanel.add(prodButton); // Aggiungi il pulsante al pannello
+
         buttonpanel.add(Box.createVerticalGlue()); // Spazio sotto i bottoni
     }
-
 
     public void azioni(Controller c) {
         // Listener per il pulsante di logout, chiama il metodo logout del Controller con parametro 1
@@ -96,7 +103,11 @@ public class DipendenteFrame extends JFrame {
 
         // Listener per il pulsante di ricerca, chiama il metodo searchAndElem del Controller con parametro 1
         searchbutton.addActionListener(e -> c.searchAndElem(1));
+
+        // Nuovo listener per il pulsante prodotti, chiama il metodo dipAndElem del Controller con parametro 3 (o un altro metodo)
+        prodButton.addActionListener(e -> c.dipAndElem(4)); 
     }
+
 
     public DipendenteFrame(String title, Controller c) {
         super(title);
