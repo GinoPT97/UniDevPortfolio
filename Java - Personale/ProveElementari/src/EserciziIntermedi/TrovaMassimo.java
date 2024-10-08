@@ -33,19 +33,16 @@ public class TrovaMassimo {
 
     // Funzione per trovare il massimo degli elementi in un array di interi
     public static int trovaMassimo(int[] arr) {
-        if (arr.length == 0) {
-            // Restituisci un valore sentinella (es. Integer.MIN_VALUE) se l'array è vuoto
+        if (arr.length == 0)
+			// Restituisci un valore sentinella (es. Integer.MIN_VALUE) se l'array è vuoto
             return Integer.MIN_VALUE;
-        }
 
         int massimo = arr[0];
 
         // Itera attraverso gli elementi dell'array per trovare il massimo
-        for (int elemento : arr) {
-            if (elemento > massimo) {
-                massimo = elemento;
-            }
-        }
+        for (int elemento : arr)
+			if (elemento > massimo)
+				massimo = elemento;
 
         // Restituisci il massimo trovato
         return massimo;

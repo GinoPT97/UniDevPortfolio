@@ -126,9 +126,8 @@ public class Prova extends JFrame{
 					}
 				clean();
 				JOptionPane.showMessageDialog(null, "Modifica avvenuta con successo.");
-			 }else {
-				JOptionPane.showMessageDialog(null, "Seleziona una riga da modificare.");
-			 }
+			 } else
+					JOptionPane.showMessageDialog(null, "Seleziona una riga da modificare.");
 			}
 		});
 		updatebutt.setBounds(141, 280, 85, 21);
@@ -148,9 +147,8 @@ public class Prova extends JFrame{
 				if(i>=0) {
 				model.removeRow(i);
 				JOptionPane.showMessageDialog(null, "Eliminato con successo");
-				}else {
+				} else
 					JOptionPane.showMessageDialog(null, "Seleziona una riga");
-				}
 			}
 		});
 		delatebutt.setBounds(25, 337, 85, 21);

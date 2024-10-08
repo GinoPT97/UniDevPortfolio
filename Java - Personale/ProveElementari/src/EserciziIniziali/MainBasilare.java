@@ -31,17 +31,16 @@ public class MainBasilare {
 
 		input.close();
 
-		if(x==y && x==z) {
+		if(x==y && x==z)
 			System.out.print("tutti uguali");
-		} else if(y==x && (y > z || y < z)) {
+		else if(y==x && (y > z || y < z))
 			System.out.print("z è diverso");
-		} else if(y==z && (y > x || z < x)) {
+		else if(y==z && (y > x || z < x))
 			System.out.print("x è diverso");
-		} else if(x==z && (z > y || z < y)) {
+		else if(x==z && (z > y || z < y))
 			System.out.print("y è diverso");
-		} else {
+		else
 			System.out.print("tutti diversi");
-		}
 	}
 
     //esercizio per il fattoriale sia iterativo che ricorsivo
@@ -49,20 +48,18 @@ public class MainBasilare {
 	public static int FattorialeIterativo(int n){
         int result = 1;
 
-        for (int i = 1; i <= n; i++) {
+        for (int i = 1; i <= n; i++)
 			result = result * i;
-		}
 
         return result;
     }
 
 	 public static int FattorialeRicorsivo(int n) {
 
-        if( n <= 1) {
+        if( n <= 1)
 			return 1;
-		} else {
+		else
 			return n * FattorialeRicorsivo( n - 1 );
-		}
 
     }
 
@@ -175,11 +172,10 @@ public class MainBasilare {
 
 	 public static String reverseString(String str){
 
-	        if( str.length() == 0 ) {
+	        if( str.length() == 0 )
 				return str;
-			} else {
+			else
 				return str.charAt(str.length()-1)  + reverseString( str.substring(0, str.length() - 1) );
-			}
 
 	 }
 
@@ -196,11 +192,10 @@ public class MainBasilare {
 	}
 
 	public static void VerificaEquals(String str1, String str2) {
-		 if(str1.equals(str2)) {
+		 if(str1.equals(str2))
 			System.out.println("La stringa " + str1 + " è uguale a " + str2);
-		} else {
+		else
 			System.out.println("La stringa " + str1 + " è diversa da " + str2);
-		}
 	 }
 
 }

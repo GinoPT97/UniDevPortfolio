@@ -11,9 +11,8 @@ public class Esercizio1 {
         Integer[] valori = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
 
         // Inserisci le coppie chiave-valore nell'hashtable
-        for (int i = 0; i < 5; i++) {
-            hashTable.put(chiavi[i], valori[i]);
-        }
+        for (int i = 0; i < 5; i++)
+			hashTable.put(chiavi[i], valori[i]);
 
         // Test 1: Recupera il valore associato alla chiave "mela"
         testGet(hashTable, "mela");
@@ -34,11 +33,10 @@ public class Esercizio1 {
     // Metodo per eseguire il test e stampare il risultato
     private static void testGet(HashTable<String, Integer> hashTable, String key) {
         Integer value = hashTable.get(key);
-        if (value != null) {
-            System.out.println("Il valore per la chiave '" + key + "' è: " + value);
-        } else {
-            System.out.println("La chiave '" + key + "' non è stata trovata nell'hashtable.");
-        }
+        if (value != null)
+			System.out.println("Il valore per la chiave '" + key + "' è: " + value);
+		else
+			System.out.println("La chiave '" + key + "' non è stata trovata nell'hashtable.");
     }
 }
 

@@ -9,20 +9,18 @@ public class MainFattoriale {
 	public static int FattorialeIterativo(int n){
         int result = 1;
 
-        for (int i = 1; i <= n; i++) {
+        for (int i = 1; i <= n; i++)
 			result = result * i;
-		}
 
         return result;
     }
 
     public static int FattorialeRicorsivo(int n) {
 
-        if( n <= 1) {
+        if( n <= 1)
 			return 1;
-		} else {
+		else
 			return n * FattorialeRicorsivo( n - 1 );
-		}
 
     }
 

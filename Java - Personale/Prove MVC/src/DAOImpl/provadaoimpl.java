@@ -27,19 +27,17 @@ public class provadaoimpl implements provadao{
 	public boolean cancellaprove(String id) throws SQLException {
 		cancellaprove.setString(1, id);
 		int row = cancellaprove.executeUpdate();
-        if(row>0) {
+        if(row>0)
 			return true;
-		} else {
+		else
 			return false;
-		}
 	}
 
 	@Override
 	public ArrayList<provaentita> getAllprova() throws SQLException {
         ResultSet rs = getprove.executeQuery();
-        while(rs.next()) {
+        while(rs.next())
 			pe.add(new provaentita(rs.getString("id"),rs.getString("nome"), rs.getString("contatto"),rs.getString("corso")));
-		}
         rs.close();
         return pe;
 	}
@@ -51,11 +49,10 @@ public class provadaoimpl implements provadao{
         inserisciprove.setString(2, pe.getcontatto());
         inserisciprove.setString(3, pe.getcorso());
         int row = inserisciprove.executeUpdate();
-        if(row<1) {
+        if(row<1)
 			return true;
-		} else {
+		else
 			return false;
-		}
 	}
 
 	@Override
@@ -65,11 +62,10 @@ public class provadaoimpl implements provadao{
 		updateprove.setString(3, corso);
 		updateprove.setString(4, id);
         int row = updateprove.executeUpdate();
-        if(row>0) {
+        if(row>0)
 			return true;
-		} else {
+		else
 			return false;
-		}
 	}
 
 }

@@ -25,7 +25,6 @@ public class DipendenteFrame extends JFrame {
     private JLabel titlelab;
     private JButton searchbutton;
     private JPanel buttonpanel;
-    private JPanel buttonContainer;
 
     public void elementi() {
         // Impostazioni di base del frame
@@ -87,16 +86,16 @@ public class DipendenteFrame extends JFrame {
 
     public void azioni(Controller c) {
         // Listener per il pulsante di logout, chiama il metodo logout del Controller con parametro 1
-        logoututton.addActionListener(e -> c.logout(1)); 
+        logoututton.addActionListener(e -> c.logout(1));
 
         // Listener per il pulsante cliente, chiama il metodo dipAndElem del Controller con parametro 1
         clientebutton.addActionListener(e -> c.dipAndElem(1));
 
         // Listener per il pulsante ordine, chiama il metodo dipAndElem del Controller con parametro 2
-        ordineutton.addActionListener(e -> c.dipAndElem(2)); 
+        ordineutton.addActionListener(e -> c.dipAndElem(2));
 
         // Listener per il pulsante di ricerca, chiama il metodo searchAndElem del Controller con parametro 1
-        searchbutton.addActionListener(e -> c.searchAndElem(1)); 
+        searchbutton.addActionListener(e -> c.searchAndElem(1));
     }
 
     public DipendenteFrame(String title, Controller c) {

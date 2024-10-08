@@ -21,11 +21,10 @@ public class MainEquals {
 	}
 
 	public static void VerificaEquals(String str1, String str2) {
-		 if(str1.equals(str2)) {
+		 if(str1.equals(str2))
 			System.out.println("La stringa " + str1 + " è uguale a " + str2);
-		} else {
+		else
 			System.out.println("La stringa " + str1 + " è diversa da " + str2);
-		}
 	 }
 
 }

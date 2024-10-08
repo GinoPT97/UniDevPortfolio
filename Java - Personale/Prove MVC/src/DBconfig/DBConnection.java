@@ -7,15 +7,8 @@ import java.sql.SQLException;
 public class DBConnection {
 	public static DBConnection instance;
 	public static DBConnection getInstance(String db) throws SQLException {
-        if (instance == null)
-        {
-            instance = new DBConnection(db);
-        }
-        else
-            if (instance.getConnection().isClosed())
-            {
-                instance = new DBConnection(db);
-            }
+        if ((instance == null) || instance.getConnection().isClosed())
+			instance = new DBConnection(db);
 
         return instance;
     }

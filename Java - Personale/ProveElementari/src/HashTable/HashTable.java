@@ -34,13 +34,10 @@ public class HashTable<K, V> {
     public V get(K key) {
         int index = hash(key);
         LinkedList<Entry<K, V>> list = table[index];
-        if (list != null) {
-            for (Entry<K, V> entry : list) {
-                if (entry.key.equals(key)) {
-                    return entry.value;
-                }
-            }
-        }
+        if (list != null)
+			for (Entry<K, V> entry : list)
+				if (entry.key.equals(key))
+					return entry.value;
         return null; // Chiave non trovata
     }
 
@@ -52,17 +49,15 @@ public class HashTable<K, V> {
     // Metodo per inserire un elemento
     public void put(K key, V value) {
         int index = hash(key);
-        if (table[index] == null) {
-            table[index] = new LinkedList<>();
-        }
+        if (table[index] == null)
+			table[index] = new LinkedList<>();
 
         // Controlla se la chiave esiste già e aggiorna il valore
-        for (Entry<K, V> entry : table[index]) {
-            if (entry.key.equals(key)) {
+        for (Entry<K, V> entry : table[index])
+			if (entry.key.equals(key)) {
                 entry.value = value;
                 return;
             }
-        }
 
         // Se la chiave non esiste, aggiungila alla lista
         table[index].add(new Entry<>(key, value));

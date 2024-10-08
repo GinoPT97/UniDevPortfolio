@@ -24,9 +24,8 @@ public class MediaArrayEccezione {
 
             // Calcoliamo la media degli elementi dell'array
             int somma = 0;
-            for (int numero : numeri) {
-                somma += numero;
-            }
+            for (int numero : numeri)
+				somma += numero;
             double media = (double) somma / lunghezza;
 
             // Stampiamo la media calcolata

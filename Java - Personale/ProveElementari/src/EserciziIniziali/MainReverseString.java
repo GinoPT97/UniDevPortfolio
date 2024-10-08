@@ -17,11 +17,10 @@ public class MainReverseString {
 
 	public static String reverseString(String str){
 
-        if( str.length() == 0 ) {
+        if( str.length() == 0 )
 			return str;
-		} else {
+		else
 			return str.charAt(str.length()-1)  + reverseString( str.substring(0, str.length() - 1) );
-		}
 
     }
 
