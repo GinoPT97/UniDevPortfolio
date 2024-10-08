@@ -127,8 +127,8 @@ public class VisioneClienteFrame extends JFrame {
 	        }
 	    });
 
-	    // Aggiungi ActionListener al pulsante di ritorno
-	    backbutton.addActionListener(e -> c.dipAndElem(3));
+	 // Aggiungi ActionListener al pulsante di ritorno
+	 backbutton.addActionListener(e -> c.returnToLastFrame());
 	}
 
 	public VisioneClienteFrame(String title, Controller c) throws SQLException {

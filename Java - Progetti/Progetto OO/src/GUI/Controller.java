@@ -92,61 +92,45 @@ public class Controller {
 	}
 
 	public void returnToLastFrame() {
-	    // Mostra l'ultimo frame visibile e nasconde searchf e visordf
 	    setVisibleFrame(lastFrame, searchf, visordf, vprodf);
 	}
 
 	private void setVisibleFrame(Frame toShow, Frame... toHide) {
-	    // Nasconde tutti i frame nella lista toHide
 	    for (Frame frame : toHide) {
 	        if (frame != null) {
 	            frame.setVisible(false);
 	        }
 	    }
-	    // Mostra il frame specificato da toShow
 	    if (toShow != null) {
 	        toShow.setVisible(true);
 	    }
 	}
 
-	public void logtoutente(int x) {
-	    logf.setVisible(false); // Nasconde il frame di login
-	    // Mostra il frame adminf o dipf in base al valore di x
-	    setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
-	}
-
 	public void logout(int x) {
-	    // Mostra il frame di login e nasconde adminf o dipf in base al valore di x
 	    setVisibleFrame(logf, (x == 1) ? adminf : dipf);
 	}
 
-	public void adminAndElem(int x) {
-	    lastFrame = adminf; // Salva l'ultimo frame visibile come adminf
-	    // Mostra il frame corrispondente a x e nasconde gli altri
-	    switch (x) {
-	        case 1 -> setVisibleFrame(vdipf, adminf, vprodf, statdipf, visordf);
-	        case 2 -> setVisibleFrame(vprodf, adminf, vdipf, statdipf, visordf);
-	        case 3 -> setVisibleFrame(statdipf, adminf, vdipf, vprodf, visordf);
-	        case 4 -> setVisibleFrame(visordf, adminf, vdipf, vprodf, statdipf);
-	        case 5 -> setVisibleFrame(adminf, vdipf, vprodf, statdipf, visordf); // Mostra solo adminf
-	    }
+	public void logtoutente(int x) {
+	    logf.setVisible(false);
+	    setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
 	}
 
-	public void dipAndElem(int x) {
-	    lastFrame = dipf; // Salva l'ultimo frame visibile come dipf
-	    // Mostra il frame corrispondente a x e nasconde dipf se presente
+	// Unifica adminAndElem e dipAndElem in un metodo generale
+	public void manageElements(int x, boolean isAdmin) {
+	    lastFrame = isAdmin ? adminf : dipf;
+	    Frame[] commonFrames = isAdmin ? new Frame[]{vdipf, vprodf, statdipf, visordf} : new Frame[]{visctf, dipf};
+	    
 	    switch (x) {
-	        case 1 -> setVisibleFrame(visctf, dipf); // Mostra il frame per i clienti
-	        case 2 -> setVisibleFrame(visordf, dipf); // Mostra il frame per gli ordini
-	        case 3 -> setVisibleFrame(dipf, visctf); // Mostra il frame per dipendenti e clienti
-	        case 4 -> setVisibleFrame(vprodf, dipf); // Aggiunto: Mostra il frame per la gestione prodotti
+	        case 1 -> setVisibleFrame(commonFrames[0], lastFrame, commonFrames[1], commonFrames[2]);
+	        case 2 -> setVisibleFrame(commonFrames[1], lastFrame, commonFrames[0], commonFrames[2]);
+	        case 3 -> setVisibleFrame(commonFrames[2], lastFrame, commonFrames[0], commonFrames[1]);
+	        case 4 -> setVisibleFrame(visordf, lastFrame, commonFrames[0], commonFrames[1], commonFrames[2]);
+	        case 5 -> setVisibleFrame(lastFrame, commonFrames[0], commonFrames[1], commonFrames[2]);
 	    }
 	}
 
 	public void searchAndElem(int x) {
-	    // Salva l'ultimo frame visibile come adminf o dipf
-	    lastFrame = (adminf.isVisible()) ? adminf : dipf;
-	    // Mostra il frame di ricerca e nasconde adminf o dipf in base al valore di x
+	    lastFrame = adminf.isVisible() ? adminf : dipf;
 	    switch (x) {
 	        case 1 -> setVisibleFrame(searchf, adminf, dipf);
 	        case 2 -> setVisibleFrame(adminf, searchf);
@@ -155,14 +139,7 @@ public class Controller {
 	}
 
 	public void visAndCarr(int x) {
-	    // Verifica quale frame è visibile, se adminf è visibile lo assegna come lastFrame, altrimenti dipf
-	    if (adminf.isVisible()) {
-			lastFrame = adminf;
-		} else if (dipf.isVisible()) {
-			lastFrame = dipf;
-		}
-
-	    // Usa uno switch per gestire la visibilità dei frame
+	    lastFrame = adminf.isVisible() ? adminf : dipf;
 	    switch (x) {
 	        case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
 	        case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
@@ -171,7 +148,6 @@ public class Controller {
 	}
 
 	public void visAnddip(int x) {
-	    // Mostra il frame corrispondente a x e nasconde gli altri
 	    switch (x) {
 	        case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
 	        case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
@@ -180,7 +156,6 @@ public class Controller {
 	}
 
 	public void visAndcl(int x) {
-	    // Mostra il frame corrispondente a x e nasconde gli altri
 	    switch (x) {
 	        case 1 -> setVisibleFrame(nclf, visctf);
 	        case 2 -> setVisibleFrame(upclf, visctf);
@@ -189,7 +164,6 @@ public class Controller {
 	}
 
 	public void visAndprod(int x) {
-	    // Mostra il frame corrispondente a x e nasconde gli altri
 	    switch (x) {
 	        case 1 -> setVisibleFrame(nprodf, vprodf);
 	        case 2 -> setVisibleFrame(modprodf, vprodf);

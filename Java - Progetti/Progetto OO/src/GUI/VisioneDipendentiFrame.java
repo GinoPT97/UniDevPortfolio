@@ -133,7 +133,7 @@ public class VisioneDipendentiFrame extends JFrame {
 	    });
 
 	    // Listener per il pulsante di ritorno alla schermata admin
-	    backbutton.addActionListener(e -> c.adminAndElem(5));
+	    backbutton.addActionListener(e -> c.returnToLastFrame());
 	}
 
 	public VisioneDipendentiFrame(String title, Controller c) throws SQLException {

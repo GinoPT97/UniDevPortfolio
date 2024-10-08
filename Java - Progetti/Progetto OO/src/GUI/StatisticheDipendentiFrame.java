@@ -271,7 +271,7 @@ public class StatisticheDipendentiFrame extends JFrame {
         // Gestione del pulsante indietro
         backButton.addActionListener(e -> {
             clean();
-            c.adminAndElem(5); // Esegue l'azione specifica nel controller
+            c.returnToLastFrame(); // Richiama il metodo per tornare all'ultimo frame
         });
     }
 
