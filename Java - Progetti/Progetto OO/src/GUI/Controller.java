@@ -33,7 +33,6 @@ import Model.Cliente;
 import Model.Dipendente;
 import Model.Ordine;
 import Model.Prodotto;
-import Model.Tessera;
 
 public class Controller {
 	private LoginFrame logf;
@@ -167,7 +166,6 @@ public class Controller {
 	        case 1 -> setVisibleFrame(visctf, dipf); // Mostra il frame per i clienti
 	        case 2 -> setVisibleFrame(visordf, dipf); // Mostra il frame per gli ordini
 	        case 3 -> setVisibleFrame(dipf, visctf); // Mostra il frame per dipendenti e clienti
-	        //default -> System.out.println("Opzione non valida."); // Opzionale: gestire l'input non valido
 	    }
 	}
 

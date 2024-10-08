@@ -2,7 +2,8 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 
@@ -15,10 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class DipendenteFrame extends JFrame {
     private JPanel contentPane;
@@ -64,36 +61,42 @@ public class DipendenteFrame extends JFrame {
         contentPane.add(buttonpanel, BorderLayout.CENTER);
         buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS)); // Layout verticale per centrare i bottoni
 
-        // Pannello contenitore per i bottoni
-        buttonContainer = new JPanel();
-        buttonContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20)); // Layout per centrare i bottoni
-        buttonpanel.add(Box.createVerticalGlue()); // Aggiunge spazio sopra i bottoni
-        buttonpanel.add(buttonContainer); // Aggiunge il contenitore dei bottoni
-        buttonpanel.add(Box.createVerticalGlue()); // Aggiunge spazio sotto i bottoni
+        // Aggiungi spaziatura verticale sopra e sotto i bottoni
+        buttonpanel.add(Box.createVerticalGlue()); // Spazio sopra i bottoni
 
-        // Creazione e aggiunta dei bottoni al contenitore
+        // Creazione e aggiunta dei bottoni al pannello
         clientebutton = new JButton("Clienti");
-        buttonContainer.add(clientebutton);
+        clientebutton.setAlignmentX(Component.CENTER_ALIGNMENT); // Centra il pulsante
+        buttonpanel.add(clientebutton);
+
+        buttonpanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spazio tra i bottoni
 
         searchbutton = new JButton("Ricerca Clienti");
-        buttonContainer.add(searchbutton);
+        searchbutton.setAlignmentX(Component.CENTER_ALIGNMENT); // Centra il pulsante
+        buttonpanel.add(searchbutton);
+
+        buttonpanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spazio tra i bottoni
 
         ordineutton = new JButton("Ordine");
-        buttonContainer.add(ordineutton);
+        ordineutton.setAlignmentX(Component.CENTER_ALIGNMENT); // Centra il pulsante
+        buttonpanel.add(ordineutton);
+
+        buttonpanel.add(Box.createVerticalGlue()); // Spazio sotto i bottoni
     }
 
+
     public void azioni(Controller c) {
-        // Listener per il pulsante di logout, chiama il metodo logout del Controller con parametro 2
-        logoututton.addActionListener(e -> c.logout(2));
+        // Listener per il pulsante di logout, chiama il metodo logout del Controller con parametro 1
+        logoututton.addActionListener(e -> c.logout(1)); 
 
         // Listener per il pulsante cliente, chiama il metodo dipAndElem del Controller con parametro 1
         clientebutton.addActionListener(e -> c.dipAndElem(1));
 
-        // Listener per il pulsante ordine, chiama il metodo dipAndElem del Controller con parametro 3
-        ordineutton.addActionListener(e -> c.dipAndElem(3));
+        // Listener per il pulsante ordine, chiama il metodo dipAndElem del Controller con parametro 2
+        ordineutton.addActionListener(e -> c.dipAndElem(2)); 
 
         // Listener per il pulsante di ricerca, chiama il metodo searchAndElem del Controller con parametro 1
-        searchbutton.addActionListener(e -> c.searchAndElem(1));
+        searchbutton.addActionListener(e -> c.searchAndElem(1)); 
     }
 
     public DipendenteFrame(String title, Controller c) {
