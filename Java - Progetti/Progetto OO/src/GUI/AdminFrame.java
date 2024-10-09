@@ -95,17 +95,17 @@ public class AdminFrame extends JFrame {
         // Listener per il bottone di logout che richiama il metodo logout nel Controller
         logoutbutton.addActionListener(e -> c.logout(1));
 
-        // Listener per il bottone dipendenti che richiama il metodo manageElements con parametro 1 per dipendenti
-        dipbutton.addActionListener(e -> c.manageElements(1, true)); // true per admin
+        // Listener per il bottone dipendenti che richiama il metodo adminAndElem con parametro 1 per dipendenti
+        dipbutton.addActionListener(e -> c.adminAndElem(1)); // Usa adminAndElem per amministratori
 
-        // Listener per il bottone prodotti che richiama il metodo manageElements con parametro 2
-        prodbutton.addActionListener(e -> c.manageElements(2, true)); // true per admin
+        // Listener per il bottone prodotti che richiama il metodo adminAndElem con parametro 2
+        prodbutton.addActionListener(e -> c.adminAndElem(2)); // Usa adminAndElem per amministratori
 
-        // Listener per il bottone statistiche che richiama il metodo manageElements con parametro 3
-        statistichebutton.addActionListener(e -> c.manageElements(3, true)); // true per admin
+        // Listener per il bottone statistiche che richiama il metodo adminAndElem con parametro 3
+        statistichebutton.addActionListener(e -> c.adminAndElem(3)); // Usa adminAndElem per amministratori
 
-        // Listener per il bottone visione ordini che richiama il metodo manageElements con parametro 4
-        visordbutt.addActionListener(e -> c.manageElements(4, true)); // true per admin
+        // Listener per il bottone visione ordini che richiama il metodo adminAndElem con parametro 4
+        visordbutt.addActionListener(e -> c.adminAndElem(4)); // Usa adminAndElem per amministratori
 
         // Listener per il bottone ricerca che richiama il metodo searchAndElem con parametro 1
         searchbutton.addActionListener(e -> c.searchAndElem(1));

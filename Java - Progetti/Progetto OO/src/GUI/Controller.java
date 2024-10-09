@@ -92,7 +92,8 @@ public class Controller {
 	}
 
 	public void returnToLastFrame() {
-	    setVisibleFrame(lastFrame, searchf, visordf, vprodf);
+	    // Mostra l'ultimo frame visibile e nasconde gli altri frame
+	    setVisibleFrame(lastFrame, searchf, visordf, vprodf, vdipf, statdipf, visctf, carrf, nprodf, ndipf, nclf, modprodf, upclf, updipf);
 	}
 
 	private void setVisibleFrame(Frame toShow, Frame... toHide) {
@@ -114,20 +115,30 @@ public class Controller {
 	    logf.setVisible(false);
 	    setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
 	}
-
-	// Unifica adminAndElem e dipAndElem in un metodo generale
-	public void manageElements(int x, boolean isAdmin) {
-	    lastFrame = isAdmin ? adminf : dipf;
-	    Frame[] commonFrames = isAdmin ? new Frame[]{vdipf, vprodf, statdipf, visordf} : new Frame[]{visctf, dipf};
-	    
+	
+	public void adminAndElem(int x) {
+	    lastFrame = adminf; // Imposta il frame admin come ultimo frame
 	    switch (x) {
-	        case 1 -> setVisibleFrame(commonFrames[0], lastFrame, commonFrames[1], commonFrames[2]);
-	        case 2 -> setVisibleFrame(commonFrames[1], lastFrame, commonFrames[0], commonFrames[2]);
-	        case 3 -> setVisibleFrame(commonFrames[2], lastFrame, commonFrames[0], commonFrames[1]);
-	        case 4 -> setVisibleFrame(visordf, lastFrame, commonFrames[0], commonFrames[1], commonFrames[2]);
-	        case 5 -> setVisibleFrame(lastFrame, commonFrames[0], commonFrames[1], commonFrames[2]);
+	        case 1 -> setVisibleFrame(vdipf, adminf, vprodf, statdipf, visordf);
+	        case 2 -> setVisibleFrame(vprodf, adminf, vdipf, statdipf, visordf);
+	        case 3 -> setVisibleFrame(statdipf, adminf, vdipf, vprodf, visordf);
+	        case 4 -> setVisibleFrame(visordf, adminf, vdipf, vprodf, statdipf);
+	        case 5 -> setVisibleFrame(lastFrame, adminf, vdipf, vprodf, statdipf, visordf);
+	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
 	    }
 	}
+
+	public void dipAndElem(int x) {
+	    if (lastFrame == null) lastFrame = dipf; // Inizializza lastFrame se non già impostato
+	    switch (x) {
+	        case 1 -> setVisibleFrame(visctf, dipf); // Mostra Visione Clienti
+	        case 2 -> setVisibleFrame(vprodf, dipf); // Mostra Visione Prodotti
+	        case 3 -> setVisibleFrame(visordf, dipf); // Mostra Visione Ordini
+	        case 4 -> setVisibleFrame(lastFrame, visctf, vprodf, visordf, dipf); // Torna all'ultimo frame salvato
+	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
+	    }
+	}
+
 
 	public void searchAndElem(int x) {
 	    lastFrame = adminf.isVisible() ? adminf : dipf;
@@ -139,10 +150,16 @@ public class Controller {
 	}
 
 	public void visAndCarr(int x) {
+	    // Aggiorna lastFrame in base alla visibilità corrente
 	    lastFrame = adminf.isVisible() ? adminf : dipf;
+
 	    switch (x) {
 	        case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
-	        case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
+	        case 2 -> {
+	            // Salva l'ultimo frame prima di mostrare gli ordini
+	            lastFrame = carrf; // Supponiamo che il carrello sia l'ultimo frame visibile
+	            setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
+	        }
 	        case 3 -> setVisibleFrame(lastFrame, visordf); // Torna al frame precedente e nasconde il frame ordine
 	    }
 	}

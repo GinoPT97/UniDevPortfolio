@@ -95,17 +95,17 @@ public class DipendenteFrame extends JFrame {
         // Listener per il pulsante di logout, chiama il metodo logout del Controller con parametro 1
         logoututton.addActionListener(e -> c.logout(1));
 
-        // Listener per il pulsante cliente, chiama il metodo manageElements del Controller con parametro 1 per i dipendenti
-        clientebutton.addActionListener(e -> c.manageElements(1, false)); // false per dipendente
+        // Listener per il pulsante cliente, chiama il metodo dipAndElem del Controller con parametro 1 per i dipendenti
+        clientebutton.addActionListener(e -> c.dipAndElem(1)); // Usa dipAndElem per dipendenti
 
-        // Listener per il pulsante ordine, chiama il metodo manageElements del Controller con parametro 2
-        ordineutton.addActionListener(e -> c.manageElements(2, false)); // false per dipendente
+        // Listener per il pulsante ordine, chiama il metodo dipAndElem del Controller con parametro 3 (correggendo l'ordine per dipendenti)
+        ordineutton.addActionListener(e -> c.dipAndElem(3)); // Usa dipAndElem per dipendenti
 
         // Listener per il pulsante di ricerca, chiama il metodo searchAndElem del Controller con parametro 1
         searchbutton.addActionListener(e -> c.searchAndElem(1));
 
-        // Nuovo listener per il pulsante prodotti, chiama il metodo manageElements del Controller con parametro 4
-        prodButton.addActionListener(e -> c.manageElements(4, false)); // false per dipendente
+        // Nuovo listener per il pulsante prodotti, chiama il metodo dipAndElem del Controller con parametro 2
+        prodButton.addActionListener(e -> c.dipAndElem(2)); // Usa dipAndElem per dipendenti
     }
 
     public DipendenteFrame(String title, Controller c) {
