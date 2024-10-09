@@ -102,7 +102,7 @@ public class DipendenteFrame extends JFrame {
         ordineutton.addActionListener(e -> c.dipAndElem(3)); // Usa dipAndElem per dipendenti
 
         // Listener per il pulsante di ricerca, chiama il metodo searchAndElem del Controller con parametro 1
-        searchbutton.addActionListener(e -> c.searchAndElem(1));
+        searchbutton.addActionListener(e -> c.dipAndElem(5));
 
         // Nuovo listener per il pulsante prodotti, chiama il metodo dipAndElem del Controller con parametro 2
         prodButton.addActionListener(e -> c.dipAndElem(2)); // Usa dipAndElem per dipendenti

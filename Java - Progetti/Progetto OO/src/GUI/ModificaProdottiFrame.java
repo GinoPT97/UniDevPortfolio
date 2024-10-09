@@ -206,7 +206,7 @@ public class ModificaProdottiFrame extends JFrame {
 	    // Gestione del pulsante "Indietro"
 	    backbutton.addActionListener(e -> {
 	        clean(); // Pulisce i campi
-	        c.visAndProd(3); // Torna alla schermata precedente
+	        c.visAndElem(4, 3); // Torna alla schermata precedente
 	    });
 
 	    // Gestione del pulsante "Pulisci"
@@ -290,7 +290,7 @@ public class ModificaProdottiFrame extends JFrame {
 	            }
 
 	            clean(); // Pulisce i campi dopo l'aggiornamento
-	            c.visAndProd(3); // Torna alla schermata precedente
+	            c.visAndElem(4, 3); // Torna alla schermata precedente
 	        } catch (NumberFormatException | ParseException ex) {
 	            JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 	        }

@@ -256,7 +256,7 @@ public class CarrelloFrame extends JFrame {
 	    });
 
 	    // Pulsante di ritorno
-	    backbutton.addActionListener(e -> c.visAndCarr(2));
+	    backbutton.addActionListener(e -> c.visAndElem(1, 2)); 
 
 	    // Pulsante di ordine
 	    ordinebutton.addActionListener(e -> {

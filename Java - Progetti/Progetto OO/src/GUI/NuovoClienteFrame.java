@@ -129,7 +129,7 @@ public class NuovoClienteFrame extends JFrame {
         // Azione per il bottone "Indietro"
         backbutton.addActionListener(e -> {
             clean();
-            c.visAndCl(3);
+            c.visAndElem(3, 3);
         });
 
         // Azione per il bottone "Aggiungi"

@@ -123,7 +123,7 @@ public class VisioneProdottiFrame extends JFrame {
         });
 
         // Gestione del pulsante Aggiungi
-        addbutton.addActionListener(e -> c.visAndProd(1)); // Richiama il metodo per aggiungere un prodotto
+        addbutton.addActionListener(e -> c.visAndElem(4, 1)); // Richiama il metodo per aggiungere un prodotto
 
         // Gestione del pulsante Modifica
         updatebutton.addActionListener(e -> {
@@ -141,7 +141,7 @@ public class VisioneProdottiFrame extends JFrame {
                     int quantita = Integer.parseInt(table.getValueAt(i, 10).toString());
 
                     // Richiama la finestra di modifica con i dati del prodotto selezionato
-                    c.visAndProd(2);
+                    c.visAndElem(4, 2);
                     c.modprodf.viewprod(new Prodotto(codice, nome, descrizione, prezzo, categoria, null, null, disponibile, null, fornitore, quantita)); // Visualizza i dettagli del prodotto da modificare
                 } catch (NumberFormatException ex) {
                     // Gestione dell'errore di formato numerico

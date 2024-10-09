@@ -110,14 +110,14 @@ public class VisioneDipendentiFrame extends JFrame {
 	    });
 
 	    // Listener per il pulsante di aggiunta
-	    addbutton.addActionListener(e -> c.visAndDip(1));
+	    addbutton.addActionListener(e -> c.visAndElem(2, 1));
 
 	    // Listener per il pulsante di aggiornamento
 	    updatebutton.addActionListener(e -> {
 	        int i = table.getSelectedRow();
 	        if (i >= 0) {
 	            // Se una riga è selezionata, aggiorna il dipendente
-	            c.visAndDip(2);
+	            c.visAndElem(2, 2);
 	            c.updipf.viewdip(new Dipendente(
 	                table.getValueAt(i, 0).toString(),
 	                table.getValueAt(i, 1).toString(),

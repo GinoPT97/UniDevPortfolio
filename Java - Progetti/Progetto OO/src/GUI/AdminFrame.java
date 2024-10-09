@@ -108,7 +108,7 @@ public class AdminFrame extends JFrame {
         visordbutt.addActionListener(e -> c.adminAndElem(4)); // Usa adminAndElem per amministratori
 
         // Listener per il bottone ricerca che richiama il metodo searchAndElem con parametro 1
-        searchbutton.addActionListener(e -> c.searchAndElem(1));
+        searchbutton.addActionListener(e -> c.adminAndElem(6));
     }
 
 	public AdminFrame(String title, Controller c) {

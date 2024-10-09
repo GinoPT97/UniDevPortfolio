@@ -121,11 +121,12 @@ public class Controller {
 	public void adminAndElem(int x) {
 	    lastFrame = adminf; // Imposta il frame admin come ultimo frame
 	    switch (x) {
-	        case 1 -> setVisibleFrame(vdipf, adminf, vprodf, statdipf, visordf);
-	        case 2 -> setVisibleFrame(vprodf, adminf, vdipf, statdipf, visordf);
-	        case 3 -> setVisibleFrame(statdipf, adminf, vdipf, vprodf, visordf);
-	        case 4 -> setVisibleFrame(visordf, adminf, vdipf, vprodf, statdipf);
-	        case 5 -> setVisibleFrame(lastFrame, adminf, vdipf, vprodf, statdipf, visordf);
+	        case 1 -> setVisibleFrame(vdipf, adminf, vprodf, statdipf, visordf); // Mostra Visione Dipendenti
+	        case 2 -> setVisibleFrame(vprodf, adminf, vdipf, statdipf, visordf); // Mostra Visione Prodotti
+	        case 3 -> setVisibleFrame(statdipf, adminf, vdipf, vprodf, visordf); // Mostra Statistiche
+	        case 4 -> setVisibleFrame(visordf, adminf, vdipf, vprodf, statdipf); // Mostra Visione Ordini
+	        case 5 -> setVisibleFrame(lastFrame, adminf, vdipf, vprodf, statdipf, visordf); // Torna all'ultimo frame salvato
+	        case 6 -> setVisibleFrame(searchf, adminf, dipf); // Mostra ricerca
 	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
 	    }
 	}
@@ -137,59 +138,47 @@ public class Controller {
 	        case 2 -> setVisibleFrame(vprodf, dipf); // Mostra Visione Prodotti
 	        case 3 -> setVisibleFrame(visordf, dipf); // Mostra Visione Ordini
 	        case 4 -> setVisibleFrame(lastFrame, visctf, vprodf, visordf, dipf); // Torna all'ultimo frame salvato
+	        case 5 -> setVisibleFrame(searchf, dipf, adminf); // Mostra ricerca
 	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
 	    }
 	}
 
-	public void visAndCarr(int x) {
-	    // Aggiorna lastFrame in base alla visibilità corrente
-	    lastFrame = adminf.isVisible() ? adminf : dipf;
+	public void visAndElem(int context, int x) {
+	    switch (context) {
+	        case 1: // Carrello
+	            switch (x) {
+	                case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
+	                case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
+	            }
+	            break;
 
-	    switch (x) {
-	        case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
-	        case 2 -> {
-	            lastFrame = carrf; // Salva il carrello come ultimo frame visibile
-	            setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
-	        }
-	        case 3 -> setVisibleFrame(lastFrame, visordf); // Torna al frame precedente e nasconde il frame ordine
-	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
-	    }
-	}
+	        case 2: // Dipendente
+	            switch (x) {
+	                case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
+	                case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
+	                case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
+	            }
+	            break;
 
-	public void searchAndElem(int x) {
-	    lastFrame = adminf.isVisible() ? adminf : dipf; // Aggiorna lastFrame in base alla visibilità
-	    switch (x) {
-	        case 1 -> setVisibleFrame(searchf, adminf, dipf); // Mostra ricerca
-	        case 2 -> setVisibleFrame(adminf, searchf); // Mostra admin
-	        case 3 -> setVisibleFrame(dipf, searchf); // Mostra dipendente
-	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
-	    }
-	}
+	        case 3: // Cliente
+	            switch (x) {
+	                case 1 -> setVisibleFrame(nclf, visctf); // Nuovo cliente
+	                case 2 -> setVisibleFrame(upclf, visctf); // Modifica cliente
+	                case 3 -> setVisibleFrame(visctf, nclf, upclf); // Vista clienti
+	            }
+	            break;
 
-	public void visAndDip(int x) {
-	    switch (x) {
-	        case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
-	        case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
-	        case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
-	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
-	    }
-	}
+	        case 4: // Prodotto
+	            switch (x) {
+	                case 1 -> setVisibleFrame(nprodf, vprodf); // Nuovo prodotto
+	                case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
+	                case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
+	            }
+	            break;
 
-	public void visAndCl(int x) {
-	    switch (x) {
-	        case 1 -> setVisibleFrame(nclf, visctf); // Nuovo cliente
-	        case 2 -> setVisibleFrame(upclf, visctf); // Modifica cliente
-	        case 3 -> setVisibleFrame(visctf, nclf, upclf); // Vista clienti
-	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
-	    }
-	}
-
-	public void visAndProd(int x) {
-	    switch (x) {
-	        case 1 -> setVisibleFrame(nprodf, vprodf); // Nuovo prodotto
-	        case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
-	        case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
-	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
+	        default:
+	            // Handle invalid context if needed, or simply do nothing
+	            break;
 	    }
 	}
 
@@ -433,7 +422,6 @@ public class Controller {
         });
     }
 }
-
 
 
 

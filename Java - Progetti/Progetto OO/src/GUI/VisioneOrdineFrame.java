@@ -111,10 +111,10 @@ public class VisioneOrdineFrame extends JFrame {
 	    });
 
 	    // Configura il pulsante di ordine
-	    ordinebutton.addActionListener(e -> c.visAndCarr(1));
+	    ordinebutton.addActionListener(e -> c.visAndElem(1, 1));
 
 	    // Configura il pulsante di ritorno
-	    backbutton.addActionListener(e -> c.visAndCarr(3));
+	    backbutton.addActionListener(e -> c.returnToLastFrame());
 	}
 
 	public VisioneOrdineFrame(String title, Controller c) throws SQLException {
