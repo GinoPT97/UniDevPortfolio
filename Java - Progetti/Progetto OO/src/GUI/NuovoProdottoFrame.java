@@ -187,7 +187,7 @@ public class NuovoProdottoFrame extends JFrame {
 
 	    backbutton.addActionListener(e -> {
 	        clean();
-	        c.visAndprod(3);
+	        c.visAndProd(3);
 	    });
 
 	    insertbutton.addActionListener(e -> {

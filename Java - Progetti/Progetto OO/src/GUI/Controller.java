@@ -99,23 +99,25 @@ public class Controller {
 	private void setVisibleFrame(Frame toShow, Frame... toHide) {
 	    for (Frame frame : toHide) {
 	        if (frame != null) {
-	            frame.setVisible(false);
+	            frame.setVisible(false); // Nascondi il frame
 	        }
 	    }
 	    if (toShow != null) {
-	        toShow.setVisible(true);
+	        toShow.setVisible(true); // Mostra il frame specificato
 	    }
 	}
 
 	public void logout(int x) {
+	    // Cambia il frame visibile in base al tipo di logout
 	    setVisibleFrame(logf, (x == 1) ? adminf : dipf);
 	}
 
 	public void logtoutente(int x) {
-	    logf.setVisible(false);
+	    logf.setVisible(false); // Nasconde il frame di logout
+	    // Mostra il frame appropriato in base al tipo di utente
 	    setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
 	}
-	
+
 	public void adminAndElem(int x) {
 	    lastFrame = adminf; // Imposta il frame admin come ultimo frame
 	    switch (x) {
@@ -139,16 +141,6 @@ public class Controller {
 	    }
 	}
 
-
-	public void searchAndElem(int x) {
-	    lastFrame = adminf.isVisible() ? adminf : dipf;
-	    switch (x) {
-	        case 1 -> setVisibleFrame(searchf, adminf, dipf);
-	        case 2 -> setVisibleFrame(adminf, searchf);
-	        case 3 -> setVisibleFrame(dipf, searchf);
-	    }
-	}
-
 	public void visAndCarr(int x) {
 	    // Aggiorna lastFrame in base alla visibilità corrente
 	    lastFrame = adminf.isVisible() ? adminf : dipf;
@@ -156,35 +148,48 @@ public class Controller {
 	    switch (x) {
 	        case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
 	        case 2 -> {
-	            // Salva l'ultimo frame prima di mostrare gli ordini
-	            lastFrame = carrf; // Supponiamo che il carrello sia l'ultimo frame visibile
+	            lastFrame = carrf; // Salva il carrello come ultimo frame visibile
 	            setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
 	        }
 	        case 3 -> setVisibleFrame(lastFrame, visordf); // Torna al frame precedente e nasconde il frame ordine
+	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
 	    }
 	}
 
-	public void visAnddip(int x) {
+	public void searchAndElem(int x) {
+	    lastFrame = adminf.isVisible() ? adminf : dipf; // Aggiorna lastFrame in base alla visibilità
+	    switch (x) {
+	        case 1 -> setVisibleFrame(searchf, adminf, dipf); // Mostra ricerca
+	        case 2 -> setVisibleFrame(adminf, searchf); // Mostra admin
+	        case 3 -> setVisibleFrame(dipf, searchf); // Mostra dipendente
+	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
+	    }
+	}
+
+	public void visAndDip(int x) {
 	    switch (x) {
 	        case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
 	        case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
 	        case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
+	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
 	    }
 	}
 
-	public void visAndcl(int x) {
+	public void visAndCl(int x) {
 	    switch (x) {
-	        case 1 -> setVisibleFrame(nclf, visctf);
-	        case 2 -> setVisibleFrame(upclf, visctf);
-	        case 3 -> setVisibleFrame(visctf, nclf, upclf);
+	        case 1 -> setVisibleFrame(nclf, visctf); // Nuovo cliente
+	        case 2 -> setVisibleFrame(upclf, visctf); // Modifica cliente
+	        case 3 -> setVisibleFrame(visctf, nclf, upclf); // Vista clienti
+	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
 	    }
 	}
 
-	public void visAndprod(int x) {
+	public void visAndProd(int x) {
 	    switch (x) {
-	        case 1 -> setVisibleFrame(nprodf, vprodf);
-	        case 2 -> setVisibleFrame(modprodf, vprodf);
-	        case 3 -> setVisibleFrame(vprodf, nprodf, modprodf);
+	        case 1 -> setVisibleFrame(nprodf, vprodf); // Nuovo prodotto
+	        case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
+	        case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
+	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
 	    }
 	}
 

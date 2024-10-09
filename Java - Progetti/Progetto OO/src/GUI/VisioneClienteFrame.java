@@ -109,7 +109,7 @@ public class VisioneClienteFrame extends JFrame {
 	    });
 
 	    // Aggiungi ActionListener al pulsante di aggiunta
-	    addbutton.addActionListener(e -> c.visAndcl(1));
+	    addbutton.addActionListener(e -> c.visAndCl(1));
 
 	    // Aggiungi ActionListener al pulsante di aggiornamento
 	    updatebutton.addActionListener(e -> {
@@ -120,7 +120,7 @@ public class VisioneClienteFrame extends JFrame {
 	                clienteData[i] = table.getValueAt(selectedRow, i).toString();
 	            }
 
-	            c.visAndcl(2);
+	            c.visAndCl(2);
 	            c.upclf.viewct(new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null));
 	        } else {
 	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);

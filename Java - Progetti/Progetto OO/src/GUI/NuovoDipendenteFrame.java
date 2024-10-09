@@ -173,7 +173,7 @@ public class NuovoDipendenteFrame extends JFrame {
 	    // Listener per il bottone di ritorno alla schermata precedente
 	    backbutton.addActionListener(e -> {
 	        clean(); // Pulisce i campi di input
-	        c.visAnddip(3); // Passa alla schermata dipendenti
+	        c.visAndDip(3); // Passa alla schermata dipendenti
 	    });
 	}
 

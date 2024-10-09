@@ -173,7 +173,7 @@ public class ModificaClienteFrame extends JFrame {
 	    // Bottone per tornare indietro
 	    backbutton.addActionListener(e -> {
 	        clean();
-	        c.visAndcl(3); // Visualizza la vista con indice 3
+	        c.visAndCl(3); // Visualizza la vista con indice 3
 	    });
 
 	    // Bottone per aggiornare un cliente
@@ -209,7 +209,7 @@ public class ModificaClienteFrame extends JFrame {
 	            }
 
 	            clean(); // Pulisce i campi dopo l'aggiornamento
-	            c.visAndcl(3); // Torna alla vista con indice 3
+	            c.visAndCl(3); // Torna alla vista con indice 3
 	            JOptionPane.showMessageDialog(null, "Cliente modificato");
 	        } catch (SQLException e1) {
 	            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage());

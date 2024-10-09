@@ -167,7 +167,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	public void azioni(Controller c) {
 	    backbutton.addActionListener(e -> {
 	        clean();
-	        c.visAnddip(3);
+	        c.visAndDip(3);
 	    });
 
 	    addbutton.addActionListener(e -> {
@@ -199,7 +199,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	            }
 
 	            clean(); // Pulisce i campi di input
-	            c.visAnddip(3); // Torna alla vista con indice 3
+	            c.visAndDip(3); // Torna alla vista con indice 3
 	            JOptionPane.showMessageDialog(this, "Dipendente modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
 	        } catch (SQLException e1) {
 	            JOptionPane.showMessageDialog(this, "Errore!" + "\n" + "Tipo di errore: " + e1, "Errore", JOptionPane.ERROR_MESSAGE);
