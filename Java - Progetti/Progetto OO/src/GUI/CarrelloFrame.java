@@ -298,3 +298,7 @@ public class CarrelloFrame extends JFrame {
 		this.azioni(c);
 	}
 }
+
+
+
+
