@@ -147,7 +147,7 @@ public class Controller {
 	    switch (context) {
 	        case 1: // Carrello
 	            switch (x) {
-	                case 1 -> setVisibleFrame(carrf); // Mostra il frame carrello
+	                case 1 -> setVisibleFrame(carrf, visordf); // Mostra il frame carrello
 	                case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
 	            }
 	            break;
