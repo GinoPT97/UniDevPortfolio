@@ -220,7 +220,7 @@ public class Controller {
 			config.createTableProdotto();
 			config.createTableTessera();
 			config.createTableArticoliOrdine();
-			config.FromatTables();
+			//config.FromatTables();
 			config.populateDatabase();
 			cljdbc = new Clienteimpl(connection);
 			dpjdbc = new Dipendenteimpl(connection);

@@ -89,6 +89,7 @@ public class LoginFrame extends JFrame {
 					idtf.setText("");
 					JOptionPane.showMessageDialog(contentPane, "Accesso Dipendente");
 				} else if (idtf.getText().equals("00000")) {
+					c.iddip = idtf.getText();
 					c.logtoutente(1);
 					idtf.setText("");
 					JOptionPane.showMessageDialog(contentPane, "Accesso Admin");

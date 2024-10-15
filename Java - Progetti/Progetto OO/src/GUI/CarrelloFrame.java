@@ -282,7 +282,16 @@ public class CarrelloFrame extends JFrame {
 
     private void creaOrdine(Controller c) {
         try {
-            java.sql.Date sd = java.sql.Date.valueOf(dataod);
+            // Stampa il valore di dataod per il debug
+            System.out.println("Valore di dataod: " + dataod);
+
+            // Assicurati che dataod non sia null
+            if (dataod == null) {
+                JOptionPane.showMessageDialog(null, "Data non valida!", "Errore", JOptionPane.ERROR_MESSAGE);
+                return; // Esci dal metodo se la data è nulla
+            }
+
+            java.sql.Date sd = java.sql.Date.valueOf(dataod); // Converti LocalDate in java.sql.Date
             String clienteSelezionato = (String) clienteComboBox.getSelectedItem();
             String idCliente = null;
 
@@ -299,8 +308,9 @@ public class CarrelloFrame extends JFrame {
                 }
             }
 
+            String idDipendente = c.iddip; // Nessun controllo, usa direttamente il valore
+
             if (idCliente != null) {
-                String idDipendente = c.iddip;
                 double totaleOrdine = totale();
 
                 // Crea un nuovo ordine nel database
@@ -349,10 +359,10 @@ public class CarrelloFrame extends JFrame {
         } catch (SQLException e1) {
             JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException e2) {
-            JOptionPane.showMessageDialog(null, "Data non valida!", "Errore", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Data non valida!\nValore di dataod: " + dataod, "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     public void azioni(Controller c) throws SQLException {
         
         // Popola il JComboBox con i dati del c.clienteModel
