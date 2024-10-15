@@ -243,17 +243,29 @@ public class CarrelloFrame extends JFrame {
             return;
         }
 
+        // Controlla se la quantità è un numero intero positivo
+        int quantita;
         try {
-            // Controlla se la quantità è un numero intero positivo
-            int quantita = Integer.parseInt(quantitaText);
+            quantita = Integer.parseInt(quantitaText);
             if (quantita <= 0) {
                 JOptionPane.showMessageDialog(null, "La quantità deve essere un numero positivo!", "Errore", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+        } catch (NumberFormatException ex) {
+            // Messaggio di errore per input non valido
+            JOptionPane.showMessageDialog(null, "Quantità non valida! Assicurati di inserire un numero intero.", "Errore", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-            // Ottieni le scorte e il prezzo unitario
-            int scorte = Integer.parseInt(c.prodModel.getValueAt(selectedRow, 10).toString());
-            double prezzoUnitario = Double.parseDouble(c.prodModel.getValueAt(selectedRow, 2).toString());
+        // Ottieni le scorte e il prezzo unitario
+        try {
+            // Ottieni la scorta
+            String scorteString = c.prodModel.getValueAt(selectedRow, 10).toString(); // Indice 10 per le scorte
+            int scorte = Integer.parseInt(scorteString);
+
+            // Ottieni il prezzo unitario
+            String prezzoString = c.prodModel.getValueAt(selectedRow, 3).toString(); // Indice 3 per il prezzo
+            double prezzoUnitario = Double.parseDouble(prezzoString);
 
             // Verifica disponibilità
             if (scorte < quantita) {
@@ -276,8 +288,7 @@ public class CarrelloFrame extends JFrame {
             quantitatf.setText(""); // Pulisci il campo della quantità
             totale(); // Aggiorna il totale generale
         } catch (NumberFormatException ex) {
-            // Messaggio di errore per input non valido
-            JOptionPane.showMessageDialog(null, "Quantità non valida! Assicurati di inserire un numero intero.", "Errore", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Dati non validi nel prodotto selezionato!", "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
 
