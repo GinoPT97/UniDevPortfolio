@@ -295,19 +295,64 @@ public class Controller {
         return cljdbc.getIdCt(codfisc);
     }
 
-    // Aggiorna le scorte di un prodotto
+ // Aggiorna le scorte di un prodotto, il modello dei prodotti e il database
     public boolean upscorte(int x, String s) throws SQLException {
-        return prdjdbc.updateScorte(x, s);
+        // Aggiorna il database
+        boolean aggiornamentoDatabase = prdjdbc.updateScorte(x, s);
+        
+        // Se l'aggiornamento nel database ha successo, aggiorna il modello
+        if (aggiornamentoDatabase) {
+            for (int i = 0; i < prodModel.getRowCount(); i++) {
+                String idProdotto = prodModel.getValueAt(i, 0).toString(); // Supponiamo che l'ID sia nella prima colonna
+                if (idProdotto.equals(s)) {
+                    // Aggiorna la scorta nel modello
+                    int nuovaScorta = Integer.parseInt(prodModel.getValueAt(i, 10).toString()) - x; // Supponiamo che la scorta sia nella colonna 10
+                    prodModel.setValueAt(nuovaScorta, i, 10); // Aggiorna il valore della scorta
+                    return true; // Aggiornamento riuscito
+                }
+            }
+        }
+        return false; // Prodotto non trovato o errore nel database
     }
 
-    // Aggiorna i punti associati a un cliente
+    // Aggiorna i punti associati a un cliente, il modello dei clienti e il database
     public boolean uppunti(String codcl, double d) throws SQLException {
-        return tsjdbc.updatepunti(codcl, d);
+        // Aggiorna il database
+        boolean aggiornamentoDatabase = tsjdbc.updatepunti(codcl, d);
+        
+        // Se l'aggiornamento nel database ha successo, aggiorna il modello
+        if (aggiornamentoDatabase) {
+            for (int i = 0; i < clienteModel.getRowCount(); i++) {
+                String idCliente = clienteModel.getValueAt(i, 0).toString(); // Supponiamo che l'ID cliente sia nella prima colonna
+                if (idCliente.equals(codcl)) {
+                    // Aggiorna i punti nel modello
+                    double nuoviPunti = Double.parseDouble(clienteModel.getValueAt(i, 8).toString()) + d; // Supponiamo che i punti siano nella colonna 8
+                    clienteModel.setValueAt(nuoviPunti, i, 8); // Aggiorna il valore dei punti
+                    return true; // Aggiornamento riuscito
+                }
+            }
+        }
+        return false; // Cliente non trovato o errore nel database
     }
 
-    // Aggiunge un nuovo ordine al database
+    // Aggiunge un nuovo ordine al modello degli ordini e al database
     public boolean nuovoordine(Ordine ordine) throws SQLException {
-        return ordjdbc.newordine(ordine);
+        // Aggiungi l'ordine al database
+        boolean ordineCreato = ordjdbc.newordine(ordine);
+        
+        // Se l'ordine è stato creato con successo nel database, aggiorna il modello
+        if (ordineCreato) {
+            Object[] newRow = {
+                ordine.getCodOrd(),
+                ordine.getDataAcquisto(),
+                ordine.getPrezzoTotale(),
+                ordine.getIdCliente(),
+                ordine.getIdDipendente()
+            };
+            ordModel.addRow(newRow); // Aggiungi la nuova riga al modello
+            return true; // Aggiornamento riuscito
+        }
+        return false; // Errore nella creazione dell'ordine nel database
     }
 
     // Aggiunge nuovi articoli a un ordine

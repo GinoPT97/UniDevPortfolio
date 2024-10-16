@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
@@ -27,7 +25,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import Model.Articoli;
 import Model.Ordine;
 
 public class CarrelloFrame extends JFrame {
@@ -290,8 +287,14 @@ public class CarrelloFrame extends JFrame {
 
             java.sql.Date sd = java.sql.Date.valueOf(dataod); // Converti LocalDate in java.sql.Date
             String clienteSelezionato = (String) clienteComboBox.getSelectedItem();
-            String idCliente = trovaIdCliente(c, clienteSelezionato);
+            
+            // Controlla se clienteSelezionato è null
+            if (clienteSelezionato == null) {
+                JOptionPane.showMessageDialog(null, "Nessun cliente selezionato!", "Errore", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
+            String idCliente = trovaIdCliente(c, clienteSelezionato);
             String idDipendente = c.iddip; // Nessun controllo, usa direttamente il valore
 
             if (idCliente != null) {
@@ -314,13 +317,19 @@ public class CarrelloFrame extends JFrame {
 
                     // Aggiorna i punti del cliente
                     String puntiAttualiStr = c.punti(idCliente);
-                    double puntiAttuali = Double.parseDouble(puntiAttualiStr);
-                    double nuoviPunti = puntiAttuali + calcolaPuntiOrdine(totaleOrdine); // Calcola i nuovi punti
+                    
+                    // Controllo per evitare NullPointerException
+                    if (puntiAttualiStr != null) {
+                        double puntiAttuali = Double.parseDouble(puntiAttualiStr);
+                        double nuoviPunti = puntiAttuali + calcolaPuntiOrdine(totaleOrdine); // Calcola i nuovi punti
 
-                    // Aggiorna i punti nel database
-                    boolean puntiAggiornati = c.uppunti(idCliente, nuoviPunti);
-                    if (!puntiAggiornati) {
-                        JOptionPane.showMessageDialog(null, "Errore nell'aggiornamento dei punti per il cliente: " + idCliente, "Errore", JOptionPane.ERROR_MESSAGE);
+                        // Aggiorna i punti nel database
+                        boolean puntiAggiornati = c.uppunti(idCliente, nuoviPunti);
+                        if (!puntiAggiornati) {
+                            JOptionPane.showMessageDialog(null, "Errore nell'aggiornamento dei punti per il cliente: " + idCliente, "Errore", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Errore nel recupero dei punti per il cliente: " + idCliente, "Errore", JOptionPane.ERROR_MESSAGE);
                     }
 
                     // Pulisci l'interfaccia utente
