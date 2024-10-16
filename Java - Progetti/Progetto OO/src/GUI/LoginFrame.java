@@ -24,58 +24,60 @@ public class LoginFrame extends JFrame {
 	private JButton clearbutt;
 	private JTextField idtf;
 
-	public void elementi() {
-		setBounds(100, 100, 700, 450);
-		contentPane = new JPanel();
-		contentPane.setBackground(new Color(238, 238, 238));
-		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		setContentPane(contentPane);
-		setLocationRelativeTo(null);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
+	public void elementi(Controller c) {
+	    setBounds(100, 100, 700, 450);
+	    contentPane = new JPanel();
+	    contentPane.setBackground(new Color(238, 238, 238));
+	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+	    setContentPane(contentPane);
+	    setLocationRelativeTo(null);
+	    setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-		JPanel buttonpanel = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) buttonpanel.getLayout();
-		flowLayout.setAlignment(FlowLayout.TRAILING);
+	    JPanel buttonpanel = new JPanel();
+	    FlowLayout flowLayout = (FlowLayout) buttonpanel.getLayout();
+	    flowLayout.setAlignment(FlowLayout.TRAILING);
 
-		JPanel infopanel = new JPanel();
-		infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
+	    JPanel infopanel = new JPanel();
+	    infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
 
-		JPanel titlepanel = new JPanel();
-		titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
-		titlepanel.setBackground(new Color(0, 128, 0));
-		titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+	    // Creazione del pannello di sfondo con l'immagine desiderata
+	    JPanel titlepanel = c.createBackgroundPanel("ImmLog.jpg");
+	    titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+	    titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		JLabel titlelabel = new JLabel("");
-		titlelabel.setHorizontalAlignment(SwingConstants.CENTER);
-		titlelabel.setVerticalAlignment(SwingConstants.TOP);
-		titlepanel.add(titlelabel);
-		titlelabel.setText("Ortofrutta 2000");
-		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+	    // Aggiungi eventuali componenti al titlepanel se necessario
+	    JLabel titlelabel = new JLabel("");
+	    titlelabel.setHorizontalAlignment(SwingConstants.CENTER);
+	    titlelabel.setVerticalAlignment(SwingConstants.TOP);
+	    titlepanel.add(titlelabel);
+	    titlelabel.setText("Ortofrutta 2000");
+	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
 
-		contentPane.setLayout(new BorderLayout(0, 0));
-		contentPane.add(buttonpanel, BorderLayout.SOUTH);
+	    contentPane.setLayout(new BorderLayout(0, 0));
+	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-		logbutt = new JButton("Login");
-		buttonpanel.add(logbutt);
-		logbutt.setVerticalAlignment(SwingConstants.TOP);
-		logbutt.setBackground(Color.GREEN);
+	    logbutt = new JButton("Login");
+	    buttonpanel.add(logbutt);
+	    logbutt.setVerticalAlignment(SwingConstants.TOP);
+	    logbutt.setBackground(Color.GREEN);
 
-		clearbutt = new JButton("Clear");
-		buttonpanel.add(clearbutt);
-		clearbutt.setVerticalAlignment(SwingConstants.BOTTOM);
+	    clearbutt = new JButton("Clear");
+	    buttonpanel.add(clearbutt);
+	    clearbutt.setVerticalAlignment(SwingConstants.BOTTOM);
 
-		contentPane.add(infopanel, BorderLayout.CENTER);
-		infopanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+	    contentPane.add(infopanel, BorderLayout.CENTER);
+	    infopanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		JLabel idlab = new JLabel("ID :");
-		infopanel.add(idlab);
-		idtf = new JTextField();
-		idtf.setText("00000");
-		infopanel.add(idtf);
-		idtf.setHorizontalAlignment(SwingConstants.CENTER);
-		idtf.setColumns(10);
+	    JLabel idlab = new JLabel("ID :");
+	    infopanel.add(idlab);
+	    idtf = new JTextField();
+	    idtf.setText("00000");
+	    infopanel.add(idtf);
+	    idtf.setHorizontalAlignment(SwingConstants.CENTER);
+	    idtf.setColumns(10);
 
-		contentPane.add(titlepanel, BorderLayout.NORTH);
+	    // Aggiungi il titlepanel come pannello di sinistra
+	    contentPane.add(titlepanel, BorderLayout.WEST);
 	}
 
 	// Metodo azioni per gestire tutti gli eventi dei bottoni
@@ -121,7 +123,7 @@ public class LoginFrame extends JFrame {
 	public LoginFrame(String title, Controller c) throws SQLException {
 		super(title);
 		c.connect();
-		this.elementi();
+		this.elementi(c);
 		this.azioni(c);
 	}
 }

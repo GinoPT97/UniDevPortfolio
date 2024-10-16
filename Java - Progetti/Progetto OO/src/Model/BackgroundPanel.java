@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +13,14 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BackgroundPanel extends JPanel {
     private static final Map<String, Image> imageCache = new ConcurrentHashMap<>(); // Cache delle immagini
@@ -35,7 +44,8 @@ public class BackgroundPanel extends JPanel {
             @Override
             protected Image doInBackground() {
                 try {
-                    URL imageURL = getClass().getClassLoader().getResource(imagePath);
+                    // Usa getResource con un percorso relativo corretto
+                    URL imageURL = getClass().getResource("/Immagini/" + imagePath);
                     if (imageURL == null) {
                         throw new IllegalArgumentException("L'immagine non è stata trovata: " + imagePath);
                     }
