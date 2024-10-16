@@ -322,6 +322,7 @@ public class DBConfiguration {
 	    try (Statement st = connection.createStatement()) {
 	        // Popola la tabella Cliente
 	        String sqlCliente = "INSERT INTO cliente (codcliente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
+	        		+ "('00000','Marco','Salemme,'BBBBBB55B55B555B', 'Via Matteotti','1234567899','marco@hotmail.it'),"
 	                + "('11111','aldo','marzante','BBBBBB11B11B111B', 'Via Don Matteo','1234567890','aldo@arte.it'),"
 	                + "('22222','luca','benson','AAAAAA22A22A222A', 'Via Don Corleone','1234567890','luca@arte.it'),"
 	                + "('33333','mario','sarni','CCCCCC33C33C333C','Via San giovanni','1234567890','mario@arte.it'),"
@@ -329,7 +330,8 @@ public class DBConfiguration {
 	                + "('44455','giorgio','rossi','WWWWWW55W55W555W', 'Via Don Carlo','1234567890','giorgio@arte.it'),"
 	                + "('55566','paolo','verdi','QQQQQQ66Q66Q666Q', 'Via Don Alberto','1234567890','paolo@arte.it'),"
 	                + "('66677','simone','bianchi','UUUUUU77U77U777U','Via Don Giuseppe','1234567890','simone@arte.it'),"
-	                + "('88899','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it');";
+	                + "('88899','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it')"
+	                + "ON CONFLICT (codcliente) DO NOTHING;";
 	        result += st.executeUpdate(sqlCliente);
 
 	        // Popola la tabella Dipendente
@@ -340,7 +342,8 @@ public class DBConfiguration {
 	                + "('11111','mario','rossi','YYYYYY11Y11Y111Y','via parma','1234567890','mario@arte.it'),"
 	                + "('22222','andrea','verdi','HHHHHH22H22H222H','via milano','1234567890','andrea@arte.it'),"
 	                + "('33333','giuseppe','bianchi','KKKKKK88K88K888K','via torino','1234567890','giuseppe@arte.it'),"
-	                + "('44444','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it');";
+	                + "('44444','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it')"
+	                + "ON CONFLICT (coddipendente) DO NOTHING;";
 	        result += st.executeUpdate(sqlDipendente);
 
 	        // Popola la tabella Tessera
@@ -352,7 +355,8 @@ public class DBConfiguration {
 	                + "('77777','50','44455'),"
 	                + "('66667','80','55566'),"
 	                + "('55551','10','66677'),"
-	                + "('33333','150','88899');";
+	                + "('33333','150','88899')"
+	                + "ON CONFLICT (codtessera) DO NOTHING;";
 	        result += st.executeUpdate(sqlTessera);
 
 	        // Popola la tabella Prodotto
@@ -364,7 +368,8 @@ public class DBConfiguration {
 	                + "('55555', 'Arance', 'Arance siciliane', 1.20, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Ortofrutticoli', 150),"
 	                + "('66666', 'Parmigiano', 'Parmigiano Reggiano DOP', 18.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 70),"
 	                + "('77777', 'Tonno in scatola', 'Tonno al naturale in scatola', 3.50, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Inscatolati', 100),"
-	                + "('88888', 'Farina', 'Farina di grano tenero tipo \"00\"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200);";
+	                + "('88888', 'Farina', 'Farina di grano tenero tipo \"00\"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200)"
+	                + "ON CONFLICT (codprodotto) DO NOTHING;";
 	        result += st.executeUpdate(sqlProdotto);
 
 	        // Popola la tabella Ordine
@@ -383,7 +388,8 @@ public class DBConfiguration {
 	                + "('12132','120','2013-06-17','88899','33333'),"
 	                + "('18181','40','2023-12-05','44455','22222'),"
 	                + "('19191','65','2024-04-18','66677','33333'),"
-	                + "('20202','55','2024-02-28','88899','79799');";
+	                + "('20202','55','2024-02-28','88899','79799')"
+	                + "ON CONFLICT (codordine) DO NOTHING;";
 	        result += st.executeUpdate(sqlOrdine);
 
 	        // Popola la tabella ArticoliOrdine
@@ -402,7 +408,8 @@ public class DBConfiguration {
 	                + "('12132','55555','88899', '1.20', '3', '25', 'Ortofrutticoli'),"
 	                + "('18181','55555','44455', '1.20', '3', '20', 'Ortofrutticoli'),"
 	                + "('19191','77777','66677', '3.50', '2', '30', 'Inscatolati'),"
-	                + "('20202','33333','88899', '2.00', '5', '12', 'Inscatolati');";
+	                + "('20202','33333','88899', '2.00', '5', '12', 'Inscatolati')"
+	                + "ON CONFLICT (CodOrdine, CodProdotto) DO NOTHING;";
 	        result += st.executeUpdate(sqlArticoliOrdine);
 
 	    } catch (SQLException e) {
