@@ -298,19 +298,47 @@ public class CarrelloFrame extends JFrame {
                 double totaleOrdine = totale();
 
                 // Crea un nuovo ordine nel database
-                c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente, idDipendente));
+                boolean ordineCreato = c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente, idDipendente));
+                if (ordineCreato) {
+                    // Aggiorna gli ordini e le scorte nel database
+                    for (int j = 0; j < ordmodel.getRowCount(); j++) {
+                        int quantita = Integer.parseInt(ordmodel.getValueAt(j, 4).toString()); // Quantità
+                        String codiceProdotto = ordmodel.getValueAt(j, 0).toString(); // Codice Prodotto
 
-                // Aggiorna i dettagli dell'ordine e modifica i modelli e il database
-                aggiornaOrdini(c);
+                        // Aggiorna le scorte nel database
+                        boolean scorteAggiornate = c.upscorte(quantita, codiceProdotto);
+                        if (!scorteAggiornate) {
+                            JOptionPane.showMessageDialog(null, "Errore nell'aggiornamento delle scorte per il prodotto: " + codiceProdotto, "Errore", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
 
-                // Pulisci l'interfaccia utente
-                clean();
+                    // Aggiorna i punti del cliente
+                    String puntiAttualiStr = c.punti(idCliente);
+                    double puntiAttuali = Double.parseDouble(puntiAttualiStr);
+                    double nuoviPunti = puntiAttuali + calcolaPuntiOrdine(totaleOrdine); // Calcola i nuovi punti
+
+                    // Aggiorna i punti nel database
+                    boolean puntiAggiornati = c.uppunti(idCliente, nuoviPunti);
+                    if (!puntiAggiornati) {
+                        JOptionPane.showMessageDialog(null, "Errore nell'aggiornamento dei punti per il cliente: " + idCliente, "Errore", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    // Pulisci l'interfaccia utente
+                    clean();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Errore durante la creazione dell'ordine nel database!", "Errore", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(null, "Cliente non valido selezionato!", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Errore durante la creazione dell'ordine: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    // Metodo per calcolare i punti basati sull'ordine
+    private double calcolaPuntiOrdine(double totaleOrdine) {
+        return totaleOrdine * 0.1; // Esempio: 10% del totale come punti
     }
 
     // Metodo ausiliario per trovare l'ID del cliente
@@ -327,18 +355,6 @@ public class CarrelloFrame extends JFrame {
         }
         return null; // Se non trovato
     }
-
-    // Metodo ausiliario per aggiornare gli ordini nel database e nel modello
-    private void aggiornaOrdini(Controller c) throws SQLException {
-        for (int j = 0; j < ordmodel.getRowCount(); j++) {
-            int quantita = Integer.parseInt(ordmodel.getValueAt(j, 4).toString()); // Quantità
-            String codiceProdotto = ordmodel.getValueAt(j, 0).toString(); // Codice Prodotto
-
-            // Aggiorna le scorte nel database
-            c.upscorte(quantita, codiceProdotto);
-        }
-    }
-
 
     public void azioni(Controller c) throws SQLException {
         

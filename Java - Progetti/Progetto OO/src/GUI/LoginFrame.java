@@ -82,24 +82,26 @@ public class LoginFrame extends JFrame {
 	public void azioni(Controller c) {
 		// Azione per il bottone "Login"
 		logbutt.addActionListener(e -> {
-			try {
-				if (c.verifyid(idtf.getText())) {
-					c.iddip = idtf.getText();
-					c.logtoutente(2);
-					idtf.setText("");
-					JOptionPane.showMessageDialog(contentPane, "Accesso Dipendente");
-				} else if (idtf.getText().equals("00000")) {
-					c.iddip = idtf.getText();
-					c.logtoutente(1);
-					idtf.setText("");
-					JOptionPane.showMessageDialog(contentPane, "Accesso Admin");
-				} else {
-					JOptionPane.showMessageDialog(contentPane, "Id errato!");
-					idtf.setText("");
-				}
-			} catch (SQLException e1) {
-				JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-			}
+		    try {
+		        // Controlla prima se l'ID è l'admin
+		        if (idtf.getText().equals("00000")) {
+		            c.iddip = idtf.getText();
+		            c.logtoutente(1);
+		            idtf.setText("");
+		            JOptionPane.showMessageDialog(contentPane, "Accesso Admin");
+		        } else if (c.verifyid(idtf.getText())) {
+		            // Solo se non è admin, controlla se è un dipendente
+		            c.iddip = idtf.getText();
+		            c.logtoutente(2);
+		            idtf.setText("");
+		            JOptionPane.showMessageDialog(contentPane, "Accesso Dipendente");
+		        } else {
+		            JOptionPane.showMessageDialog(contentPane, "Id errato!");
+		            idtf.setText("");
+		        }
+		    } catch (SQLException e1) {
+		        JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+		    }
 		});
 
 		// Azione per il bottone "Clear"
