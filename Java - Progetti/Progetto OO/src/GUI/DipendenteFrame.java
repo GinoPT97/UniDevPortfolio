@@ -93,7 +93,7 @@ public class DipendenteFrame extends JFrame {
 
     public void azioni(Controller c) {
         // Listener per il pulsante di logout, chiama il metodo logout del Controller con parametro 1
-        logoututton.addActionListener(e -> c.logout(1));
+        logoututton.addActionListener(e -> c.logout(2));
 
         // Listener per il pulsante cliente, chiama il metodo dipAndElem del Controller con parametro 1 per i dipendenti
         clientebutton.addActionListener(e -> c.dipAndElem(1)); // Usa dipAndElem per dipendenti
