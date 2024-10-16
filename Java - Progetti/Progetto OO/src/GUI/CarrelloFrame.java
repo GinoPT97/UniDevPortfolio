@@ -223,13 +223,13 @@ public class CarrelloFrame extends JFrame {
         System.out.println("Riga selezionata: " + selectedRow);
         String quantitaText = quantitatf.getText().trim(); // Rimuove eventuali spazi bianchi
 
-        // Controllo che sia selezionato un prodotto e che la quantità non sia vuota
+        // Controlla che sia selezionato un prodotto e che la quantità non sia vuota
         if (selectedRow == -1 || quantitaText.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Seleziona un prodotto e inserisci una quantità!");
             return;
         }
 
-        // Controllo se la quantità è un numero intero positivo
+        // Controlla se la quantità è un numero intero positivo
         int quantita;
         try {
             quantita = Integer.parseInt(quantitaText);
@@ -244,9 +244,9 @@ public class CarrelloFrame extends JFrame {
 
         // Ottieni le scorte e il prezzo unitario
         try {
-            // Ottieni le scorte e il prezzo unitario dal modello
-            int scorte = Integer.parseInt(c.prodModel.getValueAt(selectedRow, 10).toString()); // Indice 10 per le scorte
-            double prezzoUnitario = Double.parseDouble(c.prodModel.getValueAt(selectedRow, 3).toString()); // Indice 3 per il prezzo
+            // Usa l'indice corretto per le scorte
+            int scorte = Integer.parseInt(prodmodel.getValueAt(selectedRow, 4).toString()); // Indice 4 per le scorte
+            double prezzoUnitario = Double.parseDouble(prodmodel.getValueAt(selectedRow, 2).toString()); // Indice 2 per il prezzo
 
             // Verifica disponibilità
             if (scorte < quantita) {
@@ -255,18 +255,18 @@ public class CarrelloFrame extends JFrame {
             }
 
             // Aggiorna le scorte nel modello dei prodotti
-            String newscorte = String.valueOf(scorte - quantita);
-            c.prodModel.setValueAt(newscorte, selectedRow, 10); // Rimuovi la quantità selezionata dal modello del prodotto
+            int newScorte = scorte - quantita;
+            prodmodel.setValueAt(newScorte, selectedRow, 4); // Aggiorna la scorta
 
             // Calcola il totale per il prodotto e aggiungi la riga al modello degli ordini
             double totaleProdotto = prezzoUnitario * quantita;
             Object[] p = {
-                c.prodModel.getValueAt(selectedRow, 0), // Id
-                c.prodModel.getValueAt(selectedRow, 1), // Nome
-                prezzoUnitario,                          // Prezzo
-                c.prodModel.getValueAt(selectedRow, 9), // Categoria (indice 9)
-                quantita,                                // Quantità
-                totaleProdotto                            // Totale per il prodotto
+                prodmodel.getValueAt(selectedRow, 0), // Id
+                prodmodel.getValueAt(selectedRow, 1), // Nome
+                prezzoUnitario,                        // Prezzo
+                prodmodel.getValueAt(selectedRow, 3), // Categoria (indice 3)
+                quantita,                              // Quantità
+                totaleProdotto                          // Totale per il prodotto
             };
 
             ordmodel.addRow(p); // Usa il modello locale per gli ordini

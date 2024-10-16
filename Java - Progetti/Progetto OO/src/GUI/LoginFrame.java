@@ -86,13 +86,13 @@ public class LoginFrame extends JFrame {
 		        // Controlla prima se l'ID è l'admin
 		        if (idtf.getText().equals("00000")) {
 		            c.iddip = idtf.getText();
-		            c.logtoutente(1);
+		            c.loginUtente(1);
 		            idtf.setText("");
 		            JOptionPane.showMessageDialog(contentPane, "Accesso Admin");
 		        } else if (c.verifyid(idtf.getText())) {
 		            // Solo se non è admin, controlla se è un dipendente
 		            c.iddip = idtf.getText();
-		            c.logtoutente(2);
+		            c.loginUtente(2);
 		            idtf.setText("");
 		            JOptionPane.showMessageDialog(contentPane, "Accesso Dipendente");
 		        } else {

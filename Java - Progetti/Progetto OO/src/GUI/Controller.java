@@ -112,7 +112,7 @@ public class Controller {
 	    setVisibleFrame(logf, (x == 1) ? adminf : dipf);
 	}
 
-	public void logtoutente(int x) {
+	public void loginUtente(int x) {
 	    logf.setVisible(false); // Nasconde il frame di logout
 	    // Mostra il frame appropriato in base al tipo di utente
 	    setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
