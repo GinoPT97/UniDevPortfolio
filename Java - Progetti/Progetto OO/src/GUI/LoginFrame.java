@@ -41,7 +41,7 @@ public class LoginFrame extends JFrame {
 	    infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
 
 	    // Creazione del pannello di sfondo con l'immagine desiderata
-	    JPanel titlepanel = c.createBackgroundPanel("ImmLog.jpg");
+	    JPanel titlepanel = c.createBackgroundPanel("/Immagini/ImmLog.jpg");
 	    titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 	    titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
