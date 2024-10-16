@@ -143,6 +143,7 @@ public class Controller {
 	    }
 	}
 
+	// Assicurati di aggiornare lastFrame in modo appropriato
 	public void visAndElem(int context, int x) {
 	    switch (context) {
 	        case 1: // Carrello
@@ -157,6 +158,7 @@ public class Controller {
 	                case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
 	                case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
 	                case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
+	                // Qui puoi aggiornare lastFrame se necessario
 	            }
 	            break;
 
@@ -174,10 +176,6 @@ public class Controller {
 	                case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
 	                case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
 	            }
-	            break;
-
-	        default:
-	            // Handle invalid context if needed, or simply do nothing
 	            break;
 	    }
 	}
@@ -343,7 +341,7 @@ public class Controller {
         // Se l'ordine è stato creato con successo nel database, aggiorna il modello
         if (ordineCreato) {
             Object[] newRow = {
-                ordine.getCodOrd(),
+            	ordjdbc.getCurrentCod(),
                 ordine.getDataAcquisto(),
                 ordine.getPrezzoTotale(),
                 ordine.getIdCliente(),
