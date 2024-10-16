@@ -336,16 +336,18 @@ public class Controller {
         });
     }
 
-    // Popola il modello della tabella con i prodotti per categoria
     public void categoriaprodotti(String c, DefaultTableModel model) throws SQLException {
         List<Prodotto> prodotti = prdjdbc.getbycategoria(c);
-        populateTable(prodotti, model, p -> new Object[]{
+        model.setRowCount(0); // Reset tabella
+        for (Prodotto p : prodotti) {
+            model.addRow(new Object[]{
                 p.getCodProd(),
                 p.getNome(),
                 p.getPrezzo(),
                 p.getCategoria(),
                 p.getScorta()
-        });
+            });
+        }
     }
 
     public void allCliente() throws SQLException {

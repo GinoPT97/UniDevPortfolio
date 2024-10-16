@@ -282,31 +282,15 @@ public class CarrelloFrame extends JFrame {
 
     private void creaOrdine(Controller c) {
         try {
-            // Stampa il valore di dataod per il debug
-            System.out.println("Valore di dataod: " + dataod);
-
             // Assicurati che dataod non sia null
             if (dataod == null) {
                 JOptionPane.showMessageDialog(null, "Data non valida!", "Errore", JOptionPane.ERROR_MESSAGE);
-                return; // Esci dal metodo se la data è nulla
+                return; // Esci dal metodo se la data non è valida
             }
 
             java.sql.Date sd = java.sql.Date.valueOf(dataod); // Converti LocalDate in java.sql.Date
             String clienteSelezionato = (String) clienteComboBox.getSelectedItem();
-            String idCliente = null;
-
-            // Cerca l'ID del cliente nel clienteModel basato su nome e cognome selezionato
-            for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
-                String idClienteTemp = c.clienteModel.getValueAt(i, 0).toString(); // Colonna ID cliente
-                String nome = c.clienteModel.getValueAt(i, 1).toString(); // Colonna nome
-                String cognome = c.clienteModel.getValueAt(i, 2).toString(); // Colonna cognome
-                String nomeCognome = idClienteTemp + " - " + nome + " " + cognome; // Formato ID - Nome Cognome
-
-                if (clienteSelezionato.equals(nomeCognome)) {
-                    idCliente = idClienteTemp; // Colonna ID cliente
-                    break;
-                }
-            }
+            String idCliente = trovaIdCliente(c, clienteSelezionato);
 
             String idDipendente = c.iddip; // Nessun controllo, usa direttamente il valore
 
@@ -317,51 +301,44 @@ public class CarrelloFrame extends JFrame {
                 c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente, idDipendente));
 
                 // Aggiorna i dettagli dell'ordine e modifica i modelli e il database
-                for (int j = 0; j < c.ordModel.getRowCount(); j++) {
-                    int quantita = Integer.parseInt(c.ordModel.getValueAt(j, 4).toString()); // Quantità
-                    String codiceProdotto = c.ordModel.getValueAt(j, 0).toString(); // Codice Prodotto
-                    double prezzoUnitario = Double.parseDouble(c.ordModel.getValueAt(j, 2).toString()); // Prezzo
+                aggiornaOrdini(c);
 
-                    // Aggiorna le scorte nel database
-                    c.upscorte(quantita, codiceProdotto);
-
-                    // Aggiorna la scorta nel modello locale
-                    for (int i = 0; i < c.prodModel.getRowCount(); i++) {
-                        if (c.prodModel.getValueAt(i, 0).toString().equals(codiceProdotto)) {
-                            int scortaAttuale = Integer.parseInt(c.prodModel.getValueAt(i, 10).toString()); // Colonna Scorta
-                            c.prodModel.setValueAt(scortaAttuale - quantita, i, 10); // Aggiorna la scorta
-                            break;
-                        }
-                    }
-
-                    // Aggiungi articoli all'ordine nel database
-                    Articoli articoli = new Articoli(c.CurrOrd(), idCliente, prezzoUnitario, prezzoUnitario * quantita, quantita, c.ordModel.getValueAt(j, 3).toString());
-                    c.newarticoli(articoli);
-                }
-
-                // Aggiorna i punti del cliente nel database
-                c.uppunti(idCliente, totaleOrdine);
-
-                // Aggiorna i punti nel modello cliente locale
-                for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
-                    if (c.clienteModel.getValueAt(i, 0).toString().equals(idCliente)) {
-                        int puntiAttuali = Integer.parseInt(c.clienteModel.getValueAt(i, 8).toString()); // Colonna Punti
-                        c.clienteModel.setValueAt(puntiAttuali + (int) totaleOrdine, i, 8); // Aggiorna i punti
-                        break;
-                    }
-                }
-
-                JOptionPane.showMessageDialog(null, "Ordine aggiunto con successo");
-                clean(); // Pulisce i campi
+                // Pulisci l'interfaccia utente
+                clean();
             } else {
-                JOptionPane.showMessageDialog(null, "Cliente non trovato!");
+                JOptionPane.showMessageDialog(null, "Cliente non valido selezionato!", "Errore", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (SQLException e1) {
-            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-        } catch (IllegalArgumentException e2) {
-            JOptionPane.showMessageDialog(null, "Data non valida!\nValore di dataod: " + dataod, "Errore", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Errore durante la creazione dell'ordine: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    // Metodo ausiliario per trovare l'ID del cliente
+    private String trovaIdCliente(Controller c, String clienteSelezionato) {
+        for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
+            String idClienteTemp = c.clienteModel.getValueAt(i, 0).toString(); // Colonna ID cliente
+            String nome = c.clienteModel.getValueAt(i, 1).toString(); // Colonna nome
+            String cognome = c.clienteModel.getValueAt(i, 2).toString(); // Colonna cognome
+            String nomeCognome = idClienteTemp + " - " + nome + " " + cognome; // Formato ID - Nome Cognome
+
+            if (clienteSelezionato.equals(nomeCognome)) {
+                return idClienteTemp; // Colonna ID cliente
+            }
+        }
+        return null; // Se non trovato
+    }
+
+    // Metodo ausiliario per aggiornare gli ordini nel database e nel modello
+    private void aggiornaOrdini(Controller c) throws SQLException {
+        for (int j = 0; j < ordmodel.getRowCount(); j++) {
+            int quantita = Integer.parseInt(ordmodel.getValueAt(j, 4).toString()); // Quantità
+            String codiceProdotto = ordmodel.getValueAt(j, 0).toString(); // Codice Prodotto
+
+            // Aggiorna le scorte nel database
+            c.upscorte(quantita, codiceProdotto);
+        }
+    }
+
 
     public void azioni(Controller c) throws SQLException {
         
