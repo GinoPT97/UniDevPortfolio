@@ -12,14 +12,14 @@ import java.util.List;
 import DAOInterface.DipendenteJDBC;
 import Model.Dipendente;
 
-public class Dipendenteimpl implements DipendenteJDBC {
+public class DipendenteImpl implements DipendenteJDBC {
     private PreparedStatement setNewDip, updateDip;
     private Statement getAllDip, getDipVendite, getDipIntroiti, verifyId, getDip;
     private List<String> ordven = new ArrayList<>();
     private List<String> ordint = new ArrayList<>();
 
     // Costruttore
-    public Dipendenteimpl(Connection connection) throws SQLException {
+    public DipendenteImpl(Connection connection) throws SQLException {
         getAllDip = connection.createStatement();
         setNewDip = connection.prepareStatement(
                 "INSERT INTO dipendente VALUES (NEXTVAL('SCodDipendente'), ?, ?, ?, ?, ?, ?)");

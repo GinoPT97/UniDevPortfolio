@@ -12,25 +12,21 @@ import Model.Tessera;
 
 public class Tesseraimpl implements TesseraJDBC {
 
-    // Costanti per le query SQL
-    private static final String AddTessera = "INSERT INTO tessera VALUES (NEXTVAL('SCodTessera'),?,?)";
-    private static final String getPunti = "SELECT numeropunti FROM tessera WHERE codtessera = ?";
-    private static final String AllTessere= "SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC";
-    private static final String UpdatePunti = "UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = ?";
-
-    private PreparedStatement newtesseraStmt, getpuntitStmt, alltesseraStmt, uppuntiStmt;
+    private PreparedStatement newtesseraStmt;
+    private PreparedStatement getpuntitStmt;
+    private PreparedStatement alltesseraStmt;
+    private PreparedStatement uppuntiStmt;
 
     public Tesseraimpl(Connection connection) throws SQLException {
         // Preparazione delle query
-        newtesseraStmt = connection.prepareStatement(AddTessera);
-        getpuntitStmt = connection.prepareStatement(getPunti);
-        alltesseraStmt = connection.prepareStatement(AllTessere);
-        uppuntiStmt = connection.prepareStatement(UpdatePunti);
+        newtesseraStmt = connection.prepareStatement("INSERT INTO tessera VALUES (NEXTVAL('SCodTessera'),?,?)");
+        getpuntitStmt = connection.prepareStatement("SELECT numeropunti FROM tessera WHERE codtessera = ?");
+        alltesseraStmt = connection.prepareStatement("SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC");
+        uppuntiStmt = connection.prepareStatement("UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = ?");
     }
 
     @Override
     public boolean newtessera(String codcl) throws SQLException {
-        // Imposto i parametri della query
         newtesseraStmt.setDouble(1, 0.00);  // Tessera inizialmente con 0 punti
         newtesseraStmt.setString(2, codcl); // Codice cliente associato
         return newtesseraStmt.executeUpdate() > 0;  // Restituisce true se è stata inserita una riga
@@ -38,7 +34,6 @@ public class Tesseraimpl implements TesseraJDBC {
 
     @Override
     public String getpuntit(String codt) throws SQLException {
-        // Imposto il parametro della query
         getpuntitStmt.setString(1, codt);
         try (ResultSet rs = getpuntitStmt.executeQuery()) {
             if (rs.next()) {
@@ -76,11 +71,10 @@ public class Tesseraimpl implements TesseraJDBC {
 
     @Override
     public boolean updatepunti(String codcl, double x) throws SQLException {
-        // Calcolo dei punti in base al 10% dell'importo x
-        double punti = (x * 10) / 100;
-        uppuntiStmt.setFloat(1, (float) punti);  // Imposto i punti da aggiungere
-        uppuntiStmt.setString(2, codcl);         // Imposto il codice cliente
-        return uppuntiStmt.executeUpdate() > 0;  // Restituisce true se l'aggiornamento è andato a buon fine
+        double punti = (x * 10) / 100; // Calcolo dei punti in base al 10% dell'importo x
+        uppuntiStmt.setFloat(1, (float) punti); // Imposto i punti da aggiungere
+        uppuntiStmt.setString(2, codcl); // Imposto il codice cliente
+        return uppuntiStmt.executeUpdate() > 0; // Restituisce true se l'aggiornamento è andato a buon fine
     }
 }
 

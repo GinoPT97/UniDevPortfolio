@@ -4,18 +4,24 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import DAOInterface.ProdottoJDBC;
 import Model.Prodotto;
 
 public class ProdottoImpl implements ProdottoJDBC {
-    private PreparedStatement setNewProdottoStmt, getAllProdottiStmt, updateProdottoStmt, updateScorteStmt;
-    private Statement getCategoriaStmt;
+    private Connection connection;
+    private PreparedStatement setNewProdottoStmt;
+    private PreparedStatement getAllProdottiStmt;
+    private PreparedStatement updateProdottoStmt;
+    private PreparedStatement updateScorteStmt;
 
-    // Costruttore che inizializza la connessione e le query preparate
-    public ProdottoImpl(Connection connection) throws SQLException {
+    public ProdottoImpl(Connection connection) {
+        this.connection = connection;
+    }
+
+    // Metodo per inizializzare le query preparate
+    private void initStatements() throws SQLException {
         this.getAllProdottiStmt = connection.prepareStatement("SELECT * FROM prodotto ORDER BY nome DESC");
         this.setNewProdottoStmt = connection.prepareStatement(
             "INSERT INTO prodotto VALUES (NEXTVAL('SCodProdotto'), ?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, CAST(? AS TIPOLOGIA), ?)"
@@ -24,62 +30,70 @@ public class ProdottoImpl implements ProdottoJDBC {
             "UPDATE prodotto SET nome=?, descrizione=?, prezzo=?, luogoprovenienza=?, dataraccolta=?, datamungitura=?, glutine=CAST(? AS BOOLEAN), datascadenza=?, categoria=CAST(? AS TIPOLOGIA), scorta=? WHERE codprodotto = ?"
         );
         this.updateScorteStmt = connection.prepareStatement("UPDATE prodotto SET scorta = scorta - ? WHERE codprodotto = ?");
-        this.getCategoriaStmt = connection.createStatement();
     }
 
-    // Metodo per inserire un nuovo prodotto
     @Override
     public boolean setNewProdotto(Prodotto prodotto) throws SQLException {
+        initStatements(); // Inizializza le query preparate
         setCommonProdottoFields(setNewProdottoStmt, prodotto);
         setNewProdottoStmt.setInt(10, prodotto.getScorta());
 
-        return setNewProdottoStmt.executeUpdate() > 0;
+        boolean result = setNewProdottoStmt.executeUpdate() > 0;
+        closeStatements();
+        return result;
     }
 
-    // Metodo per aggiornare un prodotto esistente
     @Override
     public boolean updateProdotto(Prodotto prodotto) throws SQLException {
+        initStatements(); // Inizializza le query preparate
         setCommonProdottoFields(updateProdottoStmt, prodotto);
         updateProdottoStmt.setInt(10, prodotto.getScorta());
         updateProdottoStmt.setString(11, prodotto.getCodProd());
 
-        return updateProdottoStmt.executeUpdate() > 0;
+        boolean result = updateProdottoStmt.executeUpdate() > 0;
+        closeStatements();
+        return result;
     }
 
-    // Metodo per aggiornare le scorte di un prodotto
     @Override
     public boolean updateScorte(int x, String codprod) throws SQLException {
+        initStatements(); // Inizializza le query preparate
         updateScorteStmt.setInt(1, x);
         updateScorteStmt.setString(2, codprod);
 
-        return updateScorteStmt.executeUpdate() > 0;
+        boolean result = updateScorteStmt.executeUpdate() > 0;
+        closeStatements();
+        return result;
     }
 
-    // Metodo per ottenere tutti i prodotti
     @Override
     public ArrayList<Prodotto> getallprodotti() throws SQLException {
+        initStatements(); // Inizializza le query preparate
         ArrayList<Prodotto> prodotti = new ArrayList<>();
         try (ResultSet rs = getAllProdottiStmt.executeQuery()) {
             while (rs.next()) {
                 prodotti.add(createProdottoFromResultSet(rs));
             }
         }
+        closeStatements();
         return prodotti;
     }
 
-    // Metodo per ottenere i prodotti filtrati per categoria
     @Override
     public ArrayList<Prodotto> getbycategoria(String categoria) throws SQLException {
         ArrayList<Prodotto> prodottiCategoria = new ArrayList<>();
-        try (ResultSet rs = getCategoriaStmt.executeQuery("SELECT * FROM prodotto WHERE categoria = '" + categoria + "' ORDER BY nome DESC")) {
-            while (rs.next()) {
-                prodottiCategoria.add(createProdottoFromResultSet(rs));
+        String query = "SELECT * FROM prodotto WHERE categoria = ? ORDER BY nome DESC";
+        try (PreparedStatement getCategoriaStmt = connection.prepareStatement(query)) {
+            getCategoriaStmt.setString(1, categoria);
+            try (ResultSet rs = getCategoriaStmt.executeQuery()) {
+                while (rs.next()) {
+                    prodottiCategoria.add(createProdottoFromResultSet(rs));
+                }
             }
         }
         return prodottiCategoria;
     }
 
-    // Metodo ausiliario per impostare i campi comuni dei prodotti in base alla categoria
     private void setCommonProdottoFields(PreparedStatement stmt, Prodotto prodotto) throws SQLException {
         stmt.setString(1, prodotto.getNome());
         stmt.setString(2, prodotto.getDescrizione());
@@ -115,7 +129,6 @@ public class ProdottoImpl implements ProdottoJDBC {
         stmt.setString(9, prodotto.getCategoria());
     }
 
-    // Metodo ausiliario per creare un oggetto Prodotto da un ResultSet
     private Prodotto createProdottoFromResultSet(ResultSet rs) throws SQLException {
         return new Prodotto(
             rs.getString("codprodotto"),
@@ -131,4 +144,21 @@ public class ProdottoImpl implements ProdottoJDBC {
             rs.getInt("scorta")
         );
     }
+
+    // Metodo per chiudere le dichiarazioni preparate
+    private void closeStatements() throws SQLException {
+        if (setNewProdottoStmt != null) {
+            setNewProdottoStmt.close();
+        }
+        if (getAllProdottiStmt != null) {
+            getAllProdottiStmt.close();
+        }
+        if (updateProdottoStmt != null) {
+            updateProdottoStmt.close();
+        }
+        if (updateScorteStmt != null) {
+            updateScorteStmt.close();
+        }
+    }
 }
+

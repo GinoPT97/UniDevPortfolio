@@ -12,18 +12,17 @@ import DAOInterface.OrdiniJDBC;
 import Model.Ordine;
 
 public class OrdiniImpl implements OrdiniJDBC {
-    private PreparedStatement newOrdineStmt, getAllOrdiniStmt;
-    private Statement oldDateStmt, currentCodStmt;
+    private final Connection connection;
+    private PreparedStatement newOrdineStmt;
+    private PreparedStatement getAllOrdiniStmt;
 
-    // Costruttore per inizializzare la connessione e le query preparate
     public OrdiniImpl(Connection connection) throws SQLException {
-        this.newOrdineStmt = connection.prepareStatement("INSERT INTO ordine VALUES (NEXTVAL('SCodOrdine'), ?, ?, ?, ?)");
-        this.getAllOrdiniStmt = connection.prepareStatement("SELECT * FROM ordine ORDER BY dataacquisto DESC");
-        this.oldDateStmt = connection.createStatement();
-        this.currentCodStmt = connection.createStatement();
+        this.connection = connection;
+        // Preparazione delle query
+        newOrdineStmt = connection.prepareStatement("INSERT INTO ordine VALUES (NEXTVAL('SCodOrdine'), ?, ?, ?, ?)");
+        getAllOrdiniStmt = connection.prepareStatement("SELECT * FROM ordine ORDER BY dataacquisto DESC");
     }
 
-    // Metodo per inserire un nuovo ordine
     @Override
     public boolean newordine(Ordine ordine) throws SQLException {
         newOrdineStmt.setDouble(1, ordine.getPrezzoTotale());
@@ -34,7 +33,6 @@ public class OrdiniImpl implements OrdiniJDBC {
         return newOrdineStmt.executeUpdate() > 0; // Restituisce true se l'inserimento ha avuto successo
     }
 
-    // Metodo per recuperare tutti gli ordini
     @Override
     public ArrayList<Ordine> getallordini() throws SQLException {
         ArrayList<Ordine> ordiniList = new ArrayList<>();
@@ -52,11 +50,11 @@ public class OrdiniImpl implements OrdiniJDBC {
         return ordiniList;
     }
 
-    // Metodo per ottenere la data più vecchia degli ordini
     @Override
     public String getOldDate() throws SQLException {
         String query = "SELECT MIN(dataacquisto) AS old FROM ordine";
-        try (ResultSet rs = oldDateStmt.executeQuery(query)) {
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
             if (rs.next()) {
                 Date oldDate = rs.getDate("old");
                 return (oldDate != null) ? oldDate.toString() : null;
@@ -67,18 +65,26 @@ public class OrdiniImpl implements OrdiniJDBC {
         return null;
     }
 
-    // Metodo per ottenere il valore corrente del codice ordine
     @Override
     public String getCurrentCod() throws SQLException {
         String query = "SELECT currval('SCodOrdine') AS codordine";
-        try (ResultSet rs = currentCodStmt.executeQuery(query)) {
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
             if (rs.next()) {
                 return rs.getString("codordine");
             }
         }
         return null;
     }
+
+    // Metodo per chiudere le risorse
+    public void close() throws SQLException {
+        if (newOrdineStmt != null) newOrdineStmt.close();
+        if (getAllOrdiniStmt != null) getAllOrdiniStmt.close();
+        if (connection != null) connection.close(); // Chiudo la connessione
+    }
 }
+
 
 
 

@@ -13,7 +13,7 @@ import javax.swing.table.DefaultTableModel;
 
 import DAOImplementation.ArticoliImpl;
 import DAOImplementation.Clienteimpl;
-import DAOImplementation.Dipendenteimpl;
+import DAOImplementation.DipendenteImpl;
 import DAOImplementation.OrdiniImpl;
 import DAOImplementation.ProdottoImpl;
 import DAOImplementation.Tesseraimpl;
@@ -215,7 +215,7 @@ public class Controller {
 			//config.FromatTables();
 			config.populateDatabase();
 			cljdbc = new Clienteimpl(connection);
-			dpjdbc = new Dipendenteimpl(connection);
+			dpjdbc = new DipendenteImpl(connection);
 			prdjdbc = new ProdottoImpl(connection);
 			ordjdbc = new OrdiniImpl(connection);
 			tsjdbc = new Tesseraimpl(connection);

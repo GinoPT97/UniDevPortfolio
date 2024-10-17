@@ -13,20 +13,22 @@ import Model.Cliente;
 
 public class ArticoliImpl implements ArticoliJDBC {
 
-    private PreparedStatement newArticoli;
-    private Statement searchClient;
+    private final PreparedStatement newArticoli;
+    private final Connection connection;
 
     // Costruttore
     public ArticoliImpl(Connection connection) throws SQLException {
+        this.connection = connection;
         this.newArticoli = connection.prepareStatement(
                 "INSERT INTO articoliordine (codOrdine, codProdotto, prezzo, numPunti, numeroArticoli, categoria) VALUES (?, ?, ?, ?, ?, ?)");
-        this.searchClient = connection.createStatement();
     }
 
     @Override
     public boolean newordine(Articoli articoli) throws SQLException {
+        boolean result;
         setArticoliPreparedStatement(newArticoli, articoli);
-        return newArticoli.executeUpdate() > 0;
+        result = newArticoli.executeUpdate() > 0;
+        return result;
     }
 
     @Override
@@ -38,7 +40,10 @@ public class ArticoliImpl implements ArticoliJDBC {
                 JOIN articoliordine AS AO ON C.codcliente = AO.codcliente
                 GROUP BY C.codcliente, C.nome, C.cognome, AO.categoria
                 """;
-        try (ResultSet rs = searchClient.executeQuery(query)) {
+        
+        try (Statement searchClient = connection.createStatement(); 
+             ResultSet rs = searchClient.executeQuery(query)) {
+             
             while (rs.next()) {
                 clienti.add(new Cliente(
                         null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null,
