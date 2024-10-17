@@ -3,8 +3,9 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -26,8 +27,9 @@ public class LoginFrame extends JFrame {
     private JButton logbutt;
     private JButton clearbutt;
     private JTextField idtf;
+    private JPanel titlepanel;
 
-    public void elementi(Controller c) {
+    public void elementi() {
         setBounds(100, 100, 700, 450);
         contentPane = new JPanel();
         contentPane.setBackground(new Color(238, 238, 238));
@@ -35,11 +37,9 @@ public class LoginFrame extends JFrame {
         setContentPane(contentPane);
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
-
-        // Creazione del pannello di sfondo con l'immagine desiderata
-        JPanel titlepanel = c.createBackgroundPanel("/Immagini/ImmLog.jpg");
-        titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
-        titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        titlepanel = createTitlePanel(); // Usa la funzione ausiliaria per creare il titlepanel
 
         JLabel titlelabel = new JLabel("Ortofrutta 2.0");
         titlelabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -81,10 +81,21 @@ public class LoginFrame extends JFrame {
         infopanel.add(buttonpanel);
 
         contentPane.setLayout(new BorderLayout(0, 0));
-        contentPane.add(infopanel, BorderLayout.CENTER);
+        contentPane.add(titlepanel, BorderLayout.WEST); // Aggiungi il titlepanel nella parte superiore
+        contentPane.add(infopanel, BorderLayout.CENTER); // Infopanel occupa il centro
+    }
 
-        // Aggiungi il titlepanel come pannello superiore
-        contentPane.add(titlepanel, BorderLayout.NORTH);
+    // Funzione ausiliaria per creare il titlepanel con immagine di sfondo
+    private JPanel createTitlePanel() {
+        return new JPanel() {
+
+			@Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Image img = Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmLog.jpg"));
+                g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
     }
 
     public void azioni(Controller c) {
@@ -124,7 +135,13 @@ public class LoginFrame extends JFrame {
     public LoginFrame(String title, Controller c) throws SQLException {
         super(title);
         c.connect();
-        this.elementi(c);
+        this.elementi();
         this.azioni(c);
     }
 }
+
+
+
+
+
+

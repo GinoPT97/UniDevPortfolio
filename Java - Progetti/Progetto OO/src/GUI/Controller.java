@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Function;
 
-import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
 import DAOImplementation.ArticoliImpl;
@@ -28,7 +27,6 @@ import DBConfiguration.ConnectionException;
 import DBConfiguration.DBConfiguration;
 import DBConfiguration.DBConnection;
 import Model.Articoli;
-import Model.BackgroundPanel;
 import Model.Cliente;
 import Model.Dipendente;
 import Model.Ordine;
@@ -85,10 +83,6 @@ public class Controller {
 		visordf = new VisioneOrdineFrame("Visione Ordini", this);
 		searchf = new RicercaFrame("Ricerca Clienti", this);
 		logf.setVisible(true);
-	}
-
-	public JPanel createBackgroundPanel(String imagePath) {
-		return new BackgroundPanel(imagePath);
 	}
 
 	public void returnToLastFrame() {
