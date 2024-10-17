@@ -238,13 +238,12 @@ public class StatisticheDipendentiFrame extends JFrame {
             }
 
             try {
-                // Conversione delle stringhe nei campi di testo in Date
                 java.sql.Date di = java.sql.Date.valueOf(startTF.getText());
                 java.sql.Date df = java.sql.Date.valueOf(finalTF.getText());
 
                 // Recupero dei dati dal Controller
-                ordInt = c.introitidip(di, df);
-                ordVen = c.venditedip(di, df);
+                List<String> ordInt = c.introitidip(di, df);
+                List<String> ordVen = c.venditedip(di, df);
 
                 if (ordInt.isEmpty() || ordVen.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");

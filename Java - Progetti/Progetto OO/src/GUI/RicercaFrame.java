@@ -99,7 +99,7 @@ public class RicercaFrame extends JFrame {
 	}
 
 	public void azioni(Controller c) throws SQLException {
-	    // Popola la tabella inizialmente
+	    // Popola la tabella inizialmente con i dati dei clienti
 	    c.ClientSearch(searchmodel);
 
 	    // Gestione del click sul pulsante di ricerca
@@ -107,34 +107,34 @@ public class RicercaFrame extends JFrame {
 	        String categoriaSelezionata = (String) categoriacb.getSelectedItem();
 	        String intervalloPunti = (String) punticb.getSelectedItem();
 
-	        // Lista per i filtri
 	        List<RowFilter<Object, Object>> filters = new ArrayList<>();
 
-	        // Filtro basato sulla categoria
+	        // Filtro categoria
 	        if (!"Tutti".equals(categoriaSelezionata)) {
 	            filters.add(RowFilter.regexFilter(categoriaSelezionata, 2));
 	        }
 
-	        // Filtro basato sull'intervallo di punti
+	        // Filtro punti basato sull'intervallo selezionato
 	        RowFilter<Object, Object> puntiFilter = switch (intervalloPunti) {
 	            case "0-500" -> RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 3);
 	            case "501-1000" -> RowFilter.andFilter(List.of(
-	                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3),
-	                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3)
+	                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3),
+	                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3)
 	            ));
 	            case "1001-5000" -> RowFilter.andFilter(List.of(
-	                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3),
-	                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3)
+	                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3),
+	                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3)
 	            ));
 	            case ">5000" -> RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 3);
 	            default -> null;
 	        };
 
+	        // Aggiunge il filtro per i punti, se applicabile
 	        if (puntiFilter != null) {
 	            filters.add(puntiFilter);
 	        }
 
-	        // Applica i filtri se presenti
+	        // Applica i filtri alla tabella
 	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
 	        sorter.setRowFilter(filters.isEmpty() ? null : RowFilter.andFilter(filters));
 	        searchtable.setRowSorter(sorter);
@@ -143,7 +143,6 @@ public class RicercaFrame extends JFrame {
 	    // Gestione del click sul pulsante "Indietro"
 	    backbutton.addActionListener(e -> c.returnToLastFrame());
 	}
-
 
 	public RicercaFrame(String title, Controller c) throws SQLException {
 		super(title);
