@@ -18,11 +18,9 @@ public class Tesseraimpl implements TesseraJDBC {
     private static final String AllTessere= "SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC";
     private static final String UpdatePunti = "UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = ?";
 
-    private Connection connection;
     private PreparedStatement newtesseraStmt, getpuntitStmt, alltesseraStmt, uppuntiStmt;
 
     public Tesseraimpl(Connection connection) throws SQLException {
-        this.connection = connection;
         // Preparazione delle query
         newtesseraStmt = connection.prepareStatement(AddTessera);
         getpuntitStmt = connection.prepareStatement(getPunti);

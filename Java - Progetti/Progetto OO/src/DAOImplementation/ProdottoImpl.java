@@ -11,13 +11,11 @@ import DAOInterface.ProdottoJDBC;
 import Model.Prodotto;
 
 public class ProdottoImpl implements ProdottoJDBC {
-    private Connection connection;
     private PreparedStatement setNewProdottoStmt, getAllProdottiStmt, updateProdottoStmt, updateScorteStmt;
     private Statement getCategoriaStmt;
 
     // Costruttore che inizializza la connessione e le query preparate
     public ProdottoImpl(Connection connection) throws SQLException {
-        this.connection = connection;
         this.getAllProdottiStmt = connection.prepareStatement("SELECT * FROM prodotto ORDER BY nome DESC");
         this.setNewProdottoStmt = connection.prepareStatement(
             "INSERT INTO prodotto VALUES (NEXTVAL('SCodProdotto'), ?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, CAST(? AS TIPOLOGIA), ?)"

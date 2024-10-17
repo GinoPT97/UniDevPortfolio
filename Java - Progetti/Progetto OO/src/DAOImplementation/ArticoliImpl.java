@@ -13,13 +13,11 @@ import Model.Cliente;
 
 public class ArticoliImpl implements ArticoliJDBC {
 
-    private Connection connection;
     private PreparedStatement newArticoli;
     private Statement searchClient;
 
     // Costruttore
     public ArticoliImpl(Connection connection) throws SQLException {
-        this.connection = connection;
         this.newArticoli = connection.prepareStatement(
                 "INSERT INTO articoliordine (codOrdine, codProdotto, prezzo, numPunti, numeroArticoli, categoria) VALUES (?, ?, ?, ?, ?, ?)");
         this.searchClient = connection.createStatement();

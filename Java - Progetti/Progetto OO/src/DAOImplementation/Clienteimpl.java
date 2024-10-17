@@ -12,12 +12,10 @@ import Model.Cliente;
 import Model.Tessera;
 
 public class Clienteimpl implements ClienteJDBC {
-    private Connection connection;
     private PreparedStatement setNewCt, cercaCl, updateCl;
     private Statement getAllCt, idCl;
     // Costruttore
     public Clienteimpl(Connection connection) throws SQLException {
-        this.connection = connection;
         getAllCt = connection.createStatement();
         cercaCl = connection.prepareStatement(
                 "SELECT codcliente FROM cliente WHERE nome = ? AND cognome = ? AND codicefiscale = ?");

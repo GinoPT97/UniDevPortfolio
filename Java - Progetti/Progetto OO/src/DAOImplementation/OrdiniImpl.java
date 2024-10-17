@@ -12,13 +12,11 @@ import DAOInterface.OrdiniJDBC;
 import Model.Ordine;
 
 public class OrdiniImpl implements OrdiniJDBC {
-    private Connection connection;
     private PreparedStatement newOrdineStmt, getAllOrdiniStmt;
     private Statement oldDateStmt, currentCodStmt;
 
     // Costruttore per inizializzare la connessione e le query preparate
     public OrdiniImpl(Connection connection) throws SQLException {
-        this.connection = connection;
         this.newOrdineStmt = connection.prepareStatement("INSERT INTO ordine VALUES (NEXTVAL('SCodOrdine'), ?, ?, ?, ?)");
         this.getAllOrdiniStmt = connection.prepareStatement("SELECT * FROM ordine ORDER BY dataacquisto DESC");
         this.oldDateStmt = connection.createStatement();
