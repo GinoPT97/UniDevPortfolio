@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -9,6 +10,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,111 +22,109 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 public class LoginFrame extends JFrame {
-	private JPanel contentPane;
-	private JButton logbutt;
-	private JButton clearbutt;
-	private JTextField idtf;
+    private JPanel contentPane;
+    private JButton logbutt;
+    private JButton clearbutt;
+    private JTextField idtf;
 
-	public void elementi(Controller c) {
-	    setBounds(100, 100, 700, 450);
-	    contentPane = new JPanel();
-	    contentPane.setBackground(new Color(238, 238, 238));
-	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-	    setContentPane(contentPane);
-	    setLocationRelativeTo(null);
-	    setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
+    public void elementi(Controller c) {
+        setBounds(100, 100, 700, 450);
+        contentPane = new JPanel();
+        contentPane.setBackground(new Color(238, 238, 238));
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        setContentPane(contentPane);
+        setLocationRelativeTo(null);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-	    JPanel buttonpanel = new JPanel();
-	    FlowLayout flowLayout = (FlowLayout) buttonpanel.getLayout();
-	    flowLayout.setAlignment(FlowLayout.TRAILING);
+        // Creazione del pannello di sfondo con l'immagine desiderata
+        JPanel titlepanel = c.createBackgroundPanel("/Immagini/ImmLog.jpg");
+        titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+        titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-	    JPanel infopanel = new JPanel();
-	    infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
+        JLabel titlelabel = new JLabel("Ortofrutta 2.0");
+        titlelabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlepanel.add(titlelabel);
 
-	    // Creazione del pannello di sfondo con l'immagine desiderata
-	    JPanel titlepanel = c.createBackgroundPanel("/Immagini/ImmLog.jpg");
-	    titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
-	    titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        // Pannello info per i campi ID
+        JPanel infopanel = new JPanel();
+        infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
+        infopanel.setLayout(new BoxLayout(infopanel, BoxLayout.Y_AXIS));
 
-	    // Aggiungi eventuali componenti al titlepanel se necessario
-	    JLabel titlelabel = new JLabel("");
-	    titlelabel.setHorizontalAlignment(SwingConstants.CENTER);
-	    titlelabel.setVerticalAlignment(SwingConstants.TOP);
-	    titlepanel.add(titlelabel);
-	    titlelabel.setText("Ortofrutta 2000");
-	    titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        JLabel idlab = new JLabel("ID :");
+        idlab.setAlignmentX(CENTER_ALIGNMENT);
+        infopanel.add(idlab);
 
-	    contentPane.setLayout(new BorderLayout(0, 0));
-	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
+        idtf = new JTextField();
+        idtf.setText("00000");
+        idtf.setHorizontalAlignment(SwingConstants.CENTER);
+        idtf.setColumns(10);
+        idtf.setMaximumSize(new Dimension(200, 30));  // Imposta una dimensione massima per evitare l'allungamento
+        infopanel.add(idtf);
 
-	    logbutt = new JButton("Login");
-	    buttonpanel.add(logbutt);
-	    logbutt.setVerticalAlignment(SwingConstants.TOP);
-	    logbutt.setBackground(Color.GREEN);
+        // Pannello per i bottoni
+        JPanel buttonpanel = new JPanel();
+        buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS)); // Imposta i bottoni uno sotto l'altro
 
-	    clearbutt = new JButton("Clear");
-	    buttonpanel.add(clearbutt);
-	    clearbutt.setVerticalAlignment(SwingConstants.BOTTOM);
+        logbutt = new JButton("Login");
+        logbutt.setAlignmentX(CENTER_ALIGNMENT);
+        logbutt.setBackground(Color.GREEN);
+        buttonpanel.add(logbutt);
+        buttonpanel.add(Box.createVerticalStrut(10)); // Spazio tra i bottoni
 
-	    contentPane.add(infopanel, BorderLayout.CENTER);
-	    infopanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        clearbutt = new JButton("Clear");
+        clearbutt.setAlignmentX(CENTER_ALIGNMENT);
+        buttonpanel.add(clearbutt);
 
-	    JLabel idlab = new JLabel("ID :");
-	    infopanel.add(idlab);
-	    idtf = new JTextField();
-	    idtf.setText("00000");
-	    infopanel.add(idtf);
-	    idtf.setHorizontalAlignment(SwingConstants.CENTER);
-	    idtf.setColumns(10);
+        // Aggiungi il buttonpanel sotto il campo ID
+        infopanel.add(Box.createVerticalStrut(20));  // Spazio tra il campo ID e i bottoni
+        infopanel.add(buttonpanel);
 
-	    // Aggiungi il titlepanel come pannello di sinistra
-	    contentPane.add(titlepanel, BorderLayout.WEST);
-	}
+        contentPane.setLayout(new BorderLayout(0, 0));
+        contentPane.add(infopanel, BorderLayout.CENTER);
 
-	// Metodo azioni per gestire tutti gli eventi dei bottoni
-	public void azioni(Controller c) {
-		// Azione per il bottone "Login"
-		logbutt.addActionListener(e -> {
-		    try {
-		        // Controlla prima se l'ID è l'admin
-		        if (idtf.getText().equals("00000")) {
-		            c.iddip = idtf.getText();
-		            c.loginUtente(1);
-		            idtf.setText("");
-		            JOptionPane.showMessageDialog(contentPane, "Accesso Admin");
-		        } else if (c.verifyid(idtf.getText())) {
-		            // Solo se non è admin, controlla se è un dipendente
-		            c.iddip = idtf.getText();
-		            c.loginUtente(2);
-		            idtf.setText("");
-		            JOptionPane.showMessageDialog(contentPane, "Accesso Dipendente");
-		        } else {
-		            JOptionPane.showMessageDialog(contentPane, "Id errato!");
-		            idtf.setText("");
-		        }
-		    } catch (SQLException e1) {
-		        JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
-		    }
-		});
+        // Aggiungi il titlepanel come pannello superiore
+        contentPane.add(titlepanel, BorderLayout.NORTH);
+    }
 
-		// Azione per il bottone "Clear"
-		clearbutt.addActionListener(e -> idtf.setText(""));
+    public void azioni(Controller c) {
+        logbutt.addActionListener(e -> {
+            try {
+                if (idtf.getText().equals("00000")) {
+                    c.iddip = idtf.getText();
+                    c.loginUtente(1);
+                    idtf.setText("");
+                    JOptionPane.showMessageDialog(contentPane, "Accesso Admin");
+                } else if (c.verifyid(idtf.getText())) {
+                    c.iddip = idtf.getText();
+                    c.loginUtente(2);
+                    idtf.setText("");
+                    JOptionPane.showMessageDialog(contentPane, "Accesso Dipendente");
+                } else {
+                    JOptionPane.showMessageDialog(contentPane, "Id errato!");
+                    idtf.setText("");
+                }
+            } catch (SQLException e1) {
+                JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+            }
+        });
 
-		// Aggiunta del KeyListener per rilevare il tasto Invio sulla JTextField
-		idtf.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					logbutt.doClick();  // Simula il click del bottone "Login" quando si preme Invio
-				}
-			}
-		});
-	}
+        clearbutt.addActionListener(e -> idtf.setText(""));
 
-	public LoginFrame(String title, Controller c) throws SQLException {
-		super(title);
-		c.connect();
-		this.elementi(c);
-		this.azioni(c);
-	}
+        idtf.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    logbutt.doClick();  // Simula il click del bottone "Login" quando si preme Invio
+                }
+            }
+        });
+    }
+
+    public LoginFrame(String title, Controller c) throws SQLException {
+        super(title);
+        c.connect();
+        this.elementi(c);
+        this.azioni(c);
+    }
 }
