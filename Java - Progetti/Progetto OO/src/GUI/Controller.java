@@ -106,7 +106,7 @@ public class Controller {
 	    setVisibleFrame(logf, (x == 1) ? adminf : dipf);
 	}
 
-	public void loginUtente(int x) {
+	public void logtoutente(int x) {
 	    logf.setVisible(false); // Nasconde il frame di logout
 	    // Mostra il frame appropriato in base al tipo di utente
 	    setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
@@ -137,7 +137,6 @@ public class Controller {
 	    }
 	}
 
-	// Assicurati di aggiornare lastFrame in modo appropriato
 	public void visAndElem(int context, int x) {
 	    switch (context) {
 	        case 1: // Carrello
@@ -152,7 +151,6 @@ public class Controller {
 	                case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
 	                case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
 	                case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
-	                // Qui puoi aggiornare lastFrame se necessario
 	            }
 	            break;
 
@@ -170,6 +168,10 @@ public class Controller {
 	                case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
 	                case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
 	            }
+	            break;
+
+	        default:
+	            // Handle invalid context if needed, or simply do nothing
 	            break;
 	    }
 	}
@@ -212,7 +214,7 @@ public class Controller {
 			config.createTableProdotto();
 			config.createTableTessera();
 			config.createTableArticoliOrdine();
-			//config.FromatTables();
+			config.FromatTables();
 			config.populateDatabase();
 			cljdbc = new Clienteimpl(connection);
 			dpjdbc = new DipendenteImpl(connection);
@@ -287,64 +289,19 @@ public class Controller {
         return cljdbc.getIdCt(codfisc);
     }
 
- // Aggiorna le scorte di un prodotto, il modello dei prodotti e il database
+    // Aggiorna le scorte di un prodotto
     public boolean upscorte(int x, String s) throws SQLException {
-        // Aggiorna il database
-        boolean aggiornamentoDatabase = prdjdbc.updateScorte(x, s);
-        
-        // Se l'aggiornamento nel database ha successo, aggiorna il modello
-        if (aggiornamentoDatabase) {
-            for (int i = 0; i < prodModel.getRowCount(); i++) {
-                String idProdotto = prodModel.getValueAt(i, 0).toString(); // Supponiamo che l'ID sia nella prima colonna
-                if (idProdotto.equals(s)) {
-                    // Aggiorna la scorta nel modello
-                    int nuovaScorta = Integer.parseInt(prodModel.getValueAt(i, 10).toString()) - x; // Supponiamo che la scorta sia nella colonna 10
-                    prodModel.setValueAt(nuovaScorta, i, 10); // Aggiorna il valore della scorta
-                    return true; // Aggiornamento riuscito
-                }
-            }
-        }
-        return false; // Prodotto non trovato o errore nel database
+        return prdjdbc.updateScorte(x, s);
     }
 
-    // Aggiorna i punti associati a un cliente, il modello dei clienti e il database
+    // Aggiorna i punti associati a un cliente
     public boolean uppunti(String codcl, double d) throws SQLException {
-        // Aggiorna il database
-        boolean aggiornamentoDatabase = tsjdbc.updatepunti(codcl, d);
-        
-        // Se l'aggiornamento nel database ha successo, aggiorna il modello
-        if (aggiornamentoDatabase) {
-            for (int i = 0; i < clienteModel.getRowCount(); i++) {
-                String idCliente = clienteModel.getValueAt(i, 0).toString(); // Supponiamo che l'ID cliente sia nella prima colonna
-                if (idCliente.equals(codcl)) {
-                    // Aggiorna i punti nel modello
-                    double nuoviPunti = Double.parseDouble(clienteModel.getValueAt(i, 8).toString()) + d; // Supponiamo che i punti siano nella colonna 8
-                    clienteModel.setValueAt(nuoviPunti, i, 8); // Aggiorna il valore dei punti
-                    return true; // Aggiornamento riuscito
-                }
-            }
-        }
-        return false; // Cliente non trovato o errore nel database
+        return tsjdbc.updatepunti(codcl, d);
     }
 
-    // Aggiunge un nuovo ordine al modello degli ordini e al database
+    // Aggiunge un nuovo ordine al database
     public boolean nuovoordine(Ordine ordine) throws SQLException {
-        // Aggiungi l'ordine al database
-        boolean ordineCreato = ordjdbc.newordine(ordine);
-        
-        // Se l'ordine è stato creato con successo nel database, aggiorna il modello
-        if (ordineCreato) {
-            Object[] newRow = {
-            	ordjdbc.getCurrentCod(),
-                ordine.getDataAcquisto(),
-                ordine.getPrezzoTotale(),
-                ordine.getIdCliente(),
-                ordine.getIdDipendente()
-            };
-            ordModel.addRow(newRow); // Aggiungi la nuova riga al modello
-            return true; // Aggiornamento riuscito
-        }
-        return false; // Errore nella creazione dell'ordine nel database
+        return ordjdbc.newordine(ordine);
     }
 
     // Aggiunge nuovi articoli a un ordine
@@ -373,18 +330,16 @@ public class Controller {
         });
     }
 
+    // Popola il modello della tabella con i prodotti per categoria
     public void categoriaprodotti(String c, DefaultTableModel model) throws SQLException {
         List<Prodotto> prodotti = prdjdbc.getbycategoria(c);
-        model.setRowCount(0); // Reset tabella
-        for (Prodotto p : prodotti) {
-            model.addRow(new Object[]{
+        populateTable(prodotti, model, p -> new Object[]{
                 p.getCodProd(),
                 p.getNome(),
                 p.getPrezzo(),
                 p.getCategoria(),
                 p.getScorta()
-            });
-        }
+        });
     }
 
     public void allCliente() throws SQLException {

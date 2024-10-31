@@ -1,0 +1,808 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-11-09 Tue 00:45 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Thread</title>
+<meta name="author" content="Antonio Petrillo" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Thread</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org11a3c7e">Example</a>
+<ul>
+<li><a href="#org56fb377">Code</a></li>
+<li><a href="#org2967af5">Compilare con:</a></li>
+<li><a href="#org6511794">Note</a></li>
+</ul>
+</li>
+<li><a href="#orgc59549d">Exercise</a>
+<ul>
+<li><a href="#org3b26751">Exercise 1</a>
+<ul>
+<li><a href="#org1d2f3e5">Stampa 1</a></li>
+<li><a href="#orgd18ce92">Stampa 2</a></li>
+<li><a href="#org4f7f669">Stampa 3</a></li>
+</ul>
+</li>
+<li><a href="#orge75700b">Exercise 2</a>
+<ul>
+<li><a href="#org3243d72">Traccia</a></li>
+<li><a href="#org4f9c972">Svolgimento</a></li>
+<li><a href="#org76d5ce2">Considerazioni</a></li>
+</ul>
+</li>
+<li><a href="#orgdbc49c2">Exercise 3</a>
+<ul>
+<li><a href="#orgb007940">Traccia</a></li>
+<li><a href="#org6485211">Svolgimento</a></li>
+<li><a href="#org71193e0">Considerazioni</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org11a3c7e" class="outline-2">
+<h2 id="org11a3c7e">Example</h2>
+<div class="outline-text-2" id="text-org11a3c7e">
+</div>
+<div id="outline-container-org56fb377" class="outline-3">
+<h3 id="org56fb377">Code</h3>
+<div class="outline-text-3" id="text-org56fb377">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdio.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdlib.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/types.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/stat.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">fcntl.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">errno.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">unistd.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/wait.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">bits/signum-arch.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">signal.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">err.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">pthread.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">string.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">time.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">global_var</span> = <span style="color: #a45bad;">0</span>;
+
+<span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #bc6ec5; font-weight: bold;">start_function</span><span style="color: #4f97d7;">(){</span>
+    srand<span style="color: #bc6ec5;">(</span>time<span style="color: #2d9574;">(</span><span style="color: #a45bad;">NULL</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>;
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">sec</span> = rand<span style="color: #bc6ec5;">()</span>%<span style="color: #a45bad;">10</span> + <span style="color: #a45bad;">1</span>;
+    sleep<span style="color: #bc6ec5;">(</span>sec<span style="color: #bc6ec5;">)</span>;
+    global_var++;
+    printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"global var: %d\n"</span>, global_var<span style="color: #bc6ec5;">)</span>;
+    pthread_exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">NULL</span><span style="color: #bc6ec5;">)</span>;
+<span style="color: #4f97d7;">}</span>
+
+<span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #bc6ec5; font-weight: bold;">main</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">argc</span>, <span style="color: #ce537a; font-weight: bold;">char</span>* <span style="color: #7590db;">argv</span><span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">){</span>
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span>argc != <span style="color: #a45bad;">2</span><span style="color: #bc6ec5;">){</span>
+        printf<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"Usage: %s &lt;number of thread&gt;\n"</span>, argv<span style="color: #67b11d;">[</span><span style="color: #a45bad;">0</span><span style="color: #67b11d;">]</span><span style="color: #2d9574;">)</span>;
+        exit<span style="color: #2d9574;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #2d9574;">)</span>;
+    <span style="color: #bc6ec5;">}</span>
+
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">num_of_thread</span> = atoi<span style="color: #bc6ec5;">(</span>argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">1</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #ce537a; font-weight: bold;">pthread_t</span>* <span style="color: #7590db;">thread_pool</span> = <span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">pthread_t</span>*<span style="color: #bc6ec5;">)</span> calloc<span style="color: #bc6ec5;">(</span>num_of_thread, <span style="color: #4f97d7; font-weight: bold;">sizeof</span><span style="color: #2d9574;">(</span>pthread_t<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>;
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">!</span>thread_pool<span style="color: #bc6ec5;">){</span>
+        printf<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"Cannot allocate the thread pool\n"</span><span style="color: #2d9574;">)</span>;
+        exit<span style="color: #2d9574;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #2d9574;">)</span>;
+    <span style="color: #bc6ec5;">}</span>
+
+   <span style="color: #4f97d7; font-weight: bold;">for</span><span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">i</span>=<span style="color: #a45bad;">0</span>; i&lt;num_of_thread; i++<span style="color: #bc6ec5;">){</span>
+       <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">err_ret</span>;
+       <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #2d9574;">(</span><span style="color: #67b11d;">(</span>err_ret = pthread_create<span style="color: #4f97d7;">(</span>&amp;thread_pool<span style="color: #bc6ec5;">[</span>i<span style="color: #bc6ec5;">]</span>, <span style="color: #a45bad;">NULL</span>, start_function, <span style="color: #a45bad;">NULL</span><span style="color: #4f97d7;">)</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">){</span>
+           printf<span style="color: #67b11d;">(</span><span style="color: #2d9574;">"%s\n"</span>,strerror<span style="color: #4f97d7;">(</span>err_ret<span style="color: #4f97d7;">)</span><span style="color: #67b11d;">)</span>;
+           exit<span style="color: #67b11d;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #67b11d;">)</span>;
+       <span style="color: #2d9574;">}</span>
+   <span style="color: #bc6ec5;">}</span>
+
+   <span style="color: #4f97d7; font-weight: bold;">for</span><span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">i</span>=<span style="color: #a45bad;">0</span>; i&lt;num_of_thread; i++<span style="color: #bc6ec5;">){</span>
+      pthread_join<span style="color: #2d9574;">(</span>thread_pool<span style="color: #67b11d;">[</span>i<span style="color: #67b11d;">]</span>, <span style="color: #a45bad;">NULL</span><span style="color: #2d9574;">)</span>;
+   <span style="color: #bc6ec5;">}</span>
+
+   printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"Expected := %d\tGlobal var := %d\tConcurrent access := %d\n"</span>, num_of_thread, global_var, num_of_thread - global_var<span style="color: #bc6ec5;">)</span>;
+
+   <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">0</span>;
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org2967af5" class="outline-3">
+<h3 id="org2967af5">Compilare con:</h3>
+<div class="outline-text-3" id="text-org2967af5">
+<div class="org-src-container">
+<pre class="src src-shell">gcc example1.c -o example1 -lpthread
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org6511794" class="outline-3">
+<h3 id="org6511794">Note</h3>
+<div class="outline-text-3" id="text-org6511794">
+<p>
+Ci sono sicuramente delle race condition nell&rsquo;accedere alla variabile globale, e&rsquo; condivisa e non ha un mutex.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc59549d" class="outline-2">
+<h2 id="orgc59549d">Exercise</h2>
+<div class="outline-text-2" id="text-orgc59549d">
+</div>
+<div id="outline-container-org3b26751" class="outline-3">
+<h3 id="org3b26751">Exercise 1</h3>
+<div class="outline-text-3" id="text-org3b26751">
+</div>
+<div id="outline-container-org1d2f3e5" class="outline-4">
+<h4 id="org1d2f3e5">Stampa 1</h4>
+<div class="outline-text-4" id="text-org1d2f3e5">
+</div>
+<ul class="org-ul">
+<li><a id="org3513ed3"></a>Traccia<br />
+<div class="outline-text-5" id="text-org3513ed3">
+<p>
+Scrivere un programma C stampa che crea un thread ed attende la
+terminazione dello stesso. Il thread scriverà in stdout in 20 i numeri da 0
+a 19.
+</p>
+</div>
+</li>
+<li><a id="org99568e5"></a>Svolgimento<br />
+<div class="outline-text-5" id="text-org99568e5">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdio.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdlib.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/types.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/stat.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">fcntl.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">errno.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">unistd.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/wait.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">bits/signum-arch.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">signal.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">err.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">pthread.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">string.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #bc6ec5; font-weight: bold;">print</span><span style="color: #4f97d7;">(){</span>
+   <span style="color: #4f97d7; font-weight: bold;">for</span><span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">i</span>=<span style="color: #a45bad;">0</span>; i&lt;<span style="color: #a45bad;">20</span>; i++<span style="color: #bc6ec5;">)</span>
+       <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">sulla mia macchina pthread_t e' implementato come unsigned int</span>
+       <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">o almeno cosi dice il mio compilatore</span>
+       printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"tid := %u\tnum := %d\n"</span>, pthread_self<span style="color: #2d9574;">()</span>, i<span style="color: #bc6ec5;">)</span>;
+   pthread_exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">NULL</span><span style="color: #bc6ec5;">)</span>;
+<span style="color: #4f97d7;">}</span>
+
+<span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #bc6ec5; font-weight: bold;">main</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">argc</span>, <span style="color: #ce537a; font-weight: bold;">char</span>* <span style="color: #7590db;">argv</span><span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">){</span>
+    <span style="color: #ce537a; font-weight: bold;">pthread_t</span> <span style="color: #7590db;">tid</span>;
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">error</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_create<span style="color: #67b11d;">(</span>&amp;tid, <span style="color: #a45bad;">NULL</span>, print, <span style="color: #a45bad;">NULL</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_join<span style="color: #67b11d;">(</span>tid, <span style="color: #a45bad;">NULL</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">0</span>;
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-orgd18ce92" class="outline-4">
+<h4 id="orgd18ce92">Stampa 2</h4>
+<div class="outline-text-4" id="text-orgd18ce92">
+</div>
+<ul class="org-ul">
+<li><a id="org0ff180a"></a>Traccia<br />
+<div class="outline-text-5" id="text-org0ff180a">
+<p>
+Modificare il codice precedente per ottendere un programma stampa2
+che prende come argomento i numeri da stampare in stdout.
+</p>
+</div>
+</li>
+<li><a id="orgeb03594"></a>Svolgimento<br />
+<div class="outline-text-5" id="text-orgeb03594">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdio.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdlib.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/types.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/stat.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">fcntl.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">errno.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">unistd.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/wait.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">bits/signum-arch.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">signal.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">err.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">pthread.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">string.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #bc6ec5; font-weight: bold;">print</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #7590db;">arg</span><span style="color: #4f97d7;">){</span>
+   <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">n</span> = *<span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">int</span>*<span style="color: #bc6ec5;">)</span> arg;
+   <span style="color: #4f97d7; font-weight: bold;">for</span><span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">i</span>=<span style="color: #a45bad;">0</span>; i&lt;n; i++<span style="color: #bc6ec5;">)</span>
+       <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">sulla mia macchina pthread_t e' implementato come unsigned int</span>
+       <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">o almeno cosi dice il mio compilatore</span>
+       printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"tid := %u\tnum := %d\n"</span>, pthread_self<span style="color: #2d9574;">()</span>, i<span style="color: #bc6ec5;">)</span>;
+   pthread_exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">NULL</span><span style="color: #bc6ec5;">)</span>;
+<span style="color: #4f97d7;">}</span>
+
+<span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #bc6ec5; font-weight: bold;">main</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">argc</span>, <span style="color: #ce537a; font-weight: bold;">char</span>* <span style="color: #7590db;">argv</span><span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">){</span>
+    <span style="color: #ce537a; font-weight: bold;">pthread_t</span> <span style="color: #7590db;">tid</span>;
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">error</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span>argc != <span style="color: #a45bad;">2</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"Usage: %s &lt;number&gt;\n"</span>, argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">0</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span> , exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">n</span> = atoi<span style="color: #bc6ec5;">(</span>argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">1</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_create<span style="color: #67b11d;">(</span>&amp;tid, <span style="color: #a45bad;">NULL</span>, print, <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>*<span style="color: #4f97d7;">)</span> &amp;n<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_join<span style="color: #67b11d;">(</span>tid, <span style="color: #a45bad;">NULL</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">0</span>;
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org4f7f669" class="outline-4">
+<h4 id="org4f7f669">Stampa 3</h4>
+<div class="outline-text-4" id="text-org4f7f669">
+</div>
+<ul class="org-ul">
+<li><a id="org1d7aa58"></a>Traccia<br />
+<div class="outline-text-5" id="text-org1d7aa58">
+<p>
+Modificare il codice precedente per ottendere un programma stampa3
+prende in ingresso un intero n e lancia due thread che scrivono
+contemporaneamente su stdout la sequenza di numeri da 0 ad n.
+</p>
+</div>
+</li>
+<li><a id="org0cde464"></a>Svolgimento<br />
+<div class="outline-text-5" id="text-org0cde464">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdio.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdlib.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/types.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/stat.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">fcntl.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">errno.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">unistd.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/wait.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">bits/signum-arch.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">signal.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">err.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">pthread.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">string.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #bc6ec5; font-weight: bold;">print</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #7590db;">arg</span><span style="color: #4f97d7;">){</span>
+   <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">n</span> = *<span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">int</span>*<span style="color: #bc6ec5;">)</span> arg;
+   <span style="color: #4f97d7; font-weight: bold;">for</span><span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">i</span>=<span style="color: #a45bad;">0</span>; i&lt;n; i++<span style="color: #bc6ec5;">)</span>
+       <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">sulla mia macchina pthread_t e' implementato come unsigned int</span>
+       <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">o almeno cosi' dice il mio compilatore</span>
+       printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"tid := %u\tnum := %d\n"</span>, pthread_self<span style="color: #2d9574;">()</span>, i<span style="color: #bc6ec5;">)</span>;
+   pthread_exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">NULL</span><span style="color: #bc6ec5;">)</span>;
+<span style="color: #4f97d7;">}</span>
+
+<span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #bc6ec5; font-weight: bold;">main</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">argc</span>, <span style="color: #ce537a; font-weight: bold;">char</span>* <span style="color: #7590db;">argv</span><span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">){</span>
+    <span style="color: #ce537a; font-weight: bold;">pthread_t</span> <span style="color: #7590db;">tid1</span>, <span style="color: #7590db;">tid2</span>;
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">error</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span>argc != <span style="color: #a45bad;">2</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"Usage: %s &lt;number&gt;\n"</span>, argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">0</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span> , exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">n</span> = atoi<span style="color: #bc6ec5;">(</span>argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">1</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_create<span style="color: #67b11d;">(</span>&amp;tid1, <span style="color: #a45bad;">NULL</span>, print, <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>*<span style="color: #4f97d7;">)</span> &amp;n<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_create<span style="color: #67b11d;">(</span>&amp;tid2, <span style="color: #a45bad;">NULL</span>, print, <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>*<span style="color: #4f97d7;">)</span> &amp;n<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_join<span style="color: #67b11d;">(</span>tid1, <span style="color: #a45bad;">NULL</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_join<span style="color: #67b11d;">(</span>tid2, <span style="color: #a45bad;">NULL</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">0</span>;
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orge75700b" class="outline-3">
+<h3 id="orge75700b">Exercise 2</h3>
+<div class="outline-text-3" id="text-orge75700b">
+</div>
+<div id="outline-container-org3243d72" class="outline-4">
+<h4 id="org3243d72">Traccia</h4>
+<div class="outline-text-4" id="text-org3243d72">
+<p>
+Scrivere un programma C <code>contaCaratteri.c</code> che prende in ingresso un
+pathname nomefile, un carattere c e due interi from, to e conta quante
+volte compare il carattere c nel file nomefile nella porzione indicata dai
+due interi: a partire da from byte fino a to.
+</p>
+</div>
+</div>
+<div id="outline-container-org4f9c972" class="outline-4">
+<h4 id="org4f9c972">Svolgimento</h4>
+<div class="outline-text-4" id="text-org4f9c972">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdio.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdlib.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/types.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/stat.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">fcntl.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">errno.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">unistd.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/wait.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">bits/signum-arch.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">signal.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">err.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">pthread.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">string.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #4f97d7; font-weight: bold;">struct</span> <span style="color: #ce537a; font-weight: bold;">args</span><span style="color: #4f97d7;">{</span>
+    <span style="color: #ce537a; font-weight: bold;">char</span>* <span style="color: #7590db;">string</span>;
+    <span style="color: #ce537a; font-weight: bold;">char</span> <span style="color: #7590db;">character</span>;
+    <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">sarebbe meglio usare unsigned</span>
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">from</span>;
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">to</span>;
+<span style="color: #4f97d7;">}</span>;
+
+<span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #bc6ec5; font-weight: bold;">conta</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #7590db;">arg</span><span style="color: #4f97d7;">){</span>
+    <span style="color: #4f97d7; font-weight: bold;">struct</span> <span style="color: #ce537a; font-weight: bold;">args</span>* <span style="color: #7590db;">arg_for_thread</span> = <span style="color: #bc6ec5;">(</span><span style="color: #4f97d7; font-weight: bold;">struct</span> <span style="color: #ce537a; font-weight: bold;">args</span> *<span style="color: #bc6ec5;">)</span> arg;
+    <span style="color: #ce537a; font-weight: bold;">int</span>* <span style="color: #7590db;">count</span> = malloc<span style="color: #bc6ec5;">(</span><span style="color: #4f97d7; font-weight: bold;">sizeof</span><span style="color: #2d9574;">(</span><span style="color: #ce537a; font-weight: bold;">int</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>;
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">!</span>count<span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"error in malloc\n"</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+    *count = <span style="color: #a45bad;">0</span>;
+    <span style="color: #4f97d7; font-weight: bold;">for</span><span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">i</span>=arg_for_thread-&gt;from; i&lt;arg_for_thread-&gt;to; i++<span style="color: #bc6ec5;">)</span>
+        *count = arg_for_thread-&gt;string<span style="color: #bc6ec5;">[</span>i<span style="color: #bc6ec5;">]</span> == arg_for_thread-&gt;character ? *count + <span style="color: #a45bad;">1</span> : *count;
+
+    pthread_exit<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>*<span style="color: #2d9574;">)</span> count<span style="color: #bc6ec5;">)</span>;
+<span style="color: #4f97d7;">}</span>
+
+<span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #bc6ec5; font-weight: bold;">main</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">argc</span>, <span style="color: #ce537a; font-weight: bold;">char</span>* <span style="color: #7590db;">argv</span><span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">){</span>
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span>argc != <span style="color: #a45bad;">5</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"Usage: %s &lt;string or path&gt; &lt;character&gt; &lt;from&gt; &lt;to&gt;\n"</span>, argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">0</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">mancano controlli sui parametri in input</span>
+
+    <span style="color: #4f97d7; font-weight: bold;">struct</span> <span style="color: #ce537a; font-weight: bold;">args</span> <span style="color: #7590db;">arg_for_thread</span>;
+    arg_for_thread.string = argv<span style="color: #bc6ec5;">[</span><span style="color: #a45bad;">1</span><span style="color: #bc6ec5;">]</span>;
+    arg_for_thread.character = argv<span style="color: #bc6ec5;">[</span><span style="color: #a45bad;">2</span><span style="color: #bc6ec5;">][</span><span style="color: #a45bad;">0</span><span style="color: #bc6ec5;">]</span>;
+    arg_for_thread.from = atoi<span style="color: #bc6ec5;">(</span>argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">3</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>;
+    arg_for_thread.to = atoi<span style="color: #bc6ec5;">(</span>argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">4</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">error</span>;
+    <span style="color: #ce537a; font-weight: bold;">pthread_t</span> <span style="color: #7590db;">tid</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_create<span style="color: #67b11d;">(</span>&amp;tid, <span style="color: #a45bad;">NULL</span>, conta, <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>*<span style="color: #4f97d7;">)</span>&amp;arg_for_thread<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #ce537a; font-weight: bold;">int</span>* <span style="color: #7590db;">ptr</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_join<span style="color: #67b11d;">(</span>tid, <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>**<span style="color: #4f97d7;">)</span>&amp;ptr<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+        printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+    printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"In \'%s\', da %d a %d, \'%c\' compare %d volte\n"</span>, argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">1</span><span style="color: #2d9574;">]</span>,
+           arg_for_thread.from, arg_for_thread.to, argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">2</span><span style="color: #2d9574;">][</span><span style="color: #a45bad;">0</span><span style="color: #2d9574;">]</span>, *ptr<span style="color: #bc6ec5;">)</span>;
+    <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">0</span>;
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org76d5ce2" class="outline-4">
+<h4 id="org76d5ce2">Considerazioni</h4>
+<div class="outline-text-4" id="text-org76d5ce2">
+<ol class="org-ol">
+<li>Per <i>&rsquo;ritornare&rsquo;</i> il risulatato al main avrei potuto inserire un altro campo alla struttura <code>struct args</code> (tramite puntatore ad intero), ma ho preferito separare gli argomenti dal valore di ritorno ed inoltre l&rsquo;approccio usato e&rsquo; un buon (credo) modo di usare la <code>pthread_exit</code>.</li>
+<li>Credo di aver mal interpretato la traccia pensando di dover contare le occorrenze nel pathname e non nell&rsquo;effettivo file del pathname.
+In ogni caso funziona su stringhe e su pathname (che non sono altro che stringhe).</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdbc49c2" class="outline-3">
+<h3 id="orgdbc49c2">Exercise 3</h3>
+<div class="outline-text-3" id="text-orgdbc49c2">
+</div>
+<div id="outline-container-orgb007940" class="outline-4">
+<h4 id="orgb007940">Traccia</h4>
+<div class="outline-text-4" id="text-orgb007940">
+<p>
+Scrivere un programma C <code>contaCaratteri2.c</code> che crea 2 thread il primo
+thread cerca il carattere nella prima parte del file, il secondo thread
+nella seconda parte.
+</p>
+</div>
+</div>
+<div id="outline-container-org6485211" class="outline-4">
+<h4 id="org6485211">Svolgimento</h4>
+<div class="outline-text-4" id="text-org6485211">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdio.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">stdlib.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">errno.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">fcntl.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/stat.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/types.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">sys/wait.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">unistd.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">bits/signum-arch.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">err.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">signal.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">pthread.h</span><span style="color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style="color: #4f97d7;">&lt;</span><span style="color: #2d9574;">string.h</span><span style="color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#define</span> <span style="color: #7590db;">BUFFSIZE</span> <span style="color: #a45bad;">16</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">dimensione a caso per il buffer</span>
+
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">more appropriate naming</span>
+<span style="color: #4f97d7; font-weight: bold;">struct</span> <span style="color: #ce537a; font-weight: bold;">args_for_thread</span> <span style="color: #4f97d7;">{</span>
+  <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">fd</span>;
+  <span style="color: #ce537a; font-weight: bold;">off_t</span> <span style="color: #7590db;">to</span>;
+  <span style="color: #ce537a; font-weight: bold;">off_t</span> <span style="color: #7590db;">from</span>;
+  <span style="color: #ce537a; font-weight: bold;">char</span> <span style="color: #7590db;">char_input</span>;
+<span style="color: #4f97d7;">}</span>;
+
+<span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #bc6ec5; font-weight: bold;">conta</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>* <span style="color: #7590db;">param</span><span style="color: #4f97d7;">){</span>
+    <span style="color: #4f97d7; font-weight: bold;">struct</span> <span style="color: #ce537a; font-weight: bold;">args_for_thread</span>* <span style="color: #7590db;">arg</span> = <span style="color: #bc6ec5;">(</span><span style="color: #4f97d7; font-weight: bold;">struct</span> <span style="color: #ce537a; font-weight: bold;">args_for_thread</span>*<span style="color: #bc6ec5;">)</span> param;
+    <span style="color: #ce537a; font-weight: bold;">off_t</span> <span style="color: #7590db;">num_byte_readed</span>;
+    <span style="color: #ce537a; font-weight: bold;">off_t</span> <span style="color: #7590db;">num_byte_already_readed</span> = <span style="color: #a45bad;">0</span>;
+    <span style="color: #ce537a; font-weight: bold;">off_t</span> <span style="color: #7590db;">num_byte_to_read</span> = arg-&gt;to - arg-&gt;from + <span style="color: #a45bad;">1</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span>lseek<span style="color: #2d9574;">(</span>arg-&gt;fd, arg-&gt;from, <span style="color: #a45bad;">SEEK_SET</span><span style="color: #2d9574;">)</span> == -<span style="color: #a45bad;">1</span><span style="color: #bc6ec5;">)</span>
+        err<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span>, <span style="color: #2d9574;">"seek error\n"</span><span style="color: #bc6ec5;">)</span>;
+
+    <span style="color: #ce537a; font-weight: bold;">unsigned</span> <span style="color: #ce537a; font-weight: bold;">int</span>* <span style="color: #7590db;">count</span> = malloc<span style="color: #bc6ec5;">(</span><span style="color: #4f97d7; font-weight: bold;">sizeof</span><span style="color: #2d9574;">(</span><span style="color: #ce537a; font-weight: bold;">unsigned</span> <span style="color: #ce537a; font-weight: bold;">int</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>;
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">!</span>count<span style="color: #bc6ec5;">)</span>
+        err<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span>, <span style="color: #2d9574;">"malloc error\n"</span><span style="color: #bc6ec5;">)</span>;
+    *count = <span style="color: #a45bad;">0</span>;
+
+    <span style="color: #ce537a; font-weight: bold;">char</span> <span style="color: #7590db;">buffer</span><span style="color: #bc6ec5;">[</span><span style="color: #a45bad;">BUFFSIZE</span><span style="color: #bc6ec5;">]</span>;
+
+    <span style="color: #4f97d7; font-weight: bold;">while</span><span style="color: #bc6ec5;">(</span>num_byte_already_readed &lt; num_byte_to_read<span style="color: #bc6ec5;">){</span>
+        <span style="color: #ce537a; font-weight: bold;">off_t</span> <span style="color: #7590db;">amount_to_read</span> = num_byte_already_readed + <span style="color: #a45bad;">BUFFSIZE</span> &gt; num_byte_to_read ? num_byte_to_read - num_byte_already_readed : <span style="color: #a45bad;">BUFFSIZE</span>;
+        <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #2d9574;">(</span><span style="color: #67b11d;">(</span>num_byte_readed = read<span style="color: #4f97d7;">(</span>arg-&gt;fd, buffer, amount_to_read<span style="color: #4f97d7;">)</span><span style="color: #67b11d;">)</span> == -<span style="color: #a45bad;">1</span><span style="color: #2d9574;">)</span>
+            err<span style="color: #2d9574;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span>, <span style="color: #2d9574;">"read conta error"</span><span style="color: #2d9574;">)</span>;
+        <span style="color: #4f97d7; font-weight: bold;">for</span><span style="color: #2d9574;">(</span><span style="color: #ce537a; font-weight: bold;">off_t</span> <span style="color: #7590db;">i</span>=<span style="color: #a45bad;">0</span>; i&lt;num_byte_readed; i++<span style="color: #2d9574;">)</span>
+            *count = buffer<span style="color: #2d9574;">[</span>i<span style="color: #2d9574;">]</span> == arg-&gt;char_input ? *count + <span style="color: #a45bad;">1</span> : *count;
+        num_byte_already_readed += num_byte_readed;
+    <span style="color: #bc6ec5;">}</span>
+    <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">non dealloco il puntatore count altrimenti il main non avrebbe niente da leggere</span>
+
+    pthread_exit<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>*<span style="color: #2d9574;">)</span> count<span style="color: #bc6ec5;">)</span>;
+<span style="color: #4f97d7;">}</span>
+
+<span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #bc6ec5; font-weight: bold;">main</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">argc</span>, <span style="color: #ce537a; font-weight: bold;">char</span> *<span style="color: #7590db;">argv</span><span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+
+  <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #bc6ec5;">(</span>argc != <span style="color: #a45bad;">3</span><span style="color: #bc6ec5;">)</span>
+    printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"Usage: %s &lt;file input&gt; &lt;character&gt;\n"</span>, argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">0</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+  <span style="color: #4f97d7; font-weight: bold;">struct</span> <span style="color: #ce537a; font-weight: bold;">stat</span> <span style="color: #7590db;">info</span>;
+  <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #bc6ec5;">(</span>lstat<span style="color: #2d9574;">(</span>argv<span style="color: #67b11d;">[</span><span style="color: #a45bad;">1</span><span style="color: #67b11d;">]</span>, &amp;info<span style="color: #2d9574;">)</span> == -<span style="color: #a45bad;">1</span><span style="color: #bc6ec5;">)</span>
+    err<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span>, <span style="color: #2d9574;">"lstat error\n"</span><span style="color: #bc6ec5;">)</span>;
+
+  <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">!</span><span style="color: #a45bad;">S_ISREG</span><span style="color: #2d9574;">(</span>info.st_mode<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+      printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s is not regular\n"</span>, argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">1</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+  <span style="color: #ce537a; font-weight: bold;">off_t</span> <span style="color: #7590db;">dim</span> = info.st_size - <span style="color: #a45bad;">1</span>;
+  <span style="color: #ce537a; font-weight: bold;">off_t</span> <span style="color: #7590db;">half_dim</span> = dim / <span style="color: #a45bad;">2</span>;
+
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">fd1</span> = open<span style="color: #bc6ec5;">(</span>argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">1</span><span style="color: #2d9574;">]</span>, <span style="color: #a45bad;">O_RDONLY</span>, <span style="color: #a45bad;">S_IRWXU</span> ^ <span style="color: #a45bad;">S_IXUSR</span><span style="color: #bc6ec5;">)</span>;
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span>fd1 == -<span style="color: #a45bad;">1</span><span style="color: #bc6ec5;">){</span>
+        printf<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"open error in thread %u\n"</span>, pthread_self<span style="color: #67b11d;">()</span><span style="color: #2d9574;">)</span>;
+        exit<span style="color: #2d9574;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #2d9574;">)</span>;
+    <span style="color: #bc6ec5;">}</span>
+
+    <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">fd2</span> = open<span style="color: #bc6ec5;">(</span>argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">1</span><span style="color: #2d9574;">]</span>, <span style="color: #a45bad;">O_RDONLY</span>, <span style="color: #a45bad;">S_IRWXU</span> ^ <span style="color: #a45bad;">S_IXUSR</span><span style="color: #bc6ec5;">)</span>;
+    <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span>fd2 == -<span style="color: #a45bad;">1</span><span style="color: #bc6ec5;">){</span>
+        printf<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"open error in thread %u\n"</span>, pthread_self<span style="color: #67b11d;">()</span><span style="color: #2d9574;">)</span>;
+        exit<span style="color: #2d9574;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #2d9574;">)</span>;
+    <span style="color: #bc6ec5;">}</span>
+
+  <span style="color: #4f97d7; font-weight: bold;">struct</span> <span style="color: #ce537a; font-weight: bold;">args_for_thread</span> <span style="color: #7590db;">arg1</span>, <span style="color: #7590db;">arg2</span>;
+
+  arg1.fd = fd1;
+  arg1.from = <span style="color: #a45bad;">0</span>;
+  arg1.to = half_dim;
+  arg1.char_input = argv<span style="color: #bc6ec5;">[</span><span style="color: #a45bad;">2</span><span style="color: #bc6ec5;">][</span><span style="color: #a45bad;">0</span><span style="color: #bc6ec5;">]</span>;
+
+  arg2.fd = fd2;
+  arg2.from = half_dim+<span style="color: #a45bad;">1</span>;
+  arg2.to = dim;
+  arg2.char_input = argv<span style="color: #bc6ec5;">[</span><span style="color: #a45bad;">2</span><span style="color: #bc6ec5;">][</span><span style="color: #a45bad;">0</span><span style="color: #bc6ec5;">]</span>;
+
+  <span style="color: #ce537a; font-weight: bold;">pthread_t</span> <span style="color: #7590db;">tid1</span>, <span style="color: #7590db;">tid2</span>;
+  <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">error</span>;
+
+  <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_create<span style="color: #67b11d;">(</span>&amp;tid1, <span style="color: #a45bad;">NULL</span>, conta, <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>*<span style="color: #4f97d7;">)</span>&amp;arg1<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+      printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+  <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_create<span style="color: #67b11d;">(</span>&amp;tid2, <span style="color: #a45bad;">NULL</span>, conta, <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>*<span style="color: #4f97d7;">)</span>&amp;arg2<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+      printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+  <span style="color: #ce537a; font-weight: bold;">unsigned</span> <span style="color: #ce537a; font-weight: bold;">int</span> *<span style="color: #7590db;">result1</span>, *<span style="color: #7590db;">result2</span>;
+
+  <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_join<span style="color: #67b11d;">(</span>tid1, <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>**<span style="color: #4f97d7;">)</span>&amp;result1<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+     printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+  <span style="color: #4f97d7; font-weight: bold;">if</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">(</span>error = pthread_join<span style="color: #67b11d;">(</span>tid2, <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span>**<span style="color: #4f97d7;">)</span>&amp;result2<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>
+     printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%s\n"</span>, strerror<span style="color: #2d9574;">(</span>error<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>, exit<span style="color: #bc6ec5;">(</span><span style="color: #a45bad;">EXIT_FAILURE</span><span style="color: #bc6ec5;">)</span>;
+
+  <span style="color: #ce537a; font-weight: bold;">unsigned</span> <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">total</span> = *result1 + *result2;
+  printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"In file \'%s\', \'%c\' appear %u time\n"</span>, argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">1</span><span style="color: #2d9574;">]</span>, argv<span style="color: #2d9574;">[</span><span style="color: #a45bad;">2</span><span style="color: #2d9574;">][</span><span style="color: #a45bad;">0</span><span style="color: #2d9574;">]</span>, total<span style="color: #bc6ec5;">)</span>;
+
+  close<span style="color: #bc6ec5;">(</span>fd1<span style="color: #bc6ec5;">)</span>;
+  close<span style="color: #bc6ec5;">(</span>fd2<span style="color: #bc6ec5;">)</span>;
+  free<span style="color: #bc6ec5;">(</span>result1<span style="color: #bc6ec5;">)</span>;
+  free<span style="color: #bc6ec5;">(</span>result2<span style="color: #bc6ec5;">)</span>;
+  <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">0</span>;
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org71193e0" class="outline-4">
+<h4 id="org71193e0">Considerazioni</h4>
+<div class="outline-text-4" id="text-org71193e0">
+<ol class="org-ol">
+<li>Ho aperto due <code>file descriptor</code> sullo stesso file perche&rsquo; ogni thread ha bisogno di un suo puntatore di offset.
+Se non avessi usato 2 fd avrei dovuto riposizionare ad ogni read l&rsquo;offset con <code>lseek</code> (cosa per niente comoda, anche se non molto difficile) in ogni caso vi sarebbero state troppe race condition.</li>
+<li>Cercando di fare delle letture bufferate occore sempre prestare attenzione a <i>casi particolari</i>, in questo caso il programma deve riuscire a capire quando <i>fermarsi</i>, infatti il thread che
+legge la prima meta&rsquo; del file potrebbe superare la meta&rsquo; e leggere piu&rsquo; volte uno stesso carattere.
+Per risolvere il problema controllo prima se posso riempire un intero buffer, se cio&rsquo; e&rsquo; possibile riempio l&rsquo;intero buffer, viceversa leggo solamente i byte rimanenti.</li>
+<li>Calcolare la dimensione del file e&rsquo; molto piu&rsquo; comprensibile se fatto con la <code>struct lstat</code> che con <code>lseek(fd,0,SEEK_END)</code>, inoltre in questo modo e&rsquo; possibile controllare prima di aprire il file.</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Antonio Petrillo</p>
+<p class="date">Created: 2021-11-09 Tue 00:45</p>
+</div>
+</body>
+</html>

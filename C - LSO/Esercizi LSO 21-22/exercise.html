@@ -1,0 +1,1512 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8" />
+  <meta name="viewport" content=
+  "width=device-width, initial-scale=1" />
+  <title>Exercise local socket</title>
+  <meta name="author" content="Antonio Petrillo" />
+  <meta name="generator" content="Org Mode" />
+  <style>
+  <![CDATA[
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  ]]>
+  </style>
+  <link rel="stylesheet" type="text/css" href=
+  "https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css" />
+  <link rel="stylesheet" type="text/css" href=
+  "https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css" />
+
+  <script src=
+  "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src=
+  "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src=
+  "https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+  <script type="text/javascript" src=
+  "https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+</head>
+<body>
+  <div id="content" class="content">
+    <h1 class="title">Exercise local socket</h1>
+    <div id="table-of-contents" role="doc-toc">
+      <h2>Table of Contents</h2>
+      <div id="text-table-of-contents" role="doc-toc">
+        <ul>
+          <li><a href="#org462bc93">Traccia</a></li>
+          <li>
+            <a href="#org381ca3f">Esercizio</a>
+            <ul>
+              <li><a href="#orgdbe54dd">Server</a></li>
+              <li><a href="#org1ee6033">Client</a></li>
+              <li><a href="#org56d611b">Script per lanciare molti
+              client</a></li>
+            </ul>
+          </li>
+          <li><a href="#orge7cab55">Considerazioni</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="outline-container-org462bc93" class="outline-2">
+      <h2 id="org462bc93">Traccia</h2>
+      <div class="outline-text-2" id="text-org462bc93">
+        <ul class="org-ul">
+          <li>Ad ogni nuova connessione, il server scrive sul
+          socket l’ora corrente, poi chiude la connessione e si
+          rimette in attesa di nuove connessioni.</li>
+          <li>Implementare anche un client che riceve l’ora dal
+          server e la stampa sul terminale</li>
+          <li>Provare a lanciare diversi client in rapida
+          successione.</li>
+        </ul>
+        <p>Extra da parte mia:</p>
+        <ul class="org-ul">
+          <li>Il server deve essere multithread</li>
+          <li>Non deve perdere connessioni dai client (se non per
+          malloc error ecc…)</li>
+        </ul>
+      </div>
+    </div>
+    <div id="outline-container-org381ca3f" class="outline-2">
+      <h2 id="org381ca3f">Esercizio</h2>
+      <div class="outline-text-2" id="text-org381ca3f"></div>
+      <div id="outline-container-orgdbe54dd" class="outline-3">
+        <h3 id="orgdbe54dd">Server</h3>
+        <div class="outline-text-3" id="text-orgdbe54dd"></div>
+        <div id="outline-container-org09e8a1b" class="outline-4">
+          <h4 id="org09e8a1b">Inclusione librerie e definizione
+          costanti</h4>
+          <div class="outline-text-4" id="text-org09e8a1b">
+            <p>Per scrivere i miei programmi uso dei template in
+            cui ho incluso tutte le librerie viste nel corso ed
+            altre extra utili, quindi ve ne sono alcune superflue
+            che non vengono realmente utilizzate.</p>
+            <div class="org-src-container">
+              <pre class="src src-c"><span style=
+              "color: #bc6ec5;">#include</span> <span style=
+              "color: #4f97d7;">&lt;</span><span style=
+              "color: #2d9574;">stdio.h</span><span style=
+              "color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">stdlib.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">errno.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">fcntl.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">string.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/stat.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/types.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/wait.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">unistd.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">bits/signum-arch.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">err.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">signal.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">pthread.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">netinet/in.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/socket.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/un.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">time.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#define</span> <span style=
+"color: #7590db;">MY_SOCKET</span> <span style=
+"color: #2d9574;">"/tmp/exercise_socket"</span>
+<span style="color: #bc6ec5;">#define</span> <span style=
+"color: #7590db;">BACKLOG</span> <span style=
+"color: #a45bad;">4096</span>
+<span style="color: #bc6ec5;">#define</span> <span style=
+"color: #7590db;">THREAD_POOL_SIZE</span> <span style=
+"color: #a45bad;">10</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-orgfb8c9f9" class="outline-4">
+          <h4 id="orgfb8c9f9">Dichirazione della queue e relative
+          funzioni</h4>
+          <div class="outline-text-4" id="text-orgfb8c9f9">
+            <p>Per non perdere connessioni, nel caso tutti i thread
+            siano occupati, inserisco nella coda il file descriptor
+            ritornato da <code>accept</code>. Poi saranno sempre i
+            thread a prelevarli e svolgere i loro lavori;
+            Idealmente la struttura dati queue andrebbe inserita in
+            un file separato, la lascio qui cosi’ da non dover
+            condividere troppi file su teams.</p>
+            <div class="org-src-container">
+              <pre class="src src-c"><span style=
+              "color: #2aa1ae; background-color: #292e34;">// </span><span style=
+              "color: #2aa1ae; background-color: #292e34;">DICHIARAZIONE QUEUE ///////////////////////////////////</span>
+
+<span style=
+"color: #4f97d7; font-weight: bold;">typedef</span> <span style=
+"color: #4f97d7; font-weight: bold;">struct</span> <span style=
+"color: #ce537a; font-weight: bold;">node</span> <span style=
+"color: #4f97d7;">{</span>
+  <span style=
+"color: #4f97d7; font-weight: bold;">struct</span> <span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #7590db;">next</span>;
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #7590db;">value</span>;
+<span style="color: #4f97d7;">}</span> <span style=
+"color: #ce537a; font-weight: bold;">node</span>;
+
+<span style=
+"color: #4f97d7; font-weight: bold;">typedef</span> <span style=
+"color: #4f97d7; font-weight: bold;">struct</span> <span style=
+"color: #ce537a; font-weight: bold;">queue</span> <span style=
+"color: #4f97d7;">{</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #7590db;">head</span>;
+  <span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #7590db;">tail</span>;
+  <span style=
+"color: #ce537a; font-weight: bold;">pthread_mutex_t</span> <span style="color: #7590db;">queue_mutex</span>;
+<span style="color: #4f97d7;">}</span> <span style=
+"color: #ce537a; font-weight: bold;">queue</span>;
+
+<span style=
+"color: #ce537a; font-weight: bold;">queue</span> *<span style=
+"color: #bc6ec5; font-weight: bold;">init_queue</span><span style=
+"color: #4f97d7;">()</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> <span style=
+"color: #bc6ec5; font-weight: bold;">destroy_queue</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">queue</span> *<span style="color: #7590db;">q</span><span style="color: #4f97d7;">)</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #bc6ec5; font-weight: bold;">makenode</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #7590db;">value</span><span style=
+"color: #4f97d7;">)</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> <span style=
+"color: #bc6ec5; font-weight: bold;">enqueue</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">queue</span> *<span style=
+"color: #7590db;">q</span>, <span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #7590db;">value</span><span style=
+"color: #4f97d7;">)</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #bc6ec5; font-weight: bold;">dequeue</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">queue</span> *<span style=
+"color: #7590db;">q</span><span style="color: #4f97d7;">)</span>;
+<span style=
+"color: #2aa1ae; background-color: #292e34;">///////////////////////////////////////////////////////////</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-orgd0da9fc" class="outline-4">
+          <h4 id="orgd0da9fc">Dichiarazione variabili globali e
+          funzioni</h4>
+          <div class="outline-text-4" id="text-orgd0da9fc">
+            <p>Il socket descriptor l’ho definito globale per
+            permettere alla funzione di shutdown di chiuderlo.</p>
+            <div class="org-src-container">
+              <pre class="src src-c"><span style=
+              "color: #ce537a; font-weight: bold;">pthread_t</span> <span style=
+              "color: #7590db;">thread_pool</span><span style=
+              "color: #4f97d7;">[</span><span style=
+              "color: #a45bad;">THREAD_POOL_SIZE</span><span style=
+              "color: #4f97d7;">]</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">pthread_cond_t</span> <span style="color: #7590db;">cond</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">queue</span> *<span style=
+"color: #7590db;">client_queue</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">continue_to_accept_new_connection</span> = <span style="color: #a45bad;">1</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">sd</span>;
+
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> *<span style=
+"color: #bc6ec5; font-weight: bold;">handle_connection</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span> *<span style="color: #7590db;">arg</span><span style="color: #4f97d7;">)</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> *<span style=
+"color: #bc6ec5; font-weight: bold;">check_for_shutdown</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span> *<span style="color: #7590db;">arg</span><span style="color: #4f97d7;">)</span>;
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> <span style=
+"color: #bc6ec5; font-weight: bold;">handle_termination</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">sig</span><span style="color: #4f97d7;">)</span>;
+</pre>
+            </div>
+          </div>
+        </div>
+        <div id="outline-container-orgc229be5" class="outline-4">
+          <h4 id="orgc229be5">Main</h4>
+          <div class="outline-text-4" id="text-orgc229be5"></div>
+          <ul class="org-ul">
+            <li>
+              <a id="orgc638ed4"></a>Inizializzione<br />
+              <div class="outline-text-5" id="text-orgc638ed4">
+                <p>In questa sezione vengono inizializzate le
+                variabili globali, la thread pool ed anche un altro
+                thread che controlla gli input dell’utente per
+                capire se arrestare il server.</p>
+                <div class="org-src-container">
+                  <pre class="src src-c"><span style=
+                  "color: #ce537a; font-weight: bold;">int</span> <span style=
+                  "color: #bc6ec5; font-weight: bold;">main</span><span style=
+                  "color: #4f97d7;">(</span><span style=
+                  "color: #ce537a; font-weight: bold;">int</span> <span style=
+                  "color: #7590db;">argc</span>, <span style=
+                  "color: #ce537a; font-weight: bold;">char</span> *<span style=
+                  "color: #7590db;">argv</span><span style=
+                  "color: #bc6ec5;">[]</span><span style=
+                  "color: #4f97d7;">)</span> <span style=
+                  "color: #4f97d7;">{</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">err_init</span>;
+
+  <span style=
+"color: #ce537a; font-weight: bold;">pthread_attr_t</span> <span style="color: #7590db;">attr</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">(</span>err_init = pthread_attr_init<span style=
+"color: #67b11d;">(</span>&amp;attr<span style=
+"color: #67b11d;">)</span><span style=
+"color: #2d9574;">)</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"error thread attr init: %s\n"</span>, strerror<span style="color: #67b11d;">(</span>err_init<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">(</span>err_init =
+           pthread_attr_setdetachstate<span style=
+"color: #67b11d;">(</span>&amp;attr, <span style=
+"color: #a45bad;">PTHREAD_CREATE_DETACHED</span><span style=
+"color: #67b11d;">)</span><span style=
+"color: #2d9574;">)</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"error thread attr set cancel state async: %s\n"</span>,
+           strerror<span style=
+"color: #67b11d;">(</span>err_init<span style=
+"color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>signal<span style=
+"color: #2d9574;">(</span>SIGUSR1, handle_termination<span style=
+"color: #2d9574;">)</span> == <span style=
+"color: #a45bad;">SIG_ERR</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"error installing handler for server termination: %s\n"</span>,
+           strerror<span style=
+"color: #67b11d;">(</span>errno<span style=
+"color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+
+  <span style=
+"color: #ce537a; font-weight: bold;">pthread_t</span> <span style=
+"color: #7590db;">thread_for_shutdown</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">(</span>err_init = pthread_create<span style=
+"color: #67b11d;">(</span>&amp;thread_for_shutdown, &amp;attr,
+                                 check_for_shutdown, <span style=
+"color: #a45bad;">NULL</span><span style=
+"color: #67b11d;">)</span><span style=
+"color: #2d9574;">)</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"error thread_for_shutdown init: %s\n"</span>, strerror<span style="color: #67b11d;">(</span>err_init<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+
+  client_queue = init_queue<span style="color: #bc6ec5;">()</span>;
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">(</span>err_init = pthread_cond_init<span style=
+"color: #67b11d;">(</span>&amp;cond, <span style=
+"color: #a45bad;">NULL</span><span style=
+"color: #67b11d;">)</span><span style=
+"color: #2d9574;">)</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"error condition variable init: %s\n"</span>, strerror<span style="color: #67b11d;">(</span>err_init<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">for</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">i</span> = <span style=
+"color: #a45bad;">0</span>; i &lt; <span style=
+"color: #a45bad;">THREAD_POOL_SIZE</span>; i++<span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #2d9574;">(</span><span style=
+"color: #67b11d;">(</span>err_init =
+             pthread_create<span style=
+"color: #4f97d7;">(</span>&amp;thread_pool<span style=
+"color: #bc6ec5;">[</span>i<span style=
+"color: #bc6ec5;">]</span>, &amp;attr, handle_connection, <span style="color: #a45bad;">NULL</span><span style="color: #4f97d7;">)</span><span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span> <span style="color: #2d9574;">{</span>
+      printf<span style="color: #67b11d;">(</span><span style=
+"color: #2d9574;">"error thread init: %s\n"</span>, strerror<span style="color: #4f97d7;">(</span>err_init<span style="color: #4f97d7;">)</span><span style="color: #67b11d;">)</span>;
+      exit<span style="color: #67b11d;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #67b11d;">)</span>;
+    <span style="color: #2d9574;">}</span>
+  <span style="color: #bc6ec5;">}</span>
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">struct</span> <span style=
+"color: #ce537a; font-weight: bold;">sockaddr_un</span> <span style="color: #7590db;">addr</span>;
+  addr.sun_family = <span style="color: #a45bad;">AF_LOCAL</span>;
+  strncpy<span style=
+"color: #bc6ec5;">(</span>addr.sun_path, <span style=
+"color: #a45bad;">MY_SOCKET</span>, <span style=
+"color: #4f97d7; font-weight: bold;">sizeof</span><span style=
+"color: #2d9574;">(</span><span style=
+"color: #a45bad;">MY_SOCKET</span><span style=
+"color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>;
+
+  sd = socket<span style="color: #bc6ec5;">(</span><span style=
+"color: #a45bad;">PF_LOCAL</span>, <span style=
+"color: #a45bad;">SOCK_STREAM</span>, <span style=
+"color: #a45bad;">0</span><span style="color: #bc6ec5;">)</span>;
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>sd == -<span style=
+"color: #a45bad;">1</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"Error creating socket: %s\n"</span>, strerror<span style="color: #67b11d;">(</span>errno<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+
+  unlink<span style="color: #bc6ec5;">(</span><span style=
+"color: #a45bad;">MY_SOCKET</span><span style=
+"color: #bc6ec5;">)</span>;
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>bind<span style=
+"color: #2d9574;">(</span>sd, <span style=
+"color: #67b11d;">(</span><span style=
+"color: #4f97d7; font-weight: bold;">struct</span> <span style=
+"color: #ce537a; font-weight: bold;">sockaddr</span> *<span style=
+"color: #67b11d;">)</span>&amp;addr, <span style=
+"color: #4f97d7; font-weight: bold;">sizeof</span><span style=
+"color: #67b11d;">(</span>addr<span style=
+"color: #67b11d;">)</span><span style=
+"color: #2d9574;">)</span> == -<span style=
+"color: #a45bad;">1</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"Error binding on address: %s\n"</span>, strerror<span style="color: #67b11d;">(</span>errno<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>listen<span style=
+"color: #2d9574;">(</span>sd, <span style=
+"color: #a45bad;">BACKLOG</span><span style=
+"color: #2d9574;">)</span> == -<span style=
+"color: #a45bad;">1</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"Error listenin on address: %s\n"</span>, strerror<span style="color: #67b11d;">(</span>errno<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+</pre>
+                </div>
+              </div>
+            </li>
+            <li>
+              <a id="orgc49f295"></a>Accettare nuove
+              connessioni<br />
+              <div class="outline-text-5" id="text-orgc49f295">
+                <p>Per le nuove connessioni alloco una porzione di
+                memoria in cui conservare il file descriptor
+                ritornato da accept, sara’ poi il thread a
+                deallocarlo. Nel caso non allocassi la memoria,
+                quindi passando <code>&amp;tmp_sd</code>, ad una
+                nuova connessione il valore di tmp<sub>sd</sub>
+                cambierebbe ed il cambiamento si rifletterebbe nei
+                thread. Ho usato un <code>pthread_cond_t</code> per
+                notificare ai thread che c’e’ un valore da
+                consumare.</p>
+                <div class="org-src-container">
+                  <pre class="src src-c">  <span style=
+                  "color: #ce537a; font-weight: bold;">int</span> <span style=
+                  "color: #7590db;">tmp_sd</span>;
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #7590db;">arg</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">while</span> <span style=
+"color: #4f97d7;">(</span>continue_to_accept_new_connection<span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+    tmp_sd = accept<span style=
+"color: #bc6ec5;">(</span>sd, <span style=
+"color: #a45bad;">NULL</span>, <span style=
+"color: #a45bad;">NULL</span><span style=
+"color: #bc6ec5;">)</span>;
+    <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>tmp_sd == -<span style=
+"color: #a45bad;">1</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+      printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"failed to accept a new connection\n"</span><span style="color: #2d9574;">)</span>;
+    <span style="color: #bc6ec5;">}</span> <span style=
+"color: #4f97d7; font-weight: bold;">else</span> <span style=
+"color: #bc6ec5;">{</span>
+      arg = <span style="color: #2d9574;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #2d9574;">)</span>malloc<span style=
+"color: #2d9574;">(</span><span style=
+"color: #4f97d7; font-weight: bold;">sizeof</span><span style=
+"color: #67b11d;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span><span style=
+"color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+      <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #2d9574;">(</span><span style=
+"color: #a45bad;">!</span>arg<span style=
+"color: #2d9574;">)</span> <span style="color: #2d9574;">{</span>
+        printf<span style="color: #67b11d;">(</span><span style=
+"color: #2d9574;">"failed to process a new connection\n"</span><span style="color: #67b11d;">)</span>;
+        <span style=
+"color: #2aa1ae; background-color: #292e34;">// </span><span style=
+"color: #2aa1ae; background-color: #292e34;">non credo sia necessario terminare il server</span>
+        <span style=
+"color: #4f97d7; font-weight: bold;">continue</span>;
+      <span style="color: #2d9574;">}</span>
+      printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"new connection\n"</span><span style=
+"color: #2d9574;">)</span>;
+      *arg = tmp_sd;
+      pthread_mutex_lock<span style=
+"color: #2d9574;">(</span>&amp;client_queue-&gt;queue_mutex<span style="color: #2d9574;">)</span>;
+      enqueue<span style=
+"color: #2d9574;">(</span>client_queue, arg<span style=
+"color: #2d9574;">)</span>;
+      pthread_cond_signal<span style=
+"color: #2d9574;">(</span>&amp;cond<span style=
+"color: #2d9574;">)</span>;
+      pthread_mutex_unlock<span style=
+"color: #2d9574;">(</span>&amp;client_queue-&gt;queue_mutex<span style="color: #2d9574;">)</span>;
+    <span style="color: #bc6ec5;">}</span>
+  <span style="color: #4f97d7;">}</span>
+</pre>
+                </div>
+              </div>
+            </li>
+            <li>
+              <a id="orgc70f230"></a>Deallocazione variabili e
+              chiusura socket descriptor<br />
+              <div class="outline-text-5" id="text-orgc70f230">
+                <p>I thread li ho impostati in uno stato detached
+                cosi’ non vanno “joinati” cio’ rende lo shutdown
+                del server piu’ facile (ma non credo corretto).</p>
+                <div class="org-src-container">
+                  <pre class="src src-c">  <span style=
+                  "color: #bc6ec5; font-weight: bold;">destroy_queue</span><span style="color: #4f97d7;">(</span>client_queue<span style="color: #4f97d7;">)</span>;
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">err_destroy</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #4f97d7;">(</span><span style=
+"color: #bc6ec5;">(</span>err_destroy = pthread_attr_destroy<span style="color: #2d9574;">(</span>&amp;attr<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+   printf<span style="color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">"error thread attr destroy: %s\n"</span>, strerror<span style="color: #2d9574;">(</span>err_destroy<span style="color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>;
+   exit<span style="color: #bc6ec5;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #bc6ec5;">)</span>;
+  <span style="color: #4f97d7;">}</span>
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">return</span> <span style=
+"color: #a45bad;">0</span>;
+<span style="color: #e0211d; text-decoration: overline;">}</span>
+</pre>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div id="outline-container-org7a059bd" class="outline-4">
+          <h4 id="org7a059bd">Funzioni per i thread</h4>
+          <div class="outline-text-4" id="text-org7a059bd"></div>
+          <ul class="org-ul">
+            <li>
+              <a id="org1a1083f"></a>Gestione nuove
+              connessioni<br />
+              <div class="outline-text-5" id="text-org1a1083f">
+                <p>Il thread deve essere cancellato solo dopo aver
+                gestito la connessione corrente ed aver liberato la
+                memoria.</p>
+                <div class="org-src-container">
+                  <pre class="src src-c"><span style=
+                  "color: #ce537a; font-weight: bold;">void</span> *<span style=
+                  "color: #bc6ec5; font-weight: bold;">handle_connection</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span> *<span style="color: #7590db;">arg</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">char</span> <span style=
+"color: #7590db;">buffer</span><span style=
+"color: #bc6ec5;">[</span><span style=
+"color: #a45bad;">26</span><span style="color: #bc6ec5;">]</span>;
+  <span style=
+"color: #ce537a; font-weight: bold;">time_t</span> <span style=
+"color: #7590db;">actual_time</span>;
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">fd</span>;
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #7590db;">client_to_serve</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">while</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #a45bad;">1</span><span style=
+"color: #bc6ec5;">)</span> <span style=
+"color: #bc6ec5;">{</span> <span style=
+"color: #2aa1ae; background-color: #292e34;">// </span><span style=
+"color: #2aa1ae; background-color: #292e34;">don't let the thread die</span>
+    pthread_setcancelstate<span style=
+"color: #2d9574;">(</span><span style=
+"color: #a45bad;">PTHREAD_CANCEL_DISABLE</span>, <span style=
+"color: #a45bad;">NULL</span><span style=
+"color: #2d9574;">)</span>;
+    pthread_mutex_lock<span style=
+"color: #2d9574;">(</span>&amp;client_queue-&gt;queue_mutex<span style="color: #2d9574;">)</span>;
+    <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #2d9574;">(</span><span style=
+"color: #67b11d;">(</span>client_to_serve = dequeue<span style=
+"color: #4f97d7;">(</span>client_queue<span style=
+"color: #4f97d7;">)</span><span style=
+"color: #67b11d;">)</span> == <span style=
+"color: #a45bad;">NULL</span><span style=
+"color: #2d9574;">)</span> <span style="color: #2d9574;">{</span>
+      pthread_cond_wait<span style=
+"color: #67b11d;">(</span>&amp;cond, &amp;client_queue-&gt;queue_mutex<span style="color: #67b11d;">)</span>;
+      client_to_serve = dequeue<span style=
+"color: #67b11d;">(</span>client_queue<span style=
+"color: #67b11d;">)</span>;
+    <span style="color: #2d9574;">}</span>
+    pthread_mutex_unlock<span style=
+"color: #2d9574;">(</span>&amp;client_queue-&gt;queue_mutex<span style="color: #2d9574;">)</span>;
+
+    <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #2d9574;">(</span>client_to_serve<span style=
+"color: #2d9574;">)</span> <span style="color: #2d9574;">{</span>
+      fd = *<span style="color: #67b11d;">(</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #4f97d7;">)</span>client_to_serve<span style=
+"color: #67b11d;">)</span>;
+      free<span style=
+"color: #67b11d;">(</span>client_to_serve<span style=
+"color: #67b11d;">)</span>; <span style=
+"color: #2aa1ae; background-color: #292e34;">// </span><span style=
+"color: #2aa1ae; background-color: #292e34;">dealloco la memoria del fd del client</span>
+      time<span style=
+"color: #67b11d;">(</span>&amp;actual_time<span style=
+"color: #67b11d;">)</span>;
+      ctime_r<span style=
+"color: #67b11d;">(</span>&amp;actual_time, buffer<span style=
+"color: #67b11d;">)</span>;
+      <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #67b11d;">(</span>write<span style=
+"color: #4f97d7;">(</span>fd, buffer, strlen<span style=
+"color: #bc6ec5;">(</span>buffer<span style=
+"color: #bc6ec5;">)</span><span style=
+"color: #4f97d7;">)</span> &lt; <span style=
+"color: #a45bad;">0</span><span style=
+"color: #67b11d;">)</span> <span style="color: #67b11d;">{</span>
+        printf<span style="color: #4f97d7;">(</span><span style=
+"color: #2d9574;">"handle connection: write error\t(operation aborted)\n"</span><span style="color: #4f97d7;">)</span>;
+      <span style="color: #67b11d;">}</span>
+      close<span style="color: #67b11d;">(</span>fd<span style=
+"color: #67b11d;">)</span>; <span style=
+"color: #2aa1ae; background-color: #292e34;">// </span><span style=
+"color: #2aa1ae; background-color: #292e34;">close client descriptor</span>
+    <span style="color: #2d9574;">}</span>
+    pthread_setcancelstate<span style=
+"color: #2d9574;">(</span><span style=
+"color: #a45bad;">PTHREAD_CANCEL_ENABLE</span>, <span style=
+"color: #a45bad;">NULL</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+  <span style=
+"color: #4f97d7; font-weight: bold;">return</span> <span style=
+"color: #a45bad;">NULL</span>;
+<span style="color: #4f97d7;">}</span>
+</pre>
+                </div>
+              </div>
+            </li>
+            <li>
+              <a id="org4f4f9c9"></a>Funzioni per lo shutdown<br />
+              <div class="outline-text-5" id="text-org4f4f9c9">
+                <p>La prima funzione e’ la <code>start
+                function</code> per un thread il cui unico lavoro
+                e’ ascoltare sullo stdin, nel caso venga inserito
+                <code>q</code> viene lanciato un segnale al
+                processo (e non ai thread). La seconda funzione
+                gestisce il segnale generato dalla prima. Lancia un
+                segnale di terminazione a tutti i thread dell
+                thread pool, successivamente imposta a 0 una
+                variabile globale, questo ha l’effetto di terminare
+                il ciclo while infinito che accetta le nuove
+                connessioni. Non ho aggiunto mutex su
+                <code>continue_to_accept_new_connection</code>
+                perche’ nel main e’ in sola lettura, quello che
+                puo’ succedere e’ che, sempre nel main, venga letta
+                la variabile nel momento in cui l’handler la
+                modifica, il main accettera’ una nuova connessione
+                e nella prossima (o in una delle prossime, chi puo’
+                dirlo) legga il nuovo valore e termini il ciclo. Le
+                connesioni accettate dopo che i thread sono
+                terminati sono le uniche ad essere perse (spero di
+                aver controllato bene).</p>
+                <p>Con la sola funzione <code>close</code> il main
+                rimaneva bloccato sull’accept, a quanto pare close
+                non chiude immediatamente gli estremi di
+                comunicazione della socket mentre
+                <code>shutdown</code> si.</p>
+                <div class="org-src-container">
+                  <pre class="src src-c"><span style=
+                  "color: #ce537a; font-weight: bold;">void</span> *<span style=
+                  "color: #bc6ec5; font-weight: bold;">check_for_shutdown</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">void</span> *<span style="color: #7590db;">arg</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">char</span> <span style=
+"color: #7590db;">input</span>;
+  printf<span style="color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">"Insert 'q' to shutdown the server.\n"</span><span style="color: #bc6ec5;">)</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">while</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">(</span>input = getchar<span style=
+"color: #67b11d;">()</span><span style=
+"color: #2d9574;">)</span> != <span style=
+"color: #2d9574;">'q'</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+  <span style="color: #bc6ec5;">}</span>
+  raise<span style="color: #bc6ec5;">(</span>SIGUSR1<span style=
+"color: #bc6ec5;">)</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">return</span> <span style=
+"color: #a45bad;">NULL</span>;
+<span style="color: #4f97d7;">}</span>
+
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> <span style=
+"color: #bc6ec5; font-weight: bold;">handle_termination</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">sig</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>sig == SIGUSR1<span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"shutdown server, all remaining connection will be ignored\n"</span><span style="color: #2d9574;">)</span>;
+    <span style=
+"color: #4f97d7; font-weight: bold;">for</span> <span style=
+"color: #2d9574;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">i</span> = <span style=
+"color: #a45bad;">0</span>; i &lt; <span style=
+"color: #a45bad;">THREAD_POOL_SIZE</span>; i++<span style=
+"color: #2d9574;">)</span> <span style="color: #2d9574;">{</span>
+        pthread_cancel<span style=
+"color: #67b11d;">(</span>thread_pool<span style=
+"color: #4f97d7;">[</span>i<span style=
+"color: #4f97d7;">]</span><span style="color: #67b11d;">)</span>;
+    <span style="color: #2d9574;">}</span>
+    continue_to_accept_new_connection = <span style=
+"color: #a45bad;">0</span>;
+    shutdown<span style="color: #2d9574;">(</span>sd, <span style=
+"color: #a45bad;">SHUT_RDWR</span><span style=
+"color: #2d9574;">)</span>;
+    close<span style="color: #2d9574;">(</span>sd<span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+<span style="color: #4f97d7;">}</span>
+</pre>
+                </div>
+                <p>Questo metodo per la terminazione e’ un po’
+                spartano (e non credo che termini correttamente il
+                programma).</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div id="outline-container-orga31c9ec" class="outline-4">
+          <h4 id="orga31c9ec">Implementazione queue</h4>
+          <div class="outline-text-4" id="text-orga31c9ec">
+            <div class="org-src-container">
+              <pre class="src src-c"><span style=
+              "color: #2aa1ae; background-color: #292e34;">//////////// </span><span style="color: #2aa1ae; background-color: #292e34;">IMPLEMENTAZIONE QUEUE/////////////////////////////</span>
+
+<span style=
+"color: #ce537a; font-weight: bold;">queue</span> *<span style=
+"color: #bc6ec5; font-weight: bold;">init_queue</span><span style=
+"color: #4f97d7;">()</span> <span style="color: #4f97d7;">{</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">queue</span> *<span style=
+"color: #7590db;">q</span> = <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #ce537a; font-weight: bold;">queue</span> *<span style=
+"color: #bc6ec5;">)</span>malloc<span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #4f97d7; font-weight: bold;">sizeof</span><span style=
+"color: #2d9574;">(</span>queue<span style=
+"color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #a45bad;">!</span>q<span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"queue allocation error\n"</span><span style=
+"color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+  q-&gt;head = <span style="color: #a45bad;">NULL</span>;
+  q-&gt;tail = <span style="color: #a45bad;">NULL</span>;
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">err_init</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">(</span>err_init = pthread_mutex_init<span style=
+"color: #67b11d;">(</span>&amp;q-&gt;queue_mutex, <span style=
+"color: #a45bad;">NULL</span><span style=
+"color: #67b11d;">)</span><span style=
+"color: #2d9574;">)</span> &lt; <span style=
+"color: #a45bad;">0</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"mutex init error: %s\n"</span>, strerror<span style="color: #67b11d;">(</span>err_init<span style="color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+  <span style="color: #4f97d7; font-weight: bold;">return</span> q;
+<span style="color: #4f97d7;">}</span>
+
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> <span style=
+"color: #bc6ec5; font-weight: bold;">destroy_queue</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">queue</span> *<span style="color: #7590db;">q</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style=
+"color: #2aa1ae; background-color: #292e34;">// </span><span style=
+"color: #2aa1ae; background-color: #292e34;">assumo che q non sia NULL, che quindi e' inizializzta</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #7590db;">tmp</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">while</span> <span style=
+"color: #bc6ec5;">(</span>q-&gt;head<span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    tmp = q-&gt;head;
+    q-&gt;head = q-&gt;head-&gt;next;
+    free<span style="color: #2d9574;">(</span>tmp<span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+  free<span style="color: #bc6ec5;">(</span>q<span style=
+"color: #bc6ec5;">)</span>;
+  q = <span style="color: #a45bad;">NULL</span>;
+<span style="color: #4f97d7;">}</span>
+
+<span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #bc6ec5; font-weight: bold;">makenode</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #7590db;">value</span><span style=
+"color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #7590db;">newnode</span> = <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #bc6ec5;">)</span>malloc<span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #4f97d7; font-weight: bold;">sizeof</span><span style=
+"color: #2d9574;">(</span>node<span style=
+"color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #a45bad;">!</span>newnode<span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"queue node allocation error\n"</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+  newnode-&gt;next = <span style="color: #a45bad;">NULL</span>;
+  newnode-&gt;value = value;
+  <span style=
+"color: #4f97d7; font-weight: bold;">return</span> newnode;
+<span style="color: #4f97d7;">}</span>
+
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> <span style=
+"color: #bc6ec5; font-weight: bold;">enqueue</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">queue</span> *<span style=
+"color: #7590db;">q</span>, <span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #7590db;">value</span><span style=
+"color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style=
+"color: #2aa1ae; background-color: #292e34;">// </span><span style=
+"color: #2aa1ae; background-color: #292e34;">assumo che q non sia NULL, che quindi e' inizializzta</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #7590db;">newnode</span> = makenode<span style=
+"color: #bc6ec5;">(</span>value<span style=
+"color: #bc6ec5;">)</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>q-&gt;tail<span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    q-&gt;tail-&gt;next = newnode;
+    q-&gt;tail = newnode;
+  <span style="color: #bc6ec5;">}</span> <span style=
+"color: #4f97d7; font-weight: bold;">else</span> <span style=
+"color: #bc6ec5;">{</span>
+    q-&gt;head = q-&gt;tail = newnode;
+  <span style="color: #bc6ec5;">}</span>
+<span style="color: #4f97d7;">}</span>
+
+<span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #bc6ec5; font-weight: bold;">dequeue</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">queue</span> *<span style=
+"color: #7590db;">q</span><span style=
+"color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style=
+"color: #2aa1ae; background-color: #292e34;">// </span><span style=
+"color: #2aa1ae; background-color: #292e34;">assumo che q non sia NULL, che quindi e' inizializzta</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> *<span style=
+"color: #7590db;">ret</span> = <span style=
+"color: #a45bad;">NULL</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>q-&gt;head<span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    ret = q-&gt;head-&gt;value;
+    <span style=
+"color: #ce537a; font-weight: bold;">node</span> *<span style=
+"color: #7590db;">tmp</span> = q-&gt;head;
+    q-&gt;head = q-&gt;head-&gt;next;
+    <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #2d9574;">(</span><span style=
+"color: #a45bad;">!</span>q-&gt;head<span style=
+"color: #2d9574;">)</span>
+      q-&gt;tail = <span style="color: #a45bad;">NULL</span>;
+    free<span style="color: #2d9574;">(</span>tmp<span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+  <span style=
+"color: #4f97d7; font-weight: bold;">return</span> ret;
+<span style="color: #4f97d7;">}</span>
+
+<span style=
+"color: #2aa1ae; background-color: #292e34;">///////////////////////////////////////////////////////////////</span>
+</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-org1ee6033" class="outline-3">
+        <h3 id="org1ee6033">Client</h3>
+        <div class="outline-text-3" id="text-org1ee6033">
+          <p>Il client e’ molto semplice, non ho inserito nulla di
+          particolare.</p>
+          <div class="org-src-container">
+            <pre class="src src-c"><span style=
+            "color: #bc6ec5;">#include</span> <span style=
+            "color: #4f97d7;">&lt;</span><span style=
+            "color: #2d9574;">stdio.h</span><span style=
+            "color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">stdlib.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">errno.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">fcntl.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/stat.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/types.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">unistd.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/wait.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">bits/signum-arch.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">err.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">signal.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">pthread.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">string.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">netinet/in.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/socket.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+<span style="color: #bc6ec5;">#include</span> <span style=
+"color: #4f97d7;">&lt;</span><span style=
+"color: #2d9574;">sys/un.h</span><span style=
+"color: #4f97d7;">&gt;</span>
+
+<span style="color: #bc6ec5;">#define</span> <span style=
+"color: #7590db;">MY_SOCKET</span> <span style=
+"color: #2d9574;">"/tmp/exercise_socket"</span>
+
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> <span style=
+"color: #bc6ec5; font-weight: bold;">handler</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">sig</span><span style="color: #4f97d7;">)</span>;
+
+<span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #bc6ec5; font-weight: bold;">main</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">argc</span>, <span style=
+"color: #ce537a; font-weight: bold;">char</span> *<span style=
+"color: #7590db;">argv</span><span style=
+"color: #bc6ec5;">[]</span><span style=
+"color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+
+  <span style=
+"color: #ce537a; font-weight: bold;">char</span> <span style=
+"color: #7590db;">buffer</span><span style=
+"color: #bc6ec5;">[</span><span style=
+"color: #a45bad;">26</span><span style="color: #bc6ec5;">]</span>;
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">struct</span> <span style=
+"color: #ce537a; font-weight: bold;">sockaddr_un</span> <span style="color: #7590db;">server_addr</span>;
+  server_addr.sun_family = <span style=
+"color: #a45bad;">AF_LOCAL</span>;
+  strncpy<span style=
+"color: #bc6ec5;">(</span>server_addr.sun_path, <span style=
+"color: #a45bad;">MY_SOCKET</span>, <span style=
+"color: #4f97d7; font-weight: bold;">sizeof</span><span style=
+"color: #2d9574;">(</span><span style=
+"color: #a45bad;">MY_SOCKET</span><span style=
+"color: #2d9574;">)</span><span style="color: #bc6ec5;">)</span>;
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>signal<span style=
+"color: #2d9574;">(</span><span style=
+"color: #a45bad;">SIGPIPE</span>, handler<span style=
+"color: #2d9574;">)</span> == <span style=
+"color: #a45bad;">SIG_ERR</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"error installing handler for server shutdown: %s\n"</span>,
+           strerror<span style=
+"color: #67b11d;">(</span>errno<span style=
+"color: #67b11d;">)</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">sd</span> = socket<span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #a45bad;">PF_LOCAL</span>, <span style=
+"color: #a45bad;">SOCK_STREAM</span>, <span style=
+"color: #a45bad;">0</span><span style="color: #bc6ec5;">)</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>sd == -<span style=
+"color: #a45bad;">1</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"(client) socket error\n"</span><span style=
+"color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+
+  <span style=
+"color: #2aa1ae; background-color: #292e34;">//  </span><span style="color: #2aa1ae; background-color: #292e34;">sleep(1);</span>
+
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>connect<span style=
+"color: #2d9574;">(</span>sd, <span style=
+"color: #67b11d;">(</span><span style=
+"color: #4f97d7; font-weight: bold;">struct</span> <span style=
+"color: #ce537a; font-weight: bold;">sockaddr</span> *<span style=
+"color: #67b11d;">)</span>&amp;server_addr, <span style=
+"color: #4f97d7; font-weight: bold;">sizeof</span><span style=
+"color: #67b11d;">(</span>server_addr<span style=
+"color: #67b11d;">)</span><span style=
+"color: #2d9574;">)</span> &lt; <span style=
+"color: #a45bad;">0</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"(client) socket connect error\n"</span><span style="color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+  <span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">n_byte_readed</span> = <span style=
+"color: #a45bad;">0</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">(</span>n_byte_readed = read<span style=
+"color: #67b11d;">(</span>sd, buffer, <span style=
+"color: #a45bad;">26</span><span style=
+"color: #67b11d;">)</span><span style=
+"color: #2d9574;">)</span> &lt; <span style=
+"color: #a45bad;">0</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"(client) socket read error\n"</span><span style=
+"color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+
+  buffer<span style=
+"color: #bc6ec5;">[</span>n_byte_readed<span style=
+"color: #bc6ec5;">]</span> = <span style=
+"color: #2d9574;">'\0'</span>;
+
+  printf<span style="color: #bc6ec5;">(</span><span style=
+"color: #2d9574;">"response received: %s"</span>, buffer<span style="color: #bc6ec5;">)</span>;
+  close<span style="color: #bc6ec5;">(</span>sd<span style=
+"color: #bc6ec5;">)</span>;
+  <span style=
+"color: #4f97d7; font-weight: bold;">return</span> <span style=
+"color: #a45bad;">0</span>;
+<span style="color: #4f97d7;">}</span>
+
+<span style=
+"color: #ce537a; font-weight: bold;">void</span> <span style=
+"color: #bc6ec5; font-weight: bold;">handler</span><span style=
+"color: #4f97d7;">(</span><span style=
+"color: #ce537a; font-weight: bold;">int</span> <span style=
+"color: #7590db;">sig</span><span style=
+"color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #bc6ec5;">(</span>sig == <span style=
+"color: #a45bad;">SIGPIPE</span><span style=
+"color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    printf<span style="color: #2d9574;">(</span><span style=
+"color: #2d9574;">"the server don't responde\n"</span><span style=
+"color: #2d9574;">)</span>;
+    exit<span style="color: #2d9574;">(</span><span style=
+"color: #a45bad;">EXIT_FAILURE</span><span style=
+"color: #2d9574;">)</span>;
+  <span style="color: #bc6ec5;">}</span>
+<span style="color: #4f97d7;">}</span>
+</pre>
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-org56d611b" class="outline-3">
+        <h3 id="org56d611b">Script per lanciare molti client</h3>
+        <div class="outline-text-3" id="text-org56d611b">
+          <p>Utile per testare il server.</p>
+          <div class="org-src-container">
+            <pre class="src src-shell"><span style=
+            "color: #2aa1ae; background-color: #292e34;">#</span><span style=
+            "color: #2aa1ae; background-color: #292e34;">!/usr/bin/</span><span style="color: #4f97d7; font-weight: bold;">env</span><span style="color: #2aa1ae; background-color: #292e34;"> bash</span>
+
+<span style=
+"color: #4f97d7; font-weight: bold;">if</span> <span style=
+"color: #4f97d7;">[</span> $<span style=
+"color: #7590db;">#</span> -ne <span style=
+"color: #a45bad;">1</span> <span style=
+"color: #4f97d7;">]</span>; <span style=
+"color: #4f97d7; font-weight: bold;">then</span>
+    <span style=
+"color: #ce537a; font-weight: bold;">echo</span> <span style=
+"color: #2d9574;">"Inserisci il numero di client che vuoi lanciare come parametro"</span>
+    <span style=
+"color: #4f97d7; font-weight: bold;">exit</span> <span style=
+"color: #a45bad;">1</span>
+<span style="color: #4f97d7; font-weight: bold;">fi</span>
+
+
+<span style=
+"color: #4f97d7; font-weight: bold;">for</span> i<span style=
+"color: #4f97d7; font-weight: bold;"> in</span> $<span style=
+"color: #4f97d7;">(</span><span style=
+"color: #bc6ec5;">seq</span> <span style=
+"color: #2d9574;">"</span><span style=
+"color: #a45bad;">$</span><span style=
+"color: #7590db;">1</span><span style=
+"color: #2d9574;">"</span><span style=
+"color: #4f97d7;">)</span>; <span style=
+"color: #4f97d7; font-weight: bold;">do</span>
+    <span style=
+"color: #2aa1ae; background-color: #292e34;"># </span><span style=
+"color: #2aa1ae; background-color: #292e34;">decommentare la porzione di riga successiva per non stampare su terminale l'output del client</span>
+    ./client <span style=
+"color: #2aa1ae; background-color: #292e34;">#</span><span style=
+"color: #2aa1ae; background-color: #292e34;">1&gt;/dev/null</span>
+<span style="color: #4f97d7; font-weight: bold;">done</span>
+</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="outline-container-orge7cab55" class="outline-2">
+      <h2 id="orge7cab55">Considerazioni</h2>
+      <div class="outline-text-2" id="text-orge7cab55">
+        <p>La prima versione del sever era pressocche’ identica a
+        quella sulle slide, cosi’ ho deciso di complicare un po’ la
+        traccia aggiungendo il multithreading. Partendo dalla
+        versione base non e’ stato troppo complicato aggiungere il
+        multithreading, la parte un piu’ complicata e’ stata lo
+        shutdown che non sapevo bene come realizzare (ed e’ per ora
+        l’unica parte che non mi soddisfa appieno).</p>
+        <p>Per il resto il server, anche con una thread pool
+        ridotta (10) riesce a gestire molte connesioni, con lo
+        script ho lanciato anche 50000 connesioni e (sembra) che
+        nessuna sia andata persa. L’utilizzo della
+        <code>pthread_cond_wait</code> ha abbassato di molto il
+        consumo di cpu, controllando da htop ho visto che quando
+        non ci sono nuove connessioni (con il server avviato)
+        praticamente non vi e’ utilizzo di cpu e nel momento in cui
+        arrivano i client nessun core arriva al 100%.</p>
+      </div>
+    </div>
+  </div>
+  <div id="postamble" class="status">
+    <p class="author">Author: Antonio Petrillo</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-10-29 Fri 15:48 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Esercizi 25/10/2021</title>
+<meta name="author" content="Antonio Petrillo" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Esercizi 25/10/2021</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org533e613">Esercizio 1</a>
+<ul>
+<li><a href="#org681753c">Setup</a></li>
+<li><a href="#org83d55bc">Svolgimento</a></li>
+<li><a href="#orgb707bff">Chiusura fd e deallocazione memoria</a></li>
+<li><a href="#org8f7ee58">Compilazione</a></li>
+</ul>
+</li>
+<li><a href="#org20f7135">Esercizio 2</a>
+<ul>
+<li><a href="#org4801025">Setup</a></li>
+<li><a href="#org09179b1">Svolgimento</a></li>
+<li><a href="#orgd0476d4">Chiusura fd e deallocazione della memoria</a></li>
+<li><a href="#orge6c2c2f">Funzioni read/write frame</a></li>
+<li><a href="#orgeec9fc2">Compilazione</a></li>
+</ul>
+</li>
+<li><a href="#org2bdf8c8">Esercizio 3</a>
+<ul>
+<li><a href="#orgad393ad">Setup</a></li>
+<li><a href="#orgc5f411a">Svolgimento</a></li>
+<li><a href="#org46d294a">Compilazione</a></li>
+<li><a href="#orgc0f424f">Accorgimenti</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org533e613" class="outline-2">
+<h2 id="org533e613">Esercizio 1</h2>
+<div class="outline-text-2" id="text-org533e613">
+<p>
+Reverse buffered, la dimensione del buffer va passata da command line.
+</p>
+</div>
+<div id="outline-container-org681753c" class="outline-3">
+<h3 id="org681753c">Setup</h3>
+<div class="outline-text-3" id="text-org681753c">
+<p>
+Inclusione delle librerie, apertura file, ecc&#x2026;
+Vi e&rsquo; anche la definizione di una funzione statica per invertire una stringa con lunghezza nota.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">stdio.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">stdlib.h</span><span style="color: #51afef;">&gt;</span>
+
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">errno.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">fcntl.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">sys/stat.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">sys/types.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">unistd.h</span><span style="color: #51afef;">&gt;</span>
+
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">err.h</span><span style="color: #51afef;">&gt;</span>
+
+<span style="color: #51afef;">static</span> <span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">reverse</span><span style="color: #51afef;">(</span><span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">buffer</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">len</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
+  <span style="color: #ECBE7B;">unsigned</span> <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">i</span> = <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #dcaeea;">j</span> = len - <span style="color: #da8548; font-weight: bold;">1</span>;
+  <span style="color: #ECBE7B;">char</span> <span style="color: #dcaeea;">tmp</span>;
+  <span style="color: #51afef;">while</span> <span style="color: #c678dd;">(</span>i &lt; j<span style="color: #c678dd;">)</span> <span style="color: #c678dd;">{</span>
+    tmp = buffer<span style="color: #98be65;">[</span>i<span style="color: #98be65;">]</span>;
+    buffer<span style="color: #98be65;">[</span>i++<span style="color: #98be65;">]</span> = buffer<span style="color: #98be65;">[</span>j<span style="color: #98be65;">]</span>;
+    buffer<span style="color: #98be65;">[</span>j--<span style="color: #98be65;">]</span> = tmp;
+  <span style="color: #c678dd;">}</span>
+  <span style="color: #51afef;">return</span>;
+<span style="color: #51afef;">}</span>
+
+<span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">main</span><span style="color: #51afef;">(</span><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">argc</span>, <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">argv</span><span style="color: #c678dd;">[]</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd</span>, <span style="color: #dcaeea;">n</span>;
+  <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">buffer</span>;
+  <span style="color: #ECBE7B;">unsigned</span> <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">buffsize</span>;
+
+  <span style="color: #ECBE7B;">char</span> <span style="color: #dcaeea;">buff_input</span><span style="color: #c678dd;">[</span><span style="color: #da8548; font-weight: bold;">32</span><span style="color: #c678dd;">]</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>argc != <span style="color: #da8548; font-weight: bold;">3</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>,
+        <span style="color: #98be65;">"Usage: %s &lt;input_filename&gt; &lt;buffer size&gt;\nthis program doesn't any "</span>
+        <span style="color: #98be65;">"check on the second parameter, please use a positive integer"</span>,
+        argv<span style="color: #98be65;">[</span><span style="color: #da8548; font-weight: bold;">0</span><span style="color: #98be65;">]</span><span style="color: #c678dd;">)</span>;
+
+  buffsize = atoi<span style="color: #c678dd;">(</span>argv<span style="color: #98be65;">[</span><span style="color: #da8548; font-weight: bold;">2</span><span style="color: #98be65;">]</span><span style="color: #c678dd;">)</span>;
+
+  buffer = calloc<span style="color: #c678dd;">(</span>buffsize, <span style="color: #51afef;">sizeof</span><span style="color: #98be65;">(</span><span style="color: #ECBE7B;">char</span><span style="color: #98be65;">)</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>buffer == <span style="color: #a9a1e1;">NULL</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"calloc error"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>fd = open<span style="color: #a9a1e1;">(</span>argv<span style="color: #51afef;">[</span><span style="color: #da8548; font-weight: bold;">1</span><span style="color: #51afef;">]</span>, <span style="color: #a9a1e1;">O_RDONLY</span><span style="color: #a9a1e1;">)</span><span style="color: #98be65;">)</span> == -<span style="color: #da8548; font-weight: bold;">1</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"open error"</span><span style="color: #c678dd;">)</span>;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org83d55bc" class="outline-3">
+<h3 id="org83d55bc">Svolgimento</h3>
+<div class="outline-text-3" id="text-org83d55bc">
+<p>
+Il programma posiziona l&rsquo;offset alla fine del file, dopodiche&rsquo; cerca di riempire tutto il buffer con una sola lettura.
+Dopo la lettura/riempimento del buffer viene invertito con <code>reverse</code> e stampato su <code>STDOUT</code> tramite <code>write</code>.
+L&rsquo; unico caso particolare da considerare e&rsquo; quello in cui non vi sono abbastanza byte per poter riempire il buffer, quindi quando la <i>posizione corrente</i> e&rsquo; inferiore alla dimensione del buffer.
+Tutto cio&rsquo; viene calcolato nella riga:
+<code>off_t offset = cur_pos &gt; buffsize ? cur_pos - buffsize : 0;</code>
+Se e&rsquo; possibile riempire un intero buffer, l&rsquo;offset viene spostato di un <i>buffer size</i> indietro, altrimenti viene impostato a 0, ovvero l&rsquo;inizio del file.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">  <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">cur_pos</span> = lseek<span style="color: #51afef;">(</span>fd, -<span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #a9a1e1;">SEEK_END</span><span style="color: #51afef;">)</span>;
+  <span style="color: #51afef;">if</span> <span style="color: #51afef;">(</span>cur_pos &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #51afef;">)</span>
+    <span style="color: #c678dd;">err</span><span style="color: #51afef;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"exit failure"</span><span style="color: #51afef;">)</span>;
+
+  <span style="color: #ECBE7B;">unsigned</span> <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">num_bytes_readed</span> = <span style="color: #da8548; font-weight: bold;">0</span>;
+  <span style="color: #51afef;">while</span> <span style="color: #51afef;">(</span>cur_pos &gt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
+    <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">offset</span> = cur_pos &gt; buffsize ? cur_pos - buffsize : <span style="color: #da8548; font-weight: bold;">0</span>;
+    <span style="color: #ECBE7B;">unsigned</span> <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">amount_to_read</span> = cur_pos &gt; buffsize ? buffsize : cur_pos;
+    <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>cur_pos = lseek<span style="color: #a9a1e1;">(</span>fd, offset, <span style="color: #a9a1e1;">SEEK_SET</span><span style="color: #a9a1e1;">)</span><span style="color: #98be65;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+      err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"seek failure"</span><span style="color: #c678dd;">)</span>;
+    <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>num_bytes_readed = read<span style="color: #a9a1e1;">(</span>fd, <span style="color: #51afef;">(</span><span style="color: #ECBE7B;">void</span> *<span style="color: #51afef;">)</span>buffer, amount_to_read<span style="color: #a9a1e1;">)</span><span style="color: #98be65;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+      err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"read failure"</span><span style="color: #c678dd;">)</span>;
+
+    reverse<span style="color: #c678dd;">(</span>buffer, amount_to_read<span style="color: #c678dd;">)</span>;
+    <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>write<span style="color: #98be65;">(</span><span style="color: #a9a1e1;">STDOUT_FILENO</span>, <span style="color: #a9a1e1;">(</span><span style="color: #ECBE7B;">void</span> *<span style="color: #a9a1e1;">)</span>buffer, num_bytes_readed<span style="color: #98be65;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+      err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"write failure"</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">}</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb707bff" class="outline-3">
+<h3 id="orgb707bff">Chiusura fd e deallocazione memoria</h3>
+<div class="outline-text-3" id="text-orgb707bff">
+<div class="org-src-container">
+<pre class="src src-c">  <span style="color: #c678dd;">free</span><span style="color: #51afef;">(</span>buffer<span style="color: #51afef;">)</span>;
+  <span style="color: #c678dd;">close</span><span style="color: #51afef;">(</span>fd<span style="color: #51afef;">)</span>;
+  exit<span style="color: #51afef;">(</span><span style="color: #da8548; font-weight: bold;">0</span><span style="color: #51afef;">)</span>;
+<span style="color: #ff6c6b; font-weight: bold;">}</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org8f7ee58" class="outline-3">
+<h3 id="org8f7ee58">Compilazione</h3>
+<div class="outline-text-3" id="text-org8f7ee58">
+<div class="org-src-container">
+<pre class="src src-shell">cc reverse_buffered.c -o reverse_buffered
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org20f7135" class="outline-2">
+<h2 id="org20f7135">Esercizio 2</h2>
+<div class="outline-text-2" id="text-org20f7135">
+<p>
+Reverse in place di un file.
+</p>
+</div>
+<div id="outline-container-org4801025" class="outline-3">
+<h3 id="org4801025">Setup</h3>
+<div class="outline-text-3" id="text-org4801025">
+<p>
+La prima parte e&rsquo; pressocche&rsquo; simile al primo esercizio con qualche controllo in piu&rsquo;.
+Vi e&rsquo; anche la definizione di due funzioni (<code>read_frame</code> &amp; <code>write_frame</code>) che discutero&rsquo; piu&rsquo; avanti.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">stddef.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">stdio.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">stdlib.h</span><span style="color: #51afef;">&gt;</span>
+
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">err.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">errno.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">fcntl.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">sys/stat.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">sys/types.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">unistd.h</span><span style="color: #51afef;">&gt;</span>
+
+<span style="color: #51afef;">static</span> <span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">reverse</span><span style="color: #51afef;">(</span><span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">buffer</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">len</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
+  <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">i</span> = <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #dcaeea;">j</span> = len - <span style="color: #da8548; font-weight: bold;">1</span>;
+  <span style="color: #ECBE7B;">char</span> <span style="color: #dcaeea;">tmp</span>;
+  <span style="color: #51afef;">while</span> <span style="color: #c678dd;">(</span>i &lt; j<span style="color: #c678dd;">)</span> <span style="color: #c678dd;">{</span>
+    tmp = buffer<span style="color: #98be65;">[</span>i<span style="color: #98be65;">]</span>;
+    buffer<span style="color: #98be65;">[</span>i++<span style="color: #98be65;">]</span> = buffer<span style="color: #98be65;">[</span>j<span style="color: #98be65;">]</span>;
+    buffer<span style="color: #98be65;">[</span>j--<span style="color: #98be65;">]</span> = tmp;
+  <span style="color: #c678dd;">}</span>
+  <span style="color: #51afef;">return</span>;
+<span style="color: #51afef;">}</span>
+
+<span style="color: #ECBE7B;">size_t</span> <span style="color: #c678dd;">read_frame</span><span style="color: #51afef;">(</span><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd</span>, <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">buffer</span>, <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">buffsize</span>, <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">from</span><span style="color: #51afef;">)</span>;
+<span style="color: #ECBE7B;">size_t</span> <span style="color: #c678dd;">write_frame</span><span style="color: #51afef;">(</span><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd</span>, <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">buffer</span>, <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">buffsize</span>, <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">from</span><span style="color: #51afef;">)</span>;
+
+<span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">main</span><span style="color: #51afef;">(</span><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">argc</span>, <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">argv</span><span style="color: #c678dd;">[]</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd_read</span>, <span style="color: #dcaeea;">fd_write</span>, <span style="color: #dcaeea;">n</span>;
+
+  <span style="color: #51afef;">struct</span> <span style="color: #ECBE7B;">stat</span> <span style="color: #dcaeea;">info</span>;
+
+  <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">buffer_read_from_start</span>, *<span style="color: #dcaeea;">buffer_read_from_end</span>;
+  <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">buffsize</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>argc &lt; <span style="color: #da8548; font-weight: bold;">3</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>,
+        <span style="color: #98be65;">"Usage: %s &lt;input_filename&gt; &lt;buffer size&gt;\nthis program doesn't any "</span>
+        <span style="color: #98be65;">"check on the second parameter, please use a positive integer"</span>,
+        argv<span style="color: #98be65;">[</span><span style="color: #da8548; font-weight: bold;">0</span><span style="color: #98be65;">]</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>lstat<span style="color: #98be65;">(</span>argv<span style="color: #a9a1e1;">[</span><span style="color: #da8548; font-weight: bold;">1</span><span style="color: #a9a1e1;">]</span>, &amp;info<span style="color: #98be65;">)</span> == -<span style="color: #da8548; font-weight: bold;">1</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"lstat error"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #51afef; font-weight: bold;">!</span><span style="color: #a9a1e1;">S_ISREG</span><span style="color: #98be65;">(</span>info.st_mode<span style="color: #98be65;">)</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"%s non e' un file regolare"</span>, argv<span style="color: #98be65;">[</span><span style="color: #da8548; font-weight: bold;">1</span><span style="color: #98be65;">]</span><span style="color: #c678dd;">)</span>;
+
+  buffsize = atoi<span style="color: #c678dd;">(</span>argv<span style="color: #98be65;">[</span><span style="color: #da8548; font-weight: bold;">2</span><span style="color: #98be65;">]</span><span style="color: #c678dd;">)</span>;
+
+  buffer_read_from_start = calloc<span style="color: #c678dd;">(</span>buffsize, <span style="color: #51afef;">sizeof</span><span style="color: #98be65;">(</span><span style="color: #ECBE7B;">char</span><span style="color: #98be65;">)</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>buffer_read_from_start == <span style="color: #a9a1e1;">NULL</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"calloc error"</span><span style="color: #c678dd;">)</span>;
+
+  buffer_read_from_end = calloc<span style="color: #c678dd;">(</span>buffsize, <span style="color: #51afef;">sizeof</span><span style="color: #98be65;">(</span><span style="color: #ECBE7B;">char</span><span style="color: #98be65;">)</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>buffer_read_from_end == <span style="color: #a9a1e1;">NULL</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"calloc error"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>fd_read = open<span style="color: #a9a1e1;">(</span>argv<span style="color: #51afef;">[</span><span style="color: #da8548; font-weight: bold;">1</span><span style="color: #51afef;">]</span>, <span style="color: #a9a1e1;">O_RDWR</span>, <span style="color: #a9a1e1;">S_IRWXU</span> ^ <span style="color: #a9a1e1;">S_IXUSR</span><span style="color: #a9a1e1;">)</span><span style="color: #98be65;">)</span> == -<span style="color: #da8548; font-weight: bold;">1</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"open error"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>fd_write = dup<span style="color: #a9a1e1;">(</span>fd_read<span style="color: #a9a1e1;">)</span><span style="color: #98be65;">)</span> == -<span style="color: #da8548; font-weight: bold;">1</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"dup error"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">current_position_from_end</span> = lseek<span style="color: #c678dd;">(</span>fd_read, -<span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #a9a1e1;">SEEK_END</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>current_position_from_end &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"seek failure"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">current_position_from_start</span> = lseek<span style="color: #c678dd;">(</span>fd_read, <span style="color: #da8548; font-weight: bold;">0</span>, <span style="color: #a9a1e1;">SEEK_SET</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>current_position_from_start &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"seek failure"</span><span style="color: #c678dd;">)</span>;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org09179b1" class="outline-3">
+<h3 id="org09179b1">Svolgimento</h3>
+<div class="outline-text-3" id="text-org09179b1">
+<p>
+L&rsquo;idea di base era quella di dividere in varie porzioni/segmenti il file (a cui nel programma mi riferisco con il termine <code>frame</code>) e lavorare su queste porzioni piu&rsquo; semplici da gestire.
+Calcolo prima quanti <code>frame</code> vi sono (<code>num_frame = num_byte / buffsize</code>) e quanti byte rimangono (<code>byte_remaining = num_byte % buffsize</code>), che insomma non riempiono un buffer completo.
+Ora lo svolgimento prosegue leggendo un <code>frame</code> ad inizio file ed un altro alla fine, una volta letti possono essere scambiati di posto e riscritti nel file,  dopo averli invertiti ovviamente.
+Occorre pero&rsquo; tenere conto di alcuni casi particolari:
+</p>
+<ol class="org-ol">
+<li>Cosa succede se il numero di frame e&rsquo; dispari?</li>
+<li>Cosa succede se non vi sono byte rimanenti?</li>
+<li>E se il numero di frame e&rsquo; divisibile per 2?</li>
+</ol>
+
+<p>
+Ho trattato questi ed altri casi particolari separatamente.
+Prima il programma procede lavorando su <code>frame</code> appaiati, quelli con un corrispettivo (Risolve il problema <code>3</code>).
+Ora se gli offset di lettura ad inizio file e fine file non si sono superati e non sono affiancati<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> continua leggendo i frame rimanenti<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup> e byte rimanenti scrivendoli nella posizione giusta.
+</p>
+
+<p>
+Sicuramente questa parte del programma potrebbe essere <span class="underline">scritta meglio</span>, mi ero ripromesso di sistemarla un po&rsquo; ma cosi&rsquo; facendo non condividerei mai la soluzione.
+Se qualcuno trova un modo <i>piu&rsquo; elegante e snello</i> di risolvere me lo faccia sapere!
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">  <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">num_byte</span> = info.st_size - <span style="color: #da8548; font-weight: bold;">1</span>; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">equivale a lseek(fd_read, 0, SEEK_END)</span>
+
+  <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">num_bytes_readed_from_start</span> = <span style="color: #da8548; font-weight: bold;">0</span>;
+  <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">num_bytes_readed_from_end</span> = <span style="color: #da8548; font-weight: bold;">0</span>;
+
+  <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">num_frame</span> = num_byte / buffsize;
+  <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">byte_remaining</span> = num_byte % buffsize;
+
+  <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">frame_to_consume</span> = num_frame - num_frame / <span style="color: #da8548; font-weight: bold;">2</span>;
+  <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">frame_consumed</span> = <span style="color: #da8548; font-weight: bold;">0</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #51afef;">(</span>num_byte &lt;= buffsize<span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
+    num_bytes_readed_from_start = read_frame<span style="color: #c678dd;">(</span>
+        fd_read, buffer_read_from_end, buffsize, current_position_from_start<span style="color: #c678dd;">)</span>;
+    reverse<span style="color: #c678dd;">(</span>buffer_read_from_end, num_bytes_readed_from_start<span style="color: #c678dd;">)</span>;
+    write_frame<span style="color: #c678dd;">(</span>fd_write, buffer_read_from_end, num_bytes_readed_from_start,
+                current_position_from_start<span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">}</span> <span style="color: #51afef;">else</span> <span style="color: #51afef;">{</span>
+    <span style="color: #51afef;">for</span> <span style="color: #c678dd;">(</span>; frame_consumed &lt; frame_to_consume; frame_consumed++<span style="color: #c678dd;">)</span> <span style="color: #c678dd;">{</span>
+      num_bytes_readed_from_start =
+          read_frame<span style="color: #98be65;">(</span>fd_read, buffer_read_from_start, buffsize,
+                     current_position_from_start<span style="color: #98be65;">)</span>;
+
+      num_bytes_readed_from_end =
+          read_frame<span style="color: #98be65;">(</span>fd_read, buffer_read_from_end, buffsize,
+                     current_position_from_end - buffsize<span style="color: #98be65;">)</span>;
+
+      reverse<span style="color: #98be65;">(</span>buffer_read_from_start, num_bytes_readed_from_start<span style="color: #98be65;">)</span>;
+      reverse<span style="color: #98be65;">(</span>buffer_read_from_end, num_bytes_readed_from_end<span style="color: #98be65;">)</span>;
+
+      current_position_from_start += num_bytes_readed_from_start;
+      current_position_from_end -= num_bytes_readed_from_end;
+
+      write_frame<span style="color: #98be65;">(</span>fd_write, buffer_read_from_end, num_bytes_readed_from_end,
+                  current_position_from_start - buffsize<span style="color: #98be65;">)</span>;
+      write_frame<span style="color: #98be65;">(</span>fd_write, buffer_read_from_start, num_bytes_readed_from_start,
+                  current_position_from_end<span style="color: #98be65;">)</span>;
+    <span style="color: #c678dd;">}</span>
+
+    <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>current_position_from_start &lt; current_position_from_end - <span style="color: #da8548; font-weight: bold;">1</span><span style="color: #c678dd;">)</span> <span style="color: #c678dd;">{</span>
+      <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">from_where</span> = current_position_from_start;
+      <span style="color: #51afef;">if</span> <span style="color: #98be65;">(</span>frame_consumed &lt; frame_to_consume<span style="color: #98be65;">)</span> <span style="color: #98be65;">{</span>
+        num_bytes_readed_from_start =
+            read_frame<span style="color: #a9a1e1;">(</span>fd_read, buffer_read_from_start, buffsize,
+                       current_position_from_start<span style="color: #a9a1e1;">)</span>;
+        from_where = current_position_from_start + num_bytes_readed_from_start;
+        reverse<span style="color: #a9a1e1;">(</span>buffer_read_from_start, num_bytes_readed_from_start<span style="color: #a9a1e1;">)</span>;
+      <span style="color: #98be65;">}</span>
+      num_bytes_readed_from_end =
+          read_frame<span style="color: #98be65;">(</span>fd_read, buffer_read_from_end, byte_remaining, from_where<span style="color: #98be65;">)</span>;
+      reverse<span style="color: #98be65;">(</span>buffer_read_from_end, num_bytes_readed_from_end<span style="color: #98be65;">)</span>;
+      write_frame<span style="color: #98be65;">(</span>fd_write, buffer_read_from_end, num_bytes_readed_from_end,
+                  current_position_from_start<span style="color: #98be65;">)</span>;
+      current_position_from_start += num_bytes_readed_from_end;
+      <span style="color: #51afef;">if</span> <span style="color: #98be65;">(</span>frame_consumed &lt; frame_to_consume<span style="color: #98be65;">)</span> <span style="color: #98be65;">{</span>
+        write_frame<span style="color: #a9a1e1;">(</span>fd_write, buffer_read_from_start,
+                    num_bytes_readed_from_start, current_position_from_start<span style="color: #a9a1e1;">)</span>;
+      <span style="color: #98be65;">}</span>
+    <span style="color: #c678dd;">}</span>
+  <span style="color: #51afef;">}</span>
+<span style="color: #ff6c6b; font-weight: bold;">}</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd0476d4" class="outline-3">
+<h3 id="orgd0476d4">Chiusura fd e deallocazione della memoria</h3>
+<div class="outline-text-3" id="text-orgd0476d4">
+<div class="org-src-container">
+<pre class="src src-c">  <span style="color: #c678dd;">free</span><span style="color: #51afef;">(</span>buffer_read_from_start<span style="color: #51afef;">)</span>;
+  <span style="color: #c678dd;">free</span><span style="color: #51afef;">(</span>buffer_read_from_end<span style="color: #51afef;">)</span>;
+  <span style="color: #c678dd;">close</span><span style="color: #51afef;">(</span>fd_read<span style="color: #51afef;">)</span>;
+  <span style="color: #c678dd;">close</span><span style="color: #51afef;">(</span>fd_write<span style="color: #51afef;">)</span>;
+  <span style="color: #51afef;">return</span> <span style="color: #da8548; font-weight: bold;">0</span>;
+<span style="color: #ff6c6b; font-weight: bold;">}</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge6c2c2f" class="outline-3">
+<h3 id="orge6c2c2f">Funzioni read/write frame</h3>
+<div class="outline-text-3" id="text-orge6c2c2f">
+<p>
+Queste due funzioni (duali tra loro), servono a posizionare l&rsquo;offset (in questo caso e&rsquo; meglio immaginarlo come un cursore) nella posizione indicata da <code>from</code> e leggono/scrivono <code>buffsize</code> byte da/nel <code>buffer</code>.
+Si puo&rsquo; anche interpretare in questo modo (faccio un esempio solo per <code>read_frame</code>):
+Legge, da <code>fd</code>, ed inserisce in <code>buffer</code> un numero pari a <code>buffsize</code> byte dalla posizione <code>from</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">size_t</span> <span style="color: #c678dd;">read_frame</span><span style="color: #51afef;">(</span><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd</span>, <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">buffer</span>, <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">buffsize</span>, <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">from</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>lseek<span style="color: #98be65;">(</span>fd, from, <span style="color: #a9a1e1;">SEEK_SET</span><span style="color: #98be65;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"seek read failure"</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">num_byte_readed</span> = <span style="color: #da8548; font-weight: bold;">0</span>;
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>num_byte_readed = read<span style="color: #a9a1e1;">(</span>fd, buffer, buffsize<span style="color: #a9a1e1;">)</span><span style="color: #98be65;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"read frame failure"</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">return</span> num_byte_readed;
+<span style="color: #51afef;">}</span>
+
+<span style="color: #ECBE7B;">size_t</span> <span style="color: #c678dd;">write_frame</span><span style="color: #51afef;">(</span><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd</span>, <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">buffer</span>, <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">buffsize</span>, <span style="color: #ECBE7B;">off_t</span> <span style="color: #dcaeea;">from</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>lseek<span style="color: #98be65;">(</span>fd, from, <span style="color: #a9a1e1;">SEEK_SET</span><span style="color: #98be65;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"seek write failure"</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">num_byte_written</span> = <span style="color: #da8548; font-weight: bold;">0</span>;
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>num_byte_written = write<span style="color: #a9a1e1;">(</span>fd, buffer, buffsize<span style="color: #a9a1e1;">)</span><span style="color: #98be65;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"write frame failure"</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">return</span> num_byte_written;
+<span style="color: #51afef;">}</span>
+
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgeec9fc2" class="outline-3">
+<h3 id="orgeec9fc2">Compilazione</h3>
+<div class="outline-text-3" id="text-orgeec9fc2">
+<div class="org-src-container">
+<pre class="src src-shell">cc reverse_in_place.c -o reverse_in_place
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2bdf8c8" class="outline-2">
+<h2 id="org2bdf8c8">Esercizio 3</h2>
+<div class="outline-text-2" id="text-org2bdf8c8">
+<p>
+Si implementi un programma C che prende come argomenti tre nomi di files
+f1, f2 , f3 (f1 deve essere un file esistente) ed il nome di un eseguibile (es.
+rev.out) che accetta a sua volta il path di un file e lo stampa in ordine
+inverso di bytes sullo standard output. Il programma genera un primo figlio che
+esegue rev.out su f1 e scrive l&rsquo;output in f2. Successivamente, il programma
+genera un secondo figlio che che esegue rev.out su f2 e scrive a sua volta
+l&rsquo;output in f3.
+</p>
+</div>
+<div id="outline-container-orgad393ad" class="outline-3">
+<h3 id="orgad393ad">Setup</h3>
+<div class="outline-text-3" id="text-orgad393ad">
+<p>
+Solite inizializzazioni di fd, controlli ecc&#x2026;
+Un controllo aggiuntivo da fare e&rsquo; quello di vedere se l&rsquo;eseguibile passato in input sia effettivamente <code>eseguibile</code>.
+Ho rimosso i controlli sui due file di output perche&rsquo; non erano richiesti dalla traccia.
+(Ho realizzato solo ora che i file di output li potevo creare utilizzando i nomi dati in input utilizzando i flag appropriati! <code>O_CREAT</code>)
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">stdio.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">stdlib.h</span><span style="color: #51afef;">&gt;</span>
+
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">errno.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">fcntl.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">sys/stat.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">sys/types.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">unistd.h</span><span style="color: #51afef;">&gt;</span>
+
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">err.h</span><span style="color: #51afef;">&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #51afef;">&lt;</span><span style="color: #98be65;">libgen.h</span><span style="color: #51afef;">&gt;</span>
+
+<span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">main</span><span style="color: #51afef;">(</span><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">argc</span>, <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">argv</span><span style="color: #c678dd;">[]</span>, <span style="color: #ECBE7B;">char</span> **<span style="color: #dcaeea;">envp</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span>
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>argc != <span style="color: #da8548; font-weight: bold;">5</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"Usage: %s &lt;file1&gt; &lt;file2&gt; &lt;file3&gt; &lt;executable&gt;"</span>,
+        argv<span style="color: #98be65;">[</span><span style="color: #da8548; font-weight: bold;">0</span><span style="color: #98be65;">]</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">struct</span> <span style="color: #ECBE7B;">stat</span> <span style="color: #dcaeea;">info_file_1</span>, <span style="color: #dcaeea;">info_file_2</span>, <span style="color: #dcaeea;">info_file_3</span>, <span style="color: #dcaeea;">info_executable</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>lstat<span style="color: #98be65;">(</span>argv<span style="color: #a9a1e1;">[</span><span style="color: #da8548; font-weight: bold;">1</span><span style="color: #a9a1e1;">]</span>, &amp;info_file_1<span style="color: #98be65;">)</span> == -<span style="color: #da8548; font-weight: bold;">1</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"lstat error"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #51afef; font-weight: bold;">!</span><span style="color: #a9a1e1;">S_ISREG</span><span style="color: #98be65;">(</span>info_file_1.st_mode<span style="color: #98be65;">)</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"%s non e' un file regolare"</span>, argv<span style="color: #98be65;">[</span><span style="color: #da8548; font-weight: bold;">1</span><span style="color: #98be65;">]</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">nella traccia non e' specificato che questi file debbano esistere</span>
+  <span style="color: #5B6268;">/* </span><span style="color: #5B6268;">if (lstat(argv[2], &amp;info_file_2) == -1)</span><span style="color: #5B6268;"> */</span>
+  <span style="color: #5B6268;">/*   </span><span style="color: #5B6268;">err(EXIT_FAILURE, "lstat error");</span><span style="color: #5B6268;"> */</span>
+
+  <span style="color: #5B6268;">/* </span><span style="color: #5B6268;">if (!S_ISREG(info_file_2.st_mode))</span><span style="color: #5B6268;"> */</span>
+  <span style="color: #5B6268;">/*   </span><span style="color: #5B6268;">err(EXIT_FAILURE, "%s non e' un file regolare", argv[2]);</span><span style="color: #5B6268;"> */</span>
+
+  <span style="color: #5B6268;">/* </span><span style="color: #5B6268;">if (lstat(argv[3], &amp;info_file_3) == -1)</span><span style="color: #5B6268;"> */</span>
+  <span style="color: #5B6268;">/*   </span><span style="color: #5B6268;">err(EXIT_FAILURE, "lstat error");</span><span style="color: #5B6268;"> */</span>
+
+  <span style="color: #5B6268;">/* </span><span style="color: #5B6268;">if (!S_ISREG(info_file_3.st_mode))</span><span style="color: #5B6268;"> */</span>
+  <span style="color: #5B6268;">/*   </span><span style="color: #5B6268;">err(EXIT_FAILURE, "%s non e' un file regolare", argv[3]);</span><span style="color: #5B6268;"> */</span>
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>lstat<span style="color: #98be65;">(</span>argv<span style="color: #a9a1e1;">[</span><span style="color: #da8548; font-weight: bold;">4</span><span style="color: #a9a1e1;">]</span>, &amp;info_executable<span style="color: #98be65;">)</span> == -<span style="color: #da8548; font-weight: bold;">1</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"lstat error"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>info_executable.st_mode &amp; <span style="color: #a9a1e1;">S_IXUSR</span><span style="color: #98be65;">)</span> == <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"you don't have the permission to execute this file"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">non ho bisogno di aprire il file 1</span>
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd2</span>, <span style="color: #dcaeea;">fd3</span>;
+
+  <span style="color: #ECBE7B;">pid_t</span> <span style="color: #dcaeea;">child1</span>, <span style="color: #dcaeea;">child2</span>;
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">exit_status_child</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>fd2 = open<span style="color: #a9a1e1;">(</span>argv<span style="color: #51afef;">[</span><span style="color: #da8548; font-weight: bold;">2</span><span style="color: #51afef;">]</span>, <span style="color: #a9a1e1;">O_RDWR</span> | <span style="color: #a9a1e1;">O_CREAT</span>, <span style="color: #a9a1e1;">S_IRWXU</span> ^ <span style="color: #a9a1e1;">S_IXUSR</span><span style="color: #a9a1e1;">)</span><span style="color: #98be65;">)</span> == -<span style="color: #da8548; font-weight: bold;">1</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"open error fd2"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #98be65;">(</span>fd3 = open<span style="color: #a9a1e1;">(</span>argv<span style="color: #51afef;">[</span><span style="color: #da8548; font-weight: bold;">3</span><span style="color: #51afef;">]</span>, <span style="color: #a9a1e1;">O_WRONLY</span> | <span style="color: #a9a1e1;">O_CREAT</span>, <span style="color: #a9a1e1;">S_IRWXU</span> ^ <span style="color: #a9a1e1;">S_IXUSR</span><span style="color: #a9a1e1;">)</span><span style="color: #98be65;">)</span> == -<span style="color: #da8548; font-weight: bold;">1</span><span style="color: #c678dd;">)</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"open error fd3"</span><span style="color: #c678dd;">)</span>;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc5f411a" class="outline-3">
+<h3 id="orgc5f411a">Svolgimento</h3>
+<div class="outline-text-3" id="text-orgc5f411a">
+<p>
+Ridirigo lo <code>STDOUT</code> sul primo file in output, eseguo il programma, dopodiche&rsquo; ripeto il procedimento ridirigendo di nuovo lo <code>STDOUT</code> sul secondo file e rieseguendo il programma usando come input il <b>primo output</b>.
+</p>
+<div class="org-src-container">
+<pre class="src src-c">  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">imposto il path in cui trovare l'eseguibile, avrei potuto anche usare</span>
+  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">un'altra exec con input il comando pwd e redirigere l'output in un buffer</span>
+
+  <span style="color: #51afef;">if</span> <span style="color: #51afef;">(</span>dup2<span style="color: #c678dd;">(</span>fd2, <span style="color: #a9a1e1;">STDOUT_FILENO</span><span style="color: #c678dd;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #51afef;">)</span>
+    <span style="color: #c678dd;">err</span><span style="color: #51afef;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"dup2 error"</span><span style="color: #51afef;">)</span>;
+
+  <span style="color: #51afef;">if</span> <span style="color: #51afef;">(</span><span style="color: #c678dd;">(</span>child1 = fork<span style="color: #98be65;">()</span><span style="color: #c678dd;">)</span> == <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span> <span style="color: #5B6268;">// </span><span style="color: #5B6268;">codice figlio 1</span>
+
+    <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span>execl<span style="color: #98be65;">(</span>argv<span style="color: #a9a1e1;">[</span><span style="color: #da8548; font-weight: bold;">4</span><span style="color: #a9a1e1;">]</span>, basename<span style="color: #a9a1e1;">(</span>argv<span style="color: #51afef;">[</span><span style="color: #da8548; font-weight: bold;">4</span><span style="color: #51afef;">]</span><span style="color: #a9a1e1;">)</span>, argv<span style="color: #a9a1e1;">[</span><span style="color: #da8548; font-weight: bold;">1</span><span style="color: #a9a1e1;">]</span>, <span style="color: #98be65;">"4096"</span>, <span style="color: #a9a1e1;">(</span><span style="color: #ECBE7B;">char</span> *<span style="color: #a9a1e1;">)</span><span style="color: #da8548; font-weight: bold;">0</span><span style="color: #98be65;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>
+      err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"execl failure"</span><span style="color: #c678dd;">)</span>;
+
+  <span style="color: #51afef;">}</span> <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> <span style="color: #51afef;">(</span>child1 &gt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #51afef;">)</span> <span style="color: #51afef;">{</span> <span style="color: #5B6268;">// </span><span style="color: #5B6268;">codice padre</span>
+
+    waitpid<span style="color: #c678dd;">(</span>child1, &amp;exit_status_child, <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #c678dd;">)</span>;
+
+    <span style="color: #51afef;">if</span> <span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">WIFEXITED</span><span style="color: #98be65;">(</span>exit_status_child<span style="color: #98be65;">)</span><span style="color: #c678dd;">)</span> <span style="color: #c678dd;">{</span>
+      <span style="color: #5B6268;">// </span><span style="color: #5B6268;">non posso stampare su stdout perche' e' redireto su fd2!</span>
+      <span style="color: #5B6268;">// </span><span style="color: #5B6268;">printf("figlio terminato con %d", WEXITSTATUS(status));</span>
+
+      <span style="color: #5B6268;">// </span><span style="color: #5B6268;">procedo con il figlio 2</span>
+
+    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">Teoricamente dove funzionare anche dup2(fd3, fd2), ma non so perche' non scriveva sul file 3</span>
+      <span style="color: #51afef;">if</span> <span style="color: #98be65;">(</span>dup2<span style="color: #a9a1e1;">(</span>fd3, <span style="color: #a9a1e1;">STDOUT_FILENO</span><span style="color: #a9a1e1;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #98be65;">)</span>
+        err<span style="color: #98be65;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"dup2 error"</span><span style="color: #98be65;">)</span>;
+
+      <span style="color: #5B6268;">// </span><span style="color: #5B6268;">chiudo il file descriptro per evitare di scrivere di nuovo anche in file 2</span>
+      close<span style="color: #98be65;">(</span>fd2<span style="color: #98be65;">)</span>;
+
+      <span style="color: #51afef;">if</span> <span style="color: #98be65;">(</span><span style="color: #a9a1e1;">(</span>child2 = fork<span style="color: #51afef;">()</span><span style="color: #a9a1e1;">)</span> == <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #98be65;">)</span> <span style="color: #98be65;">{</span> <span style="color: #5B6268;">// </span><span style="color: #5B6268;">codice figlio 2</span>
+        <span style="color: #51afef;">if</span> <span style="color: #a9a1e1;">(</span>execl<span style="color: #51afef;">(</span>argv<span style="color: #c678dd;">[</span><span style="color: #da8548; font-weight: bold;">4</span><span style="color: #c678dd;">]</span>, basename<span style="color: #c678dd;">(</span>argv<span style="color: #98be65;">[</span><span style="color: #da8548; font-weight: bold;">4</span><span style="color: #98be65;">]</span><span style="color: #c678dd;">)</span>, argv<span style="color: #c678dd;">[</span><span style="color: #da8548; font-weight: bold;">2</span><span style="color: #c678dd;">]</span>, <span style="color: #98be65;">"4096"</span>, <span style="color: #c678dd;">(</span><span style="color: #ECBE7B;">char</span> *<span style="color: #c678dd;">)</span><span style="color: #da8548; font-weight: bold;">0</span><span style="color: #51afef;">)</span> &lt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #a9a1e1;">)</span>
+          err<span style="color: #a9a1e1;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"execl failure"</span><span style="color: #a9a1e1;">)</span>;
+
+      <span style="color: #98be65;">}</span> <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> <span style="color: #98be65;">(</span>child2 &gt; <span style="color: #da8548; font-weight: bold;">0</span><span style="color: #98be65;">)</span> <span style="color: #98be65;">{</span> <span style="color: #5B6268;">// </span><span style="color: #5B6268;">sempre codice padre</span>
+        <span style="color: #51afef;">if</span> <span style="color: #a9a1e1;">(</span><span style="color: #a9a1e1;">WIFEXITED</span><span style="color: #51afef;">(</span>exit_status_child<span style="color: #51afef;">)</span><span style="color: #a9a1e1;">)</span> <span style="color: #a9a1e1;">{</span>
+          <span style="color: #5B6268;">// </span><span style="color: #5B6268;">non posso stampare su stdout perche' e' redireto su fd2 e fd3!</span>
+          <span style="color: #5B6268;">// </span><span style="color: #5B6268;">printf("figlio terminato con %d", WEXITSTATUS(status));</span>
+          close<span style="color: #51afef;">(</span>fd3<span style="color: #51afef;">)</span>;
+        <span style="color: #a9a1e1;">}</span>
+
+      <span style="color: #98be65;">}</span> <span style="color: #51afef;">else</span> <span style="color: #98be65;">{</span> <span style="color: #5B6268;">// </span><span style="color: #5B6268;">errore</span>
+        err<span style="color: #a9a1e1;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"fork error"</span><span style="color: #a9a1e1;">)</span>;
+      <span style="color: #98be65;">}</span>
+    <span style="color: #c678dd;">}</span>
+  <span style="color: #51afef;">}</span> <span style="color: #51afef;">else</span> <span style="color: #51afef;">{</span>
+    err<span style="color: #c678dd;">(</span><span style="color: #a9a1e1;">EXIT_FAILURE</span>, <span style="color: #98be65;">"fork error"</span><span style="color: #c678dd;">)</span>;
+  <span style="color: #51afef;">}</span>
+
+  <span style="color: #51afef;">return</span> <span style="color: #da8548; font-weight: bold;">0</span>;
+<span style="color: #ff6c6b; font-weight: bold;">}</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org46d294a" class="outline-3">
+<h3 id="org46d294a">Compilazione</h3>
+<div class="outline-text-3" id="text-org46d294a">
+<p>
+Non so perche&rsquo;, ma compilando in questo modo <code>gcc</code> si lamento che la funzione <code>waitpid</code> (succede anche con <code>wait</code>) non sia definita, una volta mandato in esecuzione il programma pero&rsquo; funziona.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">gcc esercizio.c -o esercizio
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc0f424f" class="outline-3">
+<h3 id="orgc0f424f">Accorgimenti</h3>
+<div class="outline-text-3" id="text-orgc0f424f">
+<p>
+Invece che usare <code>execl</code> avrei preferito usare <code>execlp</code>, questo perche&rsquo; con le variabili di ambiente potevo modificare la variabile di <code>$PATH</code> per cercare l&rsquo;eseguibile del programma.
+Infatti, per come e&rsquo; scritto ora, per passare l&rsquo;eseguibile devo inserire tutto il path assoluto, nel mio caso <code>/home/anto/Uni/lso/exerecise/esercizi_25-10-2021/reverse_buffered</code>.
+Alla fine non ho usato <code>execlp</code> perche&rsquo; anche modificando le variabili di ambiente l&rsquo;eseguibile non veniva trovato, probabilmento dovevo fare qualche passaggio in piu&rsquo; tipo:
+</p>
+
+<ol class="org-ol">
+<li>Estrarre il valore associato a <code>PATH</code>.</li>
+<li>Concatenare a <code>PATH</code> il nome dell&rsquo;eseguibile.</li>
+<li>Utilizzare l&rsquo;eseguibile.</li>
+</ol>
+
+<p>
+Se modifico la variabile <code>$PATH</code> (i.e. <code>export PATH="$PATH:/percorso/per/l'eseguibile"</code>) prima dell&rsquo;esecuzione il programma funziona anche con <code>execlp</code>.
+</p>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+Se ad esempio l&rsquo;indice, del vettore o buffer, di lettura dal basso e&rsquo; <code>5</code> mentre quello dall&rsquo;alto e&rsquo; <code>6</code> non vi sono piu&rsquo; byte da leggere.
+</p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara">
+Se immaginiamo un file di <code>15 byte</code> con un buffersize di <code>3 byte</code>, si otterrebbero <code>5 frame</code> e <code>0 byte rimanenti</code>, in questo caso il numero di frame e&rsquo; dispari (quindi vi e&rsquo; un frame non appaiato), l&rsquo;ultimo andra&rsquo; (sempre in questo caso specifico) letto, invertito e riscritto nella stessa posizione/
+</p></div></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Antonio Petrillo</p>
+<p class="date">Created: 2021-10-29 Fri 15:48</p>
+</div>
+</body>
+</html>

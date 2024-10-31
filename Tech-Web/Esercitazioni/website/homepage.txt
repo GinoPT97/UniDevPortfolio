@@ -1,0 +1,11 @@
+The Book of Programming
+
+This website contains fragments from the Book of Programming, 
+an ancient tome lost to time.
+
+The book is said to have been written by a disciple of Fu-Tzu,
+the legendary master programmer.
+
+Currently, two sections have been recovered:
+* a section describing the two aspects of programming (data and control);
+* a section reporting short-sayings and other wisdom of the master Fu-Tzu.

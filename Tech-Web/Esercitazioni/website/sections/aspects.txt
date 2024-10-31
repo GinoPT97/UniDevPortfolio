@@ -1,0 +1,27 @@
+The Two Aspects
+
+Below the surface of the machine, the program moves. Without effort,
+it expands and contracts. In great harmony, electrons scatter and
+regroup. The forms on the monitor are but ripples on the water. The
+essence stays invisibly below.
+
+When the creators built the machine, they put in the processor and the
+memory. From these arise the two aspects of the program.
+
+The aspect of the processor is the active substance. It is called
+Control. The aspect of the memory is the passive substance. It is
+called Data.
+
+Data is made of merely bits, yet it takes complex forms. Control
+consists only of simple instructions, yet it performs difficult
+tasks. From the small and trivial, the large and complex arise.
+
+The program source is Data. Control arises from it. The Control
+proceeds to create new Data. The one is born from the other, the
+other is useless without the one. This is the harmonious cycle of
+Data and Control.
+
+Of themselves, Data and Control are without structure. The programmers
+of old moulded their programs out of this raw substance. Over time,
+the amorphous Data has crystallised into data types, and the chaotic
+Control was restricted into control structures and functions.

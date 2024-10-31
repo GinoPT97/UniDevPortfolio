@@ -9,8 +9,9 @@ public class CalcolaMedia {
         int somma = 0;
 
         // Calcola la somma degli elementi nell'array
-        for (int valore : array)
-			somma += valore;
+        for (int valore : array) {
+            somma += valore;
+        }
 
         // Calcola la media
         double media = (double) somma / array.length;

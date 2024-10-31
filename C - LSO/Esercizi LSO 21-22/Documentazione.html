@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Bash Scripting</title>
+<meta name="author" content="(Valentino Bocchetti)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/night.css" id="theme"/>
+
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Bash Scripting</h1><p class="subtitle">(Esercitazione - Laboratorio di Sistemi Operativi)</p>
+<h2 class="author">Valentino Bocchetti</h2>
+</section>
+<section>
+<section id="slide-org5c935af">
+<h2 id="org5c935af">Analisi dello script</h2>
+<div class="outline-text-2" id="text-org5c935af">
+</div>
+</section>
+<section id="slide-org2129dce">
+<h3 id="org2129dce">Traccia</h3>
+<p>
+La traccia richiedeva che:
+</p>
+<ul>
+<li class="fragment appear">Data una cartella</li>
+<li class="fragment appear">Una estensione scelta</li>
+
+</ul>
+<p class="fragment (appear)">
+Venisse eliminata ricorsivamente tutti i file che contenessero quella estensione.
+</p>
+</section>
+<section id="slide-org45044f1">
+<h3 id="org45044f1">Opzioni abilitate</h3>
+<div class="org-src-container">
+
+<pre  class="src src-sh"   ><code trim><span style="color: #b294bb;">set</span> -e <span style="color: #969896; font-style: italic;"># </span><span style="color: #969896; font-style: italic;">Uscita immediata nel caso in cui un comando dia un exit status diverso da 0</span>
+
+<span style="color: #b294bb;">shopt</span> -s globstar dotglob nullglob
+</code></pre>
+</div>
+
+<p class="fragment (appear)">
+Per maggiori informazioni (dal manuale gnu):
+</p>
+<ul>
+<li class="fragment appear"><a href="https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html">set builtin</a>;</li>
+<li class="fragment appear"><a href="https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html#The-Shopt-Builtin">shopt builtin</a>.</li>
+
+</ul>
+</section>
+<section id="slide-org75fda48">
+<h3 id="org75fda48">Scelte implementative</h3>
+<p>
+Per una maggiore brevità di scrittura, faccio uso delle seguenti funzioni:
+</p>
+<ol>
+<li class="fragment appear"><code>print_ok()</code>, <code>print_info()</code> e <code>print_error()</code>;
+<ul>
+<li>Per una stampa su stout con colori diversi in base all'informazione da comunicare;</li>
+
+</ul></li>
+<li class="fragment appear"><code>usage()</code>, per informare l'utente sull'utilizzo corretto dello script;</li>
+<li class="fragment appear"><code>searchNdelete()</code>, per eseguire le operazioni di ricerca ed eliminazione dei file.</li>
+
+</ol>
+</section>
+<section id="slide-orgd9962d5">
+<h4 id="orgd9962d5">Nel dettaglio - usage</h4>
+<div class="org-src-container">
+
+<pre  class="src src-sh"   ><code trim><span style="color: #de935f;">usage</span><span style="color: #c5c8c6;">()</span> <span style="color: #c5c8c6;">{</span>
+  print_info <span style="color: #8abeb7;">"Questo script elimina file che matchano una estensione (data dall'utente) dalla directory corrente ricorsivamente.\n"</span>
+  print_ok <span style="color: #8abeb7;">"\t\tUtilizzo: ./CleanDir.sh estensione-file"</span>
+  <span style="color: #b5bd68;">exit</span> 1
+<span style="color: #c5c8c6;">}</span>
+</code></pre>
+</div>
+</section>
+<section id="slide-org267540c">
+<h4 id="org267540c">Nel dettaglio - funzioni ausiliare</h4>
+<div class="org-src-container">
+
+<pre  class="src src-sh"   ><code trim><span style="color: #de935f;">print_ok</span><span style="color: #c5c8c6;">()</span> <span style="color: #c5c8c6;">{</span>
+    <span style="color: #b294bb;">printf</span> <span style="color: #8abeb7;">"</span><span style="color: #000000; background-color: #b5bd68;">\e[32m</span><span style="color: #8abeb7;">%b\e[0m"</span> <span style="color: #8abeb7;">"$1"</span>
+    <span style="color: #b294bb;">printf</span> <span style="color: #8abeb7;">"\n"</span>
+<span style="color: #c5c8c6;">}</span>
+
+<span style="color: #de935f;">print_info</span><span style="color: #c5c8c6;">()</span> <span style="color: #c5c8c6;">{</span>
+    <span style="color: #b294bb;">printf</span> <span style="color: #8abeb7;">"</span><span style="color: #000000; background-color: #8abeb7;">\e[36m</span><span style="color: #8abeb7;">%b\e[0m"</span> <span style="color: #8abeb7;">"$1"</span>
+    <span style="color: #b294bb;">printf</span> <span style="color: #8abeb7;">"\n"</span>
+<span style="color: #c5c8c6;">}</span>
+
+<span style="color: #de935f;">print_error</span><span style="color: #c5c8c6;">()</span> <span style="color: #c5c8c6;">{</span>
+    <span style="color: #b294bb;">printf</span> <span style="color: #8abeb7;">"</span><span style="color: #ffffff; background-color: #cc6666;">\e[31m</span><span style="color: #8abeb7;">%b\e[0m"</span> <span style="color: #8abeb7;">"$1"</span>
+    <span style="color: #b294bb;">printf</span> <span style="color: #8abeb7;">"\n"</span>
+<span style="color: #c5c8c6;">}</span>
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org3922cd9">
+<h4 id="org3922cd9">Nel dettaglio - searchNdelete</h4>
+<div class="org-src-container">
+
+<pre  class="src src-sh"   ><code trim><span style="color: #de935f;">searchNdelete</span><span style="color: #c5c8c6;">(){</span>
+  print_info <span style="color: #8abeb7;">"Controllo la presenza di file che matchano la richiesta"</span>
+  <span style="color: #b5bd68;">for</span> f<span style="color: #b5bd68;"> in</span> **/*; <span style="color: #b5bd68;">do</span>
+    <span style="color: #b294bb;">printf</span> <span style="color: #8abeb7;">"%s\n"</span> <span style="color: #8abeb7;">"$f"</span> | grep $<span style="color: #f0c674;">estensione</span> &gt;&gt;  <span style="color: #8abeb7;">"$TmpStack"</span>
+  <span style="color: #b5bd68;">done</span> 
+
+  <span style="color: #b5bd68;">if</span> <span style="color: #8abeb7;">[</span> -s <span style="color: #8abeb7;">"$TmpStack"</span> <span style="color: #8abeb7;">]</span>; <span style="color: #b5bd68;">then</span>
+    <span style="color: #b294bb;">echo</span> <span style="color: #8abeb7;">" "</span>
+    <span style="color: #b5bd68;">else</span>
+    print_info <span style="color: #8abeb7;">"Nessun file trovato che matcha l'estensione richiesta!\n"</span>
+    <span style="color: #b5bd68;">exit</span> 1
+  <span style="color: #b5bd68;">fi</span>
+
+  sed -ie <span style="color: #8abeb7;">'s|^|./|g'</span> <span style="color: #8abeb7;">"$TmpStack"</span>  <span style="color: #969896; font-style: italic;"># </span><span style="color: #969896; font-style: italic;">Aggiungiamo ./ all'inizio di ogni riga</span>
+
+  print_error <span style="color: #8abeb7;">"Sto per eliminare i seguenti file che matchano la richiesta:\n"</span>
+
+  <span style="color: #b5bd68;">while </span><span style="color: #b294bb;">read</span> -r elem; <span style="color: #b5bd68;">do</span>
+    <span style="color: #b294bb;">printf</span> <span style="color: #8abeb7;">'%s\n'</span> <span style="color: #8abeb7;">"$elem"</span>
+  <span style="color: #b5bd68;">done</span> &lt; <span style="color: #8abeb7;">"$TmpStack"</span>
+
+
+  print_error <span style="color: #8abeb7;">"\n\nSei sicuro? (Si/No)"</span>
+
+  <span style="color: #b294bb;">read</span> -r p
+
+  <span style="color: #b5bd68;">if</span> <span style="color: #8abeb7;">[</span><span style="color: #f0c674;">[</span> <span style="color: #8abeb7;">"$p"</span> != <span style="color: #b5bd68;">[</span>Ss<span style="color: #b5bd68;">]</span> <span style="color: #f0c674;">]</span><span style="color: #8abeb7;">]</span>; <span style="color: #b5bd68;">then</span>
+    print_error <span style="color: #8abeb7;">"Uscita..."</span>
+    <span style="color: #b5bd68;">exit</span> 1
+  <span style="color: #b5bd68;">fi</span>
+
+  <span style="color: #b5bd68;">while </span><span style="color: #b294bb;">read</span> -r files; <span style="color: #b5bd68;">do</span>
+    rm <span style="color: #8abeb7;">"$files"</span>
+    <span style="color: #b5bd68;">done</span> &lt; <span style="color: #8abeb7;">"$TmpStack"</span>
+
+  <span style="color: #8abeb7;">[</span> -f <span style="color: #8abeb7;">"$TmpStack"</span> <span style="color: #8abeb7;">]</span> &amp;&amp; rm $<span style="color: #f0c674;">TmpStack</span>
+  print_info <span style="color: #8abeb7;">"Operazione completata!"</span>
+
+<span style="color: #c5c8c6;">}</span>
+</code></pre>
+</div>
+
+</section>
+<section id="slide-org2d6b4b8">
+<h3 id="org2d6b4b8">File di appoggio</h3>
+<p>
+Faccio uso di un file di appoggio (salvato nella directory di sistema <code>/tmp</code>) in cui vado a salvare il risultato della ricerca dei file che combaciano con l'estensione scelta dall'utente.
+</p>
+</section>
+<section id="slide-org5a687a7">
+<h4 id="org5a687a7">Precauzioni</h4>
+<p>
+Ad ogni iterazione verifico che:
+</p>
+<ul>
+<li>Il file esista;</li>
+<li>Il file non sia vuoto (è inutile effettuare operazioni successive se non ho corrispondenze di file);</li>
+
+</ul>
+
+<p>
+Infine, elimino il file utilizzato.
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/notes/notes.js"></script>
+
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+plugins: [RevealMarkdown, RevealZoom, RevealNotes],
+slideNumber:true
+});
+
+</script>
+</body>
+</html>

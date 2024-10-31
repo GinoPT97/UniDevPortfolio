@@ -20,8 +20,8 @@ public class DBConfig {
 
 	    public int createSequence() throws ConnectionException,SQLException{
 	    	int result = -1;
-	    	if(connectionExists())
-				try {
+	    	if(connectionExists()) {
+	    		try {
 	    			Statement st = connection.createStatement();
 
 	    			String sql = "CREATE SEQUENCE seqid INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
@@ -30,6 +30,7 @@ public class DBConfig {
 	    		}catch(SQLException ex){
 	                System.out.println("SQL Exception in Creation Sequence : "+ex);
 	            }
+	    	}
 			return result;
 	    }
 
@@ -37,7 +38,8 @@ public class DBConfig {
 	        int result = -1;
 
 	        if(connectionExists())
-				try {
+	        {
+	            try {
 	                Statement st = connection.createStatement();
 
 	                if (!tableExists("prove")) {
@@ -49,15 +51,17 @@ public class DBConfig {
 	                    result = st.executeUpdate(sql);
 	                    st.close();
 
-	                } else
+	                } else {
 						System.out.println("Table prova already exists!");
+					}
 	            }
 	            catch(SQLException ex)
 	            {
 	                System.out.println("SQL Exception in creation table prova : "+ex);
 	            }
-			else
+	        } else {
 				throw new ConnectionException("A connection must exist!");
+			}
 
 	        return result;
 	    }
@@ -66,8 +70,9 @@ public class DBConfig {
 	    {
 	        DatabaseMetaData metadata = connection.getMetaData();
 	        ResultSet tables = metadata.getTables(null, null, tbl_name, null);
-	        if (tables.next())
+	        if (tables.next()) {
 				return true;
+			}
 	        return false;
 
 	    }

@@ -55,14 +55,20 @@ public class LancioDadi {
         int i, cont = 0;
 
         for (i=0; i<numerolanci; ++i)
-			if (lanci[i]==numeroDaContare)
-				cont = cont + 1;
+        {
+            if (lanci[i]==numeroDaContare)
+            {
+                cont = cont + 1;
+            }
+        }
         return cont;
     }
 
     public void lanciaDado()
     {
         for (int i=0; i<numerolanci; ++i)
-			lanci[i] = 1 + (int)((7-1) * Math.random());  //genera un numero casuale fra 1 e 6
+        {
+            lanci[i] = 1 + (int)((7-1) * Math.random());  //genera un numero casuale fra 1 e 6
+        }
     }
 }

@@ -1,0 +1,23 @@
+ESERCIZIO 1
+
+Scrivere un programma C che crea un figlio:
+- il padre invia al figlio 10 numeri interi casuali al ritmo di uno al secondo, e poi termina;
+- il figlio riceve i numeri dal padre e li stampa sul terminale;
+- il figlio termina dopo aver ricevuto il decimo numero.
+
+(I due processi comunicano tramite una PIPE)
+Opzionale: modificare il figlio in modo che termini dopo aver ricevuto 5 interi
+
+(La soluzione, prensete in questo file, di questo esercizio prende direttamente in input la quantità di numeri)
+
+ESERCIZIO 2
+
+Scrivere un programma C che crea un figlio:
+- il padre entra in un ciclo in cui legge dal terminale un numero intero x e manda al figlio x^2;
+- il padre esce dal cliclo e termina quando l'utente immette il numero 0;
+- il figlio riceve i numeri dal padre e li stampa sul terminale;
+- il figlio termina quando riceve 0 dal padre.
+
+
+(Entrambe le soluzioni fanno uso dei segnali per eseguire la comunicazione tra i processi)
+

@@ -334,7 +334,6 @@ public class DBConfiguration {
 
 	        // Popola la tabella Dipendente
 	        String sqlDipendente = "INSERT INTO dipendente (coddipendente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
-	        		+ "('00000','Marco','Salemme','BBBBBB55B55B555B','Via Matteotti','1234567899','marco@hotmail.it'),"
 	                + "('89899','dario','forte','FFFFFF11F11F111F','via andromeda','1234567890','dario@arte.it'),"
 	                + "('79799','sandro','romano','LLLLLL22L22L222L','via omega','1234567890','sandro@arte.it'),"
 	                + "('34345','giulio','cesare','PPPPPP88P88P888P','via roma','1234567890','giulio@arte.it'),"
