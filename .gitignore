@@ -10,10 +10,11 @@ build/
 # Gradle Wrapper JAR
 **/gradle-wrapper.jar
 
-# Android Studio files
+# Android Studio and IntelliJ project files
 /.idea/
 *.iml
-*.hprof
+*.ipr
+*.iws
 
 # Local configuration file (sdk location, etc)
 local.properties
@@ -41,13 +42,6 @@ out/
 # Exclude libraries
 libs/*.jar
 
-# IntelliJ project files
-.idea/
-*.iws
-*.ipr
-*.iml
-.idea/
-
 # Keystore files
 *.jks
 
@@ -59,6 +53,6 @@ crashlytics.properties
 fabric.properties
 **/crashlytics-build.properties
 
-# Remove indexing, keeping source files
+# Exclude build files while keeping source files
 **/build/
 !app/src/
