@@ -1,4 +1,13 @@
+Con messaggio di commit pre-impostatp :
+
 git -C ~/Documenti/GitHub/CodicePersonale add .
 git -C ~/Documenti/GitHub/CodicePersonale commit -m "Aggiunta di nuove funzionalità"
 git -C ~/Documenti/GitHub/CodicePersonale push origin main
+
+Con messaggio di commit richiesto da terminale :
+
+git -C ~/Documenti/GitHub/CodicePersonale add .
+git -C ~/Documenti/GitHub/CodicePersonale commit --edit
+git -C ~/Documenti/GitHub/CodicePersonale push origin main
+
 
