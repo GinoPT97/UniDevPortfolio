@@ -16,7 +16,7 @@ import DAOImplementation.Clienteimpl;
 import DAOImplementation.DipendenteImpl;
 import DAOImplementation.OrdiniImpl;
 import DAOImplementation.ProdottoImpl;
-import DAOImplementation.Tesseraimpl;
+import DAOImplementation.TesseraImpl;
 import DAOInterface.ArticoliJDBC;
 import DAOInterface.ClienteJDBC;
 import DAOInterface.DipendenteJDBC;
@@ -205,7 +205,7 @@ public class Controller {
 			config = new DBConfiguration(connection);
 			// Metodi per la definizione del DB:
 			config.createTipologie();
-			config.createSequences();
+			//config.createSequences();
 			config.createTableCliente();
 			config.createTableDipendente();
 			config.createTableOrdine();
@@ -218,7 +218,7 @@ public class Controller {
 			dpjdbc = new DipendenteImpl(connection);
 			prdjdbc = new ProdottoImpl(connection);
 			ordjdbc = new OrdiniImpl(connection);
-			tsjdbc = new Tesseraimpl(connection);
+			tsjdbc = new TesseraImpl(connection);
 			artjdbc = new ArticoliImpl(connection);
 		} catch (SQLException | ConnectionException e) {
 			System.out.println("SQLException: " + e.getMessage());
