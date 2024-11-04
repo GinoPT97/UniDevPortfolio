@@ -1,0 +1,4 @@
+git -C ~/Documenti/GitHub/CodicePersonale add .
+git -C ~/Documenti/GitHub/CodicePersonale commit -m "Aggiunta di nuove funzionalità"
+git -C ~/Documenti/GitHub/CodicePersonale push origin main
+
