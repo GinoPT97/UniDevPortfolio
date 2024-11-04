@@ -1,6 +1,0 @@
-Si implementi un programma C che prende come argomenti tre nomi di files f1, f2 , f3
-(f1 deve essere un file esistente) ed il nome di un eseguibile (es. rev.out)
-che accetta a sua volta il path di un file e lo stampa in ordine inverso di bytes sullo standard output.
-Il programma genera un primo figlio che esegue rev.out su f1 e scrive l'output in f2.
-Successivamente, il programma genera un secondo figlio che che esegue rev.out su f2 e scrive a sua volta l'output in f3.
- 

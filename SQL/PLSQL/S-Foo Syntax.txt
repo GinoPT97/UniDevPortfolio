@@ -1,8 +1,0 @@
-$ CREATE OR REPLACE FUNCTION fooName(var #IN-OUT-IN/OUT# TYPE, ...) RETURN TYPE
-$ IS
-$ DECLARE
-$   ...
-$ BEGIN
-$   ...
-$   RETURN var;
-$ END; 

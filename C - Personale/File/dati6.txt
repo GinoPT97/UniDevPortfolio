@@ -1,3 +1,0 @@
-Citta': PALERMO 
-Massima durata di una telefonata: 260s
-Numero di scatti totale: 6

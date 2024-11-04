@@ -1,7 +1,0 @@
-Main-Class: com.thp.ComputerClient_REV_1
-Specification-Title: Computer And Software Classes  
-Specification-Version: 1.0
-Specification-Vendor: Pellegrino Principe
-Implementation-Title: com.pellegrinoprincipe
-Implementation-Version: build 500
-Implementation-Vendor: Pellegrino Principe

@@ -1,8 +1,0 @@
-Rossi   24  24.56
-Bianchi 23  18.2
-Verdi   30  29.65
-Blu     22  28.30
-Rosa    19  27.3
-Gialli  25  27.3
-Neri    24  25.56
-Viola   21  30.0
