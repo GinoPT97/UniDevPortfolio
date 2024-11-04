@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>JavaScript</title>
+    <style>
+      html {
+        font-family: sans-serif; font-size: 24px;
+      }
+      input {
+        font-size: 1em;
+      }
+      .done {
+        text-decoration: line-through;
+        color: red;
+      }
+    </style>
+    <script src="todo.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Web Tech's first ToDo App</h1>
+      <p>
+        <strong>Instructions:</strong> add as many todos as you wish using 
+        the following form. <br>
+        To add the current item, you can either click on the dedicated button, or 
+        press <kbd>Enter</kbd> on your keyboard.<br>
+        Click on an item on the list to mark it as <span class="done">done</span>.
+        Double click on an item do delete it.
+      </p>
+
+      <form>
+        <input id="todo-input" type="text" placeholder="Write your todo here">
+        <input type="button" value="Add to the list" id="todo-add-button">
+      </form>
+
+      <section>
+        <h2>List of things to do</h2>
+        <ul id="todo-list">
+
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

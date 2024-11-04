@@ -1,0 +1,27 @@
+inversa([], []).
+inversa([X|Rest],Inv) :- inversa(Rest, RestInv), append(RestInv, [X], Inv).
+
+concatena([], L, L).
+concatena([X|Rest1], L2, [X|Rest2]) :- concatena(Rest1, L2, Rest2).
+
+sottolista([], _).
+sottolista([X|Rest], List) :- append(_, [X|RestSottolista], List), sottolista(Rest, RestSottolista).
+
+ultimo([X], X).
+ultimo([_|Rest], Last) :- ultimo(Rest, Last).
+
+duplica([], []).
+duplica([X|Rest], [X,X|DupRest]) :- duplica(Rest, DupRest).
+
+palindromo(List) :- inversa(List, List).
+
+rimuovi_duplicati([], []).
+rimuovi_duplicati([X|Rest], [X|CleanRest]) :- rimuovi_elemento(X, Rest, RestSenzaX), rimuovi_duplicati(RestSenzaX, CleanRest).
+
+rimuovi_elemento(_, [], []).
+rimuovi_elemento(X, [X|Rest], CleanRest) :- rimuovi_elemento(X, Rest, CleanRest).
+rimuovi_elemento(X, [Y|Rest], [Y|CleanRest]) :- X \= Y, rimuovi_elemento(X, Rest, CleanRest).
+
+sottoinsieme([], _).
+sottoinsieme([X|Rest], Set) :- member(X, Set), sottoinsieme(Rest, Set).
+

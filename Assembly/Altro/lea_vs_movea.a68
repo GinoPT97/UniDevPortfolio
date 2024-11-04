@@ -1,0 +1,22 @@
+*  Programma che mostra la differenza tra LEA e MOVEA
+
+		ORG		$8000
+*
+START		MOVEA.W	#VAR,A0	prestare attenzione all'estensione in segno
+		MOVEA.L	#VAR,A0
+*
+		LEA.L		(A0),A1             A1 viene caricato con l'effective address dell'operando sorgente
+		MOVEA.L 	(A0),A2             A2 con il CONTENUTO dell'effective address
+		STOP		#$2700
+*
+		ORG 		$8100
+VAR		DC.L		$8888		
+		END		START		Termina assemblaggio e salta all'entry point
+
+
+
+
+
+
+
+

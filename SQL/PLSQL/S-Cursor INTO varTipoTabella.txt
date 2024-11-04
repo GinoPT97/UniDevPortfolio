@@ -1,0 +1,14 @@
+Creare una variabile che ha stesse colonne della tabella del cursore
+
+$ DECLARE
+$   CURSOR curs IS
+$   SELECT name, salary
+$   FROM tab
+$   WHERE id = 100;
+$ 
+$   var_tab curs%ROWTYPE;
+$ BEGIN
+$   OPEN curs;
+$   FETCH curs INTO var_tab;
+$   CLOSE curs;
+$ END;

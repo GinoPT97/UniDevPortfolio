@@ -1,0 +1,2955 @@
+%% process.tex
+%%
+%% Copyright (C) 2000-2018 by Simone Piccardi.  Permission is granted to
+%% copy, distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.1 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+
+\chapter{L'interfaccia base con i processi}
+\label{cha:process_interface}
+
+Come accennato nell'introduzione il \textsl{processo} è l'unità di base con
+cui un sistema unix-like alloca ed utilizza le risorse.  Questo capitolo
+tratterà l'interfaccia base fra il sistema e i processi, come vengono passati
+gli argomenti, come viene gestita e allocata la memoria, come un processo può
+richiedere servizi al sistema e cosa deve fare quando ha finito la sua
+esecuzione. Nella sezione finale accenneremo ad alcune problematiche generiche
+di programmazione.
+
+In genere un programma viene eseguito quando un processo lo fa partire
+eseguendo una funzione della famiglia \func{exec}; torneremo su questo e sulla
+creazione e gestione dei processi nel prossimo capitolo. In questo
+affronteremo l'avvio e il funzionamento di un singolo processo partendo dal
+punto di vista del programma che viene messo in esecuzione.
+
+
+\section{Esecuzione e conclusione di un programma}
+
+Uno dei concetti base di Unix è che un processo esegue sempre uno ed un solo
+programma: si possono avere più processi che eseguono lo stesso programma ma
+ciascun processo vedrà la sua copia del codice (in realtà il kernel fa sì che
+tutte le parti uguali siano condivise), avrà un suo spazio di indirizzi,
+variabili proprie e sarà eseguito in maniera completamente indipendente da
+tutti gli altri. Questo non è del tutto vero nel caso di un programma
+\textit{multi-thread}, ma la gestione dei \textit{thread} in Linux sarà
+trattata a parte\unavref{in cap.~\ref{cha:threads}}.
+
+
+\subsection{L'avvio e l'esecuzione di un programma}
+\label{sec:proc_main}
+
+\itindbeg{link-loader}
+\itindbeg{shared~objects}
+Quando un programma viene messo in esecuzione, cosa che può essere fatta solo
+con una funzione della famiglia \func{exec} (vedi sez.~\ref{sec:proc_exec}),
+il kernel esegue un opportuno codice di avvio, il cosiddetto
+\textit{link-loader}, costituito dal programma \cmd{ld-linux.so}. Questo
+programma è una parte fondamentale del sistema il cui compito è quello della
+gestione delle cosiddette \textsl{librerie condivise}, quelle che nel mondo
+Windows sono chiamate DLL (\textit{Dinamic Link Library}), e che invece in un
+sistema unix-like vengono chiamate \textit{shared objects}.
+
+Infatti, a meno di non aver specificato il flag \texttt{-static} durante la
+compilazione, tutti i programmi in Linux sono compilati facendo riferimento a
+librerie condivise, in modo da evitare di duplicare lo stesso codice nei
+relativi eseguibili e consentire un uso più efficiente della memoria, dato che
+il codice di uno \textit{shared objects} viene caricato in memoria dal kernel
+una sola volta per tutti i programmi che lo usano.
+\itindend{shared~objects}
+
+Questo significa però che normalmente il codice di un programma è incompleto,
+contenendo solo i riferimenti alle funzioni di libreria che vuole utilizzare e
+non il relativo codice. Per questo motivo all'avvio del programma è necessario
+l'intervento del \textit{link-loader} il cui compito è caricare in memoria le
+librerie condivise eventualmente assenti, ed effettuare poi il collegamento
+dinamico del codice del programma alle funzioni di libreria da esso utilizzate
+prima di metterlo in esecuzione.
+
+Il funzionamento di \cmd{ld-linux.so} è controllato da alcune variabili di
+ambiente e dal contenuto del file \conffile{/etc/ld.so.conf} che consentono di
+elencare le directory un cui cercare le librerie e determinare quali verranno
+utilizzate.  In particolare con la variabile di ambiente
+\envvar{LD\_LIBRARY\_PATH} si possono indicare ulteriori directory rispetto a
+quelle di sistema in cui inserire versioni personali delle librerie che hanno
+la precedenza su quelle di sistema, mentre con la variabile di ambiente
+\envvar{LD\_PRELOAD} si può passare direttamente una lista di file di librerie
+condivise da usare al posto di quelli di sistema. In questo modo è possibile
+effettuare lo sviluppo o il test di nuove librerie senza dover sostituire
+quelle di sistema. Ulteriori dettagli sono riportati nella pagina di manuale
+di \cmd{ld.so} e per un approfondimento dell'argomento si può consultare
+sez.~3.1.2 di \cite{AGL}.
+
+Una volta completate le operazioni di inizializzazione di \cmd{ld-linux.so}, il
+sistema fa partire qualunque programma chiamando la funzione \code{main}. Sta
+al programmatore chiamare così la funzione principale del programma da cui si
+suppone che inizi l'esecuzione. In ogni caso senza questa funzione lo stesso
+\textit{link-loader} darebbe luogo ad errori.  Lo standard ISO C specifica che
+la funzione \code{main} può non avere argomenti o prendere due argomenti che
+rappresentano gli argomenti passati da linea di comando (su cui torneremo in
+sez.~\ref{sec:proc_par_format}), in sostanza un prototipo che va sempre bene è
+il seguente:
+\includecodesnip{listati/main_def.c}
+
+\itindend{link-loader}
+
+In realtà nei sistemi Unix esiste un altro modo per definire la funzione
+\code{main}, che prevede la presenza di un terzo argomento, \code{char
+  *envp[]}, che fornisce l'\textsl{ambiente} del programma; questa forma però
+non è prevista dallo standard POSIX.1 per cui se si vogliono scrivere
+programmi portabili è meglio evitarla. Per accedere all'ambiente, come vedremo
+in sez.~\ref{sec:proc_environ} si usa in genere una variabile globale che
+viene sempre definita automaticamente.
+
+Ogni programma viene fatto partire mettendo in esecuzione il codice contenuto
+nella funzione \code{main}, ogni altra funzione usata dal programma, che sia
+ottenuta da una libreria condivisa, o che sia direttamente definita nel
+codice, dovrà essere invocata a partire dal codice di \code{main}. Nel caso di
+funzioni definite nel programma occorre tenere conto che, nel momento stesso
+in cui si usano le librerie di sistema (vale a dire la \acr{glibc}) alcuni
+nomi sono riservati e non possono essere utilizzati. 
+
+In particolare sono riservati a priori e non possono essere mai ridefiniti in
+nessun caso i nomi di tutte le funzioni, le variabili, le macro di
+preprocessore, ed i tipi di dati previsti dallo standard ISO C. Lo stesso
+varrà per tutti i nomi definiti negli \textit{header file} che si sono
+esplicitamente inclusi nel programma (vedi sez.~\ref{sec:proc_syscall}), ma
+anche se è possibile riutilizzare nomi definiti in altri \textit{header file}
+la pratica è da evitare nella maniera più assoluta per non generare ambiguità.
+
+Oltre ai nomi delle funzioni di libreria sono poi riservati in maniera
+generica tutti i nomi di variabili o funzioni globali che iniziano con il
+carattere di sottolineato (``\texttt{\_}''), e qualunque nome che inizi con il
+doppio sottolineato (``\texttt{\_\_}'') o con il sottolineato seguito da
+lettera maiuscola. Questi identificativi infatti sono utilizzati per i nomi
+usati internamente in forma privata dalle librerie, ed evitandone l'uso si
+elimina il rischio di conflitti.
+
+Infine esiste una serie di classi di nomi che sono riservati per un loro
+eventuale uso futuro da parte degli standard ISO C e POSIX.1, questi in teoria
+possono essere usati senza problemi oggi, ma potrebbero dare un conflitto con
+una revisione futura di questi standard, per cui è comunque opportuno
+evitarli, in particolare questi sono:
+\begin{itemize*}
+\item i nomi che iniziano per ``\texttt{E}'' costituiti da lettere maiuscole e
+  numeri, che potrebbero essere utilizzati per nuovi codici di errore (vedi
+  sez.~\ref{sec:sys_errors}),
+\item i nomi che iniziano con ``\texttt{is}'' o ``\texttt{to}'' e costituiti
+  da lettere minuscole che potrebbero essere utilizzati da nuove funzioni per
+  il controllo e la conversione del tipo di caratteri,
+\item i nomi che iniziano con ``\texttt{LC\_}'' e costituiti
+  da lettere maiuscole che possono essere usato per macro attinenti la
+  localizzazione,% mettere in seguito (vedi sez.~\ref{sec:proc_localization}),
+\item nomi che iniziano con ``\texttt{SIG}'' o ``\texttt{SIG\_}'' e costituiti
+  da lettere maiuscole che potrebbero essere usati per nuovi nomi di segnale
+  (vedi sez.~\ref{sec:sig_classification}),
+\item nomi che iniziano con ``\texttt{str}'', ``\texttt{mem}'', o
+  ``\texttt{wcs}'' e costituiti da lettere minuscole che possono essere
+  utilizzati per funzioni attinenti la manipolazione delle stringhe e delle
+  aree di memoria,
+\item nomi che terminano in ``\texttt{\_t}'' che potrebbero essere utilizzati
+  per la definizione di nuovi tipi di dati di sistema oltre quelli di
+  tab.~\ref{tab:intro_primitive_types}).
+\end{itemize*}
+
+
+\subsection{Chiamate a funzioni e \textit{system call}}
+\label{sec:proc_syscall}
+
+Come accennato in sez.~\ref{sec:intro_syscall} un programma può utilizzare le
+risorse che il sistema gli mette a disposizione attraverso l'uso delle
+opportune \textit{system call}. Abbiamo inoltre appena visto come all'avvio un
+programma venga messo in grado di chiamare le funzioni fornite da eventuali
+librerie condivise da esso utilizzate. 
+
+Vedremo nel resto della guida quali sono le risorse del sistema accessibili
+attraverso le \textit{system call} e tratteremo buona parte delle funzioni
+messe a disposizione dalla libreria standard del C, in questa sezione però si
+forniranno alcune indicazioni generali sul come fare perché un programma possa
+utilizzare queste funzioni.
+
+\itindbeg{header~file}
+
+In sez.~\ref{sec:intro_standard} abbiamo accennato come le funzioni definite
+nei vari standard siano definite in una serie di \textit{header file} (in
+italiano \textsl{file di intestazione}).  Vengono chiamati in questo modo quei
+file, forniti insieme al codice delle librerie, che contengono le
+dichiarazioni delle variabili, dei tipi di dati, delle macro di preprocessore
+e soprattutto delle funzioni che fanno parte di una libreria.
+
+Questi file sono necessari al compilatore del linguaggio C per ottenere i
+riferimenti ai nomi delle funzioni (e alle altre risorse) definite in una
+libreria, per questo quando si vogliono usare le funzioni di una libreria
+occorre includere nel proprio codice gli \textit{header file} che le
+definiscono con la direttiva \code{\#include}. Dato che le funzioni devono
+essere definite prima di poterle usare in genere gli \textit{header file}
+vengono inclusi all'inizio del programma. Se inoltre si vogliono utilizzare le
+macro di controllo delle funzionalità fornite dai vari standard illustrate in
+sez.~\ref{sec:intro_gcc_glibc_std} queste, come accennato, dovranno a loro
+volta essere definite prima delle varie inclusioni.
+
+Ogni libreria fornisce i propri file di intestazione per i quali si deve
+consultare la documentazione, ma in tab.~\ref{tab:intro_posix_header} si sono
+riportati i principali \textit{header file} definiti nella libreria standard
+del C (nel caso la \acr{glibc}) che contengono le varie funzioni previste
+negli standard POSIX ed ANSI C, e che prevedono la definizione sia delle
+funzioni di utilità generica che delle interfacce alle \textit{system call}. In
+seguito per ciascuna funzione o \textit{system call} che tratteremo
+indicheremo anche quali sono gli \textit{header file} contenenti le necessarie
+definizioni.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|c|c|l|}
+    \hline
+    \multirow{2}{*}{\textbf{Header}}&
+    \multicolumn{2}{|c|}{\textbf{Standard}}&
+    \multirow{2}{*}{\textbf{Contenuto}} \\
+    \cline{2-3}
+    & ANSI C& POSIX& \\
+    \hline
+    \hline
+    \headfiled{assert.h}&$\bullet$&    --   & Verifica le asserzioni fatte in un
+                                              programma.\\ 
+    \headfiled{ctype.h} &$\bullet$&    --   & Tipi standard.\\
+    \headfiled{dirent.h}&   --    &$\bullet$& Manipolazione delle directory.\\
+    \headfiled{errno.h} &   --    &$\bullet$& Errori di sistema.\\
+    \headfiled{fcntl.h} &   --    &$\bullet$& Controllo sulle opzioni dei
+                                              file.\\ 
+    \headfiled{limits.h}&   --    &$\bullet$& Limiti e parametri del sistema.\\
+    \headfiled{malloc.h}&$\bullet$&    --   & Allocazione della memoria.\\
+    \headfiled{setjmp.h}&$\bullet$&    --   & Salti non locali.\\
+    \headfiled{signal.h}&   --    &$\bullet$& Gestione dei segnali.\\
+    \headfiled{stdarg.h}&$\bullet$&    --   & Gestione di funzioni a argomenti
+                                             variabili.\\ 
+    \headfiled{stdio.h} &$\bullet$&    --   & I/O bufferizzato in standard ANSI
+                                              C.\\ 
+    \headfiled{stdlib.h}&$\bullet$&    --   & Definizioni della libreria
+                                              standard.\\ 
+    \headfiled{string.h}&$\bullet$&    --   & Manipolazione delle stringhe.\\
+    \headfiled{time.h}  &   --    &$\bullet$& Gestione dei tempi.\\
+    \headfiled{times.h} &$\bullet$&    --   & Gestione dei tempi.\\
+    \headfiled{unistd.h}&   --    &$\bullet$& Unix standard library.\\
+    \headfiled{utmp.h}  &   --    &$\bullet$& Registro connessioni utenti.\\
+    \hline
+  \end{tabular}
+  \caption{Elenco dei principali \textit{header file} definiti dagli standard
+    POSIX e ANSI C.}
+  \label{tab:intro_posix_header}
+\end{table}
+
+Un esempio di inclusione di questi file, preso da uno dei programmi di
+esempio, è il seguente, e si noti come gli \textit{header file} possano essere
+referenziati con il nome fra parentesi angolari, nel qual caso si indica l'uso
+di quelli installati con il sistema,\footnote{in un sistema GNU/Linux che
+  segue le specifiche del \textit{Filesystem Hierarchy Standard} (per maggiori
+  informazioni si consulti sez.~1.2.3 di \cite{AGL}) si trovano sotto
+  \texttt{/usr/include}.}  o fra virgolette, nel qual caso si fa riferimento
+ad una versione locale, da indicare con un \textit{pathname} relativo:
+\includecodesnip{listati/main_include.c}
+
+Si tenga presente che oltre ai nomi riservati a livello generale di cui si è
+parlato in sez.~\ref{sec:proc_main}, alcuni di questi \textit{header file}
+riservano degli ulteriori identificativi, il cui uso sarà da evitare, ad
+esempio si avrà che:
+\begin{itemize*}
+\item in \headfile{dirent.h} vengono riservati i nomi che iniziano con
+  ``\texttt{d\_}'' e costituiti da lettere minuscole,
+\item in \headfile{fcntl.h} vengono riservati i nomi che iniziano con
+  ``\texttt{l\_}'', ``\texttt{F\_}'',``\texttt{O\_}'' e ``\texttt{S\_}'',
+\item in \headfile{limits.h} vengono riservati i nomi che finiscono in
+  ``\texttt{\_MAX}'',
+\item in \headfile{signal.h} vengono riservati i nomi che iniziano con
+  ``\texttt{sa\_}'' e ``\texttt{SA\_}'',
+\item in \headfile{sys/stat.h} vengono riservati i nomi che iniziano con
+  ``\texttt{st\_}'' e ``\texttt{S\_}'',
+\item in \headfile{sys/times.h} vengono riservati i nomi che iniziano con
+  ``\texttt{tms\_}'',
+\item in \headfile{termios.h} vengono riservati i nomi che iniziano con
+  ``\texttt{c\_}'', ``\texttt{V}'', ``\texttt{I}'', ``\texttt{O}'' e
+  ``\texttt{TC}'' e con ``\texttt{B}'' seguito da un numero,
+\item in \headfile{grp.h} vengono riservati i nomi che iniziano con
+  ``\texttt{gr\_}'',
+\item in \headfile{pwd.h} vengono riservati i nomi che iniziano con
+  ``\texttt{pw\_}'',
+\end{itemize*}
+
+\itindend{header~file}
+
+Una volta inclusi gli \textit{header file} necessari un programma potrà
+richiamare le funzioni di libreria direttamente nel proprio codice ed accedere
+ai servizi del kernel; come accennato infatti normalmente ogni \textit{system
+  call} è associata ad una omonima funzione di libreria, che è quella che si
+usa normalmente per invocarla.
+
+Occorre però tenere presente che anche se dal punto di vista della scrittura
+del codice la chiamata di una \textit{system call} non è diversa da quella di
+una qualunque funzione ordinaria, la situazione è totalmente diversa
+nell'esecuzione del programma. Una funzione ordinaria infatti viene eseguita,
+esattamente come il codice che si è scritto nel corpo del programma, in
+\textit{user space}. Quando invece si esegue una \textit{system call}
+l'esecuzione ordinaria del programma viene interrotta con quello che viene
+usualmente chiamato un \itindex{context~switch} \textit{context
+  switch};\footnote{in realtà si parla più comunemente di \textit{context
+    switch} quando l'esecuzione di un processo viene interrotta dal kernel
+  (tramite lo \textit{scheduler}) per metterne in esecuzione un altro, ma il
+  concetto generale resta lo stesso: l'esecuzione del proprio codice in
+  \textit{user space} viene interrotta e lo stato del processo deve essere
+  salvato per poterne riprendere l'esecuzione in un secondo tempo.}  il
+contesto di esecuzione del processo viene salvato in modo da poterne
+riprendere in seguito l'esecuzione ed i dati forniti (come argomenti della
+chiamata) vengono trasferiti al kernel che esegue il codice della
+\textit{system call} (che è codice del kernel) in \textit{kernel space}; al
+completamento della \textit{system call} i dati salvati nel \textit{context
+  switch} saranno usati per riprendere l'esecuzione ordinaria del programma.
+
+Dato che il passaggio dei dati ed il salvataggio del contesto di esecuzione
+sono operazioni critiche per le prestazioni del sistema, per rendere il più
+veloce possibile questa operazione sono state sviluppate una serie di
+ottimizzazioni che richiedono alcune preparazioni abbastanza complesse dei
+dati, che in genere dipendono dall'architettura del processore e sono scritte
+direttamente in \textit{assembler}.
+
+
+%
+% TODO:trattare qui, quando sarà il momento vsyscall e vDSO, vedi:
+% http://davisdoesdownunder.blogspot.com/2011/02/linux-syscall-vsyscall-and-vdso-oh-my.html 
+% http://www.win.tue.nl/~aeb/linux/lk/lk-4.html
+%
+% Altro materiale al riguardo http://lwn.net/Articles/615809/
+% http://man7.org/linux/man-pages/man7/vdso.7.html 
+
+Inoltre alcune \textit{system call} sono state modificate nel corso degli anni
+con lo sviluppo del kernel per aggiungere ad esempio funzionalità in forma di
+nuovi argomenti, o per consolidare diverse varianti in una interfaccia
+generica.  Per questo motivo dovendo utilizzare una \textit{system call} è
+sempre preferibile usare l'interfaccia fornita dalla \textsl{glibc}, che si
+cura di mantenere una uniformità chiamando le versioni più aggiornate.
+
+Ci sono alcuni casi però in cui può essere necessario evitare questa
+associazione, e lavorare a basso livello con una specifica versione, oppure si
+può voler utilizzare una \textit{system call} che non è stata ancora associata
+ad una funzione di libreria.  In tal caso, per evitare di dover effettuare
+esplicitamente le operazioni di preparazione citate, all'interno della
+\textsl{glibc} è fornita una specifica funzione,
+\funcd{syscall},\footnote{fino a prima del kernel 2.6.18 per l'esecuzione
+  diretta delle \textit{system call} erano disponibili anche una serie di
+  macro \texttt{\_syscall\textsl{N}} (con $N$ pari al numero di argomenti
+  della \textit{system call}); queste sono deprecate e pertanto non ne
+  parleremo ulteriormente.} che consente eseguire direttamente una
+\textit{system call}; il suo prototipo, accessibile se si è definita la macro
+\macro{\_GNU\_SOURCE}, è:
+
+\begin{funcproto}{
+  \fhead{unistd.h}
+  \fhead{sys/syscall.h}
+  \fdecl{long syscall(int number, ...)}
+  \fdesc{Esegue la \textit{system call} indicata da \param{number}.}
+}
+{La funzione ritorna un intero dipendente dalla \textit{system call} invocata,
+ in generale $0$ indica il successo ed un valore negativo un errore.}
+\end{funcproto}
+
+La funzione richiede come primo argomento il numero della \textit{system call}
+da invocare, seguita dagli argomenti da passare alla stessa, che ovviamente
+dipendono da quest'ultima, e restituisce il codice di ritorno della
+\textit{system call} invocata. In generale un valore nullo indica il successo
+ed un valore negativo è un codice di errore che poi viene memorizzato nella
+variabile \var{errno} (sulla gestione degli errori torneremo in dettaglio in
+sez.~\ref{sec:sys_errors}).
+
+Il valore di \param{number} dipende sia dalla versione di kernel che
+dall'architettura,\footnote{in genere le vecchie \textit{system call} non
+  vengono eliminate e se ne aggiungono di nuove con nuovi numeri.}  ma
+ciascuna \textit{system call} viene in genere identificata da una costante
+nella forma \texttt{SYS\_*} dove al prefisso viene aggiunto il nome che spesso
+corrisponde anche alla omonima funzione di libreria. Queste costanti sono
+definite nel file \headfiled{sys/syscall.h}, ma si possono anche usare
+direttamente valori numerici.
+
+
+\subsection{La terminazione di un programma}
+\label{sec:proc_conclusion}
+
+Normalmente un programma conclude la sua esecuzione quando si fa ritornare la
+funzione \code{main}, si usa cioè l'istruzione \instruction{return} del
+linguaggio C all'interno della stessa, o se si richiede esplicitamente la
+chiusura invocando direttamente la funzione \func{exit}. Queste due modalità
+sono assolutamente equivalenti, dato che \func{exit} viene chiamata in maniera
+trasparente anche quando \code{main} ritorna, passandogli come argomento il
+valore indicato da \instruction{return}.
+
+La funzione \funcd{exit}, che è completamente generale, essendo definita dallo
+standard ANSI C, è quella che deve essere invocata per una terminazione
+``\textit{normale}'', il suo prototipo è:
+
+\begin{funcproto}{
+  \fhead{unistd.h}
+  \fdecl{void exit(int status)}
+  \fdesc{Causa la conclusione ordinaria del programma.}
+}
+{La funzione non ritorna, il processo viene terminato.}
+\end{funcproto}
+
+La funzione è pensata per eseguire una conclusione pulita di un programma che
+usi la libreria standard del C; essa esegue tutte le funzioni che sono state
+registrate con \func{atexit} e \func{on\_exit} (vedi
+sez.~\ref{sec:proc_atexit}), chiude tutti gli \textit{stream} (vedi
+sez.~\ref{sec:file_stream}) effettuando il salvataggio dei dati sospesi
+(chiamando \func{fclose}, vedi sez.~\ref{sec:file_fopen}), infine passa il
+controllo al kernel chiamando la \textit{system call} \func{\_exit} (che
+vedremo a breve) che completa la terminazione del processo.
+
+\itindbeg{exit~status}
+
+Il valore dell'argomento \param{status} o il valore di ritorno di \code{main}
+costituisce quello che viene chiamato lo \textsl{stato di uscita}
+(l'\textit{exit status}) del processo. In generale si usa questo valore per
+fornire al processo padre (come vedremo in sez.~\ref{sec:proc_wait}) delle
+informazioni generiche sulla riuscita o il fallimento del programma appena
+terminato.
+
+Anche se l'argomento \param{status} (ed il valore di ritorno di \code{main})
+sono numeri interi di tipo \ctyp{int}, si deve tener presente che il valore
+dello stato di uscita viene comunque troncato ad 8 bit, per cui deve essere
+sempre compreso fra 0 e 255. Si tenga presente che se si raggiunge la fine
+della funzione \code{main} senza ritornare esplicitamente si ha un valore di
+uscita indefinito, è pertanto consigliabile di concludere sempre in maniera
+esplicita detta funzione.
+
+Non esiste un significato intrinseco della stato di uscita, ma una convenzione
+in uso pressoché universale è quella di restituire 0 in caso di successo e 1
+in caso di fallimento. Una eccezione a questa convenzione è per i programmi
+che effettuano dei confronti (come \cmd{diff}), che usano 0 per indicare la
+corrispondenza, 1 per indicare la non corrispondenza e 2 per indicare
+l'incapacità di effettuare il confronto. Un'altra convenzione riserva i valori
+da 128 a 256 per usi speciali: ad esempio 128 viene usato per indicare
+l'incapacità di eseguire un altro programma in un sottoprocesso. Benché le
+convenzioni citate non siano seguite universalmente è una buona idea tenerle
+presenti ed adottarle a seconda dei casi.
+
+Si tenga presente inoltre che non è una buona idea usare eventuali codici di
+errore restituiti nella variabile \var{errno} (vedi sez.~\ref{sec:sys_errors})
+come \textit{exit status}. In generale infatti non ci si cura del valore dello
+stato di uscita di un processo se non per vedere se è diverso da zero, come
+indicazione di un qualche errore.  Dato che viene troncato ad 8 bit utilizzare
+un intero di valore generico può comportare il rischio, qualora si vada ad
+usare un multiplo di 256, di avere uno stato di uscita uguale a zero, che
+verrebbe interpretato come un successo.
+
+Per questo motivo in \headfile{stdlib.h} sono definite, seguendo lo standard
+POSIX, le due costanti \constd{EXIT\_SUCCESS} e \constd{EXIT\_FAILURE}, da
+usare sempre per specificare lo stato di uscita di un processo. Su Linux, ed
+in generale in qualunque sistema POSIX, ad esse sono assegnati rispettivamente
+i valori 0 e 1.
+
+\itindend{exit~status}
+
+Una forma alternativa per effettuare una terminazione esplicita di un
+programma è quella di chiamare direttamente la \textit{system call}
+\funcd{\_exit},\footnote{la stessa è definita anche come \funcd{\_Exit} in
+  \headfile{stdlib.h}, inoltre a partire dalla \acr{glibc} 2.3 usando questa
+  funzione viene invocata \func{exit\_group} che termina tutti i
+  \textit{thread} del processo e non solo quello corrente (fintanto che non si
+  usano i \textit{thread}\unavref{, vedi sez.~\ref{cha:threads},} questo non
+  fa nessuna differenza).} che restituisce il controllo direttamente al
+kernel, concludendo immediatamente il processo, il suo prototipo è:
+
+\begin{funcproto}{ \fhead{unistd.h} \fdecl{void \_exit(int status)}
+    \fdesc{Causa la conclusione immediata del programma.}  } {La funzione non
+    ritorna, il processo viene terminato.}
+\end{funcproto}
+
+La funzione termina immediatamente il processo e le eventuali funzioni
+registrate con \func{atexit} e \func{on\_exit} non vengono eseguite. La
+funzione chiude tutti i file descriptor appartenenti al processo, cosa che
+però non comporta il salvataggio dei dati eventualmente presenti nei buffer
+degli \textit{stream}, (torneremo sulle due interfacce dei file in
+sez.~\ref{sec:file_unix_interface} e
+sez.~\ref{sec:files_std_interface}). Infine fa sì che ogni figlio del processo
+sia adottato da \cmd{init} (vedi sez.~\ref{sec:proc_termination}), manda un
+segnale \signal{SIGCHLD} al processo padre (vedi
+sez.~\ref{sec:sig_job_control}) e salva lo stato di uscita specificato in
+\param{status} che può essere raccolto usando la funzione \func{wait} (vedi
+sez.~\ref{sec:proc_wait}).
+
+Si tenga presente infine che oltre alla conclusione ``\textsl{normale}''
+appena illustrata esiste anche la possibilità di una conclusione
+``\textsl{anomala}'' del programma a causa della ricezione di un segnale
+(tratteremo i segnali in cap.~\ref{cha:signals}) o della chiamata alla
+funzione \func{abort}; torneremo su questo in sez.~\ref{sec:proc_termination}.
+
+
+\subsection{Esecuzione di funzioni preliminari all'uscita}
+\label{sec:proc_atexit}
+
+Un'esigenza comune che si incontra è quella di dover effettuare una serie di
+operazioni di pulizia prima della conclusione di un programma, ad esempio
+salvare dei dati, ripristinare delle impostazioni, eliminare dei file
+temporanei, ecc. In genere queste operazioni vengono fatte in un'apposita
+sezione del programma, ma quando si realizza una libreria diventa antipatico
+dover richiedere una chiamata esplicita ad una funzione di pulizia al
+programmatore che la utilizza.
+
+È invece molto meno soggetto ad errori, e completamente trasparente
+all'utente, avere la possibilità di fare effettuare automaticamente la
+chiamata ad una funzione che effettui tali operazioni all'uscita dal
+programma. A questo scopo lo standard ANSI C prevede la possibilità di
+registrare un certo numero di funzioni che verranno eseguite all'uscita dal
+programma,\footnote{nel caso di \func{atexit} lo standard POSIX.1-2001
+  richiede che siano registrabili almeno \constd{ATEXIT\_MAX} funzioni (il
+  valore può essere ottenuto con \func{sysconf}, vedi
+  sez.~\ref{sec:sys_limits}).} sia per la chiamata ad \func{exit} che per il
+ritorno di \code{main}. La prima funzione che si può utilizzare a tal fine è
+\funcd{atexit}, il cui prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h} 
+\fdecl{int atexit(void (*function)(void))}
+\fdesc{Registra la funzione \param{function} per la chiamata all'uscita
+      dal programma.}  
+} 
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, \var{errno}
+  non viene modificata.}
+\end{funcproto}
+
+La funzione richiede come argomento \param{function} l'indirizzo di una
+opportuna funzione di pulizia da chiamare all'uscita del programma, che non
+deve prendere argomenti e non deve ritornare niente. In sostanza deve la
+funzione di pulizia dovrà essere definita come \code{void function(void)}.
+
+Un'estensione di \func{atexit} è la funzione \funcd{on\_exit}, che la
+\acr{glibc} include per compatibilità con SunOS ma che non è detto sia
+definita su altri sistemi,\footnote{la funzione è disponibile dalla
+  \acr{glibc} 2.19 definendo la macro \macro{\_DEFAULT\_SOURCE}, mentre in
+  precedenza erano necessarie \macro{\_BSD\_SOURCE} o \macro{\_SVID\_SOURCE};
+  non essendo prevista dallo standard POSIX è in generale preferibile evitarne
+  l'uso.} il suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h} 
+\fdecl{int on\_exit(void (*function)(int, void *), void *arg))}
+\fdesc{Registra la funzione \param{function} per la chiamata all'uscita dal
+  programma.} 
+}
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, \var{errno}
+  non viene modificata.} 
+\end{funcproto}
+
+In questo caso la funzione da chiamare all'uscita prende i due argomenti
+specificati nel prototipo, un intero ed un puntatore; dovrà cioè essere
+definita come \code{void function(int status, void *argp)}. Il primo argomento
+sarà inizializzato allo stato di uscita con cui è stata chiamata \func{exit}
+ed il secondo al puntatore \param{arg} passato come secondo argomento di
+\func{on\_exit}.  Così diventa possibile passare dei dati alla funzione di
+chiusura.
+
+Nella sequenza di chiusura tutte le funzioni registrate verranno chiamate in
+ordine inverso rispetto a quello di registrazione, ed una stessa funzione
+registrata più volte sarà chiamata più volte. Siccome entrambe le funzioni
+\func{atexit} e \func{on\_exit} fanno riferimento alla stessa lista, l'ordine
+di esecuzione sarà riferito alla registrazione in quanto tale,
+indipendentemente dalla funzione usata per farla.
+
+Una volta completata l'esecuzione di tutte le funzioni registrate verranno
+chiusi tutti gli \textit{stream} aperti ed infine verrà chiamata \func{\_exit}
+per la terminazione del programma. Questa è la sequenza ordinaria, eseguita a
+meno che una delle funzioni registrate non esegua al suo interno
+\func{\_exit}, nel qual caso la terminazione del programma sarà immediata ed
+anche le successive funzioni registrate non saranno invocate.
+
+Se invece all'interno di una delle funzioni registrate si chiama un'altra
+volta \func{exit} lo standard POSIX.1-2001 prescrive un comportamento
+indefinito, con la possibilità (che su Linux comunque non c'è) di una
+ripetizione infinita. Pertanto questa eventualità è da evitare nel modo più
+assoluto. Una altro comportamento indefinito si può avere se si termina
+l'esecuzione di una delle funzioni registrate con \func{longjmp} (vedi
+sez.~\ref{sec:proc_longjmp}).
+
+Si tenga presente infine che in caso di terminazione anomala di un processo
+(ad esempio a causa di un segnale) nessuna delle funzioni registrate verrà
+eseguita e che se invece si crea un nuovo processo con \func{fork} (vedi
+sez.~\ref{sec:proc_fork}) questo manterrà tutte le funzioni già registrate.
+
+
+\subsection{Un riepilogo}
+\label{sec:proc_term_conclusion}
+
+Data l'importanza dell'argomento è opportuno un piccolo riepilogo dei fatti
+essenziali relativi alla esecuzione di un programma. Il primo punto da
+sottolineare è che in un sistema unix-like l'unico modo in cui un programma
+può essere eseguito dal kernel è attraverso la chiamata alla \textit{system
+  call} \func{execve}, sia direttamente che attraverso una delle funzioni
+della famiglia \func{exec} che ne semplificano l'uso (vedi
+sez.~\ref{sec:proc_exec}).
+
+Allo stesso modo l'unico modo in cui un programma può concludere
+volontariamente la propria esecuzione è attraverso una chiamata alla
+\textit{system call} \func{\_exit}, sia che questa venga fatta esplicitamente,
+o in maniera indiretta attraverso l'uso di \func{exit} o il ritorno di
+\code{main}. 
+
+Uno schema riassuntivo che illustra le modalità con cui si avvia e conclude
+normalmente un programma è riportato in fig.~\ref{fig:proc_prog_start_stop}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=9cm]{img/proc_beginend}
+  % \begin{tikzpicture}[>=stealth]
+  %   \filldraw[fill=black!35] (-0.3,0) rectangle (12,1);
+  %   \draw(5.5,0.5) node {\large{\textsf{kernel}}};
+
+  %   \filldraw[fill=black!15] (1.5,2) rectangle (4,3);
+  %   \draw (2.75,2.5) node {\texttt{ld-linux.so}};
+  %   \draw [->] (2.75,1) -- (2.75,2);
+  %   \draw (2.75,1.5) node [anchor=west]{\texttt{execve}};
+
+  %   \filldraw[fill=black!15,rounded corners] (1.5,4) rectangle (4,5);
+  %   \draw (2.75,4.5) node {\texttt{main}};
+
+  %   \draw [<->, dashed] (2.75,3) -- (2.75,4);
+  %   \draw [->] (1.5,4.5) -- (0.3,4.5) -- (0.3,1);
+  %   \draw (0.9,4.5) node [anchor=south] {\texttt{\_exit}};
+
+  %   \filldraw[fill=black!15,rounded corners] (1.5,6) rectangle (4,7);
+  %   \draw (2.75,6.5) node {\texttt{funzione}};
+
+  %   \draw [<->, dashed] (2.75,5) -- (2.75,6);
+  %   \draw [->] (1.5,6.5) -- (0.05,6.5) -- (0.05,1);
+  %   \draw (0.9,6.5) node [anchor=south] {\texttt{\_exit}};
+
+  %   \draw (6.75,4.5) node (exit) [rectangle,fill=black!15,minimum width=2.5cm,minimum height=1cm,rounded corners, draw]{\texttt{exit}};
+
+  %   \draw[->] (4,6.5) -- node[anchor=south west]{\texttt{exit}} (exit);
+  %   \draw[->] (4,4.5) -- node[anchor=south]{\texttt{exit}} (exit);
+  %   \draw[->] (exit) -- node[anchor=east]{\texttt{\_exit}}(6.75,1);
+
+  %   \draw (10,4.5) node (exithandler1) [rectangle,fill=black!15,rounded corners, draw]{\textsf{exit handler}};
+  %   \draw (10,5.5) node (exithandler2) [rectangle,fill=black!15,rounded corners, draw]{\textsf{exit handler}};
+  %   \draw (10,3.5) node (stream) [rectangle,fill=black!15,rounded corners, draw]{\textsf{chiusura stream}};
+
+  %   \draw[<->, dashed] (exithandler1) -- (exit);
+  %   \draw[<->, dashed] (exithandler2) -- (exit);
+  %   \draw[<->, dashed] (stream) -- (exit);
+  % \end{tikzpicture}
+  \caption{Schema dell'avvio e della conclusione di un programma.}
+  \label{fig:proc_prog_start_stop}
+\end{figure}
+
+Si ricordi infine che un programma può anche essere interrotto dall'esterno
+attraverso l'uso di un segnale (modalità di conclusione non mostrata in
+fig.~\ref{fig:proc_prog_start_stop}); tratteremo nei dettagli i segnali e la
+loro gestione nel capitolo \ref{cha:signals}.
+
+
+
+\section{I processi e l'uso della memoria}
+\label{sec:proc_memory}
+
+Una delle risorse più importanti che ciascun processo ha a disposizione è la
+memoria, e la gestione della memoria è appunto uno degli aspetti più complessi
+di un sistema unix-like. In questa sezione, dopo una breve introduzione ai
+concetti di base, esamineremo come la memoria viene vista da parte di un
+programma in esecuzione, e le varie funzioni utilizzabili per la sua gestione.
+
+
+\subsection{I concetti generali}
+\label{sec:proc_mem_gen}
+
+\index{memoria~virtuale|(}
+
+Ci sono vari modi in cui i sistemi operativi organizzano la memoria, ed i
+dettagli di basso livello dipendono spesso in maniera diretta
+dall'architettura dell'hardware, ma quello più tipico, usato dai sistemi
+unix-like come Linux è la cosiddetta \textsl{memoria virtuale} che consiste
+nell'assegnare ad ogni processo uno spazio virtuale di indirizzamento lineare,
+in cui gli indirizzi vanno da zero ad un qualche valore massimo.\footnote{nel
+  caso di Linux fino al kernel 2.2 detto massimo era, per macchine a 32bit, di
+  2Gb. Con il kernel 2.4 ed il supporto per la \textit{high-memory} il limite
+  è stato esteso anche per macchine a 32 bit.}  Come accennato nel
+cap.~\ref{cha:intro_unix} questo spazio di indirizzi è virtuale e non
+corrisponde all'effettiva posizione dei dati nella RAM del computer. In
+generale detto spazio non è neppure continuo, cioè non tutti gli indirizzi
+possibili sono utilizzabili, e quelli usabili non sono necessariamente
+adiacenti.
+
+\itindbeg{huge~page}
+
+Per la gestione da parte del kernel la memoria viene divisa in pagine di
+dimensione fissa. Inizialmente queste pagine erano di 4kb sulle macchine a 32
+bit e di 8kb sulle alpha. Con le versioni più recenti del kernel è possibile
+anche utilizzare pagine di dimensioni maggiori (di 4Mb, dette \textit{huge
+  page}), per sistemi con grandi quantitativi di memoria in cui l'uso di
+pagine troppo piccole comporta una perdita di prestazioni. In alcuni sistemi
+la costante \constd{PAGE\_SIZE}, definita in \headfile{limits.h}, indica la
+dimensione di una pagina in byte, con Linux questo non avviene e per ottenere
+questa dimensione si deve ricorrere alla funzione \func{getpagesize} (vedi
+sez.~\ref{sec:sys_memory_res}).
+
+\itindend{huge~page}
+\itindbeg{page~table}
+
+Ciascuna pagina di memoria nello spazio di indirizzi virtuale è associata ad
+un supporto che può essere una pagina di memoria reale o ad un dispositivo di
+stoccaggio secondario (come lo spazio disco riservato alla \textit{swap}, o i
+file che contengono il codice). Per ciascun processo il kernel si cura di
+mantenere un mappa di queste corrispondenze nella cosiddetta \textit{page
+  table}.\footnote{questa è una semplificazione brutale, il meccanismo è molto
+  più complesso; una buona trattazione di come Linux gestisce la memoria
+  virtuale si trova su \cite{LinVM}.}
+
+\itindend{page~table}
+
+Una stessa pagina di memoria reale può fare da supporto a diverse pagine di
+memoria virtuale appartenenti a processi diversi, come accade in genere per le
+pagine che contengono il codice delle librerie condivise. Ad esempio il codice
+della funzione \func{printf} starà su una sola pagina di memoria reale che
+farà da supporto a tutte le pagine di memoria virtuale di tutti i processi che
+hanno detta funzione nel loro codice.
+
+\index{paginazione|(}
+
+La corrispondenza fra le pagine della memoria virtuale di un processo e quelle
+della memoria fisica della macchina viene gestita in maniera trasparente dal
+kernel.\footnote{in genere con l'ausilio dell'hardware di gestione della
+  memoria (la \textit{Memory Management Unit} del processore), con i kernel
+  della serie 2.6 è comunque diventato possibile utilizzare Linux anche su
+  architetture che non dispongono di una MMU.}  Poiché in genere la memoria
+fisica è solo una piccola frazione della memoria virtuale, è necessario un
+meccanismo che permetta di trasferire le pagine che servono dal supporto su
+cui si trovano in memoria, eliminando quelle che non servono.  Questo
+meccanismo è detto \textsl{paginazione} (o \textit{paging}), ed è uno dei
+compiti principali del kernel.
+
+\itindbeg{page~fault} 
+
+Quando un processo cerca di accedere ad una pagina che non è nella memoria
+reale, avviene quello che viene chiamato un \textit{page fault}; la gestione
+della memoria genera un'interruzione e passa il controllo al kernel il quale
+sospende il processo e si incarica di mettere in RAM la pagina richiesta,
+effettuando tutte le operazioni necessarie per reperire lo spazio necessario,
+per poi restituire il controllo al processo.
+
+Dal punto di vista di un processo questo meccanismo è completamente
+trasparente, e tutto avviene come se tutte le pagine fossero sempre
+disponibili in memoria.  L'unica differenza avvertibile è quella dei tempi di
+esecuzione, che passano dai pochi nanosecondi necessari per l'accesso in RAM
+se la pagina è direttamente disponibile, a tempi estremamente più lunghi,
+dovuti all'intervento del kernel, qualora sia necessario reperire pagine
+riposte nella \textit{swap}.
+
+\itindend{page~fault} 
+
+Normalmente questo è il prezzo da pagare per avere un \textit{multitasking}
+reale, ed in genere il sistema è molto efficiente in questo lavoro; quando
+però ci siano esigenze specifiche di prestazioni è possibile usare delle
+funzioni che permettono di bloccare il meccanismo della paginazione e
+mantenere fisse delle pagine in memoria (vedi sez.~\ref{sec:proc_mem_lock}).
+
+\index{paginazione|)}
+\index{memoria~virtuale|)}
+
+
+\subsection{La struttura della memoria di un processo}
+\label{sec:proc_mem_layout}
+
+\itindbeg{segment~violation}
+
+Benché lo spazio di indirizzi virtuali copra un intervallo molto ampio, solo
+una parte di essi è effettivamente allocato ed utilizzabile dal processo; il
+tentativo di accedere ad un indirizzo non allocato è un tipico errore che si
+commette quando si è manipolato male un puntatore e genera quella che viene
+chiamata una \textit{segment violation}. Se si tenta cioè di leggere o
+scrivere con un indirizzo per il quale non esiste un'associazione nella
+memoria virtuale, il kernel risponde al relativo \textit{page fault} mandando
+un segnale \signal{SIGSEGV} al processo, che normalmente ne causa la
+terminazione immediata.
+
+\itindend{segment~violation}
+
+È pertanto importante capire come viene strutturata la memoria virtuale di un
+processo. Essa viene divisa in \textsl{segmenti}, cioè un insieme contiguo di
+indirizzi virtuali ai quali il processo può accedere.  Solitamente un
+programma C viene suddiviso nei seguenti segmenti:
+\index{segmento!testo|(}
+\index{segmento!dati|(}
+\itindbeg{heap} 
+\itindbeg{stack}
+\begin{enumerate}
+\item Il \textsl{segmento di testo} o \textit{text segment}.  Contiene il
+  codice del programma, delle funzioni di librerie da esso utilizzate, e le
+  costanti.  Normalmente viene condiviso fra tutti i processi che eseguono lo
+  stesso programma e nel caso delle librerie anche da processi che eseguono
+  altri programmi.
+
+  Quando l'architettura hardware lo supporta viene marcato in sola lettura per
+  evitare sovrascritture accidentali (o maliziose) che ne modifichino le
+  istruzioni.  Viene allocato da \func{execve} all'avvio del programma e resta
+  invariato per tutto il tempo dell'esecuzione.
+\index{variabili!globali|(}
+\index{variabili!statiche|(}
+\item Il \textsl{segmento dei dati} o \textit{data segment}. Contiene tutti i
+  dati del programma, come le \textsl{variabili globali}, cioè quelle definite
+  al di fuori di tutte le funzioni che compongono il programma, e le
+  \textsl{variabili statiche}, cioè quelle dichiarate con l'attributo
+  \direct{static},\footnote{la direttiva \direct{static} indica al compilatore
+    C che una variabile così dichiarata all'interno di una funzione deve
+    essere mantenuta staticamente in memoria (nel segmento dati appunto);
+    questo significa che la variabile verrà inizializzata una sola volta alla
+    prima invocazione della funzione e che il suo valore sarà mantenuto fra
+    diverse esecuzioni della funzione stessa, la differenza con una variabile
+    globale è che essa può essere vista solo all'interno della funzione in cui
+    è dichiarata.} e la memoria allocata dinamicamente. Di norma è diviso in
+  tre parti:
+  \begin{itemize}
+  \item Il segmento dei dati inizializzati, che contiene le variabili il cui
+    valore è stato assegnato esplicitamente. Ad esempio se si definisce:
+    \includecodesnip{listati/pi.c}
+    questo valore sarà immagazzinato in questo segmento. La memoria di questo
+    segmento viene preallocata all'avvio del programma e inizializzata ai valori
+    specificati.
+  \item Il segmento dei dati non inizializzati, che contiene le variabili il
+    cui valore non è stato assegnato esplicitamente. Ad esempio se si
+    definisce:
+    \includecodesnip{listati/vect.c}
+    questo vettore sarà immagazzinato in questo segmento. Anch'esso viene
+    allocato all'avvio, e tutte le variabili vengono inizializzate a zero (ed
+    i puntatori a \val{NULL}).\footnote{si ricordi che questo vale solo per le
+      variabili che vanno nel segmento dati, e non è affatto vero in
+      generale.}  Storicamente questa seconda parte del segmento dati viene
+    chiamata \itindex{Block~Started~by~Symbol~(BSS)} BSS (da \textit{Block
+      Started by Symbol}). La sua dimensione è fissa.
+    \index{variabili!globali|)} \index{variabili!statiche|)}
+  \item Lo \textit{heap}, detto anche \textit{free store}. Tecnicamente lo si
+    può considerare l'estensione del segmento dei dati non inizializzati, a
+    cui di solito è posto giusto di seguito. Questo è il segmento che viene
+    utilizzato per l'allocazione dinamica della memoria.  Lo \textit{heap} può
+    essere ridimensionato allargandolo e restringendolo per allocare e
+    disallocare la memoria dinamica con le apposite funzioni (vedi
+    sez.~\ref{sec:proc_mem_alloc}), ma il suo limite inferiore, quello
+    adiacente al segmento dei dati non inizializzati, ha una posizione fissa.
+  \end{itemize}
+\item Il segmento di \textit{stack}, che contiene quello che viene chiamato lo
+  ``\textit{stack}'' del programma.  Tutte le volte che si effettua una
+  chiamata ad una funzione è qui che viene salvato l'indirizzo di ritorno e le
+  informazioni dello stato del chiamante (come il contenuto di alcuni registri
+  della CPU), poi la funzione chiamata alloca qui lo spazio per le sue
+  variabili locali. Tutti questi dati vengono \textit{impilati} (da questo
+  viene il nome \textit{stack}) in sequenza uno sull'altro; in questo modo le
+  funzioni possono essere chiamate ricorsivamente. Al ritorno della funzione
+  lo spazio è automaticamente rilasciato e ``\textsl{ripulito}''.\footnote{il
+    compilatore si incarica di generare automaticamente il codice necessario,
+    seguendo quella che viene chiamata una \textit{calling convention}; quella
+    standard usata con il C ed il C++ è detta \textit{cdecl} e prevede che gli
+    argomenti siano caricati nello \textit{stack} dal chiamante da destra a
+    sinistra, e che sia il chiamante stesso ad eseguire la ripulitura dello
+    \textit{stack} al ritorno della funzione, se ne possono però utilizzare di
+    alternative (ad esempio nel Pascal gli argomenti sono inseriti da sinistra
+    a destra ed è compito del chiamato ripulire lo \textit{stack}), in genere
+    non ci si deve preoccupare di questo fintanto che non si mescolano
+    funzioni scritte con linguaggi diversi.}
+
+  La dimensione di questo segmento aumenta seguendo la crescita dello
+  \textit{stack} del programma, ma non viene ridotta quando quest'ultimo si
+  restringe.
+\end{enumerate}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[height=10cm]{img/memory_layout}
+  % \begin{tikzpicture}
+  % \draw (0,0) rectangle (4,1);
+  % \draw (2,0.5) node {\textit{text}};
+  % \draw (0,1) rectangle (4,2.5);
+  % \draw (2,1.75) node {dati inizializzati};
+  % \draw (0,2.5) rectangle (4,5);
+  % \draw (2,3.75) node {dati non inizializzati};
+  % \draw (0,5) rectangle (4,9);
+  % \draw[dashed] (0,6) -- (4,6);
+  % \draw[dashed] (0,8) -- (4,8);
+  % \draw (2,5.5) node {\textit{heap}};
+  % \draw (2,8.5) node {\textit{stack}};
+  % \draw [->] (2,6) -- (2,6.5);
+  % \draw [->] (2,8) -- (2,7.5);
+  % \draw (0,9) rectangle (4,10);
+  % \draw (2,9.5) node {\textit{environment}};
+  % \draw (4,0) node [anchor=west] {\texttt{0x08000000}};
+  % \draw (4,5) node [anchor=west] {\texttt{0x08xxxxxx}};
+  % \draw (4,9) node [anchor=west] {\texttt{0xC0000000}};
+  % \end{tikzpicture} 
+  \caption{Disposizione tipica dei segmenti di memoria di un processo.}
+  \label{fig:proc_mem_layout}
+\end{figure}
+
+Una disposizione tipica dei vari segmenti (testo, dati inizializzati e non
+inizializzati, \textit{heap}, \textit{stack}, ecc.) è riportata in
+fig.~\ref{fig:proc_mem_layout}. Si noti come in figura sia indicata una
+ulteriore regione, marcata \textit{environment}, che è quella che contiene i
+dati relativi alle variabili di ambiente passate al programma al suo avvio
+(torneremo su questo argomento in sez.~\ref{sec:proc_environ}).
+
+Usando il comando \cmd{size} su un programma se ne può stampare le dimensioni
+dei segmenti di testo e di dati (solo però per i dati inizializzati ed il BSS,
+dato che lo \textit{heap} ha una dimensione dinamica). Si tenga presente
+comunque che il BSS, contrariamente al segmento dei dati inizializzati, non è
+mai salvato sul file che contiene l'eseguibile, dato che viene sempre
+inizializzato a zero al caricamento del programma.
+
+\index{segmento!testo|)}
+\index{segmento!dati|)}
+\itindend{heap} 
+\itindend{stack}
+
+
+\subsection{Allocazione della memoria per i programmi C}
+\label{sec:proc_mem_alloc}
+
+Il C supporta direttamente, come linguaggio di programmazione, soltanto due
+modalità di allocazione della memoria: l'\textsl{allocazione statica} e
+l'\textsl{allocazione automatica}.
+
+L'\textsl{allocazione statica} è quella con cui sono memorizzate le variabili
+globali e le variabili statiche, cioè le variabili il cui valore deve essere
+mantenuto per tutta la durata del programma. Come accennato queste variabili
+vengono allocate nel segmento dei dati all'avvio del programma come parte
+delle operazioni svolte da \func{exec}, e lo spazio da loro occupato non viene
+liberato fino alla sua conclusione.
+
+\index{variabili!automatiche|(}
+
+L'\textsl{allocazione automatica} è quella che avviene per gli argomenti di
+una funzione e per le sue variabili locali, quelle che vengono definite
+all'interno della funzione che esistono solo per la durata della sua
+esecuzione e che per questo vengono anche dette \textsl{variabili
+  automatiche}.  Lo spazio per queste variabili viene allocato nello
+\textit{stack} quando viene eseguita la funzione e liberato quando si esce
+dalla medesima.
+
+\index{variabili!automatiche|)}
+
+Esiste però un terzo tipo di allocazione, l'\textsl{allocazione dinamica}
+della memoria, che non è prevista direttamente all'interno del linguaggio C,
+ma che è necessaria quando il quantitativo di memoria che serve è
+determinabile solo durante il corso dell'esecuzione del programma. Il C non
+consente di usare variabili allocate dinamicamente, non è possibile cioè
+definire in fase di programmazione una variabile le cui dimensioni possano
+essere modificate durante l'esecuzione del programma. Per questo la libreria
+standard del C fornisce una opportuna serie di funzioni per eseguire
+l'allocazione dinamica di memoria, che come accennato avviene nello
+\textit{heap}.
+
+Le variabili il cui contenuto è allocato in questo modo non potranno essere
+usate direttamente come le altre (quelle nello \textit{stack}), ma l'accesso
+sarà possibile solo in maniera indiretta, attraverso i puntatori alla memoria
+loro riservata che si sono ottenuti dalle funzioni di allocazione.
+
+Le funzioni previste dallo standard ANSI C per la gestione della memoria sono
+quattro: \func{malloc}, \func{calloc}, \func{realloc} e \func{free}. Le prime
+due, \funcd{malloc} e \funcd{calloc} allocano nuovo spazio di memoria; i
+rispettivi prototipi sono:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h} 
+\fdecl{void *calloc(size\_t nmemb, size\_t size)}
+\fdesc{Alloca un'area di memoria inizializzata a 0.}  
+\fdecl{void *malloc(size\_t size)}
+\fdesc{Alloca un'area di memoria non inizializzata.}  
+}
+{Entrambe le funzioni restituiscono il puntatore alla zona di memoria allocata
+in caso di successo e \val{NULL} in caso di fallimento, nel qual caso
+  \var{errno} assumerà il valore \errcode{ENOMEM}.}
+\end{funcproto}
+
+In genere si usano \func{malloc} e \func{calloc} per allocare dinamicamente
+un'area di memoria.\footnote{queste funzioni presentano un comportamento
+  diverso fra la \acr{glibc} e la \acr{uClib} quando il valore di \param{size}
+  è nullo.  Nel primo caso viene comunque restituito un puntatore valido,
+  anche se non è chiaro a cosa esso possa fare riferimento, nel secondo caso
+  viene restituito \val{NULL}. Il comportamento è analogo con
+  \code{realloc(NULL, 0)}.}  Dato che i puntatori ritornati sono di tipo
+generico non è necessario effettuare un cast per assegnarli a puntatori al
+tipo di variabile per la quale si effettua l'allocazione, inoltre le funzioni
+garantiscono che i puntatori siano allineati correttamente per tutti i tipi di
+dati; ad esempio sulle macchine a 32 bit in genere sono allineati a multipli
+di 4 byte e sulle macchine a 64 bit a multipli di 8 byte.
+
+Nel caso di \func{calloc} l'area di memoria viene allocata nello \textit{heap}
+come un vettore di \param{nmemb} membri di \param{size} byte di dimensione, e
+preventivamente inizializzata a zero, nel caso di \func{malloc} invece vengono
+semplicemente allocati \param{size} byte e l'area di memoria non viene
+inizializzata.
+
+Una volta che non sia più necessaria la memoria allocata dinamicamente deve
+essere esplicitamente rilasciata usando la funzione \funcd{free},\footnote{le
+  glibc provvedono anche una funzione \funcm{cfree} definita per compatibilità
+  con SunOS, che è deprecata.} il suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h} 
+\fdecl{void free(void *ptr)}
+\fdesc{Disalloca un'area di memoria precedentemente allocata.}  
+}
+{La funzione non ritorna nulla e non riporta errori.}
+\end{funcproto}
+
+Questa funzione vuole come argomento \var{ptr} il puntatore restituito da una
+precedente chiamata ad una qualunque delle funzioni di allocazione che non sia
+già stato liberato da un'altra chiamata a \func{free}. Se il valore di
+\param{ptr} è \val{NULL} la funzione non fa niente, mentre se l'area di
+memoria era già stata liberata da una precedente chiamata il comportamento
+della funzione è dichiarato indefinito, ma in genere comporta la corruzione
+dei dati di gestione dell'allocazione, che può dar luogo a problemi gravi, ad
+esempio un \textit{segmentation fault} in una successiva chiamata di una di
+queste funzioni.
+
+\itindbeg{double~free}
+
+Dato che questo errore, chiamato in gergo \textit{double free}, è abbastanza
+frequente, specie quando si manipolano vettori di puntatori, e dato che le
+conseguenze possono essere pesanti ed inaspettate, si suggerisce come
+soluzione precauzionale di assegnare sempre a \val{NULL} ogni puntatore su cui
+sia stata eseguita \func{free} immediatamente dopo l'esecuzione della
+funzione. In questo modo, dato che con un puntatore nullo \func{free} non
+esegue nessuna operazione, si evitano i problemi del \textit{double free}.
+
+\itindend{double~free}
+
+Infine la funzione \funcd{realloc} consente di modificare, in genere di
+aumentare, la dimensione di un'area di memoria precedentemente allocata; il
+suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h} 
+\fdecl{void *realloc(void *ptr, size\_t size)}
+\fdesc{Cambia la dimensione di un'area di memoria precedentemente allocata.}
+}  {La funzione ritorna il puntatore alla zona di memoria allocata in caso
+  di successo e \val{NULL} per un errore, nel qual caso \var{errno}
+  assumerà il valore \errcode{ENOMEM}.}
+\end{funcproto}
+
+La funzione vuole come primo argomento il puntatore restituito da una
+precedente chiamata a \func{malloc} o \func{calloc} e come secondo argomento
+la nuova dimensione (in byte) che si intende ottenere. Se si passa
+per \param{ptr} il valore \val{NULL} allora la funzione si comporta come
+\func{malloc}.\footnote{questo è vero per Linux e l'implementazione secondo lo
+  standard ANSI C, ma non è vero per alcune vecchie implementazioni, inoltre
+  alcune versioni delle librerie del C consentivano di usare \func{realloc}
+  anche per un puntatore liberato con \func{free} purché non ci fossero state
+  nel frattempo altre chiamate a funzioni di allocazione, questa funzionalità
+  è totalmente deprecata e non è consentita sotto Linux.}
+
+La funzione si usa ad esempio quando si deve far crescere la dimensione di un
+vettore. In questo caso se è disponibile dello spazio adiacente al precedente
+la funzione lo utilizza, altrimenti rialloca altrove un blocco della
+dimensione voluta, copiandoci automaticamente il contenuto; lo spazio aggiunto
+non viene inizializzato. Se la funzione fallisce l'area di memoria originale
+non viene assolutamente toccata.
+
+Si deve sempre avere ben presente il fatto che il blocco di memoria restituito
+da \func{realloc} può non essere un'estensione di quello che gli si è passato
+in ingresso; per questo si dovrà \emph{sempre} eseguire la riassegnazione di
+\param{ptr} al valore di ritorno della funzione, e reinizializzare o provvedere
+ad un adeguato aggiornamento di tutti gli altri puntatori all'interno del
+blocco di dati ridimensionato.
+
+La \acr{glibc} ha un'implementazione delle funzioni di allocazione che è
+controllabile dall'utente attraverso alcune variabili di ambiente (vedi
+sez.~\ref{sec:proc_environ}), in particolare diventa possibile tracciare
+questo tipo di errori usando la variabile di ambiente \envvar{MALLOC\_CHECK\_}
+che quando viene definita mette in uso una versione meno efficiente delle
+funzioni suddette, che però è più tollerante nei confronti di piccoli errori
+come quello dei \textit{double free} o i \textit{buffer overrun} di un
+byte.\footnote{uno degli errori più comuni, causato ad esempio dalla scrittura
+  di una stringa di dimensione pari a quella del buffer, in cui ci si
+  dimentica dello zero di terminazione finale.}  In particolare:
+\begin{itemize*}
+\item se la variabile è posta a $0$ gli errori vengono ignorati;
+\item se la variabile è posta a $1$ viene stampato un avviso sullo
+  \textit{standard error} (vedi sez.~\ref{sec:file_fd});
+\item se la variabile è posta a $2$ viene chiamata la funzione \func{abort}
+  (vedi sez.~\ref{sec:sig_alarm_abort}), che in genere causa l'immediata
+  terminazione del programma;
+\item se la variabile è posta a $3$ viene stampato l'avviso e chiamata
+  \func{abort}. 
+\end{itemize*}
+
+\itindbeg{memory~leak}
+
+L'errore di programmazione più comune e più difficile da risolvere che si
+incontra con le funzioni di allocazione è quando non viene opportunamente
+liberata la memoria non più utilizzata, quello che in inglese viene chiamato
+\textit{memory leak}, cioè una \textsl{perdita di memoria}.
+
+Un caso tipico che illustra il problema è quello in cui in una propria
+funzione si alloca della memoria per uso locale senza liberarla prima di
+uscire. La memoria resta così allocata fino alla terminazione del processo.
+Chiamate ripetute alla stessa funzione continueranno ad effettuare altre
+allocazioni, che si accumuleranno causando a lungo andare un esaurimento della
+memoria disponibile e la probabile impossibilità di proseguire l'esecuzione
+del programma.
+
+Il problema è che l'esaurimento della memoria può avvenire in qualunque
+momento, in corrispondenza ad una qualunque chiamata di \func{malloc} che può
+essere in una sezione del codice che non ha alcuna relazione con la funzione
+che contiene l'errore. Per questo motivo è sempre molto difficile trovare un
+\textit{memory leak}.  In C e C++ il problema è particolarmente sentito. In
+C++, per mezzo della programmazione ad oggetti, il problema dei \textit{memory
+  leak} si può notevolmente ridimensionare attraverso l'uso accurato di
+appositi oggetti come gli \textit{smartpointers}.  Questo però in genere va a
+scapito delle prestazioni dell'applicazione in esecuzione.
+
+% TODO decidere cosa fare di questo che segue In altri linguaggi come il java
+% e recentemente il C\# il problema non si pone nemmeno perché la gestione
+% della memoria viene fatta totalmente in maniera automatica, ovvero il
+% programmatore non deve minimamente preoccuparsi di liberare la memoria
+% allocata precedentemente quando non serve più, poiché l'infrastruttura del
+% linguaggio gestisce automaticamente la cosiddetta
+% \itindex{garbage~collection} \textit{garbage collection}. In tal caso,
+% attraverso meccanismi simili a quelli del \textit{reference counting},
+% quando una zona di memoria precedentemente allocata non è più riferita da
+% nessuna parte del codice in esecuzione, può essere deallocata
+% automaticamente in qualunque momento dall'infrastruttura.
+
+% Anche questo va a scapito delle prestazioni dell'applicazione in esecuzione
+% (inoltre le applicazioni sviluppate con tali linguaggi di solito non sono
+% eseguibili compilati, come avviene invece per il C ed il C++, ed è necessaria
+% la presenza di una infrastruttura per la loro interpretazione e pertanto hanno
+% di per sé delle prestazioni più scadenti rispetto alle stesse applicazioni
+% compilate direttamente).  Questo comporta però il problema della non
+% predicibilità del momento in cui viene deallocata la memoria precedentemente
+% allocata da un oggetto.
+
+Per limitare l'impatto di questi problemi, e semplificare la ricerca di
+eventuali errori, l'implementazione delle funzioni di allocazione nella
+\acr{glibc} mette a disposizione una serie di funzionalità che permettono di
+tracciare le allocazioni e le disallocazioni, e definisce anche una serie di
+possibili \textit{hook} (\textsl{ganci}) che permettono di sostituire alle
+funzioni di libreria una propria versione (che può essere più o meno
+specializzata per il debugging). Esistono varie librerie che forniscono dei
+sostituti opportuni delle funzioni di allocazione in grado, senza neanche
+ricompilare il programma,\footnote{esempi sono \textit{Dmalloc}
+  \url{http://dmalloc.com/} di Gray Watson ed \textit{Electric Fence} di Bruce
+  Perens.} di eseguire diagnostiche anche molto complesse riguardo
+l'allocazione della memoria. Vedremo alcune delle funzionalità di ausilio
+presenti nella \acr{glibc} in sez.~\ref{sec:proc_memory_adv_management}.
+
+\itindend{memory~leak}
+
+Una possibile alternativa all'uso di \func{malloc}, per evitare di soffrire
+dei problemi di \textit{memory leak} descritti in precedenza, è di allocare la
+memoria nel segmento di \textit{stack} della funzione corrente invece che
+nello \textit{heap}. Per farlo si può usare la funzione \funcd{alloca}, la cui
+sintassi è identica a quella di \func{malloc}; il suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h} 
+\fdecl{void *alloca(size\_t size)}
+\fdesc{Alloca un'area di memoria nello \textit{stack}.} 
+}
+{La funzione ritorna il puntatore alla zona di memoria allocata, in caso
+  di errore il comportamento è indefinito.}
+\end{funcproto}
+
+La funzione alloca la quantità di memoria (non inizializzata) richiesta
+dall'argomento \param{size} nel segmento di \textit{stack} della funzione
+chiamante. Con questa funzione non è più necessario liberare la memoria
+allocata, e quindi non esiste un analogo della \func{free}, in quanto essa
+viene rilasciata automaticamente al ritorno della funzione.
+
+Come è evidente questa funzione ha alcuni vantaggi interessanti, anzitutto
+permette di evitare alla radice i problemi di \textit{memory leak}, dato che
+non serve più la deallocazione esplicita; inoltre la deallocazione automatica
+funziona anche quando si usa \func{longjmp} per uscire da una subroutine con
+un salto non locale da una funzione (vedi sez.~\ref{sec:proc_longjmp}).  Un
+altro vantaggio è che in Linux la funzione è molto più veloce di \func{malloc}
+e non viene sprecato spazio, infatti non è necessario gestire un pool di
+memoria da riservare e si evitano così anche i problemi di frammentazione di
+quest'ultimo, che comportano inefficienze sia nell'allocazione della memoria
+che nell'esecuzione dell'allocazione.
+
+Gli svantaggi sono che questa funzione non è disponibile su tutti gli Unix, e
+non è inserita né nello standard POSIX né in SUSv3 (ma è presente in BSD), il
+suo utilizzo quindi limita la portabilità dei programmi. Inoltre la funzione
+non può essere usata nella lista degli argomenti di una funzione, perché lo
+spazio verrebbe allocato nel mezzo degli stessi. Inoltre non è chiaramente
+possibile usare \func{alloca} per allocare memoria che deve poi essere usata
+anche al di fuori della funzione in cui essa viene chiamata, dato che
+all'uscita dalla funzione lo spazio allocato diventerebbe libero, e potrebbe
+essere sovrascritto all'invocazione di nuove funzioni.  Questo è lo stesso
+problema che si può avere con le variabili automatiche, su cui torneremo in
+sez.~\ref{sec:proc_var_passing}.
+
+Infine non esiste un modo di sapere se l'allocazione ha avuto successo, la
+funzione infatti viene realizzata inserendo del codice \textit{inline} nel
+programma\footnote{questo comporta anche il fatto che non è possibile
+  sostituirla con una propria versione o modificarne il comportamento
+  collegando il proprio programma con un'altra libreria.} che si limita a
+modificare il puntatore nello \textit{stack} e non c'è modo di sapere se se ne
+sono superate le dimensioni, per cui in caso di fallimento nell'allocazione il
+comportamento del programma può risultare indefinito, dando luogo ad una
+\textit{segment violation} la prima volta che si cerchi di accedere alla
+memoria non effettivamente disponibile.
+
+\index{segmento!dati|(}
+\itindbeg{heap} 
+
+Le due funzioni seguenti vengono utilizzate soltanto quando è necessario
+effettuare direttamente la gestione della memoria associata allo spazio dati
+di un processo,\footnote{le due funzioni sono state definite con BSD 4.3, sono
+  marcate obsolete in SUSv2 e non fanno parte delle librerie standard del C e
+  mentre sono state esplicitamente rimosse dallo standard POSIX.1-2001.} per
+poterle utilizzare è necessario definire una della macro di funzionalità (vedi
+sez.~\ref{sec:intro_gcc_glibc_std}) fra \macro{\_BSD\_SOURCE},
+\macro{\_SVID\_SOURCE} e \macro{\_XOPEN\_SOURCE} (ad un valore maggiore o
+uguale di 500). La prima funzione è \funcd{brk}, ed il suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{unistd.h} 
+\fdecl{int brk(void *addr)}
+\fdesc{Sposta la fine del segmento dati del processo.} 
+}
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore,
+  nel qual caso \var{errno} assumerà il valore \errcode{ENOMEM}.}
+\end{funcproto}
+
+La funzione è un'interfaccia all'omonima \textit{system call} ed imposta
+l'indirizzo finale del segmento dati di un processo (più precisamente dello
+\textit{heap}) all'indirizzo specificato da \param{addr}. Quest'ultimo deve
+essere un valore ragionevole e la dimensione totale non deve comunque eccedere
+un eventuale limite (vedi sez.~\ref{sec:sys_resource_limit}) sulle dimensioni
+massime del segmento dati del processo.
+
+Il valore di ritorno della funzione fa riferimento alla versione fornita dalla
+\acr{glibc}, in realtà in Linux la \textit{system call} corrispondente
+restituisce come valore di ritorno il nuovo valore della fine del segmento
+dati in caso di successo e quello corrente in caso di fallimento, è la
+funzione di interfaccia usata dalla \acr{glibc} che fornisce i valori di
+ritorno appena descritti; se si usano librerie diverse questo potrebbe non
+accadere.
+
+Una seconda funzione per la manipolazione diretta delle dimensioni del
+segmento dati\footnote{in questo caso si tratta soltanto di una funzione di
+  libreria, anche se basata sulla stessa \textit{system call}.} è
+\funcd{sbrk}, ed il suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{unistd.h} 
+\fdecl{void *sbrk(intptr\_t increment)}
+\fdesc{Incrementa la dimensione del segmento dati del processo.} 
+}
+{La funzione ritorna il puntatore all'inizio della nuova zona di memoria
+  allocata in caso di successo e \val{NULL} per un errore, nel qual
+  caso \var{errno} assumerà il valore \errcode{ENOMEM}.}
+\end{funcproto}
+
+La funzione incrementa la dimensione dello \textit{heap} di un programma del
+valore indicato dall'argomento \param{increment}, restituendo il nuovo
+indirizzo finale dello stesso.  L'argomento è definito come di tipo
+\typed{intptr\_t}, ma a seconda della versione delle librerie e del sistema
+può essere indicato con una serie di tipi equivalenti come \type{ptrdiff\_t},
+\type{ssize\_t}, \ctyp{int}. Se invocata con un valore nullo la funzione
+permette di ottenere l'attuale posizione della fine del segmento dati.
+
+Queste due funzioni sono state deliberatamente escluse dallo standard POSIX.1
+dato che per i normali programmi è sempre opportuno usare le funzioni di
+allocazione standard descritte in precedenza, a meno di non voler realizzare
+per proprio conto un diverso meccanismo di gestione della memoria del segmento
+dati.
+\itindend{heap} 
+\index{segmento!dati|)}
+
+
+\subsection{Il controllo della memoria virtuale}  
+\label{sec:proc_mem_lock}
+
+\index{memoria~virtuale|(}
+
+Come spiegato in sez.~\ref{sec:proc_mem_gen} il kernel gestisce la memoria
+virtuale in maniera trasparente ai processi, decidendo quando rimuovere pagine
+dalla memoria per metterle nell'area di \textit{swap}, sulla base
+dell'utilizzo corrente da parte dei vari processi.
+
+Nell'uso comune un processo non deve preoccuparsi di tutto ciò, in quanto il
+meccanismo della paginazione riporta in RAM, ed in maniera trasparente, tutte
+le pagine che gli occorrono; esistono però esigenze particolari in cui non si
+vuole che questo meccanismo si attivi. In generale i motivi per cui si possono
+avere di queste necessità sono due:
+\begin{itemize*}
+\item \textsl{La velocità}. Il processo della paginazione è trasparente solo
+  se il programma in esecuzione non è sensibile al tempo che occorre a
+  riportare la pagina in memoria; per questo motivo processi critici che hanno
+  esigenze di tempo reale o tolleranze critiche nelle risposte (ad esempio
+  processi che trattano campionamenti sonori) possono non essere in grado di
+  sopportare le variazioni della velocità di accesso dovuta alla paginazione.
+  
+  In certi casi poi un programmatore può conoscere meglio dell'algoritmo di
+  allocazione delle pagine le esigenze specifiche del suo programma e decidere
+  quali pagine di memoria è opportuno che restino in memoria per un aumento
+  delle prestazioni. In genere queste sono esigenze particolari e richiedono
+  anche un aumento delle priorità in esecuzione del processo (vedi
+  sez.~\ref{sec:proc_real_time}).
+  
+\item \textsl{La sicurezza}. Se si hanno password o chiavi segrete in chiaro
+  in memoria queste possono essere portate su disco dal meccanismo della
+  paginazione. Questo rende più lungo il periodo di tempo in cui detti segreti
+  sono presenti in chiaro e più complessa la loro cancellazione: un processo
+  infatti può cancellare la memoria su cui scrive le sue variabili, ma non può
+  toccare lo spazio disco su cui una pagina di memoria può essere stata
+  salvata. Per questo motivo di solito i programmi di crittografia richiedono
+  il blocco di alcune pagine di memoria.
+\end{itemize*}
+
+Per ottenere informazioni sulle modalità in cui un programma sta usando la
+memoria virtuale è disponibile una apposita funzione di sistema,
+\funcd{mincore}, che però non è standardizzata da POSIX e pertanto non è
+disponibile su tutte le versioni di kernel unix-like;\footnote{nel caso di
+  Linux devono essere comunque definite le macro \macro{\_BSD\_SOURCE} e
+  \macro{\_SVID\_SOURCE} o \macro{\_DEFAULT\_SOURCE}.}  il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{unistd.h}
+\fhead{sys/mman.h}
+\fdecl{int mincore(void *addr, size\_t length, unsigned char *vec)}
+\fdesc{Ritorna lo stato delle pagine di memoria occupate da un processo.}
+}
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, nel qual
+caso \var{errno} assumerà uno dei valori:
+\begin{errlist}
+   \item[\errcode{EAGAIN}] il kernel è temporaneamente non in grado di fornire
+     una risposta.
+   \item[\errcode{EFAULT}] \param{vec} punta ad un indirizzo non valido.
+   \item[\errcode{EINVAL}] \param{addr} non è un multiplo delle dimensioni di
+     una pagina.
+   \item[\errcode{ENOMEM}] o \param{addr}$+$\param{length} eccede la dimensione
+     della memoria usata dal processo o l'intervallo di indirizzi specificato
+     non è mappato.
+\end{errlist}}
+\end{funcproto}
+
+La funzione permette di ottenere le informazioni sullo stato della mappatura
+della memoria per il processo chiamante, specificando l'intervallo da
+esaminare con l'indirizzo iniziale, indicato con l'argomento \param{addr}, e
+la lunghezza, indicata con l'argomento \param{length}. L'indirizzo iniziale
+deve essere un multiplo delle dimensioni di una pagina, mentre la lunghezza
+può essere qualunque, fintanto che si resta nello spazio di indirizzi del
+processo,\footnote{in caso contrario si avrà un errore di \errcode{ENOMEM};
+  fino al kernel 2.6.11 in questo caso veniva invece restituito
+  \errcode{EINVAL}, in considerazione che il caso più comune in cui si
+  verifica questo errore è quando si usa per sbaglio un valore negativo
+  di \param{length}, che nel caso verrebbe interpretato come un intero
+  positivo di grandi dimensioni.}  ma il risultato verrà comunque fornito per
+l'intervallo compreso fino al multiplo successivo.
+
+I risultati della funzione vengono forniti nel vettore puntato da \param{vec},
+che deve essere allocato preventivamente e deve essere di dimensione
+sufficiente a contenere tanti byte quante sono le pagine contenute
+nell'intervallo di indirizzi specificato, la dimensione cioè deve essere
+almeno pari a \code{(length+PAGE\_SIZE-1)/PAGE\_SIZE}.  Al ritorno della
+funzione il bit meno significativo di ciascun byte del vettore sarà acceso se
+la pagina di memoria corrispondente è al momento residente in memoria, o
+cancellato altrimenti. Il comportamento sugli altri bit è indefinito, essendo
+questi al momento riservati per usi futuri. Per questo motivo in genere è
+comunque opportuno inizializzare a zero il contenuto del vettore, così che le
+pagine attualmente residenti in memoria saranno indicate da un valore non
+nullo del byte corrispondente.
+
+Dato che lo stato della memoria di un processo può cambiare continuamente, il
+risultato di \func{mincore} è assolutamente provvisorio e lo stato delle
+pagine potrebbe essere già cambiato al ritorno stesso della funzione, a meno
+che, come vedremo ora, non si sia attivato il meccanismo che forza il
+mantenimento di una pagina sulla memoria.  
+
+\itindbeg{memory~locking}
+
+Il meccanismo che previene la paginazione di parte della memoria virtuale di
+un processo è chiamato \textit{memory locking} (o \textsl{blocco della
+  memoria}). Il blocco è sempre associato alle pagine della memoria virtuale
+del processo, e non al segmento reale di RAM su cui essa viene mantenuta.  La
+regola è che se un segmento di RAM fa da supporto ad almeno una pagina
+bloccata allora esso viene escluso dal meccanismo della paginazione. I blocchi
+non si accumulano, se si blocca due volte la stessa pagina non è necessario
+sbloccarla due volte, una pagina o è bloccata oppure no.
+
+Il \textit{memory lock} persiste fintanto che il processo che detiene la
+memoria bloccata non la sblocca. Chiaramente la terminazione del processo
+comporta anche la fine dell'uso della sua memoria virtuale, e quindi anche di
+tutti i suoi \textit{memory lock}.  Inoltre i \textit{memory lock} non sono
+ereditati dai processi figli, ma siccome Linux usa il \textit{copy on write}
+(vedi sez.~\ref{sec:proc_fork}) gli indirizzi virtuali del figlio sono
+mantenuti sullo stesso segmento di RAM del padre, e quindi fintanto che un
+figlio non scrive su un segmento bloccato, può usufruire del \textit{memory
+  lock} del padre. Infine i \textit{memory lock} vengono automaticamente
+rimossi se si pone in esecuzione un altro programma con \func{exec} (vedi
+sez.~\ref{sec:proc_exec}).
+
+Il sistema pone dei limiti all'ammontare di memoria di un processo che può
+essere bloccata e al totale di memoria fisica che si può dedicare a questo, lo
+standard POSIX.1 richiede che sia definita in \headfile{unistd.h} la macro
+\macrod{\_POSIX\_MEMLOCK\_RANGE} per indicare la capacità di eseguire il
+\textit{memory locking}.
+
+Siccome la richiesta di un \textit{memory lock} da parte di un processo riduce
+la memoria fisica disponibile nel sistema per gli altri processi, questo ha un
+evidente impatto su tutti gli altri processi, per cui fino al kernel 2.6.9
+solo un processo dotato di privilegi amministrativi (la \textit{capability}
+\const{CAP\_IPC\_LOCK}, vedi sez.~\ref{sec:proc_capabilities}) aveva la
+capacità di bloccare una pagina di memoria.
+
+A partire dal kernel 2.6.9 anche un processo normale può bloccare la propria
+memoria\footnote{la funzionalità è stata introdotta per non essere costretti a
+  dare privilegi eccessivi a programmi di crittografia, che necessitano di
+  questa funzionalità, ma che devono essere usati da utenti normali.} ma
+mentre un processo privilegiato non ha limiti sulla quantità di memoria che
+può bloccare, un processo normale è soggetto al limite della risorsa
+\const{RLIMIT\_MEMLOCK} (vedi sez.~\ref{sec:sys_resource_limit}). In generale
+poi ogni processo può sbloccare le pagine relative alla propria memoria, se
+però diversi processi bloccano la stessa pagina questa resterà bloccata
+fintanto che ci sarà almeno un processo che la blocca.
+
+Le funzioni di sistema per bloccare e sbloccare la paginazione di singole
+sezioni di memoria sono rispettivamente \funcd{mlock} e \funcd{munlock}; i
+loro prototipi sono:
+
+\begin{funcproto}{
+  \fhead{sys/mman.h} 
+  \fdecl{int mlock(const void *addr, size\_t len)}
+  \fdesc{Blocca la paginazione su un intervallo di memoria.}
+
+  \fdecl{int munlock(const void *addr, size\_t len)}
+  \fdesc{Rimuove il blocco della paginazione su un intervallo di memoria.}
+  }
+{Entrambe le funzioni ritornano $0$ in caso di successo e $-1$ in caso di
+  errore, nel qual caso \var{errno} assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EAGAIN}] una parte o tutto l'intervallo richiesto non può
+    essere bloccato per una mancanza temporanea di risorse.
+  \item[\errcode{EINVAL}] \param{len} non è un valore positivo o la somma con
+    \param{addr} causa un overflow.
+  \item[\errcode{ENOMEM}] alcuni indirizzi dell’intervallo specificato non
+    corrispondono allo spazio di indirizzi del processo o con \func{mlock} si
+    è superato il limite di \const{RLIMIT\_MEMLOCK} per un processo non
+    privilegiato (solo per kernel a partire dal 2.6.9) o si è superato il
+    limite di regioni di memoria con attributi diversi.
+  \item[\errcode{EPERM}] il processo non è privilegiato (per kernel precedenti
+    il 2.6.9) o si ha un limite nullo per \const{RLIMIT\_MEMLOCK} e
+    il processo non è privilegiato (per kernel a partire dal 2.6.9).
+  \end{errlist}}
+\end{funcproto}
+
+Le due funzioni permettono rispettivamente di bloccare e sbloccare la
+paginazione per l'intervallo di memoria iniziante all'indirizzo \param{addr} e
+lungo \param{len} byte.  Al ritorno di \func{mlock} tutte le pagine che
+contengono una parte dell'intervallo bloccato sono garantite essere in RAM e
+vi verranno mantenute per tutta la durata del blocco. Con kernel diversi da
+Linux si può ottenere un errore di \errcode{EINVAL} se \param{addr} non è un
+multiplo della dimensione delle pagine di memoria, pertanto se si ha a cuore
+la portabilità si deve avere cura di allinearne correttamente il valore. Il
+blocco viene rimosso chiamando \func{munlock}.
+
+Altre due funzioni di sistema, \funcd{mlockall} e \funcd{munlockall},
+consentono di bloccare genericamente la paginazione per l'intero spazio di
+indirizzi di un processo.  I prototipi di queste funzioni sono:
+
+\begin{funcproto}{ 
+\fhead{sys/mman.h} 
+\fdecl{int mlockall(int flags)}
+\fdesc{Blocca la paginazione per lo spazio di indirizzi del processo corrente.} 
+\fdecl{int munlockall(void)}
+\fdesc{Sblocca la paginazione per lo spazio di indirizzi del processo corrente.}
+}
+{Codici di ritorno ed errori sono gli stessi di \func{mlock} e \func{munlock},
+  tranne per \errcode{EINVAL} che viene restituito solo se si è specificato
+  con \func{mlockall} un valore sconosciuto per \param{flags}.}
+\end{funcproto}
+
+L'argomento \param{flags} di \func{mlockall} permette di controllarne il
+comportamento; esso deve essere specificato come maschera binaria dei valori
+espressi dalle costanti riportate in tab.~\ref{tab:mlockall_flags}. 
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|p{8cm}|}
+    \hline
+    \textbf{Valore} & \textbf{Significato} \\
+    \hline
+    \hline
+    \constd{MCL\_CURRENT}& blocca tutte le pagine correntemente mappate nello
+                           spazio di indirizzi del processo.\\
+    \constd{MCL\_FUTURE} & blocca tutte le pagine che verranno mappate nello
+                           spazio di indirizzi del processo.\\
+    \constd{MCL\_ONFAULT}& esegue il blocco delle pagine selezionate solo
+                           quando vengono utilizzate (dal kernel 4.4).\\
+   \hline
+  \end{tabular}
+  \caption{Valori e significato dell'argomento \param{flags} della funzione
+    \func{mlockall}.}
+  \label{tab:mlockall_flags}
+\end{table}
+
+Con \func{mlockall} si possono bloccare tutte le pagine mappate nello spazio
+di indirizzi del processo, sia che comprendano il segmento di testo, di dati,
+lo \textit{stack}, lo \textit{heap} e pure le funzioni di libreria chiamate, i
+file mappati in memoria, i dati del kernel mappati in \textit{user space}, la
+memoria condivisa.  L'uso dell'argomento \param{flags} permette di selezionare
+con maggior finezza le pagine da bloccare, ad esempio usando
+\const{MCL\_FUTURE} ci si può limitare a tutte le pagine allocate a partire
+dalla chiamata della funzione, mentre \const{MCL\_CURRENT} blocca tutte quelle
+correntemente mappate. L'uso di \func{munlockall} invece sblocca sempre tutte
+le pagine di memoria correntemente mappate nello spazio di indirizzi del
+programma.
+
+A partire dal kernel 4.4 alla funzione \func{mlockall} è stato aggiunto un
+altro flag, \const{MCL\_ONFAULT}, che può essere abbinato a entrambi gli altri
+due flag, e consente di modificare il comportamento della funzione per
+ottenere migliori prestazioni.
+
+Il problema che si presenta infatti è che eseguire un \textit{memory lock} per
+un intervallo ampio di memoria richiede che questa venga comunque allocata in
+RAM, con altrettanti \textit{page fault} che ne assicurino la presenza; questo
+vale per tutto l'intervallo e può avere un notevole costo in termini di
+prestazioni, anche quando poi, nell'esecuzione del programma, venisse usata
+solo una piccola parte dello stesso. L'uso di \const{MCL\_ONFAULT} previene il
+\textit{page faulting} immediato di tutto l'intervallo, le pagine
+dell'intervallo verranno bloccate, ma solo quando un \textit{page fault}
+dovuto all'accesso ne richiede l'allocazione effettiva in RAM.
+
+Questo stesso comportamento non è ottenibile con \func{mlock}, che non dispone
+di un argomento \param{flag} che consenta di richiederlo, per questo sempre
+con il kernel 4.4 è stata aggiunta una ulteriore funzione di sistema,
+\funcd{mlock2}, il cui prototipo è:
+
+\begin{funcproto}{
+  \fhead{sys/mman.h} 
+  \fdecl{int mlock2(const void *addr, size\_t len, int flags)}
+  \fdesc{Blocca la paginazione su un intervallo di memoria.}
+}
+{Le funzione ritornano $0$ in caso di successo e $-1$ in caso di errore, nel
+  qual caso \var{errno} assume gli stessi valori di \func{mlock} con
+  l'aggiunta id un possibile \errcode{EINVAL} anche se si è indicato un valore
+  errato di \param{flags}.}
+\end{funcproto}
+
+% NOTA: per mlock2, introdotta con il kernel 4.4 (vedi
+% http://lwn.net/Articles/650538/)
+
+Indicando un valore nullo per \param{flags} il comportamento della funzione è
+identico a quello di \func{mlock}, l'unico altro valore possibile è
+\constd{MLOCK\_ONFAULT} che ha lo stesso effetto sull'allocazione delle pagine
+in RAM già descritto per \const{MCL\_ONFAULT}.
+
+Si tenga presente che un processo \textit{real-time} che intende usare il
+\textit{memory locking} con \func{mlockall} per prevenire l'avvenire di un
+eventuale \textit{page fault} ed il conseguente rallentamento (probabilmente
+inaccettabile) dei tempi di esecuzione, deve comunque avere delle accortezze.
+In particolare si deve assicurare di aver preventivamente bloccato una
+quantità di spazio nello \textit{stack} sufficiente a garantire l'esecuzione
+di tutte le funzioni che hanno i requisiti di criticità sui tempi. Infatti,
+anche usando \const{MCL\_FUTURE}, in caso di allocazione di una nuova pagina
+nello \textit{stack} durante l'esecuzione di una funzione (precedentemente non
+usata e quindi non bloccata) si potrebbe avere un \textit{page fault}.
+
+In genere si ovvia a questa problematica chiamando inizialmente una funzione
+che definisca una quantità sufficientemente ampia di variabili automatiche
+(che si ricordi vengono allocate nello \textit{stack}) e ci scriva, in modo da
+esser sicuri che le corrispondenti pagine vengano mappate nello spazio di
+indirizzi del processo, per poi bloccarle. La scrittura è necessaria perché il
+kernel usa il meccanismo di \textit{copy on write} (vedi
+sez.~\ref{sec:proc_fork}) e le pagine potrebbero non essere allocate
+immediatamente.
+
+\itindend{memory~locking}
+\index{memoria~virtuale|)} 
+
+
+\subsection{Gestione avanzata dell'allocazione della memoria} 
+\label{sec:proc_memory_adv_management}
+
+La trattazione delle funzioni di allocazione di sez.~\ref{sec:proc_mem_alloc}
+si è limitata a coprire le esigenze generiche di un programma, in cui non si
+hanno dei requisiti specifici e si lascia il controllo delle modalità di
+allocazione alle funzioni di libreria.  Tuttavia esistono una serie di casi in
+cui può essere necessario avere un controllo più dettagliato delle modalità
+con cui la memoria viene allocata; nel qual caso potranno venire in aiuto le
+funzioni trattate in questa sezione.
+
+Le prime funzioni che tratteremo sono quelle che consentono di richiedere di
+allocare un blocco di memoria ``\textsl{allineato}'' ad un multiplo una certa
+dimensione. Questo tipo di esigenza emerge usualmente quando si devono
+allocare dei buffer da utilizzare per eseguire dell'I/O diretto su dispositivi
+a blocchi. In questo caso infatti il trasferimento di dati viene eseguito per
+blocchi di dimensione fissa, ed è richiesto che l'indirizzo di partenza del
+buffer sia un multiplo intero di questa dimensione, usualmente 512 byte. In
+tal caso l'uso di \func{malloc} non è sufficiente, ed occorre utilizzare una
+funzione specifica.
+
+Tradizionalmente per rispondere a questa esigenza sono state create due
+funzioni diverse, \funcd{memalign} e \funcd{valloc}, oggi obsolete, cui si
+aggiunge \funcd{pvalloc} come estensione GNU, anch'essa obsoleta; i rispettivi
+prototipi sono:
+
+\begin{funcproto}{ 
+\fhead{malloc.h} 
+\fdecl{void *valloc(size\_t size)}
+\fdesc{Alloca un blocco di memoria allineato alla dimensione di una pagina di
+  memoria.}  
+\fdecl{void *memalign(size\_t boundary, size\_t size)}
+\fdesc{Alloca un blocco di memoria allineato ad un multiplo
+  di \param{boundary}.} 
+\fdecl{void *pvalloc(size\_t size)}
+\fdesc{Alloca un blocco di memoria allineato alla dimensione di una pagina di
+  memoria.}  
+}
+{Entrambe le funzioni ritornano un puntatore al blocco di memoria allocato in
+  caso di successo e \val{NULL} in caso di errore, nel qual caso \var{errno}
+  assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EINVAL}] \param{boundary} non è una potenza di due.
+  \item[\errcode{ENOMEM}] non c'è memoria sufficiente per l'allocazione.
+  \end{errlist}}
+\end{funcproto}
+
+Le funzioni restituiscono il puntatore al buffer di memoria allocata di
+dimensioni pari a \param{size}, che per \func{memalign} sarà un multiplo di
+\param{boundary} mentre per \func{valloc} un multiplo della dimensione di una
+pagina di memoria; lo stesso vale per \func{pvalloc} che però arrotonda
+automaticamente la dimensione dell'allocazione al primo multiplo di una
+pagina. Nel caso della versione fornita dalla \acr{glibc} la memoria allocata
+con queste funzioni deve essere liberata con \func{free}, cosa che non è detto
+accada con altre implementazioni.
+
+Nessuna delle due funzioni ha una chiara standardizzazione e nessuna delle due
+compare in POSIX.1, inoltre ci sono indicazioni discordi sui file che ne
+contengono la definizione;\footnote{secondo SUSv2 \func{valloc} è definita in
+  \headfile{stdlib.h}, mentre sia la \acr{glibc} che le precedenti \acr{libc4}
+  e \acr{libc5} la dichiarano in \headfile{malloc.h}, lo stesso vale per
+  \func{memalign} che in alcuni sistemi è dichiarata in \headfile{stdlib.h}.}
+per questo motivo il loro uso è sconsigliato, essendo state sostituite dalla
+nuova \funcd{posix\_memalign}, che è stata standardizzata in POSIX.1d e
+disponibile dalla \acr{glibc} 2.1.91; il suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h} 
+\fdecl{posix\_memalign(void **memptr, size\_t alignment, size\_t size)}
+\fdesc{Alloca un buffer di memoria allineato ad un multiplo
+  di \param{alignment}.}   
+}
+{Entrambe le funzioni ritornano un puntatore al blocco di memoria allocato in
+  caso di successo e \val{NULL} in caso di errore, nel qual caso \var{errno}
+  assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EINVAL}] \param{alignment} non è potenza di due o un multiplo
+    di \code{sizeof(void *)}.
+  \item[\errcode{ENOMEM}] non c'è memoria sufficiente per l'allocazione.
+  \end{errlist}}
+\end{funcproto}
+
+La funzione restituisce il puntatore al buffer allocato di dimensioni pari
+a \param{size} nella variabile (di tipo \texttt{void *}) posta all'indirizzo
+indicato da \param{memptr}. La funzione fallisce nelle stesse condizioni delle
+due funzioni precedenti, ma a loro differenza restituisce direttamente come
+valore di ritorno il codice di errore.  Come per le precedenti la memoria
+allocata con \func{posix\_memalign} deve essere disallocata con \func{free},
+che in questo caso però è quanto richiesto dallo standard.
+
+Dalla versione 2.16 della \acr{glibc} è stata aggiunta anche la funzione
+\funcd{aligned\_alloc}, prevista dallo standard C11 (e disponibile definendo
+\const{\_ISOC11\_SOURCE}), il cui prototipo è:
+
+\begin{funcproto}{ 
+\fhead{malloc.h} 
+\fdecl{void *aligned\_alloc(size\_t alignment, size\_t size)}
+\fdesc{Alloca un blocco di memoria allineato ad un multiplo
+  di \param{alignment}.} 
+}
+{La funzione ha gli stessi valori di ritorno e codici di errore di
+  \func{memalign}.}
+\end{funcproto}
+
+La funzione è identica a \func{memalign} ma richiede che \param{size} sia un
+multiplo di \param{alignment}.  Infine si tenga presente infine che nessuna di
+queste funzioni inizializza il buffer di memoria allocato, il loro
+comportamento cioè è analogo, allineamento a parte, a quello di \func{malloc}.
+
+Un secondo caso in cui risulta estremamente utile poter avere un maggior
+controllo delle modalità di allocazione della memoria è quello in cui cercano
+errori di programmazione. Esempi di questi errori sono i \textit{double free},
+o i cosiddetti \itindex{buffer~overrun} \textit{buffer overrun}, cioè le
+scritture su un buffer oltre le dimensioni della sua
+allocazione,\footnote{entrambe queste operazioni causano in genere la
+  corruzione dei dati di controllo delle funzioni di allocazione, che vengono
+  anch'essi mantenuti nello \textit{heap} per tenere traccia delle zone di
+  memoria allocata.} o i classici \textit{memory leak}.
+
+Abbiamo visto in sez.~\ref{sec:proc_mem_lock} come una prima funzionalità di
+ausilio nella ricerca di questi errori sia l'uso della variabile di ambiente
+\envvar{MALLOC\_CHECK\_}.  Una modalità alternativa per effettuare dei
+controlli di consistenza sullo stato delle allocazioni di memoria eseguite con
+\func{malloc}, anche questa fornita come estensione specifica (e non standard)
+della \acr{glibc}, è quella di utilizzare la funzione \funcd{mcheck}, che deve
+essere chiamata prima di eseguire qualunque allocazione con \func{malloc}; il
+suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{mcheck.h} 
+\fdecl{int mcheck(void (*abortfn) (enum mcheck\_status status))}
+\fdesc{Attiva i controlli di consistenza delle allocazioni di memoria.}   
+}
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore;
+  \var{errno} non viene impostata.} 
+\end{funcproto}
+
+La funzione consente di registrare una funzione di emergenza che verrà
+eseguita tutte le volte che, in una successiva esecuzione di \func{malloc},
+venissero trovate delle inconsistenze, come delle operazioni di scrittura
+oltre i limiti dei buffer allocati. Per questo motivo la funzione deve essere
+chiamata prima di qualunque allocazione di memoria, altrimenti fallirà.
+
+Se come primo argomento di \func{mcheck} si passa \val{NULL} verrà utilizzata
+una funzione predefinita che stampa un messaggio di errore ed invoca la
+funzione \func{abort} (vedi sez.~\ref{sec:sig_alarm_abort}), altrimenti si
+dovrà creare una funzione personalizzata in grado di ricevere il tipo di
+errore ed agire di conseguenza.
+
+Nonostante la scarsa leggibilità del prototipo si tratta semplicemente di
+definire una funzione di tipo \code{void abortfn(enum mcheck\_status status)},
+che non deve restituire nulla e che deve avere un unico argomento di tipo
+\code{mcheck\_status}. In caso di errore la funzione verrà eseguita ricevendo
+un opportuno valore di \param{status} che è un tipo enumerato che può assumere
+soltanto i valori di tab.~\ref{tab:mcheck_status_value} che indicano la
+tipologia di errore riscontrata.
+
+\begin{table}[htb]
+  \centering
+  \footnotesize
+  \begin{tabular}[c]{|l|p{7cm}|}
+    \hline
+    \textbf{Valore} & \textbf{Significato} \\
+    \hline
+    \hline
+    \constd{MCHECK\_OK}      & Riportato a \func{mprobe} se nessuna
+                               inconsistenza è presente.\\
+    \constd{MCHECK\_DISABLED}& Riportato a \func{mprobe} se si è chiamata
+                               \func{mcheck} dopo aver già usato
+                               \func{malloc}.\\
+    \constd{MCHECK\_HEAD}    & I dati immediatamente precedenti il buffer sono
+                               stati modificati, avviene in genere quando si
+                               decrementa eccessivamente il valore di un
+                               puntatore scrivendo poi prima dell'inizio del
+                               buffer.\\
+    \constd{MCHECK\_TAIL}    & I dati immediatamente seguenti il buffer sono
+                               stati modificati, succede quando si va scrivere
+                               oltre la dimensione corretta del buffer.\\
+    \constd{MCHECK\_FREE}    & Il buffer è già stato disallocato.\\
+    \hline
+  \end{tabular}
+  \caption{Valori dello stato dell'allocazione di memoria ottenibili dalla
+    funzione di terminazione installata con \func{mcheck}.} 
+  \label{tab:mcheck_status_value}
+\end{table}
+
+Una volta che si sia chiamata \func{mcheck} con successo si può anche
+controllare esplicitamente lo stato delle allocazioni senza aspettare un
+errore nelle relative funzioni utilizzando la funzione \funcd{mprobe}, il cui
+prototipo è:
+
+\begin{funcproto}{ 
+\fhead{mcheck.h} 
+\fdecl{enum mcheck\_status mprobe(ptr)}
+\fdesc{Esegue un controllo di consistenza delle allocazioni.}   
+}
+{La funzione ritorna un codice fra quelli riportati in
+   tab.~\ref{tab:mcheck_status_value} e non ha errori.} 
+\end{funcproto}
+
+La funzione richiede che si passi come argomento un puntatore ad un blocco di
+memoria precedentemente allocato con \func{malloc} o \func{realloc}, e
+restituisce lo stesso codice di errore che si avrebbe per la funzione di
+emergenza ad una successiva chiamata di una funzione di allocazione, e poi i
+primi due codici che indicano rispettivamente quando tutto è a posto o il
+controllo non è possibile per non aver chiamato \func{mcheck} in tempo.
+
+% TODO: trattare le altre funzionalità avanzate di \func{malloc}, mallopt,
+% mtrace, muntrace, mallinfo e gli hook con le glibc 2.10 c'è pure malloc_info
+% a sostituire mallinfo, vedi http://udrepper.livejournal.com/20948.html
+
+
+\section{Argomenti, ambiente ed altre proprietà di un processo}
+\label{sec:proc_options}
+
+In questa sezione esamineremo le funzioni che permettono di gestire gli
+argomenti e le opzioni, e quelle che consentono di manipolare ed utilizzare le
+variabili di ambiente. Accenneremo infine alle modalità con cui si può gestire
+la localizzazione di un programma modificandone il comportamento a seconda
+della lingua o del paese a cui si vuole faccia riferimento nelle sue
+operazioni. 
+
+\subsection{Il formato degli argomenti}
+\label{sec:proc_par_format}
+
+Tutti i programmi hanno la possibilità di ricevere argomenti e opzioni quando
+vengono lanciati e come accennato in sez.~\ref{sec:proc_main} questo viene
+effettuato attraverso gli argomenti \param{argc} e \param{argv} ricevuti nella
+funzione \code{main} all'avvio del programma. Questi argomenti vengono passati
+al programma dalla shell o dal processo che esegue la \func{exec} (secondo le
+modalità che vedremo in sez.~\ref{sec:proc_exec}) quando questo viene messo in
+esecuzione.
+
+Nel caso più comune il passaggio di argomenti ed opzioni viene effettuato
+dalla shell, che si incarica di leggere la linea di comando con cui si lancia
+il programma e di effettuarne la scansione (il cosiddetto \textit{parsing})
+per individuare le parole che la compongono, ciascuna delle quali potrà essere
+considerata un argomento o un'opzione. 
+
+Di norma per individuare le parole che andranno a costituire la lista degli
+argomenti viene usato come carattere di separazione lo spazio o il tabulatore,
+ma la cosa dipende ovviamente dalle modalità con cui si effettua la scansione
+e dalle convenzioni adottate dal programma che la esegue: ad esempio la shell
+consente di proteggere con opportuni caratteri di controllo argomenti che
+contengono degli spazi evitando di spezzarli in parole diverse.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=13cm]{img/argv_argc}
+  % \begin{tikzpicture}[>=stealth]
+  % \draw (0.5,2.5) rectangle (3.5,3);
+  % \draw (2,2.75) node {\texttt{argc = 5}};
+  % \draw (5,2.5) rectangle (8,3);
+  % \draw (6.5,2.75) node {\texttt{argv[0]}};
+  % \draw [->] (8,2.75) -- (9,2.75);
+  % \draw (9,2.75) node [anchor=west] {\texttt{"touch"}};
+  % \draw (5,2) rectangle (8,2.5);
+  % \draw (6.5,2.25) node {\texttt{argv[1]}};
+  % \draw [->] (8,2.25) -- (9,2.25);
+  % \draw (9,2.25) node [anchor=west] {\texttt{"-r"}};
+  % \draw (5,1.5) rectangle (8,2);
+  % \draw (6.5,1.75) node {\texttt{argv[2]}};
+  % \draw [->] (8,1.75) -- (9,1.75);
+  % \draw (9,1.75) node [anchor=west] {\texttt{"riferimento.txt"}};
+  % \draw (5,1.0) rectangle (8,1.5);
+  % \draw (6.5,1.25) node {\texttt{argv[3]}};
+  % \draw [->] (8,1.25) -- (9,1.25);
+  % \draw (9,1.25) node [anchor=west] {\texttt{"-m"}};
+  % \draw (5,0.5) rectangle (8,1.0);
+  % \draw (6.5,0.75) node {\texttt{argv[4]}};
+  % \draw [->] (8,0.75) -- (9,0.75);
+  % \draw (9,0.75) node [anchor=west] {\texttt{"questofile.txt"}};
+  % \draw (4.25,3.5) node{\texttt{"touch -r riferimento.txt -m questofile.txt"}};
+  % \end{tikzpicture}
+  \caption{Esempio dei valori di \param{argv} e \param{argc} generati nella 
+    scansione di una riga di comando.}
+  \label{fig:proc_argv_argc}
+\end{figure}
+
+Indipendentemente da come viene eseguita, il risultato finale della scansione
+dovrà comunque essere la costruzione del vettore di puntatori \param{argv} in
+cui si devono inserire in successione i puntatori alle stringhe costituenti i
+vari argomenti ed opzioni da passare al programma, e della
+variabile \param{argc} che deve essere inizializzata al numero di stringhe
+contenute in \param{argv}. Nel caso della shell questo comporta ad esempio che
+il primo argomento sia sempre il nome del programma. Un esempio di questo
+meccanismo è mostrato in fig.~\ref{fig:proc_argv_argc}, che illustra il
+risultato della scansione di una riga di comando.
+
+
+\subsection{La gestione delle opzioni}
+\label{sec:proc_opt_handling}
+
+In generale un programma Unix riceve da linea di comando sia gli argomenti che
+le opzioni, queste ultime sono standardizzate per essere riconosciute come
+tali: un elemento di \param{argv} successivo al primo che inizia con il
+carattere ``\texttt{-}'' e che non sia un singolo ``\texttt{-}'' o un
+``\texttt{-{}-}'' viene considerato un'opzione.  In genere le opzioni sono
+costituite da una lettera singola (preceduta dal carattere ``\texttt{-}'') e
+possono avere o no un parametro associato.
+
+Un esempio tipico può essere quello mostrato in
+fig.~\ref{fig:proc_argv_argc}. In quel caso le opzioni sono \cmd{-r} e
+\cmd{-m} e la prima vuole un parametro mentre la seconda no
+(\cmd{questofile.txt} è un argomento del programma, non un parametro di
+\cmd{-m}).
+
+Per gestire le opzioni all'interno degli argomenti a linea di comando passati
+in \param{argv} la libreria standard del C fornisce la funzione
+\funcd{getopt}, che ha il seguente prototipo:
+
+\begin{funcproto}{ 
+\fhead{unistd.h} 
+\fdecl{int getopt(int argc, char * const argv[], const char *optstring)}
+\fdesc{Esegue la scansione delle opzioni negli argomenti della funzione
+  \code{main}.} 
+}
+{Ritorna il carattere che segue l'opzione, ``\texttt{:}'' se manca un
+  parametro all'opzione, ``\texttt{?}'' se l'opzione è sconosciuta, e $-1$ se
+  non esistono altre opzioni.} 
+\end{funcproto}
+
+Questa funzione prende come argomenti le due variabili \param{argc} e
+\param{argv} che devono essere quelle passate come argomenti di \code{main}
+all'esecuzione del programma, ed una stringa \param{optstring} che indica
+quali sono le opzioni valide. La funzione effettua la scansione della lista
+degli argomenti ricercando ogni stringa che comincia con il carattere
+``\texttt{-}'' e ritorna ogni volta che trova un'opzione valida.
+
+La stringa \param{optstring} indica quali sono le opzioni riconosciute ed è
+costituita da tutti i caratteri usati per identificare le singole opzioni, se
+l'opzione ha un parametro al carattere deve essere fatto seguire il carattere
+di due punti (``\texttt{:}''); nel caso di fig.~\ref{fig:proc_argv_argc} ad
+esempio la stringa di opzioni avrebbe dovuto contenere \texttt{"r:m"}.
+
+La modalità di uso di \func{getopt} è pertanto quella di chiamare più volte la
+funzione all'interno di un ciclo, fintanto che essa non ritorna il valore $-1$
+che indica che non ci sono più opzioni. Nel caso si incontri un'opzione non
+dichiarata in \param{optstring} viene ritornato il carattere ``\texttt{?}''
+mentre se un'opzione che lo richiede non è seguita da un parametro viene
+ritornato il carattere ``\texttt{:}'', infine se viene incontrato il valore
+``\texttt{-{}-}'' la scansione viene considerata conclusa, anche se vi sono
+altri elementi di \param{argv} che cominciano con il carattere ``\texttt{-}''.
+
+Quando \func{getopt} trova un'opzione fra quelle indicate in \param{optstring}
+essa ritorna il valore numerico del carattere, in questo modo si possono
+eseguire azioni specifiche usando uno \instruction{switch}; la funzione
+inoltre inizializza alcune variabili globali:
+\begin{itemize*}
+\item \var{char *optarg} contiene il puntatore alla stringa parametro
+  dell'opzione.
+\item \var{int optind} alla fine della scansione restituisce l'indice del
+  primo elemento di \param{argv} che non è un'opzione.
+\item \var{int opterr} previene, se posto a zero, la stampa di un messaggio
+  di errore in caso di riconoscimento di opzioni non definite.
+\item \var{int optopt} contiene il carattere dell'opzione non riconosciuta.
+\end{itemize*}
+
+\begin{figure}[!htb]
+  \footnotesize \centering
+  \begin{minipage}[c]{\codesamplewidth}
+  \includecodesample{listati/option_code.c}
+  \end{minipage}
+  \normalsize
+  \caption{Esempio di codice per la gestione delle opzioni.}
+  \label{fig:proc_options_code}
+\end{figure}
+
+In fig.~\ref{fig:proc_options_code} si è mostrata la sezione del programma
+\file{fork\_test.c}, che useremo nel prossimo capitolo per effettuare dei test
+sulla creazione dei processi, deputata alla decodifica delle opzioni a riga di
+comando da esso supportate.
+
+Si può notare che si è anzitutto (\texttt{\small 1}) disabilitata la stampa di
+messaggi di errore per opzioni non riconosciute, per poi passare al ciclo per
+la verifica delle opzioni (\texttt{\small 2-27}); per ciascuna delle opzioni
+possibili si è poi provveduto ad un'azione opportuna, ad esempio per le tre
+opzioni che prevedono un parametro si è effettuata la decodifica del medesimo,
+il cui indirizzo è contenuto nella variabile \var{optarg}), avvalorando la
+relativa variabile (\texttt{\small 12-14}, \texttt{\small 15-17} e
+\texttt{\small 18-20}). Completato il ciclo troveremo in \var{optind}
+l'indice in \code{argv[]} del primo degli argomenti rimanenti nella linea di
+comando.
+
+Normalmente \func{getopt} compie una permutazione degli elementi di
+\param{argv} cosicché alla fine della scansione gli elementi che non sono
+opzioni sono spostati in coda al vettore. Oltre a questa esistono altre due
+modalità di gestire gli elementi di \param{argv}; se \param{optstring} inizia
+con il carattere ``\texttt{+}'' (o è impostata la variabile di ambiente
+\cmd{POSIXLY\_CORRECT}) la scansione viene fermata non appena si incontra un
+elemento che non è un'opzione.
+
+L'ultima modalità, usata quando un programma può gestire la mescolanza fra
+opzioni e argomenti, ma se li aspetta in un ordine definito, si attiva
+quando \param{optstring} inizia con il carattere ``\texttt{-}''. In questo caso
+ogni elemento che non è un'opzione viene considerato comunque un'opzione e
+associato ad un valore di ritorno pari ad 1, questo permette di identificare
+gli elementi che non sono opzioni, ma non effettua il riordinamento del
+vettore \param{argv}.
+
+
+\subsection{Le variabili di ambiente}
+\label{sec:proc_environ}
+
+\index{variabili!di~ambiente|(}
+Oltre agli argomenti passati a linea di comando esiste un'altra modalità che
+permette di trasferire ad un processo delle informazioni in modo da
+modificarne il comportamento.  Ogni processo infatti riceve dal sistema, oltre
+alle variabili \param{argv} e \param{argc} anche un \textsl{ambiente} (in
+inglese \textit{environment}); questo viene espresso nella forma di una lista
+(chiamata \textit{environment list}) delle cosiddette \textsl{variabili di
+  ambiente}, i valori di queste variabili possono essere poi usati dal
+programma.
+
+Anche in questo caso la lista delle \textsl{variabili di ambiente} deve essere
+costruita ed utilizzata nella chiamata alla funzione \func{exec} (torneremo su
+questo in sez.~\ref{sec:proc_exec}) quando questo viene lanciato. Come per la
+lista degli argomenti anche questa lista è un vettore di puntatori a
+caratteri, ciascuno dei quali punta ad una stringa, terminata da un
+\val{NULL}. A differenza di \code{argv[]} in questo caso non si ha una
+lunghezza del vettore data da un equivalente di \param{argc}, ma la lista è
+terminata da un puntatore nullo.
+
+L'indirizzo della lista delle variabili di ambiente è passato attraverso la
+variabile globale \var{environ}, che viene definita automaticamente per
+ciascun processo, e a cui si può accedere attraverso una semplice
+dichiarazione del tipo:
+\includecodesnip{listati/env_ptr.c}
+un esempio della struttura di questa lista, contenente alcune delle variabili
+più comuni che normalmente sono definite dal sistema, è riportato in
+fig.~\ref{fig:proc_envirno_list}.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=13cm]{img/environ_var}
+  % \begin{tikzpicture}[>=stealth]
+  % \draw (2,3.5) node {\textsf{Environment pointer}};
+  % \draw (6,3.5) node {\textsf{Environment list}};
+  % \draw (10.5,3.5) node {\textsf{Environment string}};
+  % \draw (0.5,2.5) rectangle (3.5,3);
+  % \draw (2,2.75) node {\texttt{environ}};
+  % \draw [->] (3.5,2.75) -- (4.5,2.75);
+  % \draw (4.5,2.5) rectangle (7.5,3);
+  % \draw (6,2.75) node {\texttt{environ[0]}};
+  % \draw (4.5,2) rectangle (7.5,2.5);
+  % \draw (6,2.25) node {\texttt{environ[1]}};
+  % \draw (4.5,1.5) rectangle (7.5,2);
+  % \draw (4.5,1) rectangle (7.5,1.5);
+  % \draw (4.5,0.5) rectangle (7.5,1);
+  % \draw (4.5,0) rectangle (7.5,0.5);
+  % \draw (6,0.25) node {\texttt{NULL}};
+  % \draw [->] (7.5,2.75) -- (8.5,2.75);
+  % \draw (8.5,2.75) node[right] {\texttt{HOME=/home/piccardi}};
+  % \draw [->] (7.5,2.25) -- (8.5,2.25);
+  % \draw (8.5,2.25) node[right] {\texttt{PATH=:/bin:/usr/bin}};
+  % \draw [->] (7.5,1.75) -- (8.5,1.75);
+  % \draw (8.5,1.75) node[right] {\texttt{SHELL=/bin/bash}};
+  % \draw [->] (7.5,1.25) -- (8.5,1.25);
+  % \draw (8.5,1.25) node[right] {\texttt{EDITOR=emacs}};
+  % \draw [->] (7.5,0.75) -- (8.5,0.75);
+  % \draw (8.5,0.75) node[right] {\texttt{OSTYPE=linux-gnu}};
+  % \end{tikzpicture}
+  \caption{Esempio di lista delle variabili di ambiente.}
+  \label{fig:proc_envirno_list}
+\end{figure}
+
+Per convenzione le stringhe che definiscono l'ambiente sono tutte del tipo
+\textsl{\texttt{NOME=valore}} ed in questa forma che le funzioni di gestione
+che vedremo a breve se le aspettano, se pertanto si dovesse costruire
+manualmente un ambiente si abbia cura di rispettare questa convenzione.
+Inoltre alcune variabili, come quelle elencate in
+fig.~\ref{fig:proc_envirno_list}, sono definite dal sistema per essere usate
+da diversi programmi e funzioni: per queste c'è l'ulteriore convenzione di
+usare nomi espressi in caratteri maiuscoli.\footnote{ma si tratta solo di una
+  convenzione, niente vieta di usare caratteri minuscoli, come avviene in vari
+  casi.}
+
+Il kernel non usa mai queste variabili, il loro uso e la loro interpretazione è
+riservata alle applicazioni e ad alcune funzioni di libreria; in genere esse
+costituiscono un modo comodo per definire un comportamento specifico senza
+dover ricorrere all'uso di opzioni a linea di comando o di file di
+configurazione. É di norma cura della shell, quando esegue un comando, passare
+queste variabili al programma messo in esecuzione attraverso un uso opportuno
+delle relative chiamate (si veda sez.~\ref{sec:proc_exec}).
+
+La shell ad esempio ne usa molte per il suo funzionamento, come \envvar{PATH}
+per indicare la lista delle directory in cui effettuare la ricerca dei comandi
+o \envvar{PS1} per impostare il proprio \textit{prompt}. Alcune di esse, come
+\envvar{HOME}, \envvar{USER}, ecc. sono invece definite al login (per i
+dettagli si veda sez.~\ref{sec:sess_login}), ed in genere è cura della propria
+distribuzione definire le opportune variabili di ambiente in uno script di
+avvio. Alcune servono poi come riferimento generico per molti programmi, come
+\envvar{EDITOR} che indica l'editor preferito da invocare in caso di
+necessità. Una in particolare, \envvar{LANG}, serve a controllare la
+localizzazione del programma 
+%(su cui torneremo in sez.~\ref{sec:proc_localization}) 
+per adattarlo alla lingua ed alle convezioni
+dei vari paesi.
+
+Gli standard POSIX e XPG3 definiscono alcune di queste variabili (le più
+comuni), come riportato in tab.~\ref{tab:proc_env_var}. GNU/Linux le supporta
+tutte e ne definisce anche altre, in particolare poi alcune funzioni di
+libreria prevedono la presenza di specifiche variabili di ambiente che ne
+modificano il comportamento, come quelle usate per indicare una localizzazione
+e quelle per indicare un fuso orario; una lista più completa che comprende
+queste ed ulteriori variabili si può ottenere con il comando \cmd{man 7
+  environ}.
+
+\begin{table}[htb]
+  \centering
+  \footnotesize
+  \begin{tabular}[c]{|l|c|c|c|l|}
+    \hline
+    \textbf{Variabile} & \textbf{POSIX} & \textbf{XPG3} 
+    & \textbf{Linux} & \textbf{Descrizione} \\
+    \hline
+    \hline
+    \texttt{USER}   &$\bullet$&$\bullet$&$\bullet$& Nome utente.\\
+    \texttt{LOGNAME}&$\bullet$&$\bullet$&$\bullet$& Nome di login.\\
+    \texttt{HOME}   &$\bullet$&$\bullet$&$\bullet$& Directory base
+                                                    dell'utente.\\
+    \texttt{LANG}   &$\bullet$&$\bullet$&$\bullet$& Localizzazione.\\
+    \texttt{PATH}   &$\bullet$&$\bullet$&$\bullet$& Elenco delle directory
+                                                    dei programmi.\\
+    \texttt{PWD}    &$\bullet$&$\bullet$&$\bullet$& Directory corrente.\\
+    \texttt{SHELL}  &$\bullet$&$\bullet$&$\bullet$& Shell in uso.\\
+    \texttt{TERM}   &$\bullet$&$\bullet$&$\bullet$& Tipo di terminale.\\
+    \texttt{PAGER}  &$\bullet$&$\bullet$&$\bullet$& Programma per vedere i
+                                                    testi.\\
+    \texttt{EDITOR} &$\bullet$&$\bullet$&$\bullet$& Editor preferito.\\
+    \texttt{BROWSER}&$\bullet$&$\bullet$&$\bullet$& Browser preferito.\\
+    \texttt{TMPDIR} &$\bullet$&$\bullet$&$\bullet$& Directory dei file
+                                                    temporanei.\\
+    \hline
+  \end{tabular}
+  \caption{Esempi delle variabili di ambiente più comuni definite da vari
+    standard.} 
+  \label{tab:proc_env_var}
+\end{table}
+
+Lo standard ANSI C prevede l'esistenza di un ambiente, e pur non entrando
+nelle specifiche di come sono strutturati i contenuti, definisce la funzione
+\funcd{getenv} che permette di ottenere i valori delle variabili di ambiente;
+il suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h}
+\fdecl{char *getenv(const char *name)}
+\fdesc{Cerca una variabile di ambiente del processo.} 
+}
+{La funzione ritorna il puntatore alla stringa contenente il valore della
+  variabile di ambiente in caso di successo e \val{NULL} per un errore.} 
+\end{funcproto}
+
+La funzione effettua una ricerca nell'ambiente del processo cercando una
+variabile il cui nome corrisponda a quanto indicato con
+l'argomento \param{name}, ed in caso di successo ritorna il puntatore alla
+stringa che ne contiene il valore, nella forma ``\texttt{NOME=valore}''.
+
+\begin{table}[htb]
+  \centering
+  \footnotesize
+  \begin{tabular}[c]{|l|c|c|c|c|c|c|}
+    \hline
+    \textbf{Funzione} & \textbf{ANSI C} & \textbf{POSIX.1} & \textbf{XPG3} & 
+    \textbf{SVr4} & \textbf{BSD} & \textbf{Linux} \\
+    \hline
+    \hline
+    \func{getenv}  & $\bullet$ & $\bullet$ & $\bullet$ 
+                   & $\bullet$ & $\bullet$ & $\bullet$ \\
+    \func{setenv}  &    --     &    --     &   --      
+                   &    --     & $\bullet$ & $\bullet$ \\
+    \func{unsetenv}&    --     &    --     &   --       
+                   &    --     & $\bullet$ & $\bullet$ \\
+    \func{putenv}  &    --     & opz.      & $\bullet$ 
+                   &    --     & $\bullet$ & $\bullet$ \\
+    \func{clearenv}&    --     & opz.      &   --
+                   &    --     &    --     & $\bullet$ \\
+    \hline
+  \end{tabular}
+  \caption{Funzioni per la gestione delle variabili di ambiente.}
+  \label{tab:proc_env_func}
+\end{table}
+
+Oltre a questa funzione di lettura, che è l'unica definita dallo standard ANSI
+C, nell'evoluzione dei sistemi Unix ne sono state proposte altre, da
+utilizzare per impostare, modificare e cancellare le variabili di
+ambiente. Uno schema delle funzioni previste nei vari standard e disponibili
+in Linux è riportato in tab.~\ref{tab:proc_env_func}. Tutte le funzioni sono
+state comunque inserite nello standard POSIX.1-2001, ad eccetto di
+\func{clearenv} che è stata rigettata.
+
+In Linux sono definite tutte le funzioni elencate in
+tab.~\ref{tab:proc_env_func},\footnote{in realtà nelle libc4 e libc5 sono
+  definite solo le prime quattro, \func{clearenv} è stata introdotta con la
+  \acr{glibc} 2.0.} anche se parte delle funzionalità sono ridondanti. La
+prima funzione di manipolazione che prenderemo in considerazione è
+\funcd{putenv}, che consente di aggiungere, modificare e cancellare una
+variabile di ambiente; il suo prototipo è:
+
+\begin{funcproto}{ 
+\fdecl{int putenv(char *string)}
+\fdesc{Inserisce, modifica o rimuove una variabile d'ambiente.} 
+}
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore, che può
+  essere solo \errval{ENOMEM}.}
+\end{funcproto}
+
+La funzione prende come argomento una stringa analoga a quella restituita da
+\func{getenv} e sempre nella forma ``\texttt{NOME=valore}''. Se la variabile
+specificata (nel caso \texttt{NOME}) non esiste la stringa sarà aggiunta
+all'ambiente, se invece esiste il suo valore sarà impostato a quello
+specificato dal contenuto di \param{string} (nel caso \texttt{valore}).  Se
+invece si passa come argomento solo il nome di una variabile di ambiente
+(cioè \param{string} è nella forma ``\texttt{NOME}'' e non contiene il
+carattere ``\texttt{=}'') allora questa, se presente nell'ambiente, verrà
+cancellata.
+
+Si tenga presente che, seguendo lo standard SUSv2, le \acr{glibc} successive
+alla versione 2.1.2 aggiungono direttamente \param{string} nella lista delle
+variabili di ambiente illustrata in fig.~\ref{fig:proc_envirno_list}
+sostituendo il relativo puntatore;\footnote{il comportamento è lo stesso delle
+  vecchie \acr{libc4} e \acr{libc5}; nella \acr{glibc}, dalla versione 2.0
+  alla 2.1.1, veniva invece fatta una copia, seguendo il comportamento di
+  BSD4.4; dato che questo può dar luogo a perdite di memoria e non rispetta lo
+  standard il comportamento è stato modificato a partire dalla 2.1.2,
+  eliminando anche, sempre in conformità a SUSv2, l'attributo \direct{const}
+  dal prototipo.}  pertanto ogni cambiamento alla stringa in questione si
+riflette automaticamente sull'ambiente, e quindi si deve evitare di passare a
+questa funzione una variabile automatica (per evitare i problemi esposti in
+sez.~\ref{sec:proc_var_passing}). Benché non sia richiesto dallo standard,
+nelle versioni della \acr{glibc} a partire dalla 2.1 la funzione è rientrante
+(vedi sez.~\ref{sec:proc_reentrant}).
+
+Infine quando una chiamata a \func{putenv} comporta la necessità di creare una
+nuova versione del vettore \var{environ} questo sarà allocato automaticamente,
+ma la versione corrente sarà deallocata solo se anch'essa è risultante da
+un'allocazione fatta in precedenza da un'altra \func{putenv}. Questo avviene
+perché il vettore delle variabili di ambiente iniziale, creato dalla chiamata
+ad \func{exec} (vedi sez.~\ref{sec:proc_exec}) è piazzato nella memoria al di
+sopra dello \textit{stack}, (vedi fig.~\ref{fig:proc_mem_layout}) e non nello
+\textit{heap} e quindi non può essere deallocato.  Inoltre la memoria
+associata alle variabili di ambiente eliminate non viene liberata.
+
+Come alternativa a \func{putenv} si può usare la funzione \funcd{setenv} che
+però consente solo di aggiungere o modificare una variabile di ambiente; il
+suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h}
+\fdecl{int setenv(const char *name, const char *value, int overwrite)}
+\fdesc{Inserisce o modifica una variabile di ambiente.} 
+}
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore,
+  nel qual caso \var{errno} assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EINVAL}] \param{name} è \val{NULL} o una stringa di lunghezza
+  nulla o che contiene il carattere ``\texttt{=}''.
+  \item[\errcode{ENOMEM}] non c'è memoria sufficiente per aggiungere una nuova
+    variabile all'ambiente.
+\end{errlist}}
+\end{funcproto}
+
+La funzione consente di specificare separatamente nome e valore della
+variabile di ambiente da aggiungere negli argomenti \param{name}
+e \param{value}. Se la variabile è già presente nell'ambiente
+l'argomento \param{overwrite} specifica il comportamento della funzione, se
+diverso da zero sarà sovrascritta, se uguale a zero sarà lasciata immutata.  A
+differenza di \func{putenv} la funzione esegue delle copie del contenuto degli
+argomenti \param{name} e \param{value} e non è necessario preoccuparsi di
+allocarli in maniera permanente.
+
+La cancellazione di una variabile di ambiente viene invece gestita
+esplicitamente con \funcd{unsetenv}, il cui prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h}
+\fdecl{int unsetenv(const char *name)}
+\fdesc{Rimuove una variabile di ambiente.} 
+}
+{La funzione ritorna $0$ in caso di successo e $-1$ per un errore,
+  nel qual caso \var{errno} assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EINVAL}] \param{name} è \val{NULL} o una stringa di lunghezza
+  nulla o che contiene il carattere ``\texttt{=}''.
+\end{errlist}}
+\end{funcproto}
+
+La funzione richiede soltanto il nome della variabile di ambiente
+nell'argomento \param{name}, se la variabile non esiste la funzione ritorna
+comunque con un valore di successo.\footnote{questo con le versioni della
+  \acr{glibc} successive la 2.2.2, per le precedenti \func{unsetenv} era
+  definita come \texttt{void} e non restituiva nessuna informazione.}
+
+L'ultima funzione per la gestione dell'ambiente è
+\funcd{clearenv},\footnote{che come accennato è l'unica non presente nello
+  standard POSIX.1-2000, ed è disponibili solo per versioni della \acr{glibc}
+  a partire dalla 2.0; per poterla utilizzare occorre aver definito le macro
+  \macro{\_SVID\_SOURCE} e \macro{\_XOPEN\_SOURCE}.} che viene usata per
+cancellare completamente tutto l'ambiente; il suo prototipo è:
+
+\begin{funcproto}{ 
+\fhead{stdlib.h}
+\fdecl{int clearenv(void)}
+\fdesc{Cancella tutto l'ambiente.} 
+}
+{La funzione ritorna $0$ in caso di successo e un valore diverso da zero per
+  un errore.}
+\end{funcproto}
+
+In genere si usa questa funzione in maniera precauzionale per evitare i
+problemi di sicurezza connessi nel trasmettere ai programmi che si invocano un
+ambiente che può contenere dei dati non controllati, le cui variabili possono
+causare effetti indesiderati. Con l'uso della funzione si provvede alla
+cancellazione di tutto l'ambiente originale in modo da poterne costruirne una
+versione ``\textsl{sicura}'' da zero.
+
+\index{variabili!di~ambiente|)}
+
+
+% \subsection{La localizzazione}
+% \label{sec:proc_localization}
+
+% Abbiamo accennato in sez.~\ref{sec:proc_environ} come la variabile di ambiente
+% \envvar{LANG} sia usata per indicare ai processi il valore della cosiddetta
+% \textsl{localizzazione}. Si tratta di una funzionalità fornita dalle librerie
+% di sistema\footnote{prenderemo in esame soltanto il caso della \acr{glibc}.}
+% che consente di gestire in maniera automatica sia la lingua in cui vengono
+% stampati i vari messaggi (come i messaggi associati agli errori che vedremo in
+% sez.~\ref{sec:sys_strerror}) che le convenzioni usate nei vari paesi per una
+% serie di aspetti come il formato dell'ora, quello delle date, gli ordinamenti
+% alfabetici, le espressioni della valute, ecc.
+
+% Da finire.
+
+% La localizzazione di un programma si può selezionare con la 
+
+% In realtà perché un programma sia effettivamente localizzato non è sufficiente 
+
+% TODO trattare, quando ci sarà tempo, setlocale ed il resto
+
+
+%\subsection{Opzioni in formato esteso}
+%\label{sec:proc_opt_extended}
+
+%Oltre alla modalità ordinaria di gestione delle opzioni trattata in
+%sez.~\ref{sec:proc_opt_handling} la \acr{glibc} fornisce una modalità
+%alternativa costituita dalle cosiddette \textit{long-options}, che consente di
+%esprimere le opzioni in una forma più descrittiva che nel caso più generale è
+%qualcosa del tipo di ``\texttt{-{}-option-name=parameter}''.
+
+%(NdA: questa parte verrà inserita in seguito).
+
+% TODO opzioni in formato esteso
+
+% TODO trattare il vettore ausiliario e getauxval (vedi
+% http://lwn.net/Articles/519085/)
+
+
+\section{Problematiche di programmazione generica}
+\label{sec:proc_gen_prog}
+
+Benché questo non sia un libro sul linguaggio C, è opportuno affrontare alcune
+delle problematiche generali che possono emergere nella programmazione con
+questo linguaggio e di quali precauzioni o accorgimenti occorre prendere per
+risolverle. Queste problematiche non sono specifiche di sistemi unix-like o
+\textit{multitasking}, ma avendo trattato in questo capitolo il comportamento
+dei processi visti come entità a sé stanti, le riportiamo qui.
+
+
+\subsection{Il passaggio di variabili e valori di ritorno nelle funzioni}
+\label{sec:proc_var_passing}
+
+Una delle caratteristiche standard del C è che le variabili vengono passate
+alle funzioni che si invocano in un programma attraverso un meccanismo che
+viene chiamato \textit{by value}, diverso ad esempio da quanto avviene con il
+Fortran, dove le variabili sono passate, come suol dirsi, \textit{by
+  reference}, o dal C++ dove la modalità del passaggio può essere controllata
+con l'operatore \cmd{\&}.
+
+Il passaggio di una variabile \textit{by value} significa che in realtà quello
+che viene passato alla funzione è una copia del valore attuale di quella
+variabile, copia che la funzione potrà modificare a piacere, senza che il
+valore originale nella funzione chiamante venga toccato. In questo modo non
+occorre preoccuparsi di eventuali effetti delle operazioni svolte nella
+funzione stessa sulla variabile passata come argomento.
+
+Questo però va inteso nella maniera corretta. Il passaggio \textit{by value}
+vale per qualunque variabile, puntatori compresi; quando però in una funzione
+si usano dei puntatori (ad esempio per scrivere in un buffer) in realtà si va
+a modificare la zona di memoria a cui essi puntano, per cui anche se i
+puntatori sono copie, i dati a cui essi puntano saranno sempre gli stessi, e
+le eventuali modifiche avranno effetto e saranno visibili anche nella funzione
+chiamante.
+
+Nella maggior parte delle funzioni di libreria e delle \textit{system call} i
+puntatori vengono usati per scambiare dati (attraverso i buffer o le strutture
+a cui fanno riferimento) e le variabili normali vengono usate per specificare
+argomenti; in genere le informazioni a riguardo dei risultati vengono passate
+alla funzione chiamante attraverso il valore di ritorno.  È buona norma
+seguire questa pratica anche nella programmazione normale.
+
+\itindbeg{value~result~argument}
+
+Talvolta però è necessario che la funzione possa restituire indietro alla
+funzione chiamante un valore relativo ad uno dei suoi argomenti usato anche in
+ingresso.  Per far questo si usa il cosiddetto \textit{value result argument},
+si passa cioè, invece di una normale variabile, un puntatore alla stessa. Gli
+esempi di questa modalità di passaggio sono moltissimi, ad esempio essa viene
+usata nelle funzioni che gestiscono i socket (in
+sez.~\ref{sec:TCP_functions}), in cui, per permettere al kernel di restituire
+informazioni sulle dimensioni delle strutture degli indirizzi utilizzate,
+viene usato proprio questo meccanismo.
+
+Occorre tenere ben presente questa differenza, perché le variabili passate in
+maniera ordinaria, che vengono inserite nello \textit{stack}, cessano di
+esistere al ritorno di una funzione, ed ogni loro eventuale modifica
+all'interno della stessa sparisce con la conclusione della stessa, per poter
+passare delle informazioni occorre quindi usare un puntatore che faccia
+riferimento ad un indirizzo accessibile alla funzione chiamante.
+
+\itindend{value~result~argument}
+
+Questo requisito di accessibilità è fondamentale, infatti dei possibili
+problemi che si possono avere con il passaggio dei dati è quello di restituire
+alla funzione chiamante dei dati che sono contenuti in una variabile
+automatica.  Ovviamente quando la funzione ritorna la sezione dello
+\textit{stack} che conteneva la variabile automatica (si ricordi quanto detto
+in sez.~\ref{sec:proc_mem_alloc}) verrà liberata automaticamente e potrà
+essere riutilizzata all'invocazione di un'altra funzione, con le immaginabili
+conseguenze, quasi invariabilmente catastrofiche, di sovrapposizione e
+sovrascrittura dei dati.
+
+Per questo una delle regole fondamentali della programmazione in C è che
+all'uscita di una funzione non deve restare nessun riferimento alle sue
+variabili locali. Qualora sia necessario utilizzare delle variabili che devono
+essere viste anche dalla funzione chiamante queste devono essere allocate
+esplicitamente, o in maniera statica usando variabili globali o dichiarate
+come \direct{extern},\footnote{la direttiva \direct{extern} informa il
+  compilatore che la variabile che si è dichiarata in una funzione non è da
+  considerarsi locale, ma globale, e per questo allocata staticamente e
+  visibile da tutte le funzioni dello stesso programma.} o dinamicamente con
+una delle funzioni della famiglia \func{malloc}, passando opportunamente il
+relativo puntatore fra le funzioni.
+
+
+\subsection{Il passaggio di un numero variabile di argomenti}
+\label{sec:proc_variadic}
+
+\index{funzioni!\textit{variadic}|(}
+
+Come vedremo nei capitoli successivi, non sempre è possibile specificare un
+numero fisso di argomenti per una funzione.  Lo standard ISO C prevede nella
+sua sintassi la possibilità di definire delle \textit{variadic function} che
+abbiano un numero variabile di argomenti, attraverso l'uso nella dichiarazione
+della funzione dello speciale costrutto ``\texttt{...}'', che viene chiamato
+\textit{ellipsis}.
+
+Lo standard però non provvede a livello di linguaggio alcun meccanismo con cui
+dette funzioni possono accedere ai loro argomenti.  L'accesso viene pertanto
+realizzato a livello della libreria standard del C che fornisce gli strumenti
+adeguati.  L'uso di una \textit{variadic function} prevede quindi tre punti:
+\begin{itemize*}
+\item \textsl{dichiarare} la funzione come \textit{variadic} usando un
+  prototipo che contenga una \textit{ellipsis};
+\item \textsl{definire} la funzione come \textit{variadic} usando la stessa
+  \textit{ellipsis}, ed utilizzare le apposite macro che consentono la
+  gestione di un numero variabile di argomenti;
+\item \textsl{invocare} la funzione specificando prima gli argomenti fissi, ed
+  a seguire quelli addizionali.
+\end{itemize*}
+
+Lo standard ISO C prevede che una \textit{variadic function} abbia sempre
+almeno un argomento fisso. Prima di effettuare la dichiarazione deve essere
+incluso l'apposito \textit{header file} \headfile{stdarg.h}; un esempio di
+dichiarazione è il prototipo della funzione \func{execl} che vedremo in
+sez.~\ref{sec:proc_exec}:
+\includecodesnip{listati/exec_sample.c}
+in questo caso la funzione prende due argomenti fissi ed un numero variabile
+di altri argomenti, che andranno a costituire gli elementi successivi al primo
+del vettore \param{argv} passato al nuovo processo. Lo standard ISO C richiede
+inoltre che l'ultimo degli argomenti fissi sia di tipo
+\textit{self-promoting}\footnote{il linguaggio C prevede che quando si
+  mescolano vari tipi di dati, alcuni di essi possano essere \textsl{promossi}
+  per compatibilità; ad esempio i tipi \ctyp{float} vengono convertiti
+  automaticamente a \ctyp{double} ed i \ctyp{char} e gli \ctyp{short} ad
+  \ctyp{int}. Un tipo \textit{self-promoting} è un tipo che verrebbe promosso
+  a sé stesso.} il che esclude vettori, puntatori a funzioni e interi di tipo
+\ctyp{char} o \ctyp{short} (con segno o meno). Una restrizione ulteriore di
+alcuni compilatori è di non dichiarare l'ultimo argomento fisso come variabile
+di tipo \direct{register}.\footnote{la direttiva \direct{register} del
+  compilatore chiede che la variabile dichiarata tale sia mantenuta, nei
+  limiti del possibile, all'interno di un registro del processore; questa
+  direttiva è originaria dell'epoca dai primi compilatori, quando stava al
+  programmatore scrivere codice ottimizzato, riservando esplicitamente alle
+  variabili più usate l'uso dei registri del processore, oggi questa direttiva
+  è in disuso pressoché completo dato che tutti i compilatori sono normalmente
+  in grado di valutare con maggior efficacia degli stessi programmatori quando
+  sia il caso di eseguire questa ottimizzazione.}
+
+Una volta dichiarata la funzione il secondo passo è accedere ai vari argomenti
+quando la si va a definire. Gli argomenti fissi infatti hanno un loro nome, ma
+quelli variabili vengono indicati in maniera generica dalla
+\textit{ellipsis}. L'unica modalità in cui essi possono essere recuperati è
+pertanto quella sequenziale, in cui vengono estratti dallo \textit{stack}
+secondo l'ordine in cui sono stati scritti nel prototipo della funzione.
+
+\macrobeg{va\_start}
+
+Per fare questo in \headfile{stdarg.h} sono definite delle macro specifiche,
+previste dallo standard ISO C89, che consentono di eseguire questa operazione.
+La prima di queste macro è \macro{va\_start}, che inizializza opportunamente
+una lista degli argomenti, la sua definizione è:
+
+{\centering
+\begin{funcbox}{ 
+\fhead{stdarg.h}
+\fdecl{void va\_start(va\_list ap, last)}
+\fdesc{Inizializza una lista degli argomenti di una funzione
+  \textit{variadic}.} 
+}
+\end{funcbox}}
+
+La macro inizializza il puntatore alla lista di argomenti \param{ap} che deve
+essere una apposita variabile di tipo \type{va\_list}; il
+parametro \param{last} deve indicare il nome dell'ultimo degli argomenti fissi
+dichiarati nel prototipo della funzione \textit{variadic}.
+
+\macrobeg{va\_arg}
+
+La seconda macro di gestione delle liste di argomenti di una funzione
+\textit{variadic} è \macro{va\_arg}, che restituisce in successione un
+argomento della lista; la sua definizione è:
+
+{\centering
+\begin{funcbox}{ 
+\fhead{stdarg.h}
+\fdecl{type va\_arg(va\_list ap, type)}
+\fdesc{Restituisce il valore del successivo argomento opzionale.} 
+}
+\end{funcbox}}
+ 
+La macro restituisce il valore di un argomento, modificando opportunamente la
+lista \param{ap} perché una chiamata successiva restituisca l'argomento
+seguente. La macro richiede che si specifichi il tipo dell'argomento che si
+andrà ad estrarre attraverso il parametro \param{type} che sarà anche il tipo
+del valore da essa restituito. Si ricordi che il tipo deve essere
+\textit{self-promoting}.
+
+In generale è perfettamente legittimo richiedere meno argomenti di quelli che
+potrebbero essere stati effettivamente forniti, per cui nella esecuzione delle
+\macro{va\_arg} ci si può fermare in qualunque momento ed i restanti argomenti
+saranno ignorati. Se invece si richiedono più argomenti di quelli
+effettivamente forniti si otterranno dei valori indefiniti. Si avranno
+risultati indefiniti anche quando si chiama \macro{va\_arg} specificando un
+tipo che non corrisponde a quello usato per il corrispondente argomento.
+
+\macrobeg{va\_end}
+
+Infine una volta completata l'estrazione occorre indicare che si sono concluse
+le operazioni con la macro \macrod{va\_end}, la cui definizione è:
+
+{\centering
+\begin{funcbox}{ 
+\fhead{stdarg.h}
+\fdecl{void va\_end(va\_list ap)}
+\fdesc{Conclude l'estrazione degli argomenti di una funzione
+  \textit{variadic}.} 
+}
+\end{funcbox}}
+ 
+Dopo l'uso di \macro{va\_end} la variabile \param{ap} diventa indefinita e
+successive chiamate a \macro{va\_arg} non funzioneranno.  Nel caso del
+\cmd{gcc} l'uso di \macro{va\_end} può risultare inutile, ma è comunque
+necessario usarla per chiarezza del codice, per compatibilità con diverse
+implementazioni e per eventuali modifiche future a questo comportamento.
+
+Riassumendo la procedura da seguire per effettuare l'estrazione degli
+argomenti di una funzione \textit{variadic} è la seguente:
+\begin{enumerate*}
+\item inizializzare una lista degli argomenti attraverso la macro
+  \macro{va\_start};
+\item accedere agli argomenti con chiamate successive alla macro
+  \macro{va\_arg}: la prima chiamata restituirà il primo argomento, la seconda
+  il secondo e così via;
+\item dichiarare la conclusione dell'estrazione degli argomenti invocando la
+  macro \macro{va\_end}.
+\end{enumerate*}
+
+Si tenga presente che si possono usare anche più liste degli argomenti,
+ciascuna di esse andrà inizializzata con \macro{va\_start} e letta con
+\macro{va\_arg}, e ciascuna potrà essere usata per scandire la lista degli
+argomenti in modo indipendente. Infine ciascuna scansione dovrà essere
+terminata con \macro{va\_end}.
+
+Un limite di queste macro è che i passi 1) e 3) devono essere eseguiti nel
+corpo principale della funzione, il passo 2) invece può essere eseguito anche
+in un'altra funzione, passandole lista degli argomenti \param{ap}. In questo
+caso però al ritorno della funzione \macro{va\_arg} non può più essere usata
+(anche se non si era completata l'estrazione) dato che il valore di \param{ap}
+risulterebbe indefinito.
+
+\macroend{va\_start}
+\macroend{va\_arg}
+\macroend{va\_end}
+
+Esistono dei casi in cui è necessario eseguire più volte la scansione degli
+argomenti e poter memorizzare una posizione durante la stessa. In questo caso
+sembrerebbe naturale copiarsi la lista degli argomenti \param{ap} con una
+semplice assegnazione ad un'altra variabile dello stesso tipo. Dato che una
+delle realizzazioni più comuni di \type{va\_list} è quella di un puntatore
+nello \textit{stack} all'indirizzo dove sono stati salvati gli argomenti, è
+assolutamente normale pensare di poter effettuare questa operazione.
+
+\index{tipo!opaco|(}
+
+In generale però possono esistere anche realizzazioni diverse, ed è per questo
+motivo che invece che un semplice puntatore, \typed{va\_list} è quello che
+viene chiamato un \textsl{tipo opaco}. Si chiamano così quei tipi di dati, in
+genere usati da una libreria, la cui struttura interna non deve essere vista
+dal programma chiamante (da cui deriva il nome opaco) che li devono utilizzare
+solo attraverso dalle opportune funzioni di gestione.
+
+\index{tipo!opaco|)}
+
+Per questo motivo una variabile di tipo \typed{va\_list} non può essere
+assegnata direttamente ad un'altra variabile dello stesso tipo, ma lo standard
+ISO C99\footnote{alcuni sistemi che non hanno questa macro provvedono al suo
+  posto \macrod{\_\_va\_copy} che era il nome proposto in una bozza dello
+  standard.}  ha previsto una macro ulteriore che permette di eseguire la
+copia di una lista degli argomenti:
+
+{\centering
+\begin{funcbox}{ 
+\fhead{stdarg.h}
+\fdecl{void va\_copy(va\_list dest, va\_list src)}
+\fdesc{Copia la lista degli argomenti di una funzione \textit{variadic}.} 
+}
+\end{funcbox}}
+
+La macro copia l'attuale della lista degli argomenti \param{src} su una nuova
+lista \param{dest}. Anche in questo caso è buona norma chiudere ogni
+esecuzione di una \macrod{va\_copy} con una corrispondente \macro{va\_end} sul
+nuovo puntatore alla lista degli argomenti.
+
+La chiamata di una funzione con un numero variabile di argomenti, posto che la
+si sia dichiarata e definita come tale, non prevede nulla di particolare;
+l'invocazione è identica alle altre, con gli argomenti, sia quelli fissi che
+quelli opzionali, separati da virgole. Quello che però è necessario tenere
+presente è come verranno convertiti gli argomenti variabili.
+
+In Linux gli argomenti dello stesso tipo sono passati allo stesso modo, sia
+che siano fissi sia che siano opzionali (alcuni sistemi trattano diversamente
+gli opzionali), ma dato che il prototipo non può specificare il tipo degli
+argomenti opzionali, questi verranno sempre promossi, pertanto nella ricezione
+dei medesimi occorrerà tenerne conto (ad esempio un \ctyp{char} verrà visto da
+\macro{va\_arg} come \ctyp{int}).
+
+Un altro dei problemi che si devono affrontare con le funzioni con un numero
+variabile di argomenti è che non esiste un modo generico che permetta di
+stabilire quanti sono gli argomenti effettivamente passati in una chiamata.
+
+Esistono varie modalità per affrontare questo problema; una delle più
+immediate è quella di specificare il numero degli argomenti opzionali come uno
+degli argomenti fissi. Una variazione di questo metodo è l'uso di un argomento
+fisso per specificare anche il tipo degli argomenti variabili, come fa la
+stringa di formato per \func{printf} (vedi sez.~\ref{sec:file_formatted_io}).
+
+Infine una ulteriore modalità diversa, che può essere applicata solo quando il
+tipo degli argomenti lo rende possibile, è quella che prevede di usare un
+valore speciale per l'ultimo argomento, come fa ad esempio \func{execl} che
+usa un puntatore \val{NULL} per indicare la fine della lista degli argomenti
+(vedi sez.~\ref{sec:proc_exec}).
+
+\index{funzioni!\textit{variadic}|)}
+
+\subsection{Il controllo di flusso non locale}
+\label{sec:proc_longjmp}
+
+Il controllo del flusso di un programma in genere viene effettuato con le
+varie istruzioni del linguaggio C; fra queste la più bistrattata è il
+\instruction{goto}, che viene deprecato in favore dei costrutti della
+programmazione strutturata, che rendono il codice più leggibile e
+mantenibile. Esiste però un caso in cui l'uso di questa istruzione porta
+all'implementazione più efficiente e più chiara anche dal punto di vista della
+struttura del programma: quello dell'uscita in caso di errore.
+
+\index{salto~non-locale|(} 
+
+Il C però non consente di effettuare un salto ad una etichetta definita in
+un'altra funzione, per cui se l'errore avviene in una funzione, e la sua
+gestione ordinaria è in un'altra, occorre usare quello che viene chiamato un
+\textsl{salto non-locale}.  Il caso classico in cui si ha questa necessità,
+citato sia in \cite{APUE} che in \cite{GlibcMan}, è quello di un programma nel
+cui corpo principale vengono letti dei dati in ingresso sui quali viene
+eseguita, tramite una serie di funzioni di analisi, una scansione dei
+contenuti, da cui si ottengono le indicazioni per l'esecuzione di opportune
+operazioni.
+
+Dato che l'analisi può risultare molto complessa, ed opportunamente suddivisa
+in fasi diverse, la rilevazione di un errore nei dati in ingresso può accadere
+all'interno di funzioni profondamente annidate l'una nell'altra. In questo
+caso si dovrebbe gestire, per ciascuna fase, tutta la casistica del passaggio
+all'indietro di tutti gli errori rilevabili dalle funzioni usate nelle fasi
+successive.  Questo comporterebbe una notevole complessità, mentre sarebbe
+molto più comodo poter tornare direttamente al ciclo di lettura principale,
+scartando l'input come errato.\footnote{a meno che, come precisa
+  \cite{GlibcMan}, alla chiusura di ciascuna fase non siano associate
+  operazioni di pulizia specifiche (come deallocazioni, chiusure di file,
+  ecc.), che non potrebbero essere eseguite con un salto non-locale.}
+
+Tutto ciò può essere realizzato proprio con un salto non-locale; questo di
+norma viene realizzato salvando il contesto dello \textit{stack} nel punto in
+cui si vuole tornare in caso di errore, e ripristinandolo, in modo da tornare
+quando serve nella funzione da cui si era partiti.  La funzione che permette
+di salvare il contesto dello \textit{stack} è \funcd{setjmp}, il cui prototipo
+è:
+
+\begin{funcproto}{ 
+\fhead{setjmp.h}
+\fdecl{int setjmp(jmp\_buf env)}
+\fdesc{Salva il contesto dello \textit{stack}.} 
+}
+{La funzione ritorna $0$ quando è chiamata direttamente ed un valore diverso
+  da zero quando ritorna da una chiamata di \func{longjmp} che usa il contesto
+  salvato in precedenza.}
+\end{funcproto}
+  
+Quando si esegue la funzione il contesto corrente dello \textit{stack} viene
+salvato nell'argomento \param{env}, una variabile di tipo
+\typed{jmp\_buf}\footnote{anche questo è un classico esempio di variabile di
+  \textsl{tipo opaco}.}  che deve essere stata definita in precedenza. In
+genere le variabili di tipo \type{jmp\_buf} vengono definite come variabili
+globali in modo da poter essere viste in tutte le funzioni del programma.
+
+Quando viene eseguita direttamente la funzione ritorna sempre zero, un valore
+diverso da zero viene restituito solo quando il ritorno è dovuto ad una
+chiamata di \func{longjmp} in un'altra parte del programma che ripristina lo
+\textit{stack} effettuando il salto non-locale. Si tenga conto che il contesto
+salvato in \param{env} viene invalidato se la funzione che ha chiamato
+\func{setjmp} ritorna, nel qual caso un successivo uso di \func{longjmp} può
+comportare conseguenze imprevedibili (e di norma fatali) per il processo.
+  
+Come accennato per effettuare un salto non-locale ad un punto precedentemente
+stabilito con \func{setjmp} si usa la funzione \funcd{longjmp}; il suo
+prototipo è:
+
+\begin{funcproto}{ 
+\fhead{setjmp.h}
+\fdecl{void longjmp(jmp\_buf env, int val)}
+\fdesc{Ripristina il contesto dello stack.} 
+}
+{La funzione non ritorna.}   
+\end{funcproto}
+
+La funzione ripristina il contesto dello \textit{stack} salvato da una
+chiamata a \func{setjmp} nell'argomento \param{env}. Dopo l'esecuzione della
+funzione il programma prosegue nel codice successivo alla chiamata della
+\func{setjmp} con cui si era salvato \param{env}, che restituirà il valore
+dell'argomento \param{val} invece di zero.  Il valore
+dell'argomento \param{val} deve essere sempre diverso da zero, se si è
+specificato 0 sarà comunque restituito 1 al suo posto.
+
+In sostanza l'esecuzione di \func{longjmp} è analoga a quella di una
+istruzione \instr{return}, solo che invece di ritornare alla riga
+successiva della funzione chiamante, il programma in questo caso ritorna alla
+posizione della relativa \func{setjmp}. L'altra differenza fondamentale con
+\instr{return} è che il ritorno può essere effettuato anche attraverso
+diversi livelli di funzioni annidate.
+
+L'implementazione di queste funzioni comporta alcune restrizioni dato che esse
+interagiscono direttamente con la gestione dello \textit{stack} ed il
+funzionamento del compilatore stesso. In particolare \func{setjmp} è
+implementata con una macro, pertanto non si può cercare di ottenerne
+l'indirizzo, ed inoltre le chiamate a questa funzione sono sicure solo in uno
+dei seguenti casi:
+\begin{itemize*}
+\item come espressione di controllo in un comando condizionale, di selezione o
+  di iterazione (come \instruction{if}, \instruction{switch} o
+  \instruction{while});
+\item come operando per un operatore di uguaglianza o confronto in una
+  espressione di controllo di un comando condizionale, di selezione o di
+  iterazione;
+\item come operando per l'operatore di negazione (\code{!}) in una espressione
+  di controllo di un comando condizionale, di selezione o di iterazione;
+\item come espressione a sé stante.
+\end{itemize*}
+
+In generale, dato che l'unica differenza fra il risultato di una chiamata
+diretta di \func{setjmp} e quello ottenuto nell'uscita con un \func{longjmp} è
+costituita dal valore di ritorno della funzione, quest'ultima viene usualmente
+chiamata all'interno di un una istruzione \instr{if} che permetta di
+distinguere i due casi.
+
+Uno dei punti critici dei salti non-locali è quello del valore delle
+variabili, ed in particolare quello delle variabili automatiche della funzione
+a cui si ritorna. In generale le variabili globali e statiche mantengono i
+valori che avevano al momento della chiamata di \func{longjmp}, ma quelli
+delle variabili automatiche (o di quelle dichiarate \dirct{register}) sono in
+genere indeterminati.
+
+Quello che succede infatti è che i valori delle variabili che sono tenute in
+memoria manterranno il valore avuto al momento della chiamata di
+\func{longjmp}, mentre quelli tenuti nei registri del processore (che nella
+chiamata ad un'altra funzione vengono salvati nel contesto nello
+\textit{stack}) torneranno al valore avuto al momento della chiamata di
+\func{setjmp}; per questo quando si vuole avere un comportamento coerente si
+può bloccare l'ottimizzazione che porta le variabili nei registri
+dichiarandole tutte come \direct{volatile}.\footnote{la direttiva
+  \direct{volatile} informa il compilatore che la variabile che è dichiarata
+  può essere modificata, durante l'esecuzione del nostro, da altri programmi.
+  Per questo motivo occorre dire al compilatore che non deve essere mai
+  utilizzata l'ottimizzazione per cui quanto opportuno essa viene mantenuta in
+  un registro, poiché in questo modo si perderebbero le eventuali modifiche
+  fatte dagli altri programmi (che avvengono solo in una copia posta in
+  memoria).}
+
+\index{salto~non-locale|)}
+
+
+% TODO trattare qui le restartable sequences (vedi
+% https://lwn.net/Articles/664645/ e https://lwn.net/Articles/650333/) se e
+% quando saranno introdotte
+
+\subsection{La \textit{endianness}}
+\label{sec:endianness}
+
+\itindbeg{endianness} 
+
+Un altro dei problemi di programmazione che può dar luogo ad effetti
+imprevisti è quello relativo alla cosiddetta \textit{endianness}.  Questa è
+una caratteristica generale dell'architettura hardware di un computer che
+dipende dal fatto che la rappresentazione di un numero binario può essere
+fatta in due modi, chiamati rispettivamente \textit{big endian} e
+\textit{little endian}, a seconda di come i singoli bit vengono aggregati per
+formare le variabili intere (ed in genere in diretta corrispondenza a come
+sono poi in realtà cablati sui bus interni del computer).
+
+\begin{figure}[!htb]
+  \centering \includegraphics[height=3cm]{img/endianness}
+  \caption{Schema della disposizione dei dati in memoria a seconda della
+    \textit{endianness}.}
+  \label{fig:sock_endianness}
+\end{figure}
+
+Per capire meglio il problema si consideri un intero a 32 bit scritto in una
+locazione di memoria posta ad un certo indirizzo. Come illustrato in
+fig.~\ref{fig:sock_endianness} i singoli bit possono essere disposti in memoria
+in due modi: a partire dal più significativo o a partire dal meno
+significativo.  Così nel primo caso si troverà il byte che contiene i bit più
+significativi all'indirizzo menzionato e il byte con i bit meno significativi
+nell'indirizzo successivo; questo ordinamento è detto \textit{big endian},
+dato che si trova per prima la parte più grande. Il caso opposto, in cui si
+parte dal bit meno significativo è detto per lo stesso motivo \textit{little
+  endian}.
+
+Si può allora verificare quale tipo di \textit{endianness} usa il proprio
+computer con un programma elementare che si limita ad assegnare un valore ad
+una variabile per poi ristamparne il contenuto leggendolo un byte alla volta.
+Il codice di detto programma, \file{endtest.c}, è nei sorgenti allegati,
+allora se lo eseguiamo su un normale PC compatibile, che è \textit{little
+  endian} otterremo qualcosa del tipo:
+\begin{Console}
+[piccardi@gont sources]$ \textbf{./endtest}
+Using value ABCDEF01
+val[0]= 1
+val[1]=EF
+val[2]=CD
+val[3]=AB
+\end{Console}
+%$
+mentre su un vecchio Macintosh con PowerPC, che è \textit{big endian} avremo
+qualcosa del tipo:
+\begin{Console}
+piccardi@anarres:~/gapil/sources$ \textbf{./endtest}
+Using value ABCDEF01
+val[0]=AB
+val[1]=CD
+val[2]=EF
+val[3]= 1
+\end{Console}
+%$
+
+L'attenzione alla \textit{endianness} nella programmazione è importante, perché
+se si fanno assunzioni relative alla propria architettura non è detto che
+queste restino valide su un'altra architettura. Inoltre, come vedremo ad
+esempio in sez.~\ref{sec:sock_addr_func}, si possono avere problemi quando ci
+si trova a usare valori di un formato con una infrastruttura che ne usa
+un altro. 
+
+La \textit{endianness} di un computer dipende essenzialmente dalla architettura
+hardware usata; Intel e Digital usano il \textit{little endian}, Motorola,
+IBM, Sun (sostanzialmente tutti gli altri) usano il \textit{big endian}. Il
+formato dei dati contenuti nelle intestazioni dei protocolli di rete (il
+cosiddetto \textit{network order}) è anch'esso \textit{big endian}; altri
+esempi di uso di questi due diversi formati sono quello del bus PCI, che è
+\textit{little endian}, o quello del bus VME che è \textit{big endian}.
+
+Esistono poi anche dei processori che possono scegliere il tipo di formato
+all'avvio e alcuni che, come il PowerPC o l'Intel i860, possono pure passare
+da un tipo di ordinamento all'altro con una specifica istruzione. In ogni caso
+in Linux l'ordinamento è definito dall'architettura e dopo l'avvio del sistema
+in genere resta sempre lo stesso,\footnote{su architettura PowerPC è possibile
+  cambiarlo, si veda sez.~\ref{sec:process_prctl}.} anche quando il processore
+permetterebbe di eseguire questi cambiamenti.
+
+\begin{figure}[!htbp]
+  \footnotesize \centering
+  \begin{minipage}[c]{\codesamplewidth}
+    \includecodesample{listati/endian.c}
+  \end{minipage} 
+  \normalsize
+  \caption{La funzione \samplefunc{endian}, usata per controllare il tipo di
+    architettura della macchina.}
+  \label{fig:sock_endian_code}
+\end{figure}
+
+Per controllare quale tipo di ordinamento si ha sul proprio computer si è
+scritta una piccola funzione di controllo, il cui codice è riportato
+fig.~\ref{fig:sock_endian_code}, che restituisce un valore nullo (falso) se
+l'architettura è \textit{big endian} ed uno non nullo (vero) se l'architettura
+è \textit{little endian}.
+
+Come si vede la funzione è molto semplice, e si limita, una volta assegnato
+(\texttt{\small 9}) un valore di test pari a \texttt{0xABCD} ad una variabile
+di tipo \ctyp{short} (cioè a 16 bit), a ricostruirne una copia byte a byte.
+Per questo prima (\texttt{\small 10}) si definisce il puntatore \var{ptr} per
+accedere al contenuto della prima variabile, ed infine calcola (\texttt{\small
+  11}) il valore della seconda assumendo che il primo byte sia quello meno
+significativo (cioè, per quanto visto in fig.~\ref{fig:sock_endianness}, che sia
+\textit{little endian}). Infine la funzione restituisce (\texttt{\small 12})
+il valore del confronto delle due variabili. 
+
+In generale non ci si deve preoccupare della \textit{endianness} all'interno
+di un programma fintanto che questo non deve generare o manipolare dei dati
+che sono scambiati con altre macchine, ad esempio via rete o tramite dei file
+binari. Nel primo caso la scelta è già stata fatta nella standardizzazione dei
+protocolli, che hanno adottato il \textit{big endian} (che viene detto anche
+per questo \textit{network order}); vedremo in sez.~\ref{sec:sock_func_ord} le
+funzioni di conversione che devono essere usate.
+
+Nel secondo caso occorre sapere quale \textit{endianness} è stata usata nei
+dati memorizzati sul file e tenerne conto nella rilettura e nella
+manipolazione e relativa modifica (e salvataggio). La gran parte dei formati
+binari standardizzati specificano quale \textit{endianness} viene utilizzata e
+basterà identificare qual'è, se se ne deve definire uno per i propri scopi
+basterà scegliere una volta per tutte quale usare e attenersi alla scelta.
+
+\itindend{endianness}
+
+
+% LocalWords:  like exec kernel thread main ld linux static linker char envp Gb
+% LocalWords:  sez POSIX exit system call cap abort shell diff errno stdlib int
+% LocalWords:  SUCCESS FAILURE void atexit stream fclose unistd descriptor init
+% LocalWords:  SIGCHLD wait function glibc SunOS arg argp execve fig high kb Mb
+% LocalWords:  memory alpha swap table printf Unit MMU paging fault SIGSEGV BSS
+% LocalWords:  multitasking text segment NULL Block Started Symbol fill black
+% LocalWords:  heap stack calling convention size malloc calloc realloc nmemb
+% LocalWords:  ENOMEM ptr uClib cfree error leak smartpointers hook Dmalloc brk
+% LocalWords:  Gray Watson Electric Fence Bruce Perens sbrk longjmp SUSv BSD ap
+% LocalWords:  ptrdiff increment locking lock copy write capabilities IPC mlock
+% LocalWords:  capability MEMLOCK limits getpagesize RLIMIT munlock sys const
+% LocalWords:  addr len EINVAL EPERM mlockall munlockall flags l'OR CURRENT IFS
+% LocalWords:  argc argv parsing questofile txt getopt optstring switch optarg
+% LocalWords:  optind opterr optopt POSIXLY CORRECT long options NdA group
+% LocalWords:  option parameter list environ PATH HOME XPG tab LOGNAME LANG PWD
+% LocalWords:  TERM PAGER TMPDIR getenv name SVr setenv unsetenv putenv opz gcc
+% LocalWords:  clearenv libc value overwrite string reference result argument
+% LocalWords:  socket variadic ellipsis header stdarg execl self promoting last
+% LocalWords:  float double short register type dest src extern setjmp jmp buf
+% LocalWords:  env return if while Di page cdecl  rectangle node anchor west PS
+% LocalWords:  environment rounded corners dashed south width height draw east
+% LocalWords:  exithandler handler violation inline SOURCE SVID XOPEN mincore
+% LocalWords:  length unsigned vec EFAULT EAGAIN dell'I memalign valloc posix
+% LocalWords:  boundary memptr alignment sizeof overrun mcheck abortfn enum big
+% LocalWords:  mprobe DISABLED HEAD TAIL touch right emacs OSTYPE endianness IBM
+% LocalWords:  endian little endtest Macintosh PowerPC Intel Digital Motorola
+% LocalWords:  Sun order VME  loader Windows DLL shared objects PRELOAD termios
+% LocalWords:  is to LC SIG str mem wcs assert ctype dirent fcntl signal stdio
+% LocalWords:  times library utmp syscall number Filesystem Hierarchy pathname
+% LocalWords:  context assembler sysconf fork Dinamic huge segmentation program
+% LocalWords:  break store using intptr ssize overflow ONFAULT faulting alloc
+%  LocalWords:  scheduler pvalloc aligned ISOC ABCDEF
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End: 

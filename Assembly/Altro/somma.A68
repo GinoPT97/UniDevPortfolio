@@ -1,0 +1,20 @@
+* Programma per sommare ( A +B = C) 
+* DECIMALE:  10 + 7 = 17 
+* ESADECIMALE: $0A + $07 = $11
+*
+*
+	      ORG    	   $8000      * inizializza il PLC
+START       CLR.W	   C              * resetta la locazione di memoria C (word)
+                  MOVE.W       A,D0        * sposta una word a partire dalla locazione di memoria A in D0
+                  MOVE.W       B,D1        * sposta una word a partire dalla locazione di memoria B in D1
+                  ADD.W          D0,D1      * somma D0 e D1 e memorizza il risultato in D1
+                  MOVE.W       D1,C         * sposta il contenuto (word) di D1 nella locazione di memoria C
+FINE          STOP            #$2000
+A               DC.W             10             * inizializza una word a 10 e associa a questo indirizzo l'etichetta A
+B               DC.W             7              * inizializza una word a 10 e associa a questo indirizzo l'etichetta B
+C               DS.W            1                * riserva 1 word per il risultato dell'operazione 
+                 END             START
+
+
+
+

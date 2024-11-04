@@ -1,0 +1,23 @@
+00000000                                     1  * File: autoinc.a68 - Somma numeri 
+00000000                                     2  * Usa address register indirect addressing con post-increment 
+00000000                                     3  *
+00008000                                     4  		ORG	  $8000 
+00008000  103C 0005                          5  		MOVE.B  #5,D0         Cinque numeri da sommare
+00008004  41F9 00008016                      6        	LEA     Table,A0      A0 punta ai numeri
+0000800A  4201                               7        	CLR.B   D1            Inizializza la somma
+0000800C  D218                               8  Loop 		ADD.B   (A0)+,D1      Somma il numero al totale
+0000800E  5300                               9       		SUB.B   #1,D0
+00008010  66FA                              10        	BNE     Loop          Fino a sommare tutti i numeri
+00008012  4E72 2700                         11        	STOP    #$2700
+00008016  01 02 03 04 05                    12  Table 	DC.B    1,2,3,4,5     Dati d’esempio
+0000801B                                    13  
+0000801B                                    14  		
+0000801B                                    15  
+0000801B                                    16  
+0000801B                                    17  
+0000801B                                    18  
+0000801B                                    19  
+0000801B                                    20  
+
+No errors detected
+No warnings generated

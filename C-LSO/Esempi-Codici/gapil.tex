@@ -1,0 +1,241 @@
+%% gapil.tex
+%%
+%% Copyright (C) 2000-2018 Simone Piccardi.  Permission is granted to
+%% copy, distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.3 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+%% GaPiL : Guida alla Programmazione in Linux
+%%
+%% S. Piccardi Oct. 2000
+%% 
+%% gapil.tex: file principale, gli altri vanno inclusi da questo.
+%%
+\documentclass[10pt,twoside]{book}
+
+%\usepackage[paperwidth=18.91cm,paperheight=24.589cm,
+%inner=2.5cm,outer=1.8cm,bottom=3.3cm,top=2.3cm]{geometry}
+
+\usepackage[paperwidth=18.91cm,paperheight=24.589cm,
+vmargin=1.9cm,inner=1.9cm,outer=1.9cm,bindingoffset=0.89cm]{geometry}
+
+
+
+
+% encodings
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{ae,aecompl}
+
+% more fonts
+\usepackage{inconsolata}
+
+
+%
+% New header style
+%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[RE]{\slshape \rightmark}
+\fancyhead[RO,LE]{\thepage}
+\fancyhead[LO]{\slshape \leftmark}
+
+\renewcommand{\chaptermark}[1]{% 
+\markboth{\thechapter.% 
+\ #1}{}} 
+
+\renewcommand{\sectionmark}[1]{% 
+\markright{\ \thesection% 
+\ #1}{}}
+
+
+% fancy verbatim
+\usepackage{fancyvrb}
+\DefineVerbatimEnvironment{Example}{Verbatim}
+{xleftmargin=1cm,xrightmargin=1cm}
+
+\DefineVerbatimEnvironment{FileExample}{Verbatim}
+{frame=lines,framerule=0.5mm,framesep=2mm,xleftmargin=1cm,xrightmargin=1cm,fontsize=\footnotesize}
+
+\DefineVerbatimEnvironment{Terminal}{Verbatim}
+{xleftmargin=\parindent,xrightmargin=\parindent,fontsize=\footnotesize}
+
+\DefineVerbatimEnvironment{Command}{Verbatim}
+{xleftmargin=\parindent,xrightmargin=\parindent,fontseries=b,
+fontsize=\footnotesize}
+
+\DefineVerbatimEnvironment{Console}{Verbatim}
+{commandchars=\\\{\},xleftmargin=\parindent,xrightmargin=\parindent,fontsize=\footnotesize}
+
+
+\usepackage[bookmarks=true,plainpages=false,pdfpagelabels,
+hyperfootnotes=false]{hyperref}
+
+\usepackage{makeidx}
+\usepackage{pst-node}
+\usepackage{eso-pic}
+\usepackage{graphicx}
+\usepackage[italian]{babel}
+\usepackage{cite}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage[hang,bf,footnotesize,it]{caption}
+\usepackage{listings}
+\lstloadlanguages{C++}
+\usepackage{color} 
+
+\providecommand{\defaultdesc}{%
+\desclabelstyle{\pushlabel}%
+\renewcommand{\makelabel}[1]{##1}%
+\setlength{\labelwidth}{0pt}%
+}
+\usepackage{mdwlist}
+
+\usepackage{boxedminipage}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{varwidth}
+%\usepackage{footnote} 
+%\usepackage{mdwtab} 
+
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+
+\frenchspacing
+
+%\includeonly{macro,pref,intro,fdl}
+
+\title{\Huge \textbf{\textsl{G}a\textsl{P}i\textsl{L}}\\
+\huge Guida alla Programmazione in Linux} 
+
+\author{Simone Piccardi}
+
+\makeindex
+
+% Solo prima parte, scommentare 
+% \includeonly{macro,preambolo,pref,intro,process,prochand,filedir,
+%   fileunix,filestd,system,signal,session,fileadv,ipc,errors,
+%   ringraziamenti,fdl}
+
+% Solo seconda parte e appendici, scommentare
+%\includeonly{macro,preambolo,network,socket,tcpsock,sockctrl,othersock,
+%  sockadv,netlayer,trasplayer,errors,ringraziamenti,fdl}
+
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\newcommand{\clearemptydoublepage}{\newpage{\pagestyle{empty}
+\cleardoublepage}}
+
+\begin{quote}
+  
+  Copyright \copyright\ 2000-2018 Simone Piccardi.  Permission is granted to
+  copy, distribute and/or modify this document under the terms of the GNU Free
+  Documentation License, Version 1.3 or any later version published by the
+  Free Software Foundation; with the Invariant Sections being ``Un preambolo''
+  in ``Prefazione'', with no Front-Cover Texts, and with no Back-Cover Texts.
+  A copy of the license is included in the section entitled ``GNU Free
+  Documentation License''.
+
+\end{quote}
+\clearemptydoublepage
+
+%\ifx\hcode\undefined\else
+\tableofcontents
+%\fi
+
+\clearemptydoublepage
+\include{macro}
+\include{preambolo}
+\include{pref}
+\clearemptydoublepage
+\mainmatter
+
+\lstset{language=C++} 
+
+\lstset{basicstyle=\small,
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=2pt, 
+  frame=TB,
+  framesep=5pt,
+%  xleftmargin=0.3cm,
+  basicstyle=\ttfamily,
+  keywordstyle=\color{blue}\ttfamily,
+  ndkeywordstyle=\color{yellow}\ttfamily,
+%  rdkeywordstyle=\ttfamily,
+  identifierstyle=\ttfamily,
+  commentstyle=\color{red}\ttfamily,
+  stringstyle=\color{green}\ttfamily,
+%  texcsststyle=\ttfamily,
+  directivestyle=\color{magenta}\ttfamily
+} 
+
+% distance from margins for boxedminipage
+%\fboxsep=6pt
+
+% less hspace for tables
+\setlength{\tabcolsep}{0.5em}
+
+% comment following to have reference to incomplete section using \unavref
+% command removed
+\def\incomplete{\relax}
+
+\part{Programmazione di sistema}
+\label{part:progr-di-sist}
+\include{intro}
+\include{process}
+\include{prochand}
+\include{filedir}
+\include{fileio}
+\include{system}
+\include{signal}
+\include{session}
+\include{procadv}
+\include{fileadv}
+\include{ipc}
+\include{thread}
+
+% Commentare sotto se si genera la prima parte
+\part{Programmazione di rete}
+\label{part:progr-di-rete}
+
+\include{network}
+\include{socket}
+\include{tcpsock}
+\include{sockctrl}
+\include{othersock}
+\include{sockadv}
+\appendix
+
+\part{Appendici}
+\label{part:appendici}
+\include{errors}
+\include{netlayer}
+\include{trasplayer}
+\include{build}
+\include{ringraziamenti}
+\include{fdl-1.3}
+
+% at the end put the bibliography
+\backmatter
+\printindex
+%\bibliographystyle{phaip}
+%\bibliographystyle{ieeetr}
+\bibliographystyle{abstract}
+\bibliography{biblio}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

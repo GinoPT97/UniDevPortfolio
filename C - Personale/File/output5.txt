@@ -1,0 +1,2 @@
+Il primo file (dati1) ha 6 righe
+Il secondo file (dati2) ha 5 righe

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<head>
+    <title>:: Inserimento dati ::</title>
+    <style type="text/css">
+        .style1
+        {
+            width: 171px;
+        }
+        .style2
+        {
+            width: 289px;
+        }
+        table
+        {
+            font-family: Tahoma;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body style="width: 619px; height: 207px">
+    <form id="f" name="f" method="post" action="params">
+    <fieldset>
+        <legend>Dati:</legend>
+        <table style="width: 79%;">
+            <tr>
+                <td class="style1">
+                    Nome
+                </td>
+                <td class="style2">
+                    <input id="txt_n" name="nome" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td class="style1">
+                    Cognome
+                </td>
+                <td class="style2">
+                    <input id="txt_c" name="cognome" type="text" />
+                </td>
+            </tr>
+            <tr>
+                <td class="style1">
+                    Sesso
+                </td>
+                <td class="style2">
+                    <input id="r_sex" name="sesso" type="radio" value="Maschio" />M<input id="r_sex_f" name="sesso"
+                        type="radio" value="Femmina" />F
+                </td>
+            </tr>
+            <tr>
+                <td class="style1">
+                    Linguaggio di programmazione
+                </td>
+                <td class="style2">
+                    <input id="check_cpp" name="linguaggi" type="checkbox" value="Cpp"/>C++
+                    <input id="check_java" name="linguaggi" type="checkbox" value="Java"/>Java
+                    <input id="check_cs" name="linguaggi" type="checkbox" value="C#"/>C#
+                    <input id="check_py" name="linguaggi" type="checkbox" value="Python"/>Python
+                </td>
+            </tr>
+            <tr>
+                <td class="style1">
+                    Sistema operativo
+                </td>
+                <td class="style2">
+                    <select id="menu" name="sistemi">
+                        <option>Windows</option>
+                        <option>Linux</option>
+                        <option>Mac OS</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="style1">
+                    &nbsp;
+                </td>
+                <td class="style2">
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td class="style1">
+                    &nbsp;
+                </td>
+                <td class="style2">
+                    <input id="sub" name="submit" type="submit" value="Invia i dati" />
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+    </form>
+</body>
+</html>

@@ -1,0 +1,1135 @@
+%% socket.tex
+%%
+%% Copyright (C) 2000-2018 Simone Piccardi.  Permission is granted to
+%% copy, distribute and/or modify this document under the terms of the GNU Free
+%% Documentation License, Version 1.1 or any later version published by the
+%% Free Software Foundation; with the Invariant Sections being "Un preambolo",
+%% with no Front-Cover Texts, and with no Back-Cover Texts.  A copy of the
+%% license is included in the section entitled "GNU Free Documentation
+%% License".
+%%
+
+\chapter{I socket}
+\label{cha:socket_intro}
+
+In questo capitolo inizieremo a spiegare le caratteristiche salienti della
+principale interfaccia per la programmazione di rete, quella dei
+\textit{socket}, che, pur essendo nata in ambiente Unix, è usata ormai da
+tutti i sistemi operativi.
+
+Dopo una breve panoramica sulle caratteristiche di questa interfaccia vedremo
+come creare un socket e come collegarlo allo specifico protocollo di rete che
+si utilizzerà per la comunicazione. Per evitare un'introduzione puramente
+teorica concluderemo il capitolo con un primo esempio di applicazione.
+
+\section{Introduzione ai socket}
+\label{sec:sock_overview}
+
+In questa sezione daremo descrizione essenziale di cosa sono i \textit{socket}
+e di quali sono i concetti fondamentali da tenere presente quando si ha a che
+fare con essi; ne illustreremo poi le caratteristiche e le differenti
+tipologie presenti ed infine tratteremo le modalità con cui possono essere
+creati.
+
+\index{socket!definizione|(}
+
+\subsection{Cosa sono i \textit{socket}}
+\label{sec:sock_socket_def}
+
+I \textit{socket} (una traduzione letterale potrebbe essere \textsl{presa}, ma
+essendo universalmente noti come \textit{socket} utilizzeremo sempre la parola
+inglese) sono uno dei principali meccanismi di comunicazione utilizzato in
+ambito Unix, e li abbiamo brevemente incontrati in
+sez.~\ref{sec:ipc_socketpair}, fra i vari meccanismi di intercomunicazione fra
+processi. 
+
+Un socket costituisce in sostanza un canale di comunicazione fra due processi
+su cui si possono leggere e scrivere dati analogo a quello di una
+\textit{pipe} (vedi sez.~\ref{sec:ipc_pipes}) ma, a differenza di questa e
+degli altri meccanismi esaminati nel capitolo cap.~\ref{cha:IPC}, i socket non
+sono limitati alla comunicazione fra processi che girano sulla stessa
+macchina, ma possono realizzare la comunicazione anche attraverso la rete.
+
+Quella dei socket costituisce infatti la principale interfaccia usata nella
+programmazione di rete.  La loro origine risale al 1983, quando furono
+introdotti in BSD 4.2; l'interfaccia è rimasta sostanzialmente la stessa, con
+piccole modifiche, negli anni successivi. Benché siano state sviluppate
+interfacce alternative, originate dai sistemi SVr4 come la XTI (\textit{X/Open
+  Transport Interface}) nessuna ha mai raggiunto la diffusione e la popolarità
+di quella dei socket (né tantomeno la stessa usabilità e flessibilità) ed oggi
+sono praticamente dimenticate.
+
+La flessibilità e la genericità dell'interfaccia inoltre consente di
+utilizzare i socket con i più disparati meccanismi di comunicazione, e non
+solo con l'insieme dei protocolli TCP/IP, anche se questa sarà comunque quella
+di cui tratteremo in maniera più estesa.
+
+Per capire il funzionamento dei socket occorre avere presente il funzionamento
+dei protocolli di rete che su utilizzeranno (ed in particolare quelli del
+TCP/IP già illustrati in sez.~\ref{sec:net_tpcip}), ma l'interfaccia è del
+tutto generale e benché le problematiche, e quindi le modalità di risolvere i
+problemi, siano diverse a seconda del tipo di protocollo di comunicazione
+usato, le funzioni da usare nella gestione dei socket restano le stesse.
+
+Per questo motivo una semplice descrizione dell'interfaccia è assolutamente
+inutile, in quanto il comportamento di quest'ultima e le problematiche da
+affrontare cambiano radicalmente a seconda del tipo di comunicazione usato.
+La scelta di questo tipo di comunicazione (sovente anche detto \textsl{stile})
+va infatti ad incidere sulla semantica che verrà utilizzata a livello utente
+per gestire la comunicazione cioè su come inviare e ricevere i dati e sul
+comportamento effettivo delle funzioni utilizzate.
+
+La scelta di uno \textsl{stile} dipende sia dai meccanismi disponibili, sia
+dal tipo di comunicazione che si vuole effettuare. Ad esempio alcuni tipi di
+comunicazione considerano i dati come una sequenza continua di byte, in quello
+che viene chiamato un \textsl{flusso} (in inglese \textit{stream}), mentre
+altri invece li raggruppano in \textsl{pacchetti} (in inglese
+\textit{datagram}) che vengono sempre inviati in blocchi separati e non
+divisibili.
+
+Un altro esempio delle differenze fra i diversi tipi di comunicazione concerne
+la possibilità che essa possa o meno perdere dati nella trasmissione, che
+possa o meno rispettare l'ordine in cui i dati inviati e ricevuti, o che possa
+accadere di inviare dei pacchetti di dati più volte (differenze che ad esempio
+sono presenti nel caso di utilizzo dei protocolli TCP o UDP).
+
+Un terzo esempio di differenza nel tipo di comunicazione concerne il modo in
+cui essa avviene nei confronti dei corrispondenti, in certi casi essa può
+essere condotta con una connessione diretta con un solo corrispondente, come
+per una telefonata; altri casi possono prevedere una comunicazione come per
+lettera, in cui si scrive l'indirizzo su ogni pacchetto, altri ancora una
+comunicazione uno a molti come il \textit{broadcast} ed il \textit{multicast},
+in cui i pacchetti possono venire emessi su appositi ``\textsl{canali}'' dove
+chiunque si collega possa riceverli.
+
+É chiaro che ciascuno di questi diversi aspetti è associato ad un tipo di
+comunicazione che comporta una modalità diversa di gestire la stessa, ad
+esempio se la comunicazione è inaffidabile occorrerà essere in grado di
+gestire la perdita o il rimescolamento dei dati, se è a pacchetti questi
+dovranno essere opportunamente trattati, se è uno a molti occorrerà tener
+conto della eventuale unidirezionalità della stessa, ecc.
+
+\index{socket!definizione|)}
+
+
+\subsection{La creazione di un socket}
+\label{sec:sock_creation}
+
+Come accennato l'interfaccia dei socket è estremamente flessibile e permette
+di interagire con protocolli di comunicazione anche molto diversi fra di loro;
+in questa sezione vedremo come è possibile creare un socket e come specificare
+il tipo di comunicazione che esso deve utilizzare.
+
+La creazione di un socket avviene attraverso l'uso della funzione di sistema 
+\funcd{socket}; essa restituisce un \textit{file descriptor} (del tutto
+analogo a quelli che si ottengono per i file di dati e le \textit{pipe},
+descritti in sez.~\ref{sec:file_fd}) che serve come riferimento al socket; il
+suo prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/socket.h}
+\fdecl{int socket(int domain, int type, int protocol)}
+\fdesc{Apre un socket.} 
+}
+
+{La funzione ritorna un valore positivo in caso di successo e $-1$ per un
+  errore, nel qual caso \var{errno} assumerà uno dei valori:
+  \begin{errlist}
+  \item[\errcode{EACCES}] non si hanno privilegi per creare un socket nel
+    dominio o con il protocollo specificato.
+  \item[\errcode{EAFNOSUPPORT}] famiglia di indirizzi non supportata.
+  \item[\errcode{EINVAL}] argomento \param{type} invalido.
+  \item[\errcode{EMFILE}] si è ecceduta la tabella dei file.
+  \item[\errcode{ENFILE}] si è raggiunto il limite massimo di file aperti.
+  \item[\errcode{ENOBUFS}] non c'è sufficiente memoria per creare il socket
+    (può essere anche \errval{ENOMEM}).
+  \item[\errcode{EPROTONOSUPPORT}] il tipo di socket o il protocollo scelto
+    non sono supportati nel dominio.
+  \end{errlist}
+  ed inoltre a seconda del protocollo usato, potranno essere generati altri
+  errori, che sono riportati nelle pagine di manuale relative al protocollo.}
+\end{funcproto}
+
+
+La funzione ha tre argomenti, \param{domain} specifica il dominio del socket
+(definisce cioè, come vedremo in sez.~\ref{sec:sock_domain}, la famiglia di
+protocolli usata), \param{type} specifica il tipo di socket (definisce cioè,
+come vedremo in sez.~\ref{sec:sock_type}, lo stile di comunicazione) e
+\param{protocol} il protocollo; in genere quest'ultimo è indicato
+implicitamente dal tipo di socket, per cui di norma questo valore viene messo
+a zero (con l'eccezione dei \textit{raw socket}).
+
+% TODO: l'ultimo argomento viene usato anche dai nuovi ping socket introdotti
+% con il kernel 3.0, vedi anche http://lwn.net/Articles/420799/ e
+% http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commitdiff;h=c319b4d76b9e583a5d88d6bf190e079c4e43213d 
+
+Si noti che la creazione del socket si limita ad allocare le opportune
+strutture nel kernel (sostanzialmente una voce nella \textit{file table}) e
+non comporta nulla riguardo all'indicazione degli indirizzi remoti o locali
+attraverso i quali si vuole effettuare la comunicazione. Questo significa che
+la funzione da sola non è in grado di fornire alcun tipo di comunicazione. 
+
+
+\subsection{Il dominio dei socket}
+\label{sec:sock_domain}
+
+Dati i tanti e diversi protocolli di comunicazione disponibili, esistono vari
+tipi di socket, che vengono classificati raggruppandoli in quelli che si
+chiamano \textsl{domini}.  La scelta di un dominio equivale in sostanza alla
+scelta di una famiglia di protocolli, e viene effettuata attraverso
+l'argomento \param{domain} della funzione \func{socket}. Ciascun dominio ha un
+suo nome simbolico che convenzionalmente è indicato da una costante che inizia
+per \texttt{PF\_}, sigla che sta per \textit{protocol family}, altro nome con
+cui si indicano i domini.
+
+A ciascun tipo di dominio corrisponde un analogo nome simbolico, anch'esso
+associato ad una costante, che inizia invece per \texttt{AF\_} (da
+\textit{address family}) che identifica il formato degli indirizzi usati in
+quel dominio. Le pagine di manuale di Linux si riferiscono a questi indirizzi
+anche come \textit{name space}, (nome che invece il manuale della \acr{glibc}
+riserva a quello che noi abbiamo chiamato domini) dato che identificano il
+formato degli indirizzi usati in quel dominio per identificare i capi della
+comunicazione.
+
+\begin{table}[!htb]
+  \footnotesize
+  \centering
+  \begin{tabular}[c]{|l|l|l|l|}
+       \hline
+       \textbf{Nome}&\textbf{Valore}&\textbf{Utilizzo}&\textbf{Man page} \\
+       \hline
+       \hline
+       \constd{AF\_UNSPEC}   & 0& Non specificato               &            \\
+       \constd{AF\_LOCAL}    & 1& Local communication           & unix(7)    \\
+       \constd{AF\_UNIX}, \constd{AF\_FILE}&1&Sinonimi di \const{AF\_LOCAL}& \\
+       \constd{AF\_INET}     & 2& IPv4 Internet protocols       & ip(7)      \\
+       \constd{AF\_AX25}     & 3& Amateur radio AX.25 protocol  &            \\
+       \constd{AF\_IPX}      & 4& IPX - Novell protocols        &            \\
+       \constd{AF\_APPLETALK}& 5& Appletalk                     & ddp(7)     \\
+       \constd{AF\_NETROM}   & 6& Amateur radio NetROM          &            \\
+       \constd{AF\_BRIDGE}   & 7& Multiprotocol bridge          &            \\
+       \constd{AF\_ATMPVC}   & 8& Access to raw ATM PVCs        &            \\
+       \constd{AF\_X25}      & 9& ITU-T X.25 / ISO-8208 protocol& x25(7)     \\
+       \constd{AF\_INET6}    &10& IPv6 Internet protocols       & ipv6(7)    \\
+       \constd{AF\_ROSE}     &11& Amateur Radio X.25 PLP        &            \\
+       \constd{AF\_DECnet}   &12& Reserved for DECnet project   &            \\
+       \constd{AF\_NETBEUI}  &13& Reserved for 802.2LLC project &            \\
+       \constd{AF\_SECURITY} &14& Security callback pseudo AF   &            \\
+       \constd{AF\_KEY}      &15& AF\_KEY key management API    &            \\
+       \constd{AF\_NETLINK}  &16& Kernel user interface device  & netlink(7) \\
+       \constd{AF\_ROUTE}    &16& Sinonimo di \const{AF\_NETLINK} emula BSD.&\\
+       \constd{AF\_PACKET}   &17& Low level packet interface    & packet(7)  \\
+       \constd{AF\_ASH}      &18& Ash                           &    \\
+       \constd{AF\_ECONET}   &19& Acorn Econet                  &    \\
+       \constd{AF\_ATMSVC}   &20& ATM SVCs                      &    \\
+       \constd{AF\_RDS}      &21& RDS Sockets                   &    \\
+       \constd{AF\_SNA}      &22& Linux SNA Project             &    \\
+       \constd{AF\_IRDA}     &23& IRDA socket (infrarossi)      & irda(7)    \\
+       \constd{AF\_PPPOX}    &24& PPPoX socket                  &    \\
+       \constd{AF\_WANPIPE}  &25& Wanpipe API socket            &    \\
+       \constd{AF\_LLC}      &26& Linux LLC                     &    \\
+       \constd{AF\_IB}       &27&  Native InfiniBand address    &    \\
+       \constd{AF\_MPLS}     &28& MPSL                          &    \\
+       \constd{AF\_CAN}      &29& Controller Are Network        &    \\
+       \constd{AF\_TIPC}     &30& TIPC sockets                  &    \\
+       \constd{AF\_BLUETOOTH}&31& Bluetooth socket              &    \\
+       \constd{AF\_IUCV}     &32& IUCV sockets                  &    \\
+       \constd{AF\_RXRPC}    &33& RxRPC sockets                 &    \\
+       \constd{AF\_ISDN}     &34& mISDN sockets                 &    \\
+       \constd{AF\_PHONET}   &35& Phonet sockets                &    \\
+       \constd{AF\_IEEE802154}&36& IEEE802154 sockets           &    \\
+       \constd{AF\_CAIF}     &37& CAIF sockets                  &    \\
+       \constd{AF\_ALG}      &38& Algorithm sockets             &    \\
+       \constd{AF\_NFC}      &39& NFC sockets                   &    \\
+       \constd{AF\_VSOCK}    &40& vSockets                      &    \\
+       \constd{AF\_KCM}      &41& Kernel Connection Multiplexor &    \\
+       \constd{AF\_QIPCRTR}  &42& Qualcomm IPC Router           &    \\
+       \constd{AF\_SMC}      &43& smc sockets                   &    \\
+       \hline
+  \end{tabular}
+  \caption{Famiglie di protocolli definiti in Linux.} 
+  \label{tab:net_pf_names}
+\end{table}
+
+L'idea alla base della distinzione fra questi due insiemi di costanti era che
+una famiglia di protocolli potesse supportare vari tipi di indirizzi, per cui
+il prefisso \texttt{PF\_} si sarebbe dovuto usare nella creazione dei socket e
+il prefisso \texttt{AF\_} in quello delle strutture degli indirizzi. Questo è
+quanto specificato anche dallo standard POSIX.1g, ma non esistono a tuttora
+famiglie di protocolli che supportino diverse strutture di indirizzi, per cui
+nella pratica questi due nomi sono equivalenti e corrispondono agli stessi
+valori numerici.\footnote{in Linux, come si può verificare andando a guardare
+  il contenuto di \file{bits/socket.h}, le costanti sono esattamente le stesse
+  e ciascuna \texttt{AF\_} è definita alla corrispondente \texttt{PF\_} e con
+  lo stesso nome.} Qui si sono indicati i nomi con il prefisso \texttt{AF\_}
+seguendo la convenzione usata nelle pagine di manuale.
+
+I domini (e i relativi nomi simbolici), così come i nomi delle famiglie di
+indirizzi, sono definiti dall'\textit{header file} \headfiled{socket.h}. Un
+elenco, aggiornato alla versione 4.15, delle famiglie di protocolli
+disponibili in Linux è riportato in tab.~\ref{tab:net_pf_names}.  L'elenco
+indica tutti i protocolli definiti; fra questi però saranno utilizzabili solo
+quelli per i quali si è compilato il supporto nel kernel (o si sono caricati
+gli opportuni moduli), viene definita anche una costante \constd{AF\_MAX} che
+indica il valore massimo associabile ad un dominio.
+
+Si tenga presente che non tutte le famiglie di protocolli sono utilizzabili
+dall'utente generico, ad esempio in generale tutti i socket di tipo
+\const{SOCK\_RAW} possono essere creati solo da processi che hanno i privilegi
+di amministratore (cioè con \ids{UID} effettivo uguale a zero) o dotati della
+\textit{capability} \const{CAP\_NET\_RAW}.
+
+
+\subsection{Il tipo di socket}
+\label{sec:sock_type}
+
+La scelta di un dominio non comporta però la scelta dello stile di
+comunicazione, questo infatti viene a dipendere dal protocollo che si andrà ad
+utilizzare fra quelli disponibili nella famiglia scelta. L'interfaccia dei
+socket permette di scegliere lo stile di comunicazione indicando il tipo di
+socket con l'argomento \param{type} di \func{socket}. Linux mette a
+disposizione vari tipi di socket (che corrispondono a quelli che il manuale
+della \acr{glibc} \cite{GlibcMan} chiama \textit{styles}) identificati dalle
+seguenti costanti:\footnote{le pagine di manuale POSIX riportano solo i primi
+  tre tipi, Linux supporta anche gli altri, come si può verificare nel file
+  \texttt{include/linux/net.h} dei sorgenti del kernel.}
+
+\begin{basedescript}{\desclabelwidth{2.0cm}\desclabelstyle{\nextlinelabel}}
+\item[\constd{SOCK\_STREAM}] Provvede un canale di trasmissione dati
+  bidirezionale, sequenziale e affidabile. Opera su una connessione con un
+  altro socket. I dati vengono ricevuti e trasmessi come un flusso continuo di
+  byte (da cui il nome \textit{stream}) e possono essere letti in blocchi di
+  dimensioni qualunque. Può supportare la trasmissione dei cosiddetti dati
+  urgenti (o \textit{out-of-band}, vedi sez.~\ref{sec:TCP_urgent_data}).
+\item[\constd{SOCK\_DGRAM}] Viene usato per trasmettere pacchetti di dati
+  (\textit{datagram}) di lunghezza massima prefissata, indirizzati
+  singolarmente. Non esiste una connessione e la trasmissione è effettuata in
+  maniera non affidabile.
+\item[\constd{SOCK\_SEQPACKET}] Provvede un canale di trasmissione di dati
+  bidirezionale, sequenziale e affidabile. Opera su una connessione con un
+  altro socket. I dati possono vengono trasmessi per pacchetti di dimensione
+  massima fissata, e devono essere letti integralmente da ciascuna chiamata a
+  \func{read}.
+\item[\constd{SOCK\_RAW}] Provvede l'accesso a basso livello ai protocolli di
+  rete e alle varie interfacce. I normali programmi di comunicazione non
+  devono usarlo, è riservato all'uso di sistema.
+\item[\constd{SOCK\_RDM}] Provvede un canale di trasmissione di dati
+  affidabile, ma in cui non è garantito l'ordine di arrivo dei pacchetti.
+\item[\constd{SOCK\_PACKET}] Obsoleto, non deve essere più usato (e pertanto
+  non ne parleremo ulteriormente).
+\end{basedescript}
+
+A partire dal kernel 2.6.27 l'argomento \param{type} della funzione
+\func{socket} assume un significato ulteriore perché può essere utlizzato per
+impostare dei flag relativi alle caratteristiche generali del \textit{socket}
+non strettamente attinenti all'indicazione del tipo secondo i valori appena
+illustrati. Essi infatti possono essere combinati con un OR aritmetico delle
+ulteriori costanti:
+\begin{basedescript}{\desclabelwidth{2.5cm}\desclabelstyle{\nextlinelabel}}
+\item[\constd{SOCK\_CLOEXEC}] imposta il flag di \textit{close-on-exec} sul
+  file descriptor del socket, ottenendo lo stesso effetto del flag
+  \const{O\_CLOEXEC} di \func{open} (vedi tab.~\ref{tab:open_operation_flag}),
+  di cui costituisce l'analogo.
+
+\item[\constd{SOCK\_NONBLOCK}] crea il socket in modalità non-bloccante, con
+  effetti identici ad una successiva chiamata a \func{fcntl} per impostare il
+  flag di \const{O\_NONBLOCK} sul file descriptor (si faccia di nuovo
+  riferimenti al significato di quest'ultimo come spiegato in
+  tab.~\ref{tab:open_operation_flag}).
+\end{basedescript}
+
+Si tenga presente inoltre che non tutte le combinazioni fra una famiglia di
+protocolli e un tipo di socket sono valide, in quanto non è detto che in una
+famiglia esista un protocollo per ciascuno dei diversi stili di comunicazione
+appena elencati.
+
+\begin{table}[htb]
+  \footnotesize
+  \centering
+  \begin{tabular}{|l|c|c|c|c|c|}
+    \hline
+    \multicolumn{1}{|c|}{\textbf{Famiglia}}&
+    \multicolumn{5}{|c|}{\textbf{Tipo}}\\
+    \hline
+    \hline
+    &\const{SOCK\_STREAM} &\const{SOCK\_DGRAM}     &\const{SOCK\_RAW}& 
+      \const{SOCK\_RDM}&\const{SOCK\_SEQPACKET} \\
+     \hline
+    \const{AF\_UNIX}     &  si & si  &  --  & -- &  si\footnotemark \\
+     \hline
+    \const{AF\_LOCAL}&\multicolumn{5}{|c|}{sinonimo di \const{AF\_UNIX}}\\
+     \hline
+    \const{AF\_INET}      & TCP & UDP & IPv4 & --  & --  \\
+     \hline
+    \const{AF\_INET6}     & TCP & UDP & IPv6 & --  & -- \\
+     \hline
+    \const{AF\_IPX}       & --  & si  &  --  & --  & -- \\
+     \hline
+    \const{AF\_NETLINK}   & --  & si  &  si  & --  & -- \\
+     \hline
+    \const{AF\_X25}       & --  & --  &  --  & --  & si \\
+     \hline
+    \const{AF\_AX25}      & --  & si  &  si  & --  & si \\
+     \hline
+%    \const{AF\_ATMPVC}    & --  & --  &  --  & --  & -- \\
+%     \hline
+    \const{AF\_APPLETALK} & --  & si  &  si  & --  & -- \\
+     \hline
+    \const{AF\_PACKET}    & --  & si  &  si  & --  & -- \\
+     \hline
+    \const{AF\_KEY}       & --  & --  &  si  & --  & -- \\
+     \hline
+    \const{AF\_IRDA}      & si  & si  &  si  & --  & si \\
+     \hline
+    \const{AF\_NETROM}    & --  & --  &  --  & --  & si \\
+     \hline
+    \const{AF\_ROSE}      & --  & --  &  --  & --  & si \\
+     \hline
+    \const{AF\_RDS}       & --  & --  &  --  & --  & si \\
+     \hline
+    \const{AF\_ECONET}    & --  & si  &  --  & --  & -- \\
+     \hline
+  \end{tabular}
+  \caption{Combinazioni valide di dominio e tipo di protocollo per la 
+    funzione \func{socket}.}
+  \label{tab:sock_sock_valid_combinations}
+\end{table}
+
+\footnotetext{supportati a partire dal kernel 2.6.4 per socket che conservano
+  i limiti dei messaggi e li consegnano in sequenza ordinata.}
+
+In tab.~\ref{tab:sock_sock_valid_combinations} sono mostrate le combinazioni
+valide possibili per le principali famiglie di protocolli. Per ogni
+combinazione valida si è indicato il tipo di protocollo, o la parola
+\textsl{si} qualora il protocollo non abbia un nome definito, mentre si sono
+lasciate vuote le caselle per le combinazioni non supportate.
+
+
+\section{Le strutture degli indirizzi dei socket}
+\label{sec:sock_sockaddr}
+
+Come si è visto nella creazione di un socket non si specifica nulla oltre al
+tipo di famiglia di protocolli che si vuole utilizzare, in particolare nessun
+indirizzo che identifichi i due capi della comunicazione. La funzione infatti
+si limita ad allocare nel kernel quanto necessario per poter poi realizzare la
+comunicazione.
+
+Gli indirizzi infatti vengono specificati attraverso apposite strutture che
+vengono utilizzate dalle altre funzioni della interfaccia dei socket, quando
+la comunicazione viene effettivamente realizzata.  Ogni famiglia di protocolli
+ha ovviamente una sua forma di indirizzamento e in corrispondenza a questa una
+sua peculiare struttura degli indirizzi. I nomi di tutte queste strutture
+iniziano per \var{sockaddr\_}; quelli propri di ciascuna famiglia vengono
+identificati dal suffisso finale, aggiunto al nome precedente.
+
+
+\subsection{La struttura generica}
+\label{sec:sock_sa_gen}
+
+Le strutture degli indirizzi vengono sempre passate alle varie funzioni
+attraverso puntatori (cioè \textit{by reference}), ma le funzioni devono poter
+maneggiare puntatori a strutture relative a tutti gli indirizzi possibili
+nelle varie famiglie di protocolli; questo pone il problema di come passare
+questi puntatori, il C moderno risolve questo problema coi i puntatori
+generici (i \ctyp{void *}), ma l'interfaccia dei socket è antecedente alla
+definizione dello standard ANSI C, e per questo nel 1982 fu scelto di definire
+una struttura generica per gli indirizzi dei socket, \struct{sockaddr}, che si
+è riportata in fig.~\ref{fig:sock_sa_gen_struct}.
+
+\begin{figure}[!htb]
+  \footnotesize \centering
+  \begin{minipage}[c]{0.80\textwidth}
+    \includestruct{listati/sockaddr.h}
+  \end{minipage} 
+  \caption{La struttura generica degli indirizzi dei socket
+    \structd{sockaddr}.} 
+  \label{fig:sock_sa_gen_struct}
+\end{figure}
+
+Tutte le funzioni dei socket che usano gli indirizzi sono definite usando nel
+prototipo un puntatore a questa struttura; per questo motivo quando si
+invocano dette funzioni passando l'indirizzo di un protocollo specifico
+occorrerà eseguire una conversione del relativo puntatore.
+
+I tipi di dati che compongono la struttura sono stabiliti dallo standard
+POSIX.1g e li abbiamo riassunti in tab.~\ref{tab:sock_data_types} con i
+rispettivi file di include in cui sono definiti; la struttura è invece
+definita nell'include file \headfile{sys/socket.h}.
+
+\begin{table}[!htb]
+  \centering
+  \footnotesize
+  \begin{tabular}{|l|l|l|}
+    \hline
+    \multicolumn{1}{|c|}{\textbf{Tipo}}& 
+    \multicolumn{1}{|c|}{\textbf{Descrizione}}& 
+    \multicolumn{1}{|c|}{\textbf{Header}} \\
+    \hline
+    \hline
+    \typed{int8\_t}   & intero a 8 bit con segno   & \headfile{sys/types.h}\\
+    \typed{uint8\_t}  & intero a 8 bit senza segno & \headfile{sys/types.h}\\
+    \typed{int16\_t}  & intero a 16 bit con segno  & \headfile{sys/types.h}\\
+    \typed{uint16\_t} & intero a 16 bit senza segno& \headfile{sys/types.h}\\
+    \typed{int32\_t}  & intero a 32 bit con segno  & \headfile{sys/types.h}\\
+    \typed{uint32\_t} & intero a 32 bit senza segno& \headfile{sys/types.h}\\
+    \hline
+    \typed{sa\_family\_t} & famiglia degli indirizzi&\headfile{sys/socket.h}\\
+    \typed{socklen\_t} & lunghezza (\type{uint32\_t}) dell'indirizzo di
+    un socket& \headfile{sys/socket.h}\\
+    \hline
+    \typed{in\_addr\_t} & indirizzo IPv4 (\type{uint32\_t}) & 
+    \headfile{netinet/in.h}\\
+    \typed{in\_port\_t} & porta TCP o UDP (\type{uint16\_t})& 
+    \headfile{netinet/in.h}\\
+    \hline
+  \end{tabular}
+  \caption{Tipi di dati usati nelle strutture degli indirizzi, secondo quanto 
+    stabilito dallo standard POSIX.1g.}
+  \label{tab:sock_data_types}
+\end{table}
+
+In alcuni sistemi la struttura è leggermente diversa e prevede un primo membro
+aggiuntivo \code{uint8\_t sin\_len} (come riportato da R. Stevens in
+\cite{UNP1}). Questo campo non verrebbe usato direttamente dal programmatore e
+non è richiesto dallo standard POSIX.1g, in Linux pertanto non esiste. Il
+campo \type{sa\_family\_t} era storicamente un \ctyp{unsigned short}.
+
+Dal punto di vista del programmatore l'unico uso di questa struttura è quello
+di fare da riferimento per il casting, per il kernel le cose sono un po'
+diverse, in quanto esso usa il puntatore per recuperare il campo
+\var{sa\_family}, comune a tutte le famiglie, con cui determinare il tipo di
+indirizzo; per questo motivo, anche se l'uso di un puntatore \ctyp{void *}
+sarebbe più immediato per l'utente (che non dovrebbe più eseguire il casting),
+è stato mantenuto l'uso di questa struttura.
+
+Se si usa una struttura \struct{sockaddr} per allocare delle variabili
+generiche da usare in seguito per degli indirizzi si pone il problema che
+niente assicura che i dati necessari per le varie famiglie di indirizzi
+possano rientrare nella dimensione del campo \var{sa\_data} indicata in
+fig.~\ref{fig:sock_sa_gen_struct}, anzi, come vedremo in
+sez.~\ref{sec:sock_sa_ipv6}, nel caso di indirizzi IPv6 questa non è proprio
+sufficiente. 
+
+\begin{figure}[!htb]
+  \footnotesize \centering
+  \begin{minipage}[c]{0.95\textwidth}
+    \includestruct{listati/sockaddr_storage.h}
+  \end{minipage} 
+  \caption{La struttura generica degli indirizzi dei socket
+    \structd{sockaddr\_storage}.} 
+  \label{fig:sock_sa_storage_struct}
+\end{figure}
+
+Per questo l'interfaccia di programmazione dei socket prevede la defizione di
+una speciale struttura \struct{sockaddr\_storage} illustrata in
+fig.~\ref{fig:sock_sa_storage_struct}, in cui di nuovo si usa il primo campo
+(\var{ss\_family}) per indicare il tipo di indirizzo, ed in cui i campi
+successivi sono utilizzati per allineare i dati al tipo di architettura
+hardware utilizzata, e per allocare uno spazio sufficiente ampio per contenere
+qualunque tipo di indirizzo supportato. Allocando questa struttura si ha la
+certezza di non eccedere le dimensioni qualunque sia il tipo di indirizzi che
+si useranno, pertanto risulta utile tutte le volte che si devono gestire in
+maniera generica tipi di indirizzi diversi (ad esempio IPv4 ed IPv6).
+
+
+\subsection{La struttura degli indirizzi IPv4}
+\label{sec:sock_sa_ipv4}
+
+I socket di tipo \const{AF\_INET} vengono usati per la comunicazione
+attraverso Internet; la struttura per gli indirizzi per un socket Internet (se
+si usa IPv4) è definita come \struct{sockaddr\_in} nell'header file
+\headfiled{netinet/in.h} ed ha la forma mostrata in
+fig.~\ref{fig:sock_sa_ipv4_struct}, conforme allo standard POSIX.1g.
+
+\begin{figure}[!htb]
+  \footnotesize\centering
+  \begin{minipage}[c]{0.80\textwidth}
+    \includestruct{listati/sockaddr_in.h}
+  \end{minipage} 
+  \caption{La struttura \structd{sockaddr\_in} degli indirizzi dei socket
+    Internet (IPv4) e la struttura \structd{in\_addr} degli indirizzi IPv4.}
+  \label{fig:sock_sa_ipv4_struct}
+\end{figure}
+
+L'indirizzo di un socket Internet (secondo IPv4) comprende l'indirizzo
+Internet di un'interfaccia più un \textsl{numero di porta} (affronteremo in
+dettaglio il significato di questi numeri in sez.~\ref{sec:TCP_port_num}).  Il
+protocollo IP di per sé non prevede numeri di porta, questi sono utilizzati
+solo dai protocolli di livello superiore come TCP e UDP, ma devono essere
+indicati qui. Inoltre questa struttura viene usata anche per i socket RAW che
+accedono direttamente al livello di IP, in questo caso il numero della porta
+deve essere impostato al numero di protocollo.
+
+Il membro \var{sin\_family} deve essere sempre impostato a \constd{AF\_INET},
+altrimenti si avrà un errore di \errcode{EINVAL}; il membro \var{sin\_port}
+specifica il \textsl{numero di porta}. I numeri di porta sotto il 1024 sono
+chiamati \textsl{riservati} in quanto utilizzati da servizi standard e
+soltanto processi con i privilegi di amministratore (con \ids{UID} effettivo
+uguale a zero) o con la \textit{capability} \const{CAP\_NET\_BIND\_SERVICE}
+possono usare la funzione \func{bind} (che vedremo in
+sez.~\ref{sec:TCP_func_bind}) su queste porte.
+
+Il membro \var{sin\_addr} contiene un indirizzo Internet, e viene acceduto sia
+come struttura (un resto di una implementazione precedente in cui questa era
+una \dirct{union} usata per accedere alle diverse classi di indirizzi) che
+direttamente come intero. In \headfile{netinet/in.h} vengono definite anche
+alcune costanti che identificano alcuni indirizzi speciali, riportati in
+tab.~\ref{tab:TCP_ipv4_addr}, che rincontreremo più avanti.
+
+Infine occorre sottolineare che sia gli indirizzi che i numeri di porta devono
+essere specificati in quello che viene chiamato \textit{network order}, cioè
+con i bit ordinati in formato \textit{big endian} (vedi
+sez.~\ref{sec:endianness}), questo comporta la necessità di usare apposite
+funzioni di conversione per mantenere la portabilità del codice (vedi
+sez.~\ref{sec:sock_addr_func} per i dettagli del problema e le relative
+soluzioni).
+
+
+\subsection{La struttura degli indirizzi IPv6}
+\label{sec:sock_sa_ipv6}
+
+Essendo IPv6 un'estensione di IPv4, i socket di tipo \const{AF\_INET6} sono
+sostanzialmente identici ai precedenti; la parte in cui si trovano
+praticamente tutte le differenze fra i due socket è quella della struttura
+degli indirizzi; la sua definizione, presa da \headfile{netinet/in.h}, è
+riportata in fig.~\ref{fig:sock_sa_ipv6_struct}.
+
+\begin{figure}[!htb]
+  \footnotesize \centering
+  \begin{minipage}[c]{0.80\textwidth}
+    \includestruct{listati/sockaddr_in6.h}
+  \end{minipage} 
+  \caption{La struttura \structd{sockaddr\_in6} degli indirizzi dei socket
+    IPv6 e la struttura \structd{in6\_addr} degli indirizzi IPv6.}
+  \label{fig:sock_sa_ipv6_struct}
+\end{figure}
+
+Il campo \var{sin6\_family} deve essere sempre impostato ad \constd{AF\_INET6},
+il campo \var{sin6\_port} è analogo a quello di IPv4 e segue le stesse regole;
+il campo \var{sin6\_flowinfo} è a sua volta diviso in tre parti di cui i 24
+bit inferiori indicano l'etichetta di flusso, i successivi 4 bit la priorità e
+gli ultimi 4 sono riservati. Questi valori fanno riferimento ad alcuni campi
+specifici dell'header dei pacchetti IPv6 (vedi sez.~\ref{sec:IP_ipv6head}) ed
+il loro uso è sperimentale.
+
+Il campo \var{sin6\_addr} contiene l'indirizzo a 128 bit usato da IPv6,
+espresso da un vettore di 16 byte; anche in questo caso esistono alcuni valori
+predediniti, ma essendo il campo un vettore di byte non è possibile assegnarli
+con il calore di una costante. Esistono però le variabili predefinite
+\var{in6addr\_any} (che indica l'indirizzo generico) e \var{in6addr\_loopback}
+(che indica l'indirizzo di loopback) il cui valore può essere copiato in
+questo campo. A queste due variabili si aggiungono le macro
+\macrod{IN6ADDR\_ANY\_INIT} e \macrod{IN6ADDR\_LOOPBACK\_INIT} per effettuare
+delle assegnazioni statiche.
+
+Infine il campo \var{sin6\_scope\_id} è un campo introdotto in Linux con il
+kernel 2.4, per gestire alcune operazioni riguardanti il
+\textit{multicasting}, è supportato solo per gli indirizzi di tipo
+\textit{link-local} (vedi sez.~\ref{sec:IP_ipv6_unicast}) e deve contenere
+l'\textit{interface index} (vedi sez.~\ref{sec:sock_ioctl_netdevice}) della
+scheda di rete.  Si noti infine che \struct{sockaddr\_in6} ha una dimensione
+maggiore della struttura \struct{sockaddr} generica di
+fig.~\ref{fig:sock_sa_gen_struct}, quindi occorre stare attenti a non avere
+fatto assunzioni riguardo alla possibilità di contenere i dati nelle
+dimensioni di quest'ultima (per questo se necessario è opportuno usare
+\struct{sockaddr\_storage}).
+
+
+\subsection{La struttura degli indirizzi locali}
+\label{sec:sock_sa_local}
+
+I socket di tipo \const{AF\_UNIX} o \const{AF\_LOCAL} vengono usati per una
+comunicazione fra processi che stanno sulla stessa macchina (per questo
+vengono chiamati \textit{local domain} o anche \textit{Unix domain}); essi
+hanno la caratteristica ulteriore di poter essere creati anche in maniera
+anonima attraverso la funzione \func{socketpair} (che abbiamo trattato in
+sez.~\ref{sec:ipc_socketpair}).  Quando però si vuole fare riferimento
+esplicito ad uno di questi socket si deve usare una struttura degli indirizzi
+di tipo \struct{sockaddr\_un}, la cui definizione si è riportata in
+fig.~\ref{fig:sock_sa_local_struct}.
+
+\begin{figure}[!htb]
+  \footnotesize \centering
+  \begin{minipage}[c]{0.80\textwidth}
+    \includestruct{listati/sockaddr_un.h}
+  \end{minipage} 
+  \caption{La struttura \structd{sockaddr\_un} degli indirizzi dei socket
+    locali (detti anche \textit{unix domain}) definita in
+    \headfiled{sys/un.h}.}
+  \label{fig:sock_sa_local_struct}
+\end{figure}
+
+In questo caso il campo \var{sun\_family} deve essere \constd{AF\_UNIX},
+mentre il campo \var{sun\_path} deve specificare un indirizzo. Questo ha due
+forme; può essere ``\textit{named}'' ed in tal caso deve corrispondere ad un
+file (di tipo socket) presente nel filesystem o essere ``\textit{abstract}''
+nel qual caso viene identificato da una stringa univoca in uno spazio di nomi
+astratto. 
+
+Nel primo caso l'indirizzo viene specificato in \var{sun\_path} come una
+stringa (terminata da uno zero) corrispondente al \textit{pathname} del file;
+nel secondo caso (che è specifico di Linux e non portabile) \var{sun\_path}
+deve iniziare con uno zero ed il nome verrà costituito dai restanti byte che
+verranno interpretati come stringa senza terminazione (un byte nullo non ha in
+questo caso nessun significato).
+
+In realtà esiste una terza forma, \textit{unnamed}, che non è possibile
+indicare in fase di scrittura, ma che è quella che viene usata quando si legge
+l'indirizzo di un socket anonimo creato con \texttt{socketpair}; in tal caso
+la struttura restituita è di dimensione \code{sizeof(sa\_family\_t)}, quindi
+\var{sun\_path} non esiste e non deve essere referenziato.
+
+\subsection{La struttura degli indirizzi AppleTalk}
+\label{sec:sock_sa_appletalk}
+
+I socket di tipo \const{AF\_APPLETALK} sono usati dalla libreria
+\file{netatalk} per implementare la comunicazione secondo il protocollo
+AppleTalk, uno dei primi protocolli di rete usato nel mondo dei personal
+computer, usato dalla Apple per connettere fra loro computer e stampanti. Il
+kernel supporta solo due strati del protocollo, DDP e AARP, e di norma è
+opportuno usare le funzioni della libreria \texttt{netatalk}, tratteremo qui
+questo argomento principalmente per mostrare l'uso di un protocollo
+alternativo.
+
+I socket AppleTalk permettono di usare il protocollo DDP, che è un protocollo
+a pacchetto, di tipo \const{SOCK\_DGRAM}; l'argomento \param{protocol} di
+\func{socket} deve essere nullo. È altresì possibile usare i socket raw
+specificando un tipo \const{SOCK\_RAW}, nel qual caso l'unico valore valido
+per \param{protocol} è \constd{ATPROTO\_DDP}.
+
+Gli indirizzi AppleTalk devono essere specificati tramite una struttura
+\struct{sockaddr\_atalk}, la cui definizione è riportata in
+fig.~\ref{fig:sock_sa_atalk_struct}; la struttura viene dichiarata includendo
+il file \headfiled{netatalk/at.h}.
+
+\begin{figure}[!htb]
+  \footnotesize \centering
+  \begin{minipage}[c]{0.80\textwidth}
+    \includestruct{listati/sockaddr_atalk.h}
+  \end{minipage} 
+  \caption{La struttura \structd{sockaddr\_atalk} degli indirizzi dei socket
+    AppleTalk, e la struttura \structd{at\_addr} degli indirizzi AppleTalk.}
+  \label{fig:sock_sa_atalk_struct}
+\end{figure}
+
+Il campo \var{sat\_family} deve essere sempre \constd{AF\_APPLETALK}, mentre
+il campo \var{sat\_port} specifica la porta che identifica i vari
+servizi. Valori inferiori a 129 sono usati per le \textsl{porte riservate}, e
+possono essere usati solo da processi con i privilegi di amministratore o con
+la \textit{capability} \const{CAP\_NET\_BIND\_SERVICE}.  
+
+L'indirizzo remoto è specificato nella struttura \var{sat\_addr}, e deve
+essere in \textit{network order} (vedi sez.~\ref{sec:endianness}); esso è
+composto da un parte di rete data dal campo \var{s\_net}, che può assumere il
+valore \constd{AT\_ANYNET}, che indica una rete generica e vale anche per
+indicare la rete su cui si è, il singolo nodo è indicato da \var{s\_node}, e
+può prendere il valore generico \constd{AT\_ANYNODE} che indica anche il nodo
+corrente, ed il valore \constd{ATADDR\_BCAST} che indica tutti i nodi della
+rete.
+
+
+\subsection{La struttura degli indirizzi dei \textit{packet socket}}
+\label{sec:sock_sa_packet}
+
+I \textit{packet socket}, identificati dal dominio \const{AF\_PACKET}, sono
+un'interfaccia specifica di Linux per inviare e ricevere pacchetti
+direttamente su un'interfaccia di rete, senza passare per le funzioni di
+gestione dei protocolli di livello superiore. In questo modo è possibile
+implementare dei protocolli in \textit{user space}, agendo direttamente sul
+livello fisico. In genere comunque si preferisce usare la libreria
+\file{pcap},\footnote{la libreria è mantenuta insieme al comando
+  \cmd{tcpdump}, informazioni e documentazione si possono trovare sul sito del
+  progetto \url{http://www.tcpdump.org/}.}  che assicura la portabilità su
+altre piattaforme, anche se con funzionalità ridotte.
+
+Questi socket possono essere di tipo \const{SOCK\_RAW} o \const{SOCK\_DGRAM}.
+Con socket di tipo \const{SOCK\_RAW} si può operare sul livello di
+collegamento, ed i pacchetti vengono passati direttamente dal socket al driver
+del dispositivo e viceversa.  In questo modo, in fase di trasmissione, il
+contenuto completo dei pacchetti, comprese le varie intestazioni, deve essere
+fornito dall'utente. In fase di ricezione invece tutto il contenuto del
+pacchetto viene passato inalterato sul socket, anche se il kernel analizza
+comunque il pacchetto, riempiendo gli opportuni campi della struttura
+\struct{sockaddr\_ll} ad esso associata.
+
+Si usano invece socket di tipo \const{SOCK\_DGRAM} quando si vuole operare a
+livello di rete. 
+
+In questo caso in fase di ricezione l'intestazione del protocollo di
+collegamento viene rimossa prima di passare il resto del pacchetto all'utente,
+mentre in fase di trasmissione viene creata una opportuna intestazione per il
+protocollo a livello di collegamento utilizzato, usando le informazioni
+necessarie che devono essere specificate sempre con una struttura
+\struct{sockaddr\_ll}.
+
+Nella creazione di un \textit{packet socket} il valore dell'argomento
+\param{protocol} di \func{socket} serve a specificare, in \textit{network
+  order}, il numero identificativo del protocollo di collegamento si vuole
+utilizzare. I valori possibili sono definiti secondo lo standard IEEE 802.3, e
+quelli disponibili in Linux sono accessibili attraverso opportune costanti
+simboliche definite nel file \file{linux/if\_ether.h}. Se si usa il valore
+speciale \constd{ETH\_P\_ALL} passeranno sul \textit{packet socket} tutti i
+pacchetti, qualunque sia il loro protocollo di collegamento. Ovviamente l'uso
+di questi socket è una operazione privilegiata e può essere effettuati solo da
+un processo con i privilegi di amministratore (\ids{UID} effettivo nullo) o
+con la \textit{capability} \const{CAP\_NET\_RAW}.
+
+Una volta aperto un \textit{packet socket}, tutti i pacchetti del protocollo
+specificato passeranno attraverso di esso, qualunque sia l'interfaccia da cui
+provengono; se si vuole limitare il passaggio ad una interfaccia specifica
+occorre usare la funzione \func{bind} (vedi sez.~\ref{sec:TCP_func_bind}) per
+agganciare il socket a quest'ultima.
+
+\begin{figure}[!htb]
+  \footnotesize \centering
+  \begin{minipage}[c]{\textwidth}
+    \includestruct{listati/sockaddr_ll.h}
+  \end{minipage} 
+  \caption{La struttura \structd{sockaddr\_ll} degli indirizzi dei
+    \textit{packet socket}.}
+  \label{fig:sock_sa_packet_struct}
+\end{figure}
+
+Nel caso dei \textit{packet socket} la struttura degli indirizzi è di tipo
+\struct{sockaddr\_ll}, e la sua definizione è riportata in
+fig.~\ref{fig:sock_sa_packet_struct}; essa però viene ad assumere un ruolo
+leggermente diverso rispetto a quanto visto finora per gli altri tipi di
+socket.  Infatti se il socket è di tipo \const{SOCK\_RAW} si deve comunque
+scrivere tutto direttamente nel pacchetto, quindi la struttura non serve più a
+specificare gli indirizzi. Essa mantiene questo ruolo solo per i socket di
+tipo \const{SOCK\_DGRAM}, per i quali permette di specificare i dati necessari
+al protocollo di collegamento, mentre viene sempre utilizzata in lettura (per
+entrambi i tipi di socket), per la ricezione dei dati relativi a ciascun
+pacchetto.
+
+Al solito il campo \var{sll\_family} deve essere sempre impostato al valore
+\constd{AF\_PACKET}. Il campo \var{sll\_protocol} indica il protocollo scelto,
+e deve essere indicato in \textit{network order}, facendo uso delle costanti
+simboliche definite in \file{linux/if\_ether.h}. Il campo \var{sll\_ifindex} è
+l'indice dell'interfaccia (l'\textit{inxterface index} (vedi
+sez.~\ref{sec:sock_ioctl_netdevice}) che in caso di presenza di più
+interfacce dello stesso tipo (se ad esempio si hanno più schede Ethernet),
+permette di selezionare quella con cui si vuole operare (un valore nullo
+indica qualunque interfaccia).  Questi sono i due soli campi che devono essere
+specificati quando si vuole selezionare una interfaccia specifica, usando
+questa struttura con la funzione \func{bind}.
+
+I campi \var{sll\_halen} e \var{sll\_addr} indicano rispettivamente
+l'indirizzo associato all'interfaccia sul protocollo di collegamento e la
+relativa lunghezza; ovviamente questi valori cambiano a seconda del tipo di
+collegamento che si usa, ad esempio, nel caso di Ethernet, questi saranno il
+MAC address della scheda e la relativa lunghezza. Essi vengono usati, insieme
+ai campi \var{sll\_family} e \var{sll\_ifindex} quando si inviano dei
+pacchetti, in questo caso tutti gli altri campi devono essere nulli.
+
+Il campo \var{sll\_hatype} indica il tipo ARP, come definito in
+\file{linux/if\_arp.h}, mentre il campo \var{sll\_pkttype} indica il tipo di
+pacchetto; entrambi vengono impostati alla ricezione di un pacchetto ed han
+senso solo in questo caso. In particolare \var{sll\_pkttype} può assumere i
+seguenti valori: \constd{PACKET\_HOST} per un pacchetto indirizzato alla
+macchina ricevente, \constd{PACKET\_BROADCAST} per un pacchetto di
+\textit{broadcast}, \constd{PACKET\_MULTICAST} per un pacchetto inviato ad un
+indirizzo fisico di \textit{multicast}, \constd{PACKET\_OTHERHOST} per un
+pacchetto inviato ad un'altra stazione (e ricevuto su un'interfaccia in modo
+promiscuo), \constd{PACKET\_OUTGOING} per un pacchetto originato dalla propria
+macchina che torna indietro sul socket.
+
+Si tenga presente infine che in fase di ricezione, anche se si richiede il
+troncamento del pacchetto, le funzioni \func{recv}, \func{recvfrom} e
+\func{recvmsg} (vedi sez.~\ref{sec:net_sendmsg}) restituiranno comunque la
+lunghezza effettiva del pacchetto così come arrivato sulla linea.
+
+%% \subsection{La struttura degli indirizzi DECnet}
+%% \label{sec:sock_sa_decnet}
+ 
+%% I socket di tipo \const{AF\_DECnet} usano il protocollo DECnet, usato dai VAX
+%% Digital sotto VMS quando ancora il TCP/IP non era diventato lo standard di
+%% fatto. Il protocollo è un protocollo chiuso, ed il suo uso attuale è limitato
+%% alla comunicazione con macchine che stanno comunque scomparendo. Lo si riporta
+%% solo come esempio 
+
+
+% TODO aggiungere AF_CAN, vedi http://lwn.net/Articles/253425, dal 2.6.25 ?
+
+% TODO: trattare i socket RDS, vedi documentazione del kernel, file 
+% Documentation/networking/rds.txt
+
+
+
+\section{Le funzioni di conversione degli indirizzi}
+\label{sec:sock_addr_func}
+
+In questa sezione tratteremo delle varie funzioni usate per manipolare gli
+indirizzi, limitandoci però agli indirizzi Internet.  Come accennato gli
+indirizzi e i numeri di porta usati nella rete devono essere forniti nel
+cosiddetto \textit{network order}, che corrisponde al formato \textit{big
+  endian} (vedi sez.~\ref{sec:endianness}), anche quando la proprio macchina
+non usa questo formato, cosa che può comportare la necessità di eseguire delle
+conversioni.
+
+
+\subsection{Le funzioni per il riordinamento}
+\label{sec:sock_func_ord}
+
+Come già visto in sez.~\ref{sec:endianness} il problema connesso
+all'\textit{endianness} è che quando si passano dei dati da un tipo di
+architettura all'altra i dati vengono interpretati in maniera diversa, e ad
+esempio nel caso dell'intero a 16 bit ci si ritroverà con i due byte in cui è
+suddiviso scambiati di posto.  
+
+Per questo motivo si usano delle funzioni di conversione che servono a tener
+conto automaticamente della possibile differenza fra l'ordinamento usato sul
+computer e quello che viene usato nelle trasmissione sulla rete; queste
+funzioni sono \funcd{htonl}, \funcd{htons}, \funcd{ntohl} e \funcd{ntohs} ed i
+rispettivi prototipi sono:
+
+\begin{funcproto}{
+\fhead{arpa/inet.h}
+\fdecl{unsigned long int htonl(unsigned long int hostlong)}
+\fdesc{Converte l'intero a 32 bit \param{hostlong} dal formato della macchina a
+  quello della rete.} 
+\fdecl{unsigned short int htons(unsigned short int hostshort)}
+\fdesc{Converte l'intero a 16 bit \param{hostshort} dal formato della macchina a
+  quello della rete.}
+\fdecl{unsigned long int ntohl(unsigned long int netlong)}
+\fdesc{Converte l'intero a 32 bit \param{netlong} dal formato della rete a
+  quello della macchina.}
+\fdecl{unsigned sort int ntohs(unsigned short int netshort)}
+\fdesc{Converte l'intero a 16 bit \param{netshort} dal formato della rete a
+  quello della macchina.}
+}
+
+{Tutte le funzioni restituiscono il valore convertito, e non prevedono
+  errori.}
+\end{funcproto}
+
+I nomi sono assegnati usando la lettera \texttt{n} come mnemonico per indicare
+l'ordinamento usato sulla rete (da \textit{network order}) e la lettera
+\texttt{h} come mnemonico per l'ordinamento usato sulla macchina locale (da
+\textit{host order}), mentre le lettere \texttt{s} e \texttt{l} stanno ad
+indicare i tipi di dato (\ctyp{long} o \ctyp{short}, riportati anche dai
+prototipi).
+
+Usando queste funzioni si ha la conversione automatica: nel caso in cui la
+macchina che si sta usando abbia una architettura \textit{big endian} queste
+funzioni sono definite come macro che non fanno nulla. Per questo motivo vanno
+sempre utilizzate, anche quando potrebbero non essere necessarie, in modo da
+assicurare la portabilità del codice su tutte le architetture.
+
+
+\subsection{Le funzioni di conversione per gli indirizzi IPv4}
+\label{sec:sock_func_ipv4}
+
+Un secondo insieme di funzioni di manipolazione è quello che serve per passare
+dalla rappresentazione simbolica degli indirizzi IP al formato binario
+previsto dalla struttura degli indirizzi di
+fig.~\ref{fig:sock_sa_ipv4_struct}, e viceversa. La notazione più comune è la
+cosiddetta notazione \itindex{dotted-decimal} \textit{dotted-decimal}, che
+prevede che gli indirizzi IPv4 siano indicati con l'espressione del valore
+numerico decimale di ciascuno dei 4 byte che li costituiscono separati da un
+punto (ad esempio \texttt{192.168.0.1}).
+
+In realtà le funzioni che illustreremo supportano una notazione che più
+propriamente dovrebbe esser chiamata \textit{numbers-and-dot} in quanto il
+valore può essere indicato con numeri espressi sia in decimale, che in ottale
+(se indicati apponendo uno zero) che in esadecimale (se indicati apponendo
+\texttt{0x}). Inoltre per la parte meno significativa dell'espressione, quella
+che riguarda l'indirizzo locale, si può usare, eliminando altrettanti punti,
+valori a 16 o a 24 bit, e togliendo tutti i punti, si può usare anche
+direttamente un valore numerico a 32 bit.\footnote{la funzionalità si trova
+  anche in gran parte dei programmi che usano indirizzi di rete, e deriva
+  direttamente da queste funzioni.}
+
+Tradizionalmente la conversione di un indirizzo \textit{dotted-decimal} al
+valore numerico veniva eseguita dalla funzione \funcd{inet\_addr} (prevista
+fin dalle origini in BSD e inclusa in POSIX.1-2001) il cui prototipo è:
+
+\begin{funcproto}{
+\fhead{arpa/inet.h}
+\fdecl{in\_addr\_t inet\_addr(const char *strptr)}
+\fdesc{Converte la stringa dell'indirizzo \textit{dotted decimal} in nel
+  numero IP in network order.} 
+}
+
+{La funzione ritorna il valore dell'indirizzo in caso di successo e
+  \const{INADDR\_NONE} per un errore e non genera codici di errore.}
+\end{funcproto}
+
+La prima funzione, \func{inet\_addr}, restituisce l'indirizzo a 32 bit in
+\textit{network order} (del tipo \type{in\_addr\_t}) a partire dalla stringa
+passata nell'argomento \param{strptr}. In caso di errore (quando la stringa
+non esprime un indirizzo valido) restituisce invece il valore
+\const{INADDR\_NONE}, che tipicamente sono trentadue bit a uno.  Questo però
+comporta che la stringa \texttt{255.255.255.255}, che pure è un indirizzo
+valido, non può essere usata con questa funzione dato che genererebe comunque
+un errore; per questo motivo essa è generalmente deprecata in favore di
+\func{inet\_aton}.
+
+Per effettuare la conversione inversa la funzione usata tradizionalmente è
+\funcd{inet\_ntoa}, anch'essa presente fin da BSD 4.3, in cui si riprende la
+notazione già vista in sez.~\ref{sec:sock_func_ord} che usa la lettera
+\texttt{n} come mnemonico per indicare la rete ed \texttt{a} (per ASCII) come
+mnemonico per indicare la stringa corrispodente all'indirizzo; il suo
+prototipo è:
+
+\begin{funcproto}{
+\fhead{arpa/inet.h}
+\fdecl{char *inet\_ntoa(struct in\_addr addrptr)}
+\fdesc{Converte un indirizzo IP in una stringa \textit{dotted decimal}.} 
+}
+
+{La funzione l'indirizzo della stringa con il valore dell'indirizzo convertito
+  e non prevede errori.}
+\end{funcproto}
+
+La funzione converte il valore a 32 bit dell'indirizzo, espresso in
+\textit{network order}, e preso direttamente con un puntatore al relativo
+campo della struttura degli indirizzi, restituendo il puntatore alla stringa
+che contiene l'espressione in formato \textit{dotted-decimal}. Si deve tenere
+presente che la stringa risiede in un segmento di memoria statica, per cui
+viene riscritta ad ogni chiamata e la funzione non è rientrante.
+
+Per rimediare ai problemi di \funcd{inet\_addr} è stata sostituita da
+\funcd{inet\_aton}, che però non è stata standardizzata e non è presente in
+POSIX.1-2001, anche se è definita sulla gran parte dei sistemi Unix; il suo
+prototipo è:
+
+\begin{funcproto}{
+\fhead{arpa/inet.h}
+\fdecl{int inet\_aton(const char *src, struct in\_addr *dest)}
+\fdesc{Converte la stringa dell'indirizzo \textit{dotted decimal} in un
+  indirizzo IP.}
+}
+
+{La funzione ritorna un valore non nullo in caso di successo e $0$ per un
+  errore e non genera codici di errore.}
+\end{funcproto}
+
+La funzione converte la stringa puntata da \param{src} nell'indirizzo binario
+che viene memorizzato nell'opportuna struttura \struct{in\_addr} (si veda
+fig.~\ref{fig:sock_sa_ipv4_struct}) situata all'indirizzo dato
+dall'argomento \param{dest} (è espressa in questa forma in modo da poterla
+usare direttamente con il puntatore usato per passare la struttura degli
+indirizzi). La funzione restituisce un valore diverso da zero se l'indirizzo è
+valido e la conversione ha successo e 0 in caso contrario. Se usata
+con \param{dest} inizializzato a \val{NULL} può essere usata per effettuare la
+validazione dell'indirizzo espresso da \param{src}.
+
+Oltre a queste tre funzioni esistono le ulteriori \funcm{inet\_lnaof},
+\funcm{inet\_netof} e \funcm{inet\_makeaddr} che assumono la ormai obsoleta e
+deprecata suddivisione in classi degli indirizzi IP per fornire la parte di
+rete e quella di indirizzo locale. Ad oggi il loro uso non ha più alcun senso
+per ciò non le tratteremo.
+
+
+\subsection{Le funzioni di conversione per indirizzi IP generici}
+\label{sec:sock_conv_func_gen}
+
+Le tre funzioni precedenti sono limitate solo ad indirizzi IPv4, per questo
+motivo è preferibile usare le due nuove funzioni \func{inet\_pton} e
+\func{inet\_ntop} che possono convertire anche gli indirizzi IPv6. Anche in
+questo caso le lettere \texttt{n} e \texttt{p} sono degli mnemonici per
+ricordare il tipo di conversione effettuata e stanno per \textit{presentation}
+e \textit{numeric}.
+
+Entrambe le funzioni accettano l'argomento \param{af} che indica il tipo di
+indirizzo, e che può essere soltanto \const{AF\_INET} o \const{AF\_INET6}. La
+prima funzione, \funcd{inet\_pton}, serve a convertire una stringa in un
+indirizzo; il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/socket.h}
+\fdecl{int inet\_pton(int af, const char *src, void *addr\_ptr)} 
+\fdesc{Converte l'indirizzo espresso tramite una stringa nel valore numerico.} 
+}
+
+{La funzione ritorna $1$ in caso di successo, $0$ se \param{src} non contiene
+  una rappresentazione valida per la famiglia di indirizzi indicati
+  da \param{af} e $-1$ se \param{af} specifica una famiglia di indirizzi non
+  valida, e solo in quest'ultimo caso  \var{errno} assumerà il valore
+  \errcode{EAFNOSUPPORT}.
+}
+\end{funcproto}
+
+La funzione converte la stringa indicata tramite \param{src} nel valore
+numerico dell'indirizzo IP del tipo specificato da \param{af} che viene
+memorizzato all'indirizzo puntato da \param{addr\_ptr}. La funzione supporta
+per IPv4 la sola notazione \textit{dotted-decimal}, e non quella più completa
+\textit{number-and-dot} che abbiamo visto per \func{inet\_aton}. Per IPv6 la
+notazione prevede la suddivisione dei 128 bit dell'indirizzo in 16 parti di 16
+bit espresse con valori esadecimali separati dal carattere ``\texttt{:}'' ed
+una serie di valori nulli possono essere sostituiti (una sola volta, sempre a
+partire dalla sinistra) con la notazione ``\texttt{::}'', un esempio di
+indirizzo in questa forma potrebbe essere \texttt{2001:db8::8:ba98:2078:e3e3},
+per una descrizione più completa si veda sez.~\ref{sec:IP_ipv6_notation}.
+
+La seconda funzione di conversione è \funcd{inet\_ntop} che converte un
+indirizzo in una stringa; il suo prototipo è:
+
+\begin{funcproto}{
+\fhead{sys/socket.h}
+\fdecl{char *inet\_ntop(int af, const void *addr\_ptr, char *dest, size\_t len)}
+\fdesc{Converte l'indirizzo dalla relativa struttura in una stringa simbolica.} 
+}
+
+{La funzione ritorna un puntatore non nullo alla stringa convertita in caso di
+  successo e \val{NULL} per un errore, nel qual caso \var{errno} assumerà uno
+  dei valori:
+  \begin{errlist}
+    \item[\errcode{ENOSPC}] le dimensioni della stringa con la conversione
+      dell'indirizzo eccedono la lunghezza specificata da \param{len}.
+    \item[\errcode{ENOAFSUPPORT}] la famiglia di indirizzi \param{af} non è
+      una valida.
+  \end{errlist}
+}
+\end{funcproto}
+
+
+La funzione converte la struttura dell'indirizzo puntata da \param{addr\_ptr}
+in una stringa che viene copiata nel buffer puntato dall'indirizzo
+\param{dest}; questo deve essere preallocato dall'utente e la lunghezza deve
+essere almeno \constd{INET\_ADDRSTRLEN} in caso di indirizzi IPv4 e
+\constd{INET6\_ADDRSTRLEN} per indirizzi IPv6; la lunghezza del buffer deve
+comunque essere specificata con il parametro \param{len}.
+
+Gli indirizzi vengono convertiti da/alle rispettive strutture di indirizzo
+(una struttura \struct{in\_addr} per IPv4, e una struttura \struct{in6\_addr}
+per IPv6), che devono essere precedentemente allocate e passate attraverso il
+puntatore \param{addr\_ptr}; l'argomento \param{dest} di \func{inet\_ntop} non
+può essere nullo e deve essere allocato precedentemente.
+
+
+
+
+
+% LocalWords:  socket sez cap BSD SVr XTI Transport Interface TCP stream UDP PF
+% LocalWords:  datagram broadcast descriptor sys int domain type protocol errno
+% LocalWords:  EPROTONOSUPPORT ENFILE kernel EMFILE EACCES EINVAL ENOBUFS raw
+% LocalWords:  ENOMEM table family AF address name glibc UNSPEC LOCAL Local IPv
+% LocalWords:  communication INET protocols ip AX Amateur IPX Novell APPLETALK
+% LocalWords:  Appletalk ddp NETROM NetROM Multiprotocol ATMPVC Access to ATM
+% LocalWords:  PVCs ITU ipv PLP DECnet Reserved for project NETBEUI LLC KEY key
+% LocalWords:  SECURITY Security callback NETLINK interface device netlink Low
+% LocalWords:  PACKET level packet ASH Ash ECONET Acorn Econet ATMSVC SVCs SNA
+% LocalWords:  IRDA PPPOX PPPoX WANPIPE Wanpipe BLUETOOTH Bluetooth POSIX bits
+% LocalWords:  dall'header tab SOCK capabilities capability styles DGRAM read
+% LocalWords:  SEQPACKET RDM sockaddr reference void fig Header uint socklen at
+% LocalWords:  addr netinet port len Stevens unsigned short casting nell'header
+% LocalWords:  BIND SERVICE bind union order big endian flowinfo dell'header ll
+% LocalWords:  multicast multicasting local socketpair sun path filesystem AARP
+% LocalWords:  pathname AppleTalk netatalk personal Apple ATPROTO atalk sat if
+% LocalWords:  ANYNET node ANYNODE ATADDR BCAST pcap IEEE linux ether ETH ALL
+% LocalWords:  sll ifindex ethernet halen MAC hatype ARP arp pkttype HOST recv
+% LocalWords:  OTHERHOST OUTGOING recvfrom recvmsg endianness little endtest Mac
+% LocalWords:  Intel Digital Motorola IBM VME PowerPC l'Intel xABCD ptr htonl
+% LocalWords:  htons ntohl ntohs long hostlong hostshort netlong
+% LocalWords:  sort netshort host inet aton ntoa dotted decimal const char src
+% LocalWords:  strptr struct dest addrptr INADDR NULL pton ntop presentation af
+% LocalWords:  numeric EAFNOSUPPORT size ENOSPC ENOAFSUPPORT ADDRSTRLEN ROUTE
+% LocalWords:  of tcpdump page
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "gapil"
+%%% End: 

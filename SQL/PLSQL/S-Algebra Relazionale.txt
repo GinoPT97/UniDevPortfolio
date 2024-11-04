@@ -1,0 +1,22 @@
+-Proiezione | SELECT
+$ pi attributi (tab)
+
+-Selezione | WHERE
+$ si (tab)
+$   condizione 
+
+-Rinomina attr | AS
+$ rho (tab)
+$   tab1(attr1, ..)
+
+-Rinomina tab | AS
+$ rho (tab)
+$   tabNew
+
+-Group By
+$ discr E attr COUNT, .. (tab)
+
+-Having
+$ si (group by(tab))
+$   condizione 
+

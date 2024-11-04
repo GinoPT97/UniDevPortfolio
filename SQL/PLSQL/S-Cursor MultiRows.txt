@@ -1,0 +1,7 @@
+Se un cursore ritorna più di una riga, inserire dopo fetch:
+
+$ IF(curs%ROWTYPE > 1) THEN
+$   stringa := stringa || ', ';
+$ END IF
+
+ROWTYPE ritorna il numero di rows che il cursore ha fetchato fino a quel momento

@@ -1,0 +1,27 @@
+$ CREATE TABLE tabName
+$ ( 
+$   col1 type #NULL#,
+$   col2 type #NOT NULL#,
+$   ...
+$   coln type #DEFAULT val#
+$ );
+$ ____________
+$ DROP TABLE tabName;
+$ ____________
+$ ALTER TABLE tabName
+$   ADD column type DEFAULT 'Seattle';
+$ 
+$ ALTER TABLE tabName
+$   MODIFY (column1 type,
+$           column2 type,
+$           ...
+$           columnn type);
+$ 
+$ ALTER TABLE tabName
+$   DROP COLUMN column;
+$ 
+$ ALTER TABLE table_name
+$   RENAME COLUMN old_name TO new_name;
+$ 
+$ ALTER TABLE tabName
+$   RENAME TO tabName1;

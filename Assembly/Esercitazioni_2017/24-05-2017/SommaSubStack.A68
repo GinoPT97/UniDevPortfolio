@@ -1,0 +1,50 @@
+* Esercizio 11 
+*
+* Realizzare un programma per la somma di due numeri (C = A + B) che utilizzi una subroutine per l'elaborazione principale. 
+* I parametri di scambio alla subroutine vengano passati attraverso lo stack. 
+* Si noti l'effetto delle istruzioni LINK e UNLK. 
+*
+
+
+
+
+* Area Programmi
+	ORG		$8000
+START	MOVE.W	#3,D0			Copia A in D0
+	MOVE.W	#5,D1			Copia B in D1
+	SUBQ.L	#2,SP			Alloca sullo stack una word per contenere il risultato C
+	MOVE.W	D1,-(SP)		Push di B sullo stack
+	MOVE.W	D0,-(SP)		Push di A sullo stack
+	JSR		SOMMA		Salta alla subroutine aspettandosi al ritorno di trovare nell'apposita area il risultato
+	MOVE.W	4(SP),D2		Copia il risultato in D2
+	ADD.L		#6,SP			Dealloca lo spazio sullo stack
+	MOVE.W	D2,RES		Copia il risultato in memoria
+	STOP		#$2000		Termina
+	
+* Area Dati
+	ORG		$8800
+RES	DS.W		1			Spazio per contenere il risultato
+
+* Subroutine
+		ORG		$8400
+OFFA		EQU		8		Offset di A rispetto al frame-pointer
+OFFB		EQU		10		Offset di B rispetto al frame-pointer
+OFFC		EQU		12		Offset di C rispetto al frame-pointer
+
+SOMMA	LINK		A6,#0		Imposta il frame-pointer in A6: non alloca spazio per variabili locali
+		MOVE.L	D0,-(SP)	Salva sullo stack il registro D0 per poterlo utilizzare liberamente
+		MOVE.W	OFFA(A6),D0	Copia A in D0
+		ADD.W		OFFB(A6),D0	Addiziona B a D0
+		MOVE.W	D0,OFFC(A6)	Salva il risultato nell'apposita area dello stack
+		MOVE.L	(SP)+,D0	Ripristina il registro D0
+		UNLK		A6		Ripristina il registro A6
+		RTS				Ritorna il controllo al chiamante
+
+		END		START
+
+
+
+
+
+
+

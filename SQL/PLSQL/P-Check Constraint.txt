@@ -1,0 +1,13 @@
+Check can refer to any column in a table, but not to columns of other table.
+________________
+__Update Table__
+
+$ ALTER TABLE nometab 
+$   ADD CONSTRAINT...
+________________
+__Create Table__
+
+$ CREATE TABLE nometab( 
+$ ...
+$ CONSTRAINT nome CHECK ...
+$ )

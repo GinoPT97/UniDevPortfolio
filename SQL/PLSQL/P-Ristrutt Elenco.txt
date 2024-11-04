@@ -1,0 +1,27 @@
+Eliminare: attributi strutturati, attributi multipli e gerarchie.
+
+$ Vincoli base: 
+Tipo = B AND b1 <> NULL AND c1 = NULL
+OR
+Tipo = C AND b1 = NULL AND c1 <> NULL
+_______________
+__Gen su spec__
+$ a) Total dis: OK!
+$ b) Total ovr: duplicati gestiti con trigger after update delle sottoclassi
+$ c) Partial: non posso!
+_______________
+__Spec su Gen__
+$ a) Total dis: VB (vincoli base)
+$ b) Total ovr: VB + Se tipo = B+C, b1 e c1 <> NULL
+$ c) Part dis: VB + Se tipo = A, b1 e c1 = NULL
+$ d) Part ovr: VB + Part dis + Total ovr
+________________
+__Associazioni__
+$ Si aggiungono le chiavi esterne in chi partecipa con meno nell'altra.
+$ Si pongono vincoli su queste chiavi (es. att1 IS NOT NULL AND att2 IS NOT NULL).
+$ __Casi:__
+$ a) Total dis: super associato a sub1 o sub2, ma non entrambe
+$ b) Total ovr: super associato a sub1 o sub2, o entrambe
+$ c) Part dis: super non associato a entrambi, ma può associarsi a nessuno
+$ d) Part ovr: nessun vincolo
+

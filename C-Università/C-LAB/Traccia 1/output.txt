@@ -1,0 +1,5 @@
+Gondor Mordor 410.391846
+Mordor Gondor 410.391846
+Arnor Harad 4301.307129
+Erebor Harad 790.250427
+Harad Erebor 790.250427

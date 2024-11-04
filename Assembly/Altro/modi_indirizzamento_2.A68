@@ -1,0 +1,20 @@
+* ESEMPIO SUI MODI DI INDIRIZZAMENTO
+*
+	      ORG        $8000
+START       MOVE      B,D0               
+	     ADD      C,D0               	      
+                 ADD      D,D0               
+                  MOVE     D0,A
+                  STOP     #$2000
+
+	      ORG        $8800
+A                DS          1
+B                DC          4
+C                DC          3
+D                DC          9
+                  END         START
+
+
+
+
+

@@ -1,0 +1,115 @@
+package GUI;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+public class LoginFrame extends JFrame {
+	private Controller c;
+	private JPanel contentPane;
+	private JButton logbutt;
+	private JButton clearbutt;
+	private JTextField idtf;
+
+	public void elementi(Controller c) {
+		setBounds(100, 100, 700, 450);
+		contentPane = c.createBackgroundPanel("Immagini/ImmLog.jpg"); // Setta l'immagine di sfondo
+		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+		setContentPane(contentPane);
+		setLocationRelativeTo(null);
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("Immagini/ImmIcon.png")));
+
+		JPanel buttonpanel = new JPanel();
+		buttonpanel.setOpaque(false); // Imposta trasparente per mostrare lo sfondo
+		FlowLayout flowLayout = (FlowLayout) buttonpanel.getLayout();
+		flowLayout.setAlignment(FlowLayout.TRAILING);
+
+		JPanel infopanel = new JPanel();
+		infopanel.setOpaque(false); // Imposta trasparente per mostrare lo sfondo
+		infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
+
+		JPanel titlepanel = new JPanel();
+		titlepanel.setOpaque(false); // Imposta trasparente per mostrare lo sfondo
+		titlepanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+		titlepanel.setBackground(new Color(0, 128, 0));
+		titlepanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+		JLabel titlelabel = new JLabel("");
+		titlelabel.setHorizontalAlignment(SwingConstants.CENTER);
+		titlelabel.setVerticalAlignment(SwingConstants.TOP);
+		titlepanel.add(titlelabel);
+		titlelabel.setText("Ortofrutta 2000");
+		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		contentPane.add(buttonpanel, BorderLayout.SOUTH);
+
+		logbutt = new JButton("Login");
+		buttonpanel.add(logbutt);
+		logbutt.setVerticalAlignment(SwingConstants.TOP);
+		logbutt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (c.verifyid(idtf.getText())) {
+						c.iddip = idtf.getText();
+						c.logtoutente(2);
+						idtf.setText("");
+						JOptionPane.showMessageDialog(contentPane, "Accesso Dipendente");
+					} else if (idtf.getText().equals("00000")) {
+						c.logtoutente(1);
+						idtf.setText("");
+						JOptionPane.showMessageDialog(contentPane, "Accesso Admin");
+					} else {
+						JOptionPane.showMessageDialog(contentPane, "Id errato!");
+						idtf.setText("");
+					}
+				} catch (SQLException e1) {
+					JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+				}
+			}
+		});
+		logbutt.setBackground(Color.GREEN);
+
+		clearbutt = new JButton("Clear");
+		buttonpanel.add(clearbutt);
+		clearbutt.setVerticalAlignment(SwingConstants.BOTTOM);
+		clearbutt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				idtf.setText("");
+			}
+		});
+		contentPane.add(infopanel, BorderLayout.CENTER);
+		infopanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+		JLabel idlab = new JLabel("ID :");
+		infopanel.add(idlab);
+		idtf = new JTextField();
+		idtf.setText("00000");
+		infopanel.add(idtf);
+		idtf.setHorizontalAlignment(SwingConstants.CENTER);
+		idtf.setColumns(10);
+		contentPane.add(titlepanel, BorderLayout.NORTH);
+	}
+
+	public LoginFrame(String title, Controller c) throws SQLException {
+		super(title);
+		c.connect();
+		this.elementi(c);
+	}
+}

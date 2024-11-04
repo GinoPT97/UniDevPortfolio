@@ -1,0 +1,63 @@
+* Esercizio
+* Dato un vettore A di n elementi di tipo Word, memorizzati a partire dall'indirizzo $80B0, scrivere un
+* programma che determini un vettore B tale che B[i] = A[i] + A[i-1] con i=0,..,n-1. Si assuma A[-1] = 0.
+*
+* Si realizzi il programma utilizzando le subroutine e un meccanismo di passaggio dei parametri a piacere.
+* La subroutine riceve in ingresso:
+*	1.  l'indirizzo di partenza del vettore A
+*	2.  l'indirizzo di partenza del vettore B
+*	3.  la dimensione del vettore A
+*
+* La subroutine non restituisce alcun valore al programma chiamante.
+* Al termine dell'esecuzione della subroutine, il vettore B deve risultare
+* correttamente memorizzato in memoria (a partire dalla locazione di memoria designata). 
+*
+* Ad es. se il vettore di partenza e' 3,8,-2,1,10,8,5,-1,6
+* il programma deve restituire 3,11,6,-1,11,18,13,4,5
+
+* MAIN
+		ORG 	$8200
+START		MOVE.L	#VETB,-(SP)
+		MOVE.L	#VETA,-(SP)
+		MOVE.W	#DIM,-(SP)
+		JSR		SUB
+		ADDA.L	#10,SP
+		STOP 		#$2100
+
+
+* AREA DATI
+		ORG	$80B0
+VETA		DC.W	3,8,-2,1,10,8,5,-1,6
+VETB		DS.W	9
+DIM		EQU	9
+TODIM		EQU	8
+TOVETA 		EQU	10
+TOVETB	EQU	14
+
+		ORG 	$8400
+SUB		LINK	A6,#0
+
+		MOVEM.L	D0-D2/A0-A1,-(SP)
+		
+		MOVEA.L	TOVETA(A6),A0
+		MOVEA.L	TOVETB(A6),A1
+		MOVE.W	TODIM(A6),D2
+		BEQ		FINE		
+
+				
+		CLR.L		D0				* D0 E' PRECEDENTE
+		SUBQ		#1,D2				* STO USANDO DBRA
+CICLO		MOVE.W	(A0)+,D1			* D1 E' IL CORRENTE
+		ADD.W		D1,D0				* D0 MEMORIZZA LA SOMMA PARZIALE		
+		MOVE.W	D0,(A1)+
+		MOVE.W	D1,D0				* D1 DIVENTA IL NUOVO PRECENDETE
+		DBRA		D2,CICLO
+
+FINE		MOVEM.L	(SP)+,D0-D2/A0-A1
+		UNLK		A6
+		RTS
+		END 	START
+
+
+
+

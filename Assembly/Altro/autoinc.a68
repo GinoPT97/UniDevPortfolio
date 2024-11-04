@@ -1,0 +1,20 @@
+* File: autoinc.a68 - Somma numeri 
+* Usa address register indirect addressing con post-increment 
+*
+		ORG	  $8000 
+		MOVE.B  #5,D0         Cinque numeri da sommare
+      	LEA     Table,A0      A0 punta ai numeri
+      	CLR.B   D1            Inizializza la somma
+Loop 		ADD.B   (A0)+,D1      Somma il numero al totale
+     		SUB.B   #1,D0
+      	BNE     Loop          Fino a sommare tutti i numeri
+      	STOP    #$2700
+Table 	DC.B    1,2,3,4,5     Dati d’esempio
+
+		
+
+
+
+
+
+

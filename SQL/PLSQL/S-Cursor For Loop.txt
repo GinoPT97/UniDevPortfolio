@@ -1,0 +1,10 @@
+$ DECLARE
+$   CURSOR curs IS
+$   SELECT...
+$ 
+$ BEGIN
+$   FOR I IN curs
+$   LOOP
+$     ...
+$   END LOOP;
+$ END;

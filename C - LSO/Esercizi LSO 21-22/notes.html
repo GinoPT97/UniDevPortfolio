@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-11-10 Wed 20:59 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Esercitazione</title>
+<meta name="author" content="Antonio Petrillo" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Esercitazione</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgcb59dca">Esercizio 1</a>
+<ul>
+<li><a href="#orgee0a65b">Use of ls -F</a></li>
+<li><a href="#org931cdd1">answ <code>[6/6]</code></a></li>
+</ul>
+</li>
+<li><a href="#org3ad5aaa">Esercizio 2</a>
+<ul>
+<li><a href="#orgf84686f">punto a</a></li>
+<li><a href="#org3722fae">punto b</a></li>
+<li><a href="#org41d80dd">punto c</a></li>
+</ul>
+</li>
+<li><a href="#orgf01454e">Esercizio 3</a>
+<ul>
+<li><a href="#org741bd3c">Controllo parametri</a></li>
+<li><a href="#orgdb7f9b5">Funzione di clean</a></li>
+<li><a href="#org4d9eb51">&ldquo;Main&rdquo;</a></li>
+<li><a href="#org010cf23">Condiderazioni</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgcb59dca" class="outline-2">
+<h2 id="orgcb59dca">Esercizio 1</h2>
+<div class="outline-text-2" id="text-orgcb59dca">
+</div>
+<div id="outline-container-orgee0a65b" class="outline-3">
+<h3 id="orgee0a65b">Use of ls -F</h3>
+<div class="outline-text-3" id="text-orgee0a65b">
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/</span><span style="color: #4f97d7; font-weight: bold;">env</span><span style="color: #2aa1ae; background-color: #292e34;"> bash</span>
+
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"part a"</span>
+<span style="color: #ce537a; font-weight: bold;">ls</span> -F | <span style="color: #ce537a; font-weight: bold;">grep</span> <span style="color: #2d9574;">"^[A-Z].*\/$"</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"part b"</span>
+<span style="color: #ce537a; font-weight: bold;">ls</span> -F | <span style="color: #ce537a; font-weight: bold;">grep</span> <span style="color: #2d9574;">".*a.*a.*\*$"</span>
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">alternativa</span>
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34; font-weight: bold;">ls</span><span style="color: #2aa1ae; background-color: #292e34;"> -F | </span><span style="color: #2aa1ae; background-color: #292e34; font-weight: bold;">grep</span><span style="color: #2aa1ae; background-color: #292e34;"> "a.*a.*\*$" # non bloccando l'inizio riga con ^ la prima 'a' puo' trovarsi ovunque nella riga</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"part c"</span>
+<span style="color: #ce537a; font-weight: bold;">ls</span> -F | <span style="color: #ce537a; font-weight: bold;">grep</span> <span style="color: #2d9574;">".*|$"</span> | sed <span style="color: #2d9574;">"s/|$//"</span> <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">oppure sed "/.$//"</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"part d"</span>
+<span style="color: #ce537a; font-weight: bold;">ls</span> -F | egrep -v <span style="color: #2d9574;">"(.*\*$|.*@$|.*\|$|.*=$|.*\/$)"</span> | awk <span style="color: #2d9574;">'{if (length $0 &gt; 5){print $0}}'</span> <span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">avrei potuto anche fare </span><span style="color: #2aa1ae; background-color: #292e34; font-weight: bold;">grep</span><span style="color: #2aa1ae; background-color: #292e34;"> "......*"</span>
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">alternativa</span>
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34; font-weight: bold;">ls</span><span style="color: #2aa1ae; background-color: #292e34;"> -F | </span><span style="color: #2aa1ae; background-color: #292e34; font-weight: bold;">grep</span><span style="color: #2aa1ae; background-color: #292e34;"> ".*[a-zA-Z]$" | </span><span style="color: #2aa1ae; background-color: #292e34; font-weight: bold;">grep</span><span style="color: #2aa1ae; background-color: #292e34;"> -v ".*=$" | </span><span style="color: #2aa1ae; background-color: #292e34; font-weight: bold;">grep</span><span style="color: #2aa1ae; background-color: #292e34;"> "......*"</span>
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34;">alternativa</span>
+<span style="color: #2aa1ae; background-color: #292e34;"># </span><span style="color: #2aa1ae; background-color: #292e34; font-weight: bold;">ls</span><span style="color: #2aa1ae; background-color: #292e34;"> -F | </span><span style="color: #2aa1ae; background-color: #292e34; font-weight: bold;">grep</span><span style="color: #2aa1ae; background-color: #292e34;"> -E ".{6,}.*[^*/@|=]$" #molto piu' elegante</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"part e"</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"output: Fi myli"</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"part f"</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> -e <span style="color: #2d9574;">"output: 1 1 1\ncount value at the end: 4"</span>
+</pre>
+</div>
+<ul class="org-ul">
+<li>parte e
+<code>output: Fi myli</code></li>
+<li>parte f
+Supponendo che ls dia &ldquo;a.out pippo.txt test.txt Files Temp mylib.so myFifo&rdquo; in questo specifico ordine
+<code>output: 1 1 1</code>, valore finale di count <code>4</code> (non viene stampato).
+Ordine alfabetico ovvero quello usato di defaul da ls (di solito): &ldquo;Files  a.out  myFifo  mylib.so  pippo.txt  test.txt&rdquo;
+<code>output 2 3 1</code>, valore finale di count <code>0</code></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org931cdd1" class="outline-3">
+<h3 id="org931cdd1">answ <code>[6/6]</code></h3>
+<div class="outline-text-3" id="text-org931cdd1">
+<ul class="org-ul">
+<li class="on"><code>[X]</code> part a</li>
+<li class="on"><code>[X]</code> part b</li>
+<li class="on"><code>[X]</code> part c</li>
+<li class="on"><code>[X]</code> part d</li>
+<li class="on"><code>[X]</code> part e</li>
+<li class="on"><code>[X]</code> part f</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-org3ad5aaa" class="outline-2">
+<h2 id="org3ad5aaa">Esercizio 2</h2>
+<div class="outline-text-2" id="text-org3ad5aaa">
+<p>
+Esercizi sui file <code>.fasta</code>.
+Per il punto b e c ho usato alcune funzioni di awk che non abbiamo visto a lezione, ma che comunque ho usato risolvendo gli esercizi di <a href="https://github.com/FreedomBen/awk-hack-the-planet">Ben Porter</a> su awk.
+Nel dubbio in man awk c&rsquo;e&rsquo; sono elencate molte.
+</p>
+</div>
+<div id="outline-container-orgf84686f" class="outline-3">
+<h3 id="orgf84686f">punto a</h3>
+<div class="outline-text-3" id="text-orgf84686f">
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/</span><span style="color: #4f97d7; font-weight: bold;">env</span><span style="color: #2aa1ae; background-color: #292e34;"> bash</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"part a"</span>
+
+<span style="color: #4f97d7; font-weight: bold;">for</span> file<span style="color: #4f97d7; font-weight: bold;"> in</span> *.fasta; <span style="color: #4f97d7; font-weight: bold;">do</span>
+    <span style="color: #ce537a; font-weight: bold;">echo</span> $<span style="color: #7590db;">file</span>
+    sed <span style="color: #2d9574;">"/^&gt;/ s/[^\-\&gt;[:alnum:]]/_/g"</span> $<span style="color: #7590db;">file</span>
+    <span style="color: #ce537a; font-weight: bold;">echo</span> -e <span style="color: #2d9574;">"\n"</span>
+<span style="color: #4f97d7; font-weight: bold;">done</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org3722fae" class="outline-3">
+<h3 id="org3722fae">punto b</h3>
+<div class="outline-text-3" id="text-org3722fae">
+<p>
+Numerare le sequeze in ogni file
+</p>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/</span><span style="color: #4f97d7; font-weight: bold;">env</span><span style="color: #2aa1ae; background-color: #292e34;"> bash</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"part b"</span>
+<span style="color: #4f97d7; font-weight: bold;">for</span> file<span style="color: #4f97d7; font-weight: bold;"> in</span> *.fasta; <span style="color: #4f97d7; font-weight: bold;">do</span>
+    <span style="color: #ce537a; font-weight: bold;">echo</span> $<span style="color: #7590db;">file</span>
+    sed <span style="color: #2d9574;">"/^&gt;/ s/[^\-\&gt;[:alnum:]]/_/g"</span> $<span style="color: #7590db;">file</span> | awk <span style="color: #2d9574;">'BEGIN{count=1} {if ($0 ~ /^[&gt;-]/) {printf("&gt; %d %s", count, substr($0, 2)); count++} else print $0}'</span>
+    <span style="color: #ce537a; font-weight: bold;">echo</span> -e <span style="color: #2d9574;">"\n"</span>
+<span style="color: #4f97d7; font-weight: bold;">done</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org41d80dd" class="outline-3">
+<h3 id="org41d80dd">punto c</h3>
+<div class="outline-text-3" id="text-org41d80dd">
+<p>
+Estrarre tutte i blocchi (header e sequeze)
+</p>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/</span><span style="color: #4f97d7; font-weight: bold;">env</span><span style="color: #2aa1ae; background-color: #292e34;"> bash</span>
+<span style="color: #ce537a; font-weight: bold;">echo</span> <span style="color: #2d9574;">"part c"</span>
+<span style="color: #4f97d7; font-weight: bold;">for</span> file<span style="color: #4f97d7; font-weight: bold;"> in</span> *.fasta; <span style="color: #4f97d7; font-weight: bold;">do</span>
+    <span style="color: #ce537a; font-weight: bold;">echo</span> $<span style="color: #7590db;">file</span>
+    awk <span style="color: #2d9574;">'{if ($0 ~ /^[&gt;-]/){header=$0;getline sequence; if(length (sequence) &gt; 199){printf("%s\n%s\n", header, sequence)}}}'</span> $<span style="color: #7590db;">file</span>
+    <span style="color: #ce537a; font-weight: bold;">echo</span> -e <span style="color: #2d9574;">"\n"</span>
+<span style="color: #4f97d7; font-weight: bold;">done</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgf01454e" class="outline-2">
+<h2 id="orgf01454e">Esercizio 3</h2>
+<div class="outline-text-2" id="text-orgf01454e">
+<p>
+Spring cleaning script.
+Purtroppo non ricordo bene la traccia, per quel che ho scritto sugli appunti dovrebbe essere qualcosa del genere:
+</p>
+<ul class="org-ul">
+<li>Data una folder ed un&rsquo;estensione di file, rimuovere tutti i file con quell&rsquo;estensione (anche nelle sottocartelle).</li>
+<li>Se la folder/subfolder e&rsquo; vuota la si elimina</li>
+</ul>
+</div>
+<div id="outline-container-org741bd3c" class="outline-3">
+<h3 id="org741bd3c">Controllo parametri</h3>
+<div class="outline-text-3" id="text-org741bd3c">
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #2aa1ae; background-color: #292e34;">#</span><span style="color: #2aa1ae; background-color: #292e34;">!/usr/bin/</span><span style="color: #4f97d7; font-weight: bold;">env</span><span style="color: #2aa1ae; background-color: #292e34;"> bash</span>
+
+<span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #4f97d7;">[</span> $<span style="color: #7590db;">#</span> -ne <span style="color: #a45bad;">2</span> <span style="color: #4f97d7;">]</span>; <span style="color: #4f97d7; font-weight: bold;">then</span>
+    <span style="color: #ce537a; font-weight: bold;">echo</span> -e <span style="color: #2d9574;">"Usage: spring_clean.sh start_folder file_extension (without dot i.e. html not .html)\nFor the start folder I need the absolute path"</span>
+    <span style="color: #4f97d7; font-weight: bold;">exit</span> <span style="color: #a45bad;">1</span>
+<span style="color: #4f97d7; font-weight: bold;">fi</span>
+
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdb7f9b5" class="outline-3">
+<h3 id="orgdb7f9b5">Funzione di clean</h3>
+<div class="outline-text-3" id="text-orgdb7f9b5">
+<p>
+L&rsquo;algoritmo controlla ogni file nella cartella corrente, se non e&rsquo; un link simbolico ed e&rsquo; un file regolare che matcha l&rsquo;estensione data, viene eliminato, se il file in questione e&rsquo; una cartella chiama ricorsivamente la funzione nella sottocartella.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #bc6ec5; font-weight: bold;">dfs_clean</span><span style="color: #4f97d7;">(){</span>
+    <span style="color: #ce537a; font-weight: bold;">cd</span> $<span style="color: #a45bad;">1</span>
+    <span style="color: #4f97d7; font-weight: bold;">for</span> elem<span style="color: #4f97d7; font-weight: bold;"> in</span> *; <span style="color: #4f97d7; font-weight: bold;">do</span>
+        <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #bc6ec5;">[</span> -f $<span style="color: #7590db;">elem</span> -a <span style="color: #a45bad;">!</span> -L $<span style="color: #7590db;">elem</span> <span style="color: #bc6ec5;">]</span>; <span style="color: #4f97d7; font-weight: bold;">then</span>
+            <span style="color: #7590db;">remove</span>=$<span style="color: #bc6ec5;">(</span><span style="color: #bc6ec5;">echo</span> $<span style="color: #7590db;">elem</span> | awk <span style="color: #2d9574;">'{if ($0 ~ /\.'</span>$<span style="color: #a45bad;">2</span><span style="color: #2d9574;">'$/) {printf "remove"} else {printf "dont_remove"}}'</span><span style="color: #bc6ec5;">)</span>
+            <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #bc6ec5;">[</span> $<span style="color: #7590db;">remove</span> = <span style="color: #2d9574;">"remove"</span> <span style="color: #bc6ec5;">]</span>; <span style="color: #4f97d7; font-weight: bold;">then</span>
+                <span style="color: #ce537a; font-weight: bold;">rm</span> -v $<span style="color: #7590db;">elem</span>
+            <span style="color: #4f97d7; font-weight: bold;">fi</span>
+        <span style="color: #4f97d7; font-weight: bold;">elif</span> <span style="color: #bc6ec5;">[</span> -d $<span style="color: #7590db;">elem</span> <span style="color: #bc6ec5;">]</span>; <span style="color: #4f97d7; font-weight: bold;">then</span>
+            <span style="color: #7590db;">dir</span>=$<span style="color: #7590db;">elem</span>
+            dfs_clean $<span style="color: #7590db;">dir</span> $<span style="color: #a45bad;">2</span>
+            <span style="color: #7590db;">remove_dir</span>=$<span style="color: #bc6ec5;">(</span><span style="color: #bc6ec5;">ls</span> -A $<span style="color: #7590db;">dir</span><span style="color: #bc6ec5;">)</span>
+            <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #bc6ec5;">[</span> -z $<span style="color: #7590db;">remove_dir</span> <span style="color: #bc6ec5;">]</span>; <span style="color: #4f97d7; font-weight: bold;">then</span>
+                rmdir -v $<span style="color: #7590db;">dir</span>
+            <span style="color: #4f97d7; font-weight: bold;">fi</span>
+        <span style="color: #4f97d7; font-weight: bold;">fi</span>
+    <span style="color: #4f97d7; font-weight: bold;">done</span>
+    <span style="color: #ce537a; font-weight: bold;">cd</span> ..
+<span style="color: #4f97d7;">}</span>
+
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org4d9eb51" class="outline-3">
+<h3 id="org4d9eb51">&ldquo;Main&rdquo;</h3>
+<div class="outline-text-3" id="text-org4d9eb51">
+<div class="org-src-container">
+<pre class="src src-shell"><span style="color: #7590db;">start_dir</span>=$<span style="color: #a45bad;">1</span>
+<span style="color: #7590db;">extension</span>=$<span style="color: #a45bad;">2</span>
+
+<span style="color: #4f97d7;">pushd</span> $<span style="color: #7590db;">start_dir</span> <span style="color: #a45bad;">1</span>&gt;/dev/null
+dfs_clean <span style="color: #2d9574;">"."</span> $<span style="color: #7590db;">extension</span>
+<span style="color: #4f97d7;">popd</span> <span style="color: #a45bad;">1</span>&gt;/dev/null
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org010cf23" class="outline-3">
+<h3 id="org010cf23">Condiderazioni</h3>
+<div class="outline-text-3" id="text-org010cf23">
+<p>
+Bash usa uno scope dinamico, infatti nelle chiamate ricorsive il cambio di valore su elem e dir si riflette sui chiamanti.
+Sul manuale di GNU bash non ho trovato un modo per evitare questo problema.
+Ora dato che che fra caller e callee i valori cambiano mi aspettavo qualche errore, che qualche cartella non venisse ispezionata, invece l&rsquo;unica cosa che accade e&rsquo; la shell stampa  degli errori perche&rsquo; cerca di cancellare piu&rsquo; volte le stesse cartelle.
+Potevo evitare di stampare gli errori avrei potuto scrivere <code>dfs_clean "." $extension 2&gt;/dev/null</code>, ma nascondere gli errori non credo sia una buona prassi.
+Per <code>popd</code> &amp; <code>pushd</code> allego un  <a href="https://www.youtube.com/watch?v=yxTxIOw2TSM">video</a> interssante.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Antonio Petrillo</p>
+<p class="date">Created: 2021-11-10 Wed 20:59</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+00000000                                     1  *
+00000000                                     2  * Questo programma conta quanti elementi di un vettore sono compresi 
+00000000                                     3  * tra due valori (estremi inclusi).
+00000000                                     4  * Il programma è costituito da un ciclo che scorre tutti gli elementi del vettore.
+00000000                                     5  * Per ogni elemento prelevato dal vettore, il programma verifica se il valore
+00000000                                     6  * è minore o uguale di MAX, in caso positivo verifica se il valore è
+00000000                                     7  * maggiore o uguale di MIN, in caso ancora positivo incrementa il conteggio.
+00000000                                     8  * Per gestire il numero di ripetizioni del ciclo si usa il registro D0,
+00000000                                     9  * inizializzato con la dimensione del vettore.
+00000000                                    10  * Per gestire il conteggio si usa il registro D1, inizializzato con il valore zero.
+00000000                                    11  * Il risultato verrà alla fine copiato da D1 nella locazione RES.
+00000000                                    12  * Per indirizzare il vettore si usa A0.
+00000000                                    13  * Per prelevare i dati dal vettore si usa il modo di indirizzamento
+00000000                                    14  * con post-incremento, in modo da puntare automaticamente al
+00000000                                    15  * successivo elemento nel vettore dopo aver prelevato quello corrente.
+00000000                                    16  
+00000000                                    17  
+00008000                                    18  	ORG $8000
+00008000  3039 00008038                     19  INIZIO	MOVE DIM,D0
+00008006  3238 0000                         20  	MOVE 0,D1
+0000800A  41F9 0000803A                     21  	LEA V,A0
+00008010                                    22  
+00008010  1418                              23  CICLO	MOVE.B (A0)+,D2			sposta l'elemento del vettore nel registro D2 e post-incrementa A0
+00008012  B439 00008042                     24  	CMP.B MAX,D2			confronta con MAX
+00008018  6E00 000E                         25  	BGT DIVR				salta se MAX è maggiore di D2 (Branch if Greater Than)
+0000801C  B439 00008043                     26  	CMP.B	MIN,D2			confronta con MIN
+00008022  6D00 0004                         27  	BLT DIVR				salta se MIN è minore di D2 (Branch if Less Than)
+00008026  5241                              28  	ADD #1,D1				incrementa il conteggio se invece l'elemento risulta compreso tra MIN e MAX
+00008028  5340                              29  DIVR	SUB #1,D0
+0000802A  66E4                              30  	BNE CICLO
+0000802C                                    31  
+0000802C  33C1 00008044                     32  	MOVE D1,RES				pone il risultato in memoria alla locazione RES
+00008032  4EF9 00008032                     33  FINE	JMP FINE				Fine programma: ciclo infinito
+00008038                                    34  
+00008038  0008                              35  DIM	DC.W 8				dimensione del vettore
+0000803A  03 05 0A 59 32 01 2D 5B           36  V	DC.B  3,5,10,89,50,1,45,91		vettore
+00008042  32                                37  MAX	DC.B 50				estremo superiore
+00008043  0A                                38  MIN	DC.B 10				estremo inferiore
+00008044                                    39  RES	DS.W	1				locazione di memoria che conterrà il risultato del conteggio
+00008046                                    40  
+00008046                                    41  	END INIZIO				la END va messa alla fine, dopo i dati
+
+No errors detected
+No warnings generated

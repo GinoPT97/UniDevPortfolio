@@ -1,0 +1,23 @@
+* Esercizio 3
+* Scrivere un programma per il calcolo e l'impostazione della parita' in una parola di 8 bit.
+* Dato l'indirizzo di memoria di un byte, il msb deve essere impostato in modo
+* tale che il numero di bit alti presenti nel byte sia pari.
+*
+
+	ORG		$8000
+START	MOVE.B	A,D0
+	BCLR		#7,D0
+	MOVE		#6,D1
+LOOP	BTST		D1,D0
+	BEQ		DEC
+	BCHG		#7,D0
+DEC	SUBQ		#1,D1
+	BPL		LOOP
+	MOVE.B	D0,A
+	STOP		#$2000
+
+	ORG		$8800
+A	DC.B		%00110100
+	END		START
+
+

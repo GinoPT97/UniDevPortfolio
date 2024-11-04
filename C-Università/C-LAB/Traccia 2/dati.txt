@@ -1,0 +1,7 @@
+ABC	1  Napoli
+GRU	3  Verona  Orvieto  Verona
+OGF	4  Palermo  Napoli  Bari  Potenza
+KLM	1  Salerno
+TYO	1  Como
+UEW 	6  Teramo  Genova  Livorno  Livorno Salerno Genova
+YYY	1  Perugia

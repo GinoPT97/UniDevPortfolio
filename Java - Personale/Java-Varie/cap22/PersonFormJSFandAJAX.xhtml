@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>:: Info su di una persona ::</title>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet library="css" name="pinfo.css"></h:outputStylesheet>
+        <h:form prependId="false">
+            <fieldset>
+                <legend>Info:</legend>
+                <h:panelGrid columns="2" columnClasses="label, field" styleClass="table">
+                    <h:outputText value="Nome: "></h:outputText>
+                    <h:inputText label="Nome: " value="#{pinfo.first_name}"></h:inputText>
+                    <h:outputText value="Cognome: "></h:outputText>
+                    <h:inputText label="Cognome: " value="#{pinfo.last_name}"></h:inputText>
+                    <h:outputText value="Età: "></h:outputText>
+                    <h:inputText label="Età: " value="#{pinfo.age}"></h:inputText>
+                    <h:outputText value="Indirizzo: "></h:outputText>
+                    <h:inputText label="Indirizzo: " value="#{pinfo.address}"></h:inputText>
+                    <h:outputText value="Lavoro: "></h:outputText>
+                    <h:inputText label="Lavoro: " value="#{pinfo.job}"></h:inputText>
+                    <h:panelGroup></h:panelGroup>
+                    <h:commandButton value="Invia i dati">
+                        <f:ajax execute="@form" render="r_name r_lname r_age r_addr r_job"></f:ajax>                        
+                    </h:commandButton>
+                </h:panelGrid>
+            </fieldset>
+            <hr/>
+            <fieldset>
+                <legend>Data:</legend>
+                <h:panelGrid columns="2" columnClasses="label, field" styleClass="table" border="1">
+                    <h:outputText value="Nome: "></h:outputText>
+                    <h:outputText id="r_name" value="#{pinfo.first_name}"></h:outputText>
+                    <h:outputText value="Cognome: "></h:outputText>
+                    <h:outputText id="r_lname" value="#{pinfo.last_name}"></h:outputText>
+                    <h:outputText value="Età: "></h:outputText>
+                    <h:outputText id="r_age" value="#{pinfo.age}"></h:outputText>
+                    <h:outputText value="Indirizzo: "></h:outputText>
+                    <h:outputText id="r_addr" value="#{pinfo.address}"></h:outputText>
+                    <h:outputText value="Lavoro: "></h:outputText>
+                    <h:outputText id="r_job" value="#{pinfo.job}"></h:outputText>
+                </h:panelGrid>
+            </fieldset>
+        </h:form>
+    </h:body>
+</html>
+
