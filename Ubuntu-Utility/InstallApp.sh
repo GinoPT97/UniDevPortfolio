@@ -69,7 +69,8 @@ sudo apt install -y \
   net-tools \
   gdebi \
   dos2unix \
-  openjfx
+  openjfx \
+  ssmtp
 
 sudo apt install git-lfs
 git lfs install

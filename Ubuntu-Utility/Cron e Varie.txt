@@ -1,12 +1,13 @@
-Aprire il file cron da terminale con questa riga di comando : 
+Aprire il file cron da terminale con questa riga di comando :
 
 crontab-e
 
 Righe da inserire :
 
-0 * * * * sudo -u kenobi /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Aggiornamenti.sh
-30 * * * * sudo -u kenobi /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Ottimizzazioni.sh
-0 */1 * * * clamscan -r -i / --remove | head -c 1G > /home/kenobi/Documenti/scan_result.txt
+0 * * * * source ~/.bashrc && completo
+
+#Se non inserisco source ~/.bashrc non carica gli alias e quindi non li riconosce
+
 
 Per concedere i permessi aprire visudo :
 
