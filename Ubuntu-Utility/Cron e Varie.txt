@@ -1,10 +1,18 @@
 Aprire il file cron da terminale con questa riga di comando :
 
-crontab-e
+sudo crontab-e
 
 Righe da inserire :
 
-0 * * * * source ~/.bashrc && completo
+# Aggiornamenti ogni ora
+0 * * * * sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/Aggiornamenti.sh >> /home/kenobi/Documenti/aggiornamenti_log.txt 2>&1
+
+# Pull e poi Push ogni 30 minuti
+*/30 * * * * git -C /home/kenobi/Documenti/GitHub/CodicePersonale pull origin main >> /home/kenobi/Documenti/pull_log.txt 2>&1
+*/30 * * * * git -C /home/kenobi/Documenti/GitHub/CodicePersonale push origin main >> /home/kenobi/Documenti/push_log.txt 2>&1
+
+# Ottimizzazioni ogni 2 ore
+0 */2 * * * sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/Ottimizzazioni.sh >> /home/kenobi/Documenti/ottimizzazioni_log.txt 2>&1
 
 #Se non inserisco source ~/.bashrc non carica gli alias e quindi non li riconosce
 
