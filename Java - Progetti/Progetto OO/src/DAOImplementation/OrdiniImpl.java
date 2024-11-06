@@ -19,18 +19,23 @@ public class OrdiniImpl implements OrdiniJDBC {
     public OrdiniImpl(Connection connection) throws SQLException {
         this.connection = connection;
         // Preparazione delle query
-        newOrdineStmt = connection.prepareStatement("INSERT INTO ordine VALUES (NEXTVAL('SCodOrdine'), ?, ?, ?, ?)");
+        newOrdineStmt = connection.prepareStatement("INSERT INTO ordine (prezzototale, dataacquisto, codcliente, coddipendente) VALUES (?, ?, ?, ?)");
         getAllOrdiniStmt = connection.prepareStatement("SELECT * FROM ordine ORDER BY dataacquisto DESC");
     }
 
     @Override
     public boolean newordine(Ordine ordine) throws SQLException {
-        newOrdineStmt.setDouble(1, ordine.getPrezzoTotale());
-        newOrdineStmt.setDate(2, ordine.getDataAcquisto());
-        newOrdineStmt.setString(3, ordine.getIdCliente());
-        newOrdineStmt.setString(4, ordine.getIdDipendente());
+        try {
+            newOrdineStmt.setDouble(1, ordine.getPrezzoTotale());
+            newOrdineStmt.setDate(2, ordine.getDataAcquisto());
+            newOrdineStmt.setString(3, ordine.getIdCliente());
+            newOrdineStmt.setString(4, ordine.getIdDipendente());
 
-        return newOrdineStmt.executeUpdate() > 0; // Restituisce true se l'inserimento ha avuto successo
+            return newOrdineStmt.executeUpdate() > 0; // Restituisce true se l'inserimento ha avuto successo
+        } catch (SQLException e) {
+            System.err.println("Errore durante l'inserimento dell'ordine: " + e.getMessage());
+            throw e; // Rilancia l'eccezione per gestirla a un livello superiore
+        }
     }
 
     @Override
@@ -61,13 +66,14 @@ public class OrdiniImpl implements OrdiniJDBC {
             }
         } catch (SQLException e) {
             System.err.println("Errore durante l'esecuzione della query: " + e.getMessage());
+            throw e; // Rilancia l'eccezione
         }
         return null;
     }
 
     @Override
     public String getCurrentCod() throws SQLException {
-        String query = "SELECT currval('SCodOrdine') AS codordine";
+        String query = "SELECT currval('SCodOrdine') AS codordine"; // This can be removed if not needed
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             if (rs.next()) {
@@ -84,9 +90,3 @@ public class OrdiniImpl implements OrdiniJDBC {
         if (connection != null) connection.close(); // Chiudo la connessione
     }
 }
-
-
-
-
-
-

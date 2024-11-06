@@ -14,12 +14,14 @@ import Model.Tessera;
 public class Clienteimpl implements ClienteJDBC {
     private PreparedStatement setNewCt, cercaCl, updateCl;
     private Statement getAllCt, idCl;
+
     // Costruttore
     public Clienteimpl(Connection connection) throws SQLException {
         getAllCt = connection.createStatement();
         cercaCl = connection.prepareStatement(
                 "SELECT codcliente FROM cliente WHERE nome = ? AND cognome = ? AND codicefiscale = ?");
-        setNewCt = connection.prepareStatement("INSERT INTO cliente VALUES (nextval('SCodCliente'), ?, ?, ?, ?, ?, ?)");
+        // Ometti 'codcliente' nell'INSERT per consentire a PostgreSQL di generarlo automaticamente
+        setNewCt = connection.prepareStatement("INSERT INTO cliente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES (?, ?, ?, ?, ?, ?)");
         updateCl = connection.prepareStatement(
                 "UPDATE cliente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE codcliente = ?");
         idCl = connection.createStatement();
@@ -27,7 +29,7 @@ public class Clienteimpl implements ClienteJDBC {
 
     @Override
     public boolean setNewCt(Cliente cliente) throws SQLException {
-        // Evita la duplicazione di codice, popola la query con i dati del cliente
+        // Popola la query con i dati del cliente
         setPreparedStatement(setNewCt, cliente);
         return setNewCt.executeUpdate() > 0;
     }
@@ -98,4 +100,3 @@ public class Clienteimpl implements ClienteJDBC {
         ps.setString(6, cliente.getEmail());
     }
 }
-

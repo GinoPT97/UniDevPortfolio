@@ -28,7 +28,7 @@ public class DBConfiguration {
 			return false;
 		}
 	}
-
+    /*
 	// Crea le sequenze per autogenerare le chiavi primarie di tutte le relazioni
 	public int createSequences() throws ConnectionException, SQLException {
 		int result = -1;
@@ -56,7 +56,7 @@ public class DBConfiguration {
 		}
 		return result;
 	}
-
+    */
 	public int createTableCliente() throws ConnectionException {
 		int result = -1;
 
@@ -66,7 +66,7 @@ public class DBConfiguration {
 
 				if (!tableExists("cliente")) {
 					String sql = "CREATE TABLE cliente(\n"
-							+ " codcliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n"
+							+ " codcliente SERIAL PRIMARY KEY, \n"
 							+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 							+ " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
 							+ " codicefiscale CHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),\n "
@@ -100,7 +100,7 @@ public class DBConfiguration {
 
 				if (!tableExists("dipendente")) {
 					String sql = "CREATE TABLE dipendente (\n"
-							+ "coddipendente VARCHAR(5) PRIMARY KEY, CHECK(coddipendente ~* '^[0-9]+$'),\n"
+							+ "coddipendente SERIAL PRIMARY KEY,\n"
 							+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 							+ " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
 							+ " codicefiscale CHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),\n "
@@ -134,7 +134,7 @@ public class DBConfiguration {
 
 				if (!tableExists("tessera")) {
 					String sql = "CREATE TABLE tessera(\n"
-							+ " codtessera VARCHAR(5) PRIMARY KEY, CHECK(codtessera ~* '^[0-9]+$'),\n"
+							+ " codtessera SERIAL PRIMARY KEY,\n"
 							+ " numeropunti real NOT NULL DEFAULT 0.00,\n"
 							+ " codcliente VARCHAR(5) NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
 							+ " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
@@ -165,7 +165,7 @@ public class DBConfiguration {
 
 				if (!tableExists("prodotto")) {
 					String sql = "CREATE TABLE prodotto(\n"
-							+ " codprodotto VARCHAR(5) PRIMARY KEY, CHECK(CodProdotto ~* '^[0-9]+$'),\n"
+							+ " codprodotto SERIAL PRIMARY KEY, \n"
 							+ " nome VARCHAR(255) NOT NULL, CHECK(Nome ~* '^[A-Za-z ]+$'),\n"
 							+ " descrizione VARCHAR(500), \n" + " prezzo NUMERIC DEFAULT 0.00, \n "
 							+ " luogoprovenienza VARCHAR(255), \n" + " dataraccolta DATE,\n "
@@ -200,7 +200,8 @@ public class DBConfiguration {
 				Statement st = connection.createStatement();
 
 				if (!tableExists("ordine")) {
-					String sql = "CREATE TABLE ordine(\n" + " codordine VARCHAR(5) NOT NULL, \n"
+					String sql = "CREATE TABLE ordine(\n" 
+				            + " codordine SERIAL PRIMARY KEY, \n"
 							+ " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
 							+ " dataacquisto date NOT NULL, \n"
 							+ " codcliente VARCHAR(5) NOT NULL CHECK (codcliente ~* '^[0-9]+$'), \n"

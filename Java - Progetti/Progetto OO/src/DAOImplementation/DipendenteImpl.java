@@ -21,8 +21,8 @@ public class DipendenteImpl implements DipendenteJDBC {
     // Costruttore
     public DipendenteImpl(Connection connection) throws SQLException {
         getAllDip = connection.createStatement();
-        setNewDip = connection.prepareStatement(
-                "INSERT INTO dipendente VALUES (NEXTVAL('SCodDipendente'), ?, ?, ?, ?, ?, ?)");
+        // Ometti 'coddipendente' nella query INSERT per consentire a PostgreSQL di generarlo automaticamente
+        setNewDip = connection.prepareStatement("INSERT INTO dipendente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES (?, ?, ?, ?, ?, ?)");
         updateDip = connection.prepareStatement(
                 "UPDATE dipendente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE coddipendente = ?");
         getDip = connection.createStatement();
@@ -151,4 +151,5 @@ public class DipendenteImpl implements DipendenteJDBC {
         ps.setString(6, dipendente.getEmail());
     }
 }
+
 
