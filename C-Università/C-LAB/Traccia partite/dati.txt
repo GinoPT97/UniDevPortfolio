@@ -1,8 +1,0 @@
-Pavia		23	30	4	11	15
-Entella		58	30	16	10	4
-Venezia		41	30	12	5	13
-ProPatria	32	30	8	9	13
-Cremonese	47	30	13	8	9
-Lumezzane	29	30	7	8	15
-Savona		44	30	12	8	10
-SanMarino	24	30	5	9	16

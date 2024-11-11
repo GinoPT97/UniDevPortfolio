@@ -1,6 +1,0 @@
-Mario	Marie	Andrea	Andrei	48.50
-Valeria	Valeri	Andrea	Andrei	65.00
-Andrea	Andrei	Valeria	Valeri	65.00
-Angela	Angeli	Andrea	Andrei	57.50
-Alessandra	Alessandrini	Andrea	Andrei	62.50
-Luca	Lucarelli	Andrea	Andrei	42.00
