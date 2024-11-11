@@ -1,0 +1,47 @@
+Guida per risolvere il problema di autenticazione con l'utente "postgres":
+
+Passo 1: Disinstallazione di PostgreSQL
+
+Apri un terminale e esegui i seguenti comandi uno alla volta per disinstallare PostgreSQL:
+
+sudo apt-get purge postgresql-15
+sudo apt-get purge postgresql-client-15
+sudo apt-get purge postgresql-client-common
+sudo apt-get purge postgresql-common
+
+Verifica che tutti i pacchetti di PostgreSQL siano stati disinstallati correttamente eseguendo il comando:
+
+sudo dpkg -l | grep postgres
+
+Passo 2: Installazione di PostgreSQL
+
+Apri un terminale e esegui il seguente comando per installare PostgreSQL:
+
+sudo apt-get install postgresql-15 postgresql-client-15 postgresql-client-common postgresql-common
+
+Durante l'installazione, verrà chiesto di impostare una password per l'utente "postgres". Scegli una password sicura e ricordala per i passaggi successivi.
+
+Passo 3: Cambiare la password di PostgreSQL
+
+Apri un terminale e esegui il seguente comando per accedere alla console di PostgreSQL come utente "postgres":
+
+sudo -u postgres psql
+
+Nella console di PostgreSQL, esegui il comando seguente per modificare la password dell'utente "postgres":
+
+ALTER USER postgres WITH PASSWORD 'nuova_password';
+
+Sostituisci 'nuova_password' con la nuova password che desideri impostare.
+
+Esci dalla console di PostgreSQL digitando \q.
+
+Passo 4: Verifica dell'autenticazione
+
+Apri un terminale e esegui il seguente comando per accedere alla console di PostgreSQL come utente "postgres" utilizzando la nuova password:
+
+sudo -u postgres psql
+
+Se la console si apre senza errori di autenticazione, l'autenticazione è stata effettuata correttamente.
+
+Ora puoi creare nuovi database e utilizzare PostgreSQL normalmente.
+
