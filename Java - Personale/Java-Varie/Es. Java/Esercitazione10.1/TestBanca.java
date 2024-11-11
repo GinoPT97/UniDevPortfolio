@@ -2,8 +2,6 @@
  * Questa classe contiene il programma per provare le classi del pacchetto banca.
  * Versione 4
  */
- 
-import banca.*;
 
 public class TestBanca {
 
