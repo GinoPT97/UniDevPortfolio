@@ -2,7 +2,6 @@
 
 # Percorsi delle directory
 BASE_DIR1='/home/kenobi/Documenti/GitHub/UniDevPortfolio'
-BASE_DIR2='/home/kenobi/Documenti/Eclipse-Git'
 
 # Funzione per fare il pull e push di una repository
 function pull_push {
@@ -14,6 +13,5 @@ function pull_push {
 
 # Esegui pull e push per entrambe le directory
 pull_push "$BASE_DIR1"
-pull_push "$BASE_DIR2"
 
 echo "Operazione completata."
