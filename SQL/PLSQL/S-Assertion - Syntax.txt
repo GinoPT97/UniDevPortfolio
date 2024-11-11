@@ -1,6 +1,0 @@
-$ CREATE ASSERTION nome AS CHECK
-$ (
-$ (SELECT COUNT (*)     
-$ FROM emp AS e
-$ WHERE e.job = 'yes') <= 1
-$ )
