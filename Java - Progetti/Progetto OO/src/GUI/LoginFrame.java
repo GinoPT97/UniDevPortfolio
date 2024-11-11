@@ -81,11 +81,11 @@ public class LoginFrame extends JFrame {
                 String id = idtf.getText();
                 if ("00000".equals(id)) {
                     c.iddip = id;
-                    c.loginUtente(1);
+                    c.logtoutente(1);
                     showMessage("Accesso Admin");
                 } else if (c.verifyid(id)) {
                     c.iddip = id;
-                    c.loginUtente(2);
+                    c.logtoutente(2);
                     showMessage("Accesso Dipendente");
                 } else {
                     showMessage("Id errato!");
