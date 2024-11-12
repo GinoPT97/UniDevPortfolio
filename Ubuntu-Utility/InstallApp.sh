@@ -71,7 +71,8 @@ sudo apt install -y \
   dos2unix \
   openjfx \
   ssmtp \
-  texlive-latex-base
+  texlive-latex-base \
+  texlive-latex-extra
 
 sudo apt install git-lfs
 git lfs install
