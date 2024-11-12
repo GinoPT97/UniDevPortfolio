@@ -35,7 +35,10 @@ public class LancioDadi {
             System.out.println("Vuoi giocare ancora? (s/n)");
             scelta = in.next();
         } while(scelta.equals("s")  || scelta.equals("S"));
+
+        in.close(); // Chiudi la risorsa Scanner
     }
+
     // Attributi
     int numerolanci;
     int[] lanci;
