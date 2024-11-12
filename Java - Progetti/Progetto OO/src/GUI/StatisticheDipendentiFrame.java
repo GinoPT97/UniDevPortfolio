@@ -31,7 +31,6 @@ public class StatisticheDipendentiFrame extends JFrame {
     private JComboBox<String> periodoCB;
     private JLabel periodoLab, cognomeVenditeLab, titleLabel, startLab, finalLab, nomeLab, cognomeLab, introitiValLab, nomeVenditeLab, venditeValLab;
     private JTextField startTF, finalTF, nomeIntroitiTF, cognomeIntroitiTF, introitiTF, nomeVenditeTF, cognomeVenditeTF, venditeTF;
-    private List<String> ordVen, ordInt;
 
     private void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
