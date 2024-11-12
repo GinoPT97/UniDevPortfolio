@@ -18,18 +18,18 @@ sudo apt install -y \
 
 # Installazione di Node.js (versione 16 e gestione delle versioni)
 echo "Installazione di Node.js..."
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash - && \
-sudo apt install -y nodejs && \
-sudo npm install -g n && \
-sudo n latest && \
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt install -y nodejs
+sudo npm install -g n
+sudo n latest
 sudo apt-get update
 
 # Installazione di Docker
 echo "Installazione di Docker..."
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt update && \
-sudo apt install -y docker-ce docker-ce-cli containerd.io && \
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io
 sudo systemctl status docker
 
 # Installazione di pacchetti di sistema essenziali
@@ -77,7 +77,6 @@ sudo apt install -y \
 sudo apt install git-lfs
 git lfs install
 
-
 # Scarica il file KVRT
 echo "Scaricamento del file KVRT..."
 wget -O kvrt.run https://bit.ly/4e8RLMg
@@ -93,8 +92,8 @@ nordvpn set autoconnect on
 echo "Installazione di pgAdmin 4..."
 curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
 echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list
-sudo apt update && \
-sudo apt install -y pgadmin4 pgadmin4-desktop pgadmin4-web && \
+sudo apt update
+sudo apt install -y pgadmin4 pgadmin4-desktop pgadmin4-web
 sudo /usr/pgadmin4/bin/setup-web.sh
 
 # Configurazione della password dell'utente PostgreSQL
@@ -158,7 +157,6 @@ sudo snap install --classic telegram-desktop vlc curl deja-dup discord
 sudo snap install --classic docker skype swi-prolog teams-for-linux whatsie
 sudo snap install --classic zoom-client spotify cmake
 sudo snap install bfg-repo-cleaner
-
 
 # Avvio del servizio Tor
 echo "Avvio del servizio Tor..."
