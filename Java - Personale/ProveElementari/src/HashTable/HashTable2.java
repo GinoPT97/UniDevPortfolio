@@ -21,8 +21,9 @@ public class HashTable2<K, V> {
         this(DEFAULT_CAPACITY);
     }
 
+    @SuppressWarnings("unchecked")
     public HashTable2(int capacity) {
-        this.table = new LinkedList[capacity];
+        this.table = (LinkedList<Entry<K, V>>[]) new LinkedList[capacity];
         this.size = 0;
     }
 

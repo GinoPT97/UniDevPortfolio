@@ -13,7 +13,7 @@ import Entita.provaentita;
 
 public class Controller {
 	public static void main(String[] args) throws SQLException, ConnectionException {
-	     Controller c = new Controller();
+		 new Controller();
 	}
 	private Prova pf;
 	private Connection connection = null;

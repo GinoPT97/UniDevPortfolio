@@ -25,8 +25,9 @@ public class HashTable<K, V> {
     }
 
     // Costruttore con capacità specifica
+    @SuppressWarnings("unchecked")
     public HashTable(int capacity) {
-        this.table = new LinkedList[capacity];
+        this.table = (LinkedList<Entry<K, V>>[]) new LinkedList[capacity];
         this.size = 0;
     }
 

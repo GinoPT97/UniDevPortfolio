@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,21 +17,15 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
-
-import DAOImpl.provadaoimpl;
 import Entita.provaentita;
 
 public class Prova extends JFrame{
-    private Controller c;
-	private JFrame frame;
 	private JTextField idtf;
 	private JTextField nometf;
 	private JTextField contattotf;
 	private JTextField corsotf;
 	private JTable table;
 	private DefaultTableModel model;
-	private provadaoimpl pdao;
-    private ArrayList<provaentita> pe;
     private JTextField txtProgettinoDiProva;
 
     public Prova(String s,Controller c) throws SQLException  {
@@ -86,7 +79,6 @@ public class Prova extends JFrame{
 		table = new JTable();
 		model = new DefaultTableModel();
 		Object[] colonne = {"ID", "Nome","Contatti","Corso"};
-		final Object[] rows = new Object[4];
 		model.setColumnIdentifiers(colonne);
 		table.setModel(model);
 		scrollPane.setViewportView(table);
