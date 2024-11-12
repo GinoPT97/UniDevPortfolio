@@ -65,7 +65,7 @@ public class DBConfiguration {
 				Statement st = connection.createStatement();
 
 				if (!tableExists("cliente")) {
-					String sql = "CREATE TABLE cliente(\n"
+					String sql = "CREATE TABLE IF NOT EXISTS cliente(\n"
 							+ " codcliente SERIAL PRIMARY KEY, \n"
 							+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 							+ " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
@@ -99,7 +99,7 @@ public class DBConfiguration {
 				Statement st = connection.createStatement();
 
 				if (!tableExists("dipendente")) {
-					String sql = "CREATE TABLE dipendente (\n"
+					String sql = "CREATE TABLE IF NOT EXISTS dipendente (\n"
 							+ "coddipendente SERIAL PRIMARY KEY,\n"
 							+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 							+ " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
@@ -133,10 +133,10 @@ public class DBConfiguration {
 				Statement st = connection.createStatement();
 
 				if (!tableExists("tessera")) {
-					String sql = "CREATE TABLE tessera(\n"
+					String sql = "CREATE TABLE IF NOT EXISTS tessera(\n"
 							+ " codtessera SERIAL PRIMARY KEY,\n"
 							+ " numeropunti real NOT NULL DEFAULT 0.00,\n"
-							+ " codcliente VARCHAR(5) NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
+							+ " codcliente INTEGER NOT NULL UNIQUE,\n"
 							+ " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
 							+ " ON UPDATE CASCADE \n" + " ON DELETE CASCADE \n " + " );";
 
@@ -164,7 +164,7 @@ public class DBConfiguration {
 				Statement st = connection.createStatement();
 
 				if (!tableExists("prodotto")) {
-					String sql = "CREATE TABLE prodotto(\n"
+					String sql = "CREATE TABLE IF NOT EXISTS prodotto(\n"
 							+ " codprodotto SERIAL PRIMARY KEY, \n"
 							+ " nome VARCHAR(255) NOT NULL, CHECK(Nome ~* '^[A-Za-z ]+$'),\n"
 							+ " descrizione VARCHAR(500), \n" + " prezzo NUMERIC DEFAULT 0.00, \n "
@@ -200,12 +200,12 @@ public class DBConfiguration {
 				Statement st = connection.createStatement();
 
 				if (!tableExists("ordine")) {
-					String sql = "CREATE TABLE ordine(\n" 
+					String sql = "CREATE TABLE IF NOT EXISTS ordine(\n"
 				            + " codordine SERIAL PRIMARY KEY, \n"
 							+ " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
 							+ " dataacquisto date NOT NULL, \n"
-							+ " codcliente VARCHAR(5) NOT NULL CHECK (codcliente ~* '^[0-9]+$'), \n"
-							+ " coddipendente VARCHAR(5) NOT NULL CHECK (coddipendente ~* '^[0-9]+$'), \n"
+							+ " codcliente INTEGER NOT NULL, \n"
+							+ " coddipendente INTEGER NOT NULL, \n"
 							+ " CONSTRAINT ordinepk PRIMARY KEY (codordine), \n"
 							+ " CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente) ON UPDATE CASCADE ON DELETE NO ACTION, \n "
 							+ " CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente) ON UPDATE CASCADE ON DELETE NO ACTION\n "
@@ -234,10 +234,10 @@ public class DBConfiguration {
 			try {
 				Statement st = connection.createStatement();
 				if (!tableExists("ARTICOLIORDINE")) {
-					String sql = "CREATE TABLE ARTICOLIORDINE (\n"
-							+ "CodOrdine VARCHAR(5) NOT NULL CHECK(CodOrdine ~* '^[0-9]+$'),\n"
-							+ "CodProdotto VARCHAR(5) NOT NULL CHECK(CodProdotto ~* '^[0-9]+$'),\n"
-							+ "CodCliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n"
+					String sql = "CREATE TABLE IF NOT EXISTS ARTICOLIORDINE (\n"
+							+ "CodOrdine INTEGER NOT NULL,\n"
+							+ "CodProdotto INTEGER NOT NULL,\n"
+							+ "CodCliente INTEGER PRIMARY KEY,\n"
 							+ "Prezzo NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00),\n"
 							+ "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00), \n"
 							+ "NumeroArticoli INT NOT NULL,\n" + "Categoria TIPOLOGIA,\n"
@@ -265,7 +265,7 @@ public class DBConfiguration {
 		if (connectionExists()) {
 			try {
 				Statement st = connection.createStatement();
-				String sql = "CREATE TYPE TIPOLOGIA AS ENUM('Ortofrutticoli','Latticini','Inscatolati','Farinacei')";
+				String sql = "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'tipologia') THEN CREATE TYPE TIPOLOGIA AS ENUM('Ortofrutticoli','Latticini','Inscatolati','Farinacei'); END IF; END $$";
 				result = st.executeUpdate(sql);
 			} catch (SQLException ex) {
 				System.out.println("SQL Exception in creation type tipologia: " + ex);
