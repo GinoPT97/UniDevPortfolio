@@ -1,10 +1,8 @@
 #!/bin/bash
 
-set -e
-
 # Verifica connessione di rete
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Verificando connessione di rete..."
-ping -c 1 google.com || { echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Nessuna connessione di rete. Script interrotto."; exit 1; }
+ping -c 1 google.com || { echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Nessuna connessione di rete. Continuo comunque..."; }
 
 # Disinstallazione dei pacchetti Flatpak non utilizzati
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Disinstallazione dei pacchetti Flatpak non utilizzati..."
@@ -12,14 +10,14 @@ flatpak uninstall --unused -y || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - E
 
 # Aggiornamento dei pacchetti APT
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Configurando e aggiornando pacchetti APT..."
-sudo dpkg --configure -a
-sudo apt-get update -y
-sudo apt-get full-upgrade -y
+sudo dpkg --configure -a || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nella configurazione dei pacchetti."
+sudo apt-get update -y || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nell'aggiornamento dell'elenco dei pacchetti."
+sudo apt-get full-upgrade -y || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nell'aggiornamento dei pacchetti."
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamento dei pacchetti APT completato."
 
 # Aggiornamento dei pacchetti Snap
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornando pacchetti Snap..."
-sudo snap refresh
+sudo snap refresh || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nell'aggiornamento dei pacchetti Snap."
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamento dei pacchetti Snap completato."
 
 # Sblocco del wifi e delle interfacce di rete
@@ -29,12 +27,12 @@ sudo rfkill unblock all || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Impossi
 
 # Pulizia dei pacchetti inutilizzati e cache APT
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Rimuovendo pacchetti inutilizzati..."
-sudo apt-get autoremove --purge -y
-sudo apt-get clean
+sudo apt-get autoremove --purge -y || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nella rimozione dei pacchetti inutilizzati."
+sudo apt-get clean || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nella pulizia della cache APT."
 
 # Abilitazione del firewall
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Abilitando il firewall..."
-sudo ufw status | grep -q "active" || sudo ufw enable
+sudo ufw status | grep -q "active" || sudo ufw enable || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Impossibile abilitare il firewall."
 
 # Riavvio di snapd
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Riavviando snapd..."
