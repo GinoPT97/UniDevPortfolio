@@ -11,9 +11,9 @@ public class LancioDadi {
 
         Scanner in = new Scanner(System.in);
 
-        /*System.out.println("Quante volte vuoi lanciare il dado?");
-        numeroLanci =  in.nextInt();*/
-        LancioDadi ld = new LancioDadi();
+        System.out.println("Quante volte vuoi lanciare il dado?");
+        int numeroLanci = in.nextInt();
+        LancioDadi ld = new LancioDadi(numeroLanci);
 
         do
         {
@@ -37,17 +37,13 @@ public class LancioDadi {
         } while(scelta.equals("s")  || scelta.equals("S"));
     }
     // Attributi
-    final int numerolanci = 10000;
+    int numerolanci;
+    int[] lanci;
 
-
-
-    int[] lanci = new int [numerolanci];
-
-    public LancioDadi()
+    public LancioDadi(int numeroLanci)
     {
-        // lanci[] = new int [numeroLanci];
-        //lanci = new int [numerolanci];   //vettori
-
+        this.numerolanci = numeroLanci;
+        this.lanci = new int[numerolanci];
     }
 
     public int contaNumero(int numeroDaContare)
