@@ -4,23 +4,17 @@ set -e
 
 # Verifica connessione di rete
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Verificando connessione di rete..."
-ping -c 1 google.com &> /dev/null || { echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Nessuna connessione di rete. Script interrotto."; exit 1; }
-
-# Installazione di snapd se non è già installato
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Verificando se snapd è installato..."
-command -v snapd &> /dev/null || { echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Snapd non trovato. Installazione in corso..."; sudo apt install -y snapd; }
+ping -c 1 google.com || { echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Nessuna connessione di rete. Script interrotto."; exit 1; }
 
 # Disinstallazione dei pacchetti Flatpak non utilizzati
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Disinstallazione dei pacchetti Flatpak non utilizzati..."
-flatpak uninstall --unused -y
+flatpak uninstall --unused -y || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nella disinstallazione dei pacchetti Flatpak."
 
 # Aggiornamento dei pacchetti APT
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Configurando pacchetti APT..."
+echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Configurando e aggiornando pacchetti APT..."
 sudo dpkg --configure -a
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornando pacchetti APT..."
 sudo apt-get update -y
-sudo apt-get upgrade -y
-sudo apt-get dist-upgrade -y
+sudo apt-get full-upgrade -y
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamento dei pacchetti APT completato."
 
 # Aggiornamento dei pacchetti Snap
@@ -28,8 +22,8 @@ echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornando pacchetti Snap..."
 sudo snap refresh
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamento dei pacchetti Snap completato."
 
-# Abilitazione della rete wifi e sblocco
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Sbloccando il wifi..."
+# Sblocco del wifi e delle interfacce di rete
+echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Sbloccando il wifi e tutte le interfacce..."
 sudo rfkill unblock wifi || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Impossibile sbloccare il wifi."
 sudo rfkill unblock all || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Impossibile sbloccare tutte le interfacce."
 
@@ -51,4 +45,3 @@ echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamento dei driver hardware...
 sudo ubuntu-drivers autoinstall || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nell'aggiornamento dei driver."
 
 echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamenti completati e Ubuntu Software riavviato!"
-
