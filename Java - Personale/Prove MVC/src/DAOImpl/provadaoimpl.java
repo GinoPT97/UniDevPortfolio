@@ -11,12 +11,10 @@ import Entita.provaentita;
 
 public class provadaoimpl implements provadao{
 
-	private Connection connection;
     private PreparedStatement getprove, inserisciprove, updateprove, cancellaprove;
     private ArrayList<provaentita> pe = new ArrayList<>();
 
     public provadaoimpl(Connection connection) throws SQLException {
-        this.connection = connection;
         cancellaprove = connection.prepareStatement("DELETE FROM prove WHERE id = ?");
         getprove = connection.prepareStatement("SELECT * FROM prove ORDER BY corso DESC");
         inserisciprove = connection.prepareStatement("INSERT INTO prove VALUES (NEXTVAL('seqid'), ?, ?, ?)");
