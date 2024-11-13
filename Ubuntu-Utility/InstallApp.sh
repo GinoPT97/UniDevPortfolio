@@ -1,12 +1,17 @@
 #!/bin/bash
 
+# Funzione per installare pacchetti
+install_packages() {
+  echo "Installazione di pacchetti necessari..."
+  sudo apt install -y "$@"
+}
+
 # Aggiornamento del sistema
 echo "Aggiornamento del sistema..."
 sudo apt update && sudo apt upgrade -y
 
 # Installazione di pacchetti necessari per Docker e Node.js
-echo "Installazione di pacchetti necessari..."
-sudo apt install -y \
+install_packages \
   ca-certificates \
   curl \
   gnupg \
@@ -19,7 +24,7 @@ sudo apt install -y \
 # Installazione di Node.js (versione 16 e gestione delle versioni)
 echo "Installazione di Node.js..."
 curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-sudo apt install -y nodejs
+install_packages nodejs
 sudo npm install -g n
 sudo n latest
 sudo apt-get update
@@ -29,12 +34,11 @@ echo "Installazione di Docker..."
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io
+install_packages docker-ce docker-ce-cli containerd.io
 sudo systemctl status docker
 
 # Installazione di pacchetti di sistema essenziali
-echo "Installazione di pacchetti di sistema essenziali..."
-sudo apt install -y \
+install_packages \
   deborphan \
   wireshark \
   kate \
@@ -74,7 +78,7 @@ sudo apt install -y \
   texlive-latex-base \
   texlive-latex-extra
 
-sudo apt install git-lfs
+install_packages git-lfs
 git lfs install
 
 # Scarica il file KVRT
@@ -93,7 +97,7 @@ echo "Installazione di pgAdmin 4..."
 curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
 echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list
 sudo apt update
-sudo apt install -y pgadmin4 pgadmin4-desktop pgadmin4-web
+install_packages pgadmin4 pgadmin4-desktop pgadmin4-web
 sudo /usr/pgadmin4/bin/setup-web.sh
 
 # Configurazione della password dell'utente PostgreSQL
@@ -113,69 +117,83 @@ sudo dpkg -i GitHubDesktop-linux-2.8.1-linux2.deb
 sudo apt-get install -f -y  # Risolve eventuali dipendenze mancanti
 
 # Installazione estensioni di Visual Studio Code con opzione force
+install_vscode_extensions() {
+  for extension in "$@"; do
+    code --install-extension "$extension" --force
+  done
+}
 
 # Estensioni GitHub
-code --install-extension github.copilot --force \
-  --install-extension github.copilot-chat --force \
-  --install-extension github.remotehub --force \
-  --install-extension github.vscode-pull-request-github --force
+install_vscode_extensions \
+  github.copilot \
+  github.copilot-chat \
+  github.remotehub \
+  github.vscode-pull-request-github
 
 # Estensioni Azure
-code --install-extension ms-azuretools.azure-dev --force \
-  --install-extension ms-azuretools.vscode-azureappservice --force \
-  --install-extension ms-azuretools.vscode-azurecontainerapps --force \
-  --install-extension ms-azuretools.vscode-azurefunctions --force \
-  --install-extension ms-azuretools.vscode-azureresourcegroups --force \
-  --install-extension ms-azuretools.vscode-azurestaticwebapps --force \
-  --install-extension ms-azuretools.vscode-azurestorage --force \
-  --install-extension ms-azuretools.vscode-azurevirtualmachines --force \
-  --install-extension ms-azuretools.vscode-bicep --force \
-  --install-extension ms-azuretools.vscode-cosmosdb --force \
-  --install-extension ms-azuretools.vscode-docker --force \
-  --install-extension ms-azuretools.vscode-logicapps --force \
-  --install-extension ms-vscode.azure-account --force \
-  --install-extension ms-vscode.azure-repos --force \
-  --install-extension ms-vscode.azurecli --force
+install_vscode_extensions \
+  ms-azuretools.azure-dev \
+  ms-azuretools.vscode-azureappservice \
+  ms-azuretools.vscode-azurecontainerapps \
+  ms-azuretools.vscode-azurefunctions \
+  ms-azuretools.vscode-azureresourcegroups \
+  ms-azuretools.vscode-azurestaticwebapps \
+  ms-azuretools.vscode-azurestorage \
+  ms-azuretools.vscode-azurevirtualmachines \
+  ms-azuretools.vscode-bicep \
+  ms-azuretools.vscode-cosmosdb \
+  ms-azuretools.vscode-docker \
+  ms-azuretools.vscode-logicapps \
+  ms-vscode.azure-account \
+  ms-vscode.azure-repos \
+  ms-vscode.azurecli
 
 # Estensioni per Docker e Container
-code --install-extension ms-azuretools.vscode-docker --force \
-  --install-extension ms-vscode-remote.remote-containers --force
+install_vscode_extensions \
+  ms-azuretools.vscode-docker \
+  ms-vscode-remote.remote-containers
 
 # Estensioni Node.js e strumenti JavaScript
-code --install-extension christian-kohler.npm-intellisense --force \
-  --install-extension dbaeumer.vscode-eslint --force \
-  --install-extension esbenp.prettier-vscode --force \
-  --install-extension xabikos.javascriptsnippets --force \
-  --install-extension ms-vscode.vscode-node-azure-pack --force \
-  --install-extension ms-vscode.vscode-typescript-next --force
+install_vscode_extensions \
+  christian-kohler.npm-intellisense \
+  dbaeumer.vscode-eslint \
+  esbenp.prettier-vscode \
+  xabikos.javascriptsnippets \
+  ms-vscode.vscode-node-azure-pack \
+  ms-vscode.vscode-typescript-next
 
 # Estensioni Remote Development
-code --install-extension ms-vscode-remote.remote-ssh --force \
-  --install-extension ms-vscode-remote.remote-ssh-edit --force \
-  --install-extension ms-vscode-remote.remote-wsl --force \
-  --install-extension ms-vscode-remote.vscode-remote-extensionpack --force
+install_vscode_extensions \
+  ms-vscode-remote.remote-ssh \
+  ms-vscode-remote.remote-ssh-edit \
+  ms-vscode-remote.remote-wsl \
+  ms-vscode-remote.vscode-remote-extensionpack
 
 # Linguaggi e runtime per applicazioni web
-code --install-extension ms-python.python --force \
-  --install-extension ms-python.vscode-pylance --force \
-  --install-extension ms-python.debugpy --force \
-  --install-extension redhat.java --force
+install_vscode_extensions \
+  ms-python.python \
+  ms-python.vscode-pylance \
+  ms-python.debugpy \
+  redhat.java
 
 # Strumenti per server locali e debugging di applicazioni web
-code --install-extension ritwickdey.liveserver --force \
-  --install-extension vadimcn.vscode-lldb --force
+install_vscode_extensions \
+  ritwickdey.liveserver \
+  vadimcn.vscode-lldb
 
 # Strumenti di sviluppo e linting
-code --install-extension eamodio.gitlens --force \
-  --install-extension ms-ceintl.vscode-language-pack-it --force \
-  --install-extension visualstudioexptteam.vscodeintellicode --force
+install_vscode_extensions \
+  eamodio.gitlens \
+  ms-ceintl.vscode-language-pack-it \
+  visualstudioexptteam.vscodeintellicode
 
 # Estensioni per lo sviluppo in C/C++
-code --install-extension ms-vscode.cpptools --force \
-  --install-extension ms-vscode.cpptools-extension-pack --force \
-  --install-extension ms-vscode.cpptools-themes --force \
-  --install-extension twxs.cmake --force \
-  --install-extension vadimcn.vscode-lldb --force
+install_vscode_extensions \
+  ms-vscode.cpptools \
+  ms-vscode.cpptools-extension-pack \
+  ms-vscode.cpptools-themes \
+  twxs.cmake \
+  vadimcn.vscode-lldb
 
 # Imposta la lingua italiana in Visual Studio Code
 echo '{"locale":"it"}' > ~/.config/Code/User/locale.json
