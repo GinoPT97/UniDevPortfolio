@@ -1,45 +1,79 @@
 #!/bin/bash
 
+log_info() {
+  echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - $1"
+}
+
 # Verifica connessione di rete
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Verificando connessione di rete..."
-ping -c 1 google.com || { echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Nessuna connessione di rete. Continuo comunque..."; }
+log_info "Verificando connessione di rete..."
+ping -c 1 google.com
 
 # Disinstallazione dei pacchetti Flatpak non utilizzati
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Disinstallazione dei pacchetti Flatpak non utilizzati..."
-flatpak uninstall --unused -y || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nella disinstallazione dei pacchetti Flatpak."
+log_info "Disinstallazione dei pacchetti Flatpak non utilizzati..."
+flatpak uninstall --unused -y
 
 # Aggiornamento dei pacchetti APT
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Configurando e aggiornando pacchetti APT..."
-sudo dpkg --configure -a || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nella configurazione dei pacchetti."
-sudo apt-get update -y || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nell'aggiornamento dell'elenco dei pacchetti."
-sudo apt-get full-upgrade -y || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nell'aggiornamento dei pacchetti."
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamento dei pacchetti APT completato."
+log_info "Configurando e aggiornando pacchetti APT..."
+sudo dpkg --configure -a
+sudo apt-get update -y
+sudo apt-get full-upgrade -y
+log_info "Aggiornamento dei pacchetti APT completato."
 
 # Aggiornamento dei pacchetti Snap
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornando pacchetti Snap..."
-sudo snap refresh || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nell'aggiornamento dei pacchetti Snap."
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamento dei pacchetti Snap completato."
+log_info "Aggiornando pacchetti Snap..."
+sudo snap refresh
+log_info "Aggiornamento dei pacchetti Snap completato."
 
 # Sblocco del wifi e delle interfacce di rete
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Sbloccando il wifi e tutte le interfacce..."
-sudo rfkill unblock wifi || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Impossibile sbloccare il wifi."
-sudo rfkill unblock all || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Impossibile sbloccare tutte le interfacce."
+log_info "Sbloccando il wifi e tutte le interfacce..."
+sudo rfkill unblock wifi
+sudo rfkill unblock all
 
 # Pulizia dei pacchetti inutilizzati e cache APT
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Rimuovendo pacchetti inutilizzati..."
-sudo apt-get autoremove --purge -y || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nella rimozione dei pacchetti inutilizzati."
-sudo apt-get clean || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nella pulizia della cache APT."
+log_info "Rimuovendo pacchetti inutilizzati..."
+sudo apt-get autoremove --purge -y
+sudo apt-get clean
 
 # Abilitazione del firewall
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Abilitando il firewall..."
-sudo ufw status | grep -q "active" || sudo ufw enable || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Impossibile abilitare il firewall."
+log_info "Abilitando il firewall..."
+sudo ufw status | grep -q "active" || sudo ufw enable
 
 # Riavvio di snapd
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Riavviando snapd..."
-sudo systemctl restart snapd || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Impossibile riavviare snapd."
+log_info "Riavviando snapd..."
+sudo systemctl restart snapd
 
 # Aggiornamento dei driver hardware
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamento dei driver hardware..."
-sudo ubuntu-drivers autoinstall || echo "[ERRORE] $(date '+%Y-%m-%d %H:%M:%S') - Errore nell'aggiornamento dei driver."
+log_info "Aggiornamento dei driver hardware..."
+sudo ubuntu-drivers autoinstall
 
-echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - Aggiornamenti completati e Ubuntu Software riavviato!"
+# Esecuzione di npm audit fix --force
+log_info "Esecuzione di npm audit fix --force..."
+npm audit fix --force
+
+# Aggiornamento di pip
+log_info "Aggiornamento di pip..."
+pip install --upgrade pip
+
+# Aggiornamento degli ambienti virtuali pip
+log_info "Aggiornamento degli ambienti virtuali pip..."
+for venv in $(find ~ -name "venv" -type d); do
+  source $venv/bin/activate
+  pip install --upgrade pip
+  deactivate
+done
+
+# Aggiornamento degli ambienti virtuali conda
+log_info "Aggiornamento degli ambienti virtuali conda..."
+conda update conda -y
+for env in $(conda env list | awk '{print $1}' | grep -v "#"); do
+  conda update --name $env --all -y
+done
+
+# Aggiornamento degli ambienti virtuali node.js
+log_info "Aggiornamento degli ambienti virtuali node.js..."
+for nvm_dir in $(find ~ -name ".nvm" -type d); do
+  source $nvm_dir/nvm.sh
+  nvm install node --reinstall-packages-from=node
+done
+
+log_info "Aggiornamenti completati e Ubuntu Software riavviato!"

@@ -46,7 +46,7 @@ def add_question(quiz_id):
     return jsonify({"message": "Question added successfully"}), 201
 
 @app.route('/quizzes/<int:quiz_id>/questions/<int:question_id>/choices', methods=['POST'])
-def add_choice(quiz_id, question_id):
+def add_choice(question_id):
     data = request.json
     choice = Choice(question_id=question_id, text=data['text'], is_correct=data['is_correct'])
     db.session.add(choice)
