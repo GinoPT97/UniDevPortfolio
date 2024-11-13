@@ -65,7 +65,7 @@ public class DBConfiguration {
 				Statement st = connection.createStatement();
 
 				if (!tableExists("cliente")) {
-					String sql = "CREATE TABLE cliente(\n"
+					String sql = "CREATE TABLE IF NOT EXISTS cliente(\n"
 							+ " codcliente SERIAL PRIMARY KEY, \n"
 							+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 							+ " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
@@ -99,7 +99,7 @@ public class DBConfiguration {
 				Statement st = connection.createStatement();
 
 				if (!tableExists("dipendente")) {
-					String sql = "CREATE TABLE dipendente (\n"
+					String sql = "CREATE TABLE IF NOT EXISTS dipendente (\n"
 							+ "coddipendente SERIAL PRIMARY KEY,\n"
 							+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 							+ " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
@@ -133,7 +133,7 @@ public class DBConfiguration {
 	            Statement st = connection.createStatement();
 
 	            if (!tableExists("tessera")) {
-	                String sql = "CREATE TABLE tessera(\n"
+					String sql = "CREATE TABLE IF NOT EXISTS tessera(\n"
 	                        + " codtessera SERIAL PRIMARY KEY,\n"
 	                        + " numeropunti real NOT NULL DEFAULT 0.00,\n"
 	                        + " codcliente INTEGER NOT NULL UNIQUE,\n"
@@ -165,7 +165,7 @@ public class DBConfiguration {
 				Statement st = connection.createStatement();
 
 				if (!tableExists("prodotto")) {
-					String sql = "CREATE TABLE prodotto(\n"
+					String sql = "CREATE TABLE IF NOT EXISTS prodotto(\n"
 							+ " codprodotto SERIAL PRIMARY KEY, \n"
 							+ " nome VARCHAR(255) NOT NULL, CHECK(Nome ~* '^[A-Za-z ]+$'),\n"
 							+ " descrizione VARCHAR(500), \n" + " prezzo NUMERIC DEFAULT 0.00, \n "
@@ -201,7 +201,7 @@ public class DBConfiguration {
 	            Statement st = connection.createStatement();
 
 	            if (!tableExists("ordine")) {
-	                String sql = "CREATE TABLE ordine(\n"
+					String sql = "CREATE TABLE IF NOT EXISTS ordine(\n"
 	                        + " codordine SERIAL PRIMARY KEY, \n"
 	                        + " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
 	                        + " dataacquisto date NOT NULL, \n"
@@ -234,7 +234,7 @@ public class DBConfiguration {
 	        try {
 	            Statement st = connection.createStatement();
 	            if (!tableExists("ARTICOLIORDINE")) {
-	                String sql = "CREATE TABLE ARTICOLIORDINE (\n"
+					String sql = "CREATE TABLE IF NOT EXISTS ARTICOLIORDINE (\n"
 	                        + "CodOrdine INTEGER NOT NULL,\n"
 	                        + "CodProdotto INTEGER NOT NULL,\n"
 	                        + "CodCliente INTEGER NOT NULL, \n"  // Aggiunta della colonna CodCliente
