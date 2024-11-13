@@ -112,42 +112,74 @@ wget https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/
 sudo dpkg -i GitHubDesktop-linux-2.8.1-linux2.deb
 sudo apt-get install -f -y  # Risolve eventuali dipendenze mancanti
 
-# Installazione estensioni di Visual Studio Code
-code --install-extension GitHub.copilot \
-  --install-extension GitHub.vscode-pull-request-github \
-  --install-extension ms-vscode-remote.remote-containers \
-  --install-extension redhat.java \
-  --install-extension vscjava.vscode-java-pack \
-  --install-extension ms-python.python \
-  --install-extension ms-python.vscode-pylance \
-  --install-extension ms-vscode.cpptools \
-  --install-extension eamodio.gitlens \
-  --install-extension ms-azuretools.vscode-docker \
-  --install-extension esbenp.prettier-vscode \
-  --install-extension dbaeumer.vscode-eslint \
-  --install-extension ritwickdey.LiveServer \
-  --install-extension ms-vscode.vscode-typescript-next \
-  --install-extension xabikos.JavaScriptSnippets \
-  --install-extension visualstudioexptteam.vscodeintellicode \
-  --install-extension ms-vscode-remote.remote-ssh \
-  --install-extension ms-vscode-remote.remote-ssh-edit \
-  --install-extension ms-vscode-remote.remote-wsl \
-  --install-extension ms-vscode-remote.vscode-remote-extensionpack \
-  --install-extension ms-vscode.vscode-node-azure-pack \
-  --install-extension ms-vscode.azure-account \
-  --install-extension ms-vscode.azurecli \
-  --install-extension ms-azuretools.vscode-azurefunctions \
-  --install-extension ms-azuretools.vscode-azureresourcegroups \
-  --install-extension ms-azuretools.vscode-azurestorage \
-  --install-extension ms-azuretools.vscode-logicapps \
-  --install-extension ms-azuretools.vscode-cosmosdb \
-  --install-extension ms-azuretools.vscode-appservice \
-  --install-extension ms-azuretools.vscode-bicep \
-  --install-extension ms-vscode.azure-repos \
-  --install-extension ms-ceintl.vscode-language-pack-it
+# Installazione estensioni di Visual Studio Code con opzione force
 
-# Attivazione della lingua italiana in Visual Studio Code
+# Estensioni GitHub
+code --install-extension github.copilot --force \
+  --install-extension github.copilot-chat --force \
+  --install-extension github.remotehub --force \
+  --install-extension github.vscode-pull-request-github --force
+
+# Estensioni Azure
+code --install-extension ms-azuretools.azure-dev --force \
+  --install-extension ms-azuretools.vscode-azureappservice --force \
+  --install-extension ms-azuretools.vscode-azurecontainerapps --force \
+  --install-extension ms-azuretools.vscode-azurefunctions --force \
+  --install-extension ms-azuretools.vscode-azureresourcegroups --force \
+  --install-extension ms-azuretools.vscode-azurestaticwebapps --force \
+  --install-extension ms-azuretools.vscode-azurestorage --force \
+  --install-extension ms-azuretools.vscode-azurevirtualmachines --force \
+  --install-extension ms-azuretools.vscode-bicep --force \
+  --install-extension ms-azuretools.vscode-cosmosdb --force \
+  --install-extension ms-azuretools.vscode-docker --force \
+  --install-extension ms-azuretools.vscode-logicapps --force \
+  --install-extension ms-vscode.azure-account --force \
+  --install-extension ms-vscode.azure-repos --force \
+  --install-extension ms-vscode.azurecli --force
+
+# Estensioni per Docker e Container
+code --install-extension ms-azuretools.vscode-docker --force \
+  --install-extension ms-vscode-remote.remote-containers --force
+
+# Estensioni Node.js e strumenti JavaScript
+code --install-extension christian-kohler.npm-intellisense --force \
+  --install-extension dbaeumer.vscode-eslint --force \
+  --install-extension esbenp.prettier-vscode --force \
+  --install-extension xabikos.javascriptsnippets --force \
+  --install-extension ms-vscode.vscode-node-azure-pack --force \
+  --install-extension ms-vscode.vscode-typescript-next --force
+
+# Estensioni Remote Development
+code --install-extension ms-vscode-remote.remote-ssh --force \
+  --install-extension ms-vscode-remote.remote-ssh-edit --force \
+  --install-extension ms-vscode-remote.remote-wsl --force \
+  --install-extension ms-vscode-remote.vscode-remote-extensionpack --force
+
+# Linguaggi e runtime per applicazioni web
+code --install-extension ms-python.python --force \
+  --install-extension ms-python.vscode-pylance --force \
+  --install-extension ms-python.debugpy --force \
+  --install-extension redhat.java --force
+
+# Strumenti per server locali e debugging di applicazioni web
+code --install-extension ritwickdey.liveserver --force \
+  --install-extension vadimcn.vscode-lldb --force
+
+# Strumenti di sviluppo e linting
+code --install-extension eamodio.gitlens --force \
+  --install-extension ms-ceintl.vscode-language-pack-it --force \
+  --install-extension visualstudioexptteam.vscodeintellicode --force
+
+# Estensioni per lo sviluppo in C/C++
+code --install-extension ms-vscode.cpptools --force \
+  --install-extension ms-vscode.cpptools-extension-pack --force \
+  --install-extension ms-vscode.cpptools-themes --force \
+  --install-extension twxs.cmake --force \
+  --install-extension vadimcn.vscode-lldb --force
+
+# Imposta la lingua italiana in Visual Studio Code
 echo '{"locale":"it"}' > ~/.config/Code/User/locale.json
+code --locale=it
 
 # Installazione di applicazioni tramite Snap
 echo "Installazione di applicazioni tramite Snap..."
