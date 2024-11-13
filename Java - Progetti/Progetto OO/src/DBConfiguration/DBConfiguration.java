@@ -15,18 +15,14 @@ public class DBConfiguration {
 
 	// Verifica l'istanza di connection
 	private boolean connectionExists() {
-		return !(connection == null);
+		return connection != null;
 	}
 
 	// Verifica l'esistenza delle tabelle
 	private boolean tableExists(String table_name) throws SQLException {
 		DatabaseMetaData metadata = connection.getMetaData();
 		ResultSet tables = metadata.getTables(null, null, table_name, null);
-		if (tables.next()) {
-			return true;
-		} else {
-			return false;
-		}
+		return tables.next();
 	}
     /*
 	// Crea le sequenze per autogenerare le chiavi primarie di tutte le relazioni

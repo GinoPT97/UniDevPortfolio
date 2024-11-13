@@ -7,9 +7,9 @@ import java.sql.SQLException;
 //La classe DBConnection rappresenta una connessione a un database PostgreSQL.
 
 public class DBConnection {
-    public static DBConnection instance;
+    private static DBConnection instance;
     private Connection connection = null;
-    
+
     // Credenziali per il database locale
     private final String LOCAL_USERNAME = "postgres";
     private final String LOCAL_PASSWORD = "admin";
@@ -40,7 +40,7 @@ public class DBConnection {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException ex) {
-            System.out.println("Creazione della connessione al database fallita: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -49,7 +49,7 @@ public class DBConnection {
         return connection;
     }
 
-    public static DBConnection getInstance(String db, boolean useSupabase) throws SQLException {
+    public static synchronized DBConnection getInstance(String db, boolean useSupabase) throws SQLException {
         if (instance == null) {
             instance = new DBConnection(db, useSupabase);
         } else if (instance.getConnection().isClosed()) {
