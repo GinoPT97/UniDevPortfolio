@@ -126,34 +126,35 @@ public class DBConfiguration {
 	}
 
 	public int createTableTessera() throws ConnectionException {
-		int result = -1;
+	    int result = -1;
 
-		if (connectionExists()) {
-			try {
-				Statement st = connection.createStatement();
+	    if (connectionExists()) {
+	        try {
+	            Statement st = connection.createStatement();
 
-				if (!tableExists("tessera")) {
-					String sql = "CREATE TABLE tessera(\n"
-							+ " codtessera SERIAL PRIMARY KEY,\n"
-							+ " numeropunti real NOT NULL DEFAULT 0.00,\n"
-							+ " codcliente INTEGER NOT NULL UNIQUE,\n"
-							+ " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
-							+ " ON UPDATE CASCADE \n" + " ON DELETE CASCADE \n " + " );";
+	            if (!tableExists("tessera")) {
+	                String sql = "CREATE TABLE tessera(\n"
+	                        + " codtessera SERIAL PRIMARY KEY,\n"
+	                        + " numeropunti real NOT NULL DEFAULT 0.00,\n"
+	                        + " codcliente INTEGER NOT NULL UNIQUE,\n"
+	                        + " CONSTRAINT TesseraFK FOREIGN KEY(codcliente) \n"
+	                        + " REFERENCES CLIENTE(codcliente) \n"
+	                        + " ON UPDATE CASCADE \n" + " ON DELETE CASCADE \n" + " );";
 
-					result = st.executeUpdate(sql);
-					st.close();
+	                result = st.executeUpdate(sql);
+	                st.close();
 
-				} else {
-					System.out.println("Table Tessera already exists!");
-				}
-			} catch (SQLException ex) {
-				System.out.println("SQL Exception in creation table Tessera : " + ex);
-			}
-		} else {
-			throw new ConnectionException("A connection must exist!");
-		}
+	            } else {
+	                System.out.println("Table Tessera already exists!");
+	            }
+	        } catch (SQLException ex) {
+	            System.out.println("SQL Exception in creation table Tessera : " + ex);
+	        }
+	    } else {
+	        throw new ConnectionException("A connection must exist!");
+	    }
 
-		return result;
+	    return result;
 	}
 
 	public int createTableProdotto() throws ConnectionException {
@@ -193,70 +194,71 @@ public class DBConfiguration {
 	}
 
 	public int createTableOrdine() throws ConnectionException {
-		int result = -1;
+	    int result = -1;
 
-		if (connectionExists()) {
-			try {
-				Statement st = connection.createStatement();
+	    if (connectionExists()) {
+	        try {
+	            Statement st = connection.createStatement();
 
-				if (!tableExists("ordine")) {
-					String sql = "CREATE TABLE ordine(\n"
-				            + " codordine SERIAL PRIMARY KEY, \n"
-							+ " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
-							+ " dataacquisto date NOT NULL, \n"
-							+ " codcliente INTEGER NOT NULL, \n"
-							+ " coddipendente INTEGER NOT NULL, \n"
-							+ " CONSTRAINT ordinepk PRIMARY KEY (codordine), \n"
-							+ " CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente) ON UPDATE CASCADE ON DELETE NO ACTION, \n "
-							+ " CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente) ON UPDATE CASCADE ON DELETE NO ACTION\n "
-							+ " );";
+	            if (!tableExists("ordine")) {
+	                String sql = "CREATE TABLE ordine(\n"
+	                        + " codordine SERIAL PRIMARY KEY, \n"
+	                        + " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
+	                        + " dataacquisto date NOT NULL, \n"
+	                        + " codcliente INTEGER NOT NULL, \n"
+	                        + " coddipendente INTEGER NOT NULL, \n"
+	                        + " CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente) ON UPDATE CASCADE ON DELETE NO ACTION, \n"
+	                        + " CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente) ON UPDATE CASCADE ON DELETE NO ACTION\n "
+	                        + ");";
 
-					result = st.executeUpdate(sql);
-					st.close();
+	                result = st.executeUpdate(sql);
+	                st.close();
 
-				} else {
-					System.out.println("Table Ordine already exists!");
-				}
-			} catch (SQLException ex) {
-				System.out.println("SQL Exception in creation table Ordine : " + ex);
-			}
-		} else {
-			throw new ConnectionException("A connection must exist!");
-		}
+	            } else {
+	                System.out.println("Table Ordine already exists!");
+	            }
+	        } catch (SQLException ex) {
+	            System.out.println("SQL Exception in creation table Ordine : " + ex);
+	        }
+	    } else {
+	        throw new ConnectionException("A connection must exist!");
+	    }
 
-		return result;
+	    return result;
 	}
 
 	public int createTableArticoliOrdine() throws ConnectionException {
-		int result = -1;
+	    int result = -1;
 
-		if (connectionExists()) {
-			try {
-				Statement st = connection.createStatement();
-				if (!tableExists("ARTICOLIORDINE")) {
-					String sql = "CREATE TABLE ARTICOLIORDINE (\n"
-							+ "CodOrdine INTEGER NOT NULL,\n"
-							+ "CodProdotto INTEGER NOT NULL,\n"
-							+ "CodCliente INTEGER PRIMARY KEY,\n"
-							+ "Prezzo NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00),\n"
-							+ "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00), \n"
-							+ "NumeroArticoli INT NOT NULL,\n" + "Categoria TIPOLOGIA,\n"
-							+ "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"
-							+ "CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"
-							+ "CONSTRAINT ArtocoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"
-							+ " );";
-					result = st.executeUpdate(sql);
-					st.close();
-				} else {
-					System.out.println("Table 'ARTICOLIORDINE' already exists!");
-				}
-			} catch (SQLException ex) {
-				System.out.println("SQL Exception found in creation table 'ARTICOLIORDINE': " + ex);
-			}
-		} else {
-			throw new ConnectionException("A connection must exists!");
-		}
-		return result;
+	    if (connectionExists()) {
+	        try {
+	            Statement st = connection.createStatement();
+	            if (!tableExists("ARTICOLIORDINE")) {
+	                String sql = "CREATE TABLE ARTICOLIORDINE (\n"
+	                        + "CodOrdine INTEGER NOT NULL,\n"
+	                        + "CodProdotto INTEGER NOT NULL,\n"
+	                        + "CodCliente INTEGER NOT NULL, \n"  // Aggiunta della colonna CodCliente
+	                        + "Prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK(Prezzo >= 0.00),\n"
+	                        + "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(NumeroPunti >= 0.00),\n"
+	                        + "NumeroArticoli INT NOT NULL,\n"
+	                        + "Categoria TIPOLOGIA,\n"
+	                        + "CONSTRAINT ArticoliordinePK PRIMARY KEY (CodOrdine, CodProdotto),\n"
+	                        + "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"
+	                        + "CONSTRAINT ArticoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"
+	                        + "CONSTRAINT ArticoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"
+	                        + ");";
+	                result = st.executeUpdate(sql);
+	                st.close();
+	            } else {
+	                System.out.println("Table 'ARTICOLIORDINE' already exists!");
+	            }
+	        } catch (SQLException ex) {
+	            System.out.println("SQL Exception found in creation table 'ARTICOLIORDINE': " + ex);
+	        }
+	    } else {
+	        throw new ConnectionException("A connection must exist!");
+	    }
+	    return result;
 	}
 
 	public int createTipologie() throws ConnectionException {

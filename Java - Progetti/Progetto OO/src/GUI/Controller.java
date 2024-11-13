@@ -202,7 +202,7 @@ public class Controller {
 
 	public void connect() throws SQLException {
 		try {
-			dbconn = DBConnection.getInstance("postgres");
+			dbconn = DBConnection.getInstance("postgres", true);
 			connection = dbconn.getConnection();
 			config = new DBConfiguration(connection);
 			// Metodi per la definizione del DB:
