@@ -172,8 +172,8 @@ public class Controller {
 
 	        default:
 	            // Handle invalid context if needed, or simply do nothing
-	            break;
-	    }
+				break;
+		}
 	}
 
 	public static void main(String[] args) {
