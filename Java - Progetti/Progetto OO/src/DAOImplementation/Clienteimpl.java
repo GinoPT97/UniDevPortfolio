@@ -20,8 +20,8 @@ public class Clienteimpl implements ClienteJDBC {
         getAllCt = connection.createStatement();
         cercaCl = connection.prepareStatement(
                 "SELECT codcliente FROM cliente WHERE nome = ? AND cognome = ? AND codicefiscale = ?");
-        // Ometti 'codcliente' nell'INSERT per consentire a PostgreSQL di generarlo automaticamente
-        setNewCt = connection.prepareStatement("INSERT INTO cliente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES (?, ?, ?, ?, ?, ?)");
+        // Usa una sequenza per generare automaticamente 'codcliente'
+        setNewCt = connection.prepareStatement("INSERT INTO cliente (codcliente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES (nextval('SCodCliente'), ?, ?, ?, ?, ?, ?)");
         updateCl = connection.prepareStatement(
                 "UPDATE cliente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE codcliente = ?");
         idCl = connection.createStatement();

@@ -22,7 +22,7 @@ public class DipendenteImpl implements DipendenteJDBC {
     public DipendenteImpl(Connection connection) throws SQLException {
         getAllDip = connection.createStatement();
         // Ometti 'coddipendente' nella query INSERT per consentire a PostgreSQL di generarlo automaticamente
-        setNewDip = connection.prepareStatement("INSERT INTO dipendente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES (?, ?, ?, ?, ?, ?)");
+        setNewDip = connection.prepareStatement("INSERT INTO dipendente (coddipendente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES (nextval('SCodDipendente'), ?, ?, ?, ?, ?, ?)");
         updateDip = connection.prepareStatement(
                 "UPDATE dipendente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE coddipendente = ?");
         getDip = connection.createStatement();

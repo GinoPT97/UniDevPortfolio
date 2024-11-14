@@ -180,7 +180,7 @@ public class Controller {
 	    // Utilizza EventQueue per garantire che l'app venga eseguita nel thread dell'EDT
 	    EventQueue.invokeLater(() -> {
 	        try {
-	            Controller c = new Controller();
+	            new Controller();
 	        } catch (SQLException | IOException e) {
 	            e.printStackTrace();
 	        }

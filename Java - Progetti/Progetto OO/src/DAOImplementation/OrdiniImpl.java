@@ -19,17 +19,23 @@ public class OrdiniImpl implements OrdiniJDBC {
     public OrdiniImpl(Connection connection) throws SQLException {
         this.connection = connection;
         // Preparazione delle query
-        newOrdineStmt = connection.prepareStatement("INSERT INTO ordine (prezzototale, dataacquisto, codcliente, coddipendente) VALUES (?, ?, ?, ?)");
+        newOrdineStmt = connection.prepareStatement("INSERT INTO ordine (codordine, prezzototale, dataacquisto, codcliente, coddipendente) VALUES (?, ?, ?, ?, ?)");
         getAllOrdiniStmt = connection.prepareStatement("SELECT * FROM ordine ORDER BY dataacquisto DESC");
     }
 
     @Override
     public boolean newordine(Ordine ordine) throws SQLException {
         try {
-            newOrdineStmt.setDouble(1, ordine.getPrezzoTotale());
-            newOrdineStmt.setDate(2, ordine.getDataAcquisto());
-            newOrdineStmt.setString(3, ordine.getIdCliente());
-            newOrdineStmt.setString(4, ordine.getIdDipendente());
+            try (Statement stmt = connection.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT nextval('SCodOrdine')")) {
+                if (rs.next()) {
+                    newOrdineStmt.setLong(1, rs.getLong(1));
+                }
+            }
+            newOrdineStmt.setDouble(2, ordine.getPrezzoTotale());
+            newOrdineStmt.setDate(3, ordine.getDataAcquisto());
+            newOrdineStmt.setString(4, ordine.getIdCliente());
+            newOrdineStmt.setString(5, ordine.getIdDipendente());
 
             return newOrdineStmt.executeUpdate() > 0; // Restituisce true se l'inserimento ha avuto successo
         } catch (SQLException e) {

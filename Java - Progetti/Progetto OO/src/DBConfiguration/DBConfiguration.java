@@ -25,30 +25,29 @@ public class DBConfiguration {
 		return tables.next();
 	}
 
-	// Crea le sequenze per autogenerare le chiavi primarie di tutte le relazioni
-	public int createSequences() throws ConnectionException, SQLException {
+	// Crea una sequenza generica per autogenerare le chiavi primarie
+	private int createSequence(String sequenceName) throws SQLException {
 		int result = -1;
 		if (connectionExists()) {
-			try {
-				Statement st = connection.createStatement();
-
-				String sql = "CREATE SEQUENCE SCodCliente INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
+			try (Statement st = connection.createStatement()) {
+				String sql = "CREATE SEQUENCE " + sequenceName + " INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
 				result = st.executeUpdate(sql);
-
-				sql = "CREATE SEQUENCE SCodDipendente INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
-				result = result + st.executeUpdate(sql);
-
-				sql = "CREATE SEQUENCE SCodProdotto INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
-				result = result + st.executeUpdate(sql);
-
-				sql = "CREATE SEQUENCE SCodOrdine INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
-				result = result + st.executeUpdate(sql);
-
-				sql = "CREATE SEQUENCE SCodTessera INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;";
-				result = result + st.executeUpdate(sql);
 			} catch (SQLException ex) {
-				System.out.println("SQL Exception in Creation Sequence : " + ex);
+				System.out.println("SQL Exception in Creation Sequence " + sequenceName + " : " + ex);
 			}
+		}
+		return result;
+	}
+
+	// Crea le sequenze per autogenerare le chiavi primarie di tutte le relazioni
+	public int createSequences() throws ConnectionException, SQLException {
+		int result = 0;
+		if (connectionExists()) {
+			result += createSequence("SCodCliente");
+			result += createSequence("SCodDipendente");
+			result += createSequence("SCodProdotto");
+			result += createSequence("SCodOrdine");
+			result += createSequence("SCodTessera");
 		}
 		return result;
 	}
@@ -62,7 +61,7 @@ public class DBConfiguration {
 
 					if (!tableExists("cliente")) {
 						String sql = "CREATE TABLE cliente(\n"
-								+ " codcliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n"
+								+ " codcliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'::text),\n"
 								+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 								+ " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
 								+ " codicefiscale CHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),\n "
@@ -130,7 +129,7 @@ public class DBConfiguration {
 
 					if (!tableExists("tessera")) {
 						String sql = "CREATE TABLE tessera(\n"
-								+ " codtessera VARCHAR(5) PRIMARY KEY, CHECK(codtessera ~* '^[0-9]+$'),\n"
+								+ " codtessera VARCHAR(5) PRIMARY KEY, CHECK(codtessera ~* '^[0-9]+$'::text),\n"
 								+ " numeropunti real NOT NULL DEFAULT 0.00,\n"
 								+ " codcliente VARCHAR(5) NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
 								+ " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
@@ -161,7 +160,7 @@ public class DBConfiguration {
 
 					if (!tableExists("prodotto")) {
 						String sql = "CREATE TABLE prodotto(\n"
-								+ " codprodotto VARCHAR(5) PRIMARY KEY, CHECK(CodProdotto ~* '^[0-9]+$'),\n"
+								+ " codprodotto VARCHAR(5) PRIMARY KEY, CHECK(CodProdotto ~* '^[0-9]+$'::text),\n"
 								+ " nome VARCHAR(255) NOT NULL, CHECK(Nome ~* '^[A-Za-z ]+$'),\n"
 								+ " descrizione VARCHAR(500), \n" + " prezzo NUMERIC DEFAULT 0.00, \n "
 								+ " luogoprovenienza VARCHAR(255), \n" + " dataraccolta DATE,\n "
