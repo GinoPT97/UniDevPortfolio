@@ -180,7 +180,7 @@ public class Controller {
 	    // Utilizza EventQueue per garantire che l'app venga eseguita nel thread dell'EDT
 	    EventQueue.invokeLater(() -> {
 	        try {
-				     new Controller();
+	            Controller c = new Controller();
 	        } catch (SQLException | IOException e) {
 	            e.printStackTrace();
 	        }
@@ -202,7 +202,7 @@ public class Controller {
 
 	public void connect() throws SQLException {
 		try {
-			dbconn = DBConnection.getInstance("postgres", true);
+			dbconn = DBConnection.getInstance("postgres");
 			connection = dbconn.getConnection();
 			config = new DBConfiguration(connection);
 			// Metodi per la definizione del DB:

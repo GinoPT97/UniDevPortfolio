@@ -122,7 +122,7 @@ public class DipendenteImpl implements DipendenteJDBC {
     @Override
     public Dipendente getOneDip(String id) throws SQLException {
         Dipendente dipendente = null;
-        String query = "SELECT * FROM dipendente WHERE coddipendente::text = ?";
+        String query = "SELECT * FROM dipendente WHERE coddipendente = ?";
         try (PreparedStatement ps = getDip.getConnection().prepareStatement(query)) {
             ps.setString(1, id);
             try (ResultSet rs = ps.executeQuery()) {

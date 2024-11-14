@@ -4,58 +4,47 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-//La classe DBConnection rappresenta una connessione a un database PostgreSQL.
+// La classe DBConnection rappresenta una connessione a un database PostgreSQL.
 
 public class DBConnection {
-    private static DBConnection instance;
-    private Connection connection = null;
+	public static DBConnection instance;
+	private Connection connection = null;
+	private final String USERNAME = "postgres";
+	private final String PASSWORD = "admin";
+	private final String IP = "localhost";
+	private final String PORT = "5432";
+	private String url = "jdbc:postgresql://" + IP + ":" + PORT + "/";
 
-    // Credenziali per il database locale
-    private final String LOCAL_USERNAME = "postgres";
-    private final String LOCAL_PASSWORD = "admin";
-    private final String LOCAL_URL = "jdbc:postgresql://localhost:5432/";
+	// Costruisce un nuovo oggetto DBConnection con il nome del database specificato.
 
-    // Credenziali per Supabase
-    private final String SUPABASE_USERNAME = "postgres.rgdueknjajsikdwrxrga";
-    private final String SUPABASE_PASSWORD = "zjjtoXltLwSP0RTp";
-    private final String SUPABASE_URL = "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/";
+	private DBConnection(String db) throws SQLException {
 
-    // Costruisce un nuovo oggetto DBConnection con il nome del database e il tipo di connessione
-    private DBConnection(String db, boolean useSupabase) throws SQLException {
-        String url;
-        String username;
-        String password;
+		try {
+			Class.forName("org.postgresql.Driver");
+			connection = DriverManager.getConnection(url + db, USERNAME, PASSWORD);
+		} catch (ClassNotFoundException ex) {
+			System.out.println("Creazione della connessione al database fallita: " + ex.getMessage());
+		}
 
-        if (useSupabase) {
-            url = SUPABASE_URL + db;
-            username = SUPABASE_USERNAME;
-            password = SUPABASE_PASSWORD;
-        } else {
-            url = LOCAL_URL + db;
-            username = LOCAL_USERNAME;
-            password = LOCAL_PASSWORD;
-        }
+	}
 
-        try {
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(url, username, password);
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-    }
+	// Restituisce la connessione al database.
 
-    // Restituisce la connessione al database
-    public Connection getConnection() {
-        return connection;
-    }
+	public Connection getConnection() {
+		return connection;
+	}
 
-    public static synchronized DBConnection getInstance(String db, boolean useSupabase) throws SQLException {
-        if (instance == null) {
-            instance = new DBConnection(db, useSupabase);
-        } else if (instance.getConnection().isClosed()) {
-            instance = new DBConnection(db, useSupabase);
-        }
-        return instance;
-    }
+	/**
+	 * Restituisce l'istanza singleton della classe DBConnection. Se l'istanza è
+	 * nulla o la connessione è chiusa, viene creata una nuova istanza.
+	 */
+	public static DBConnection getInstance(String db) throws SQLException {
+		if (instance == null) {
+			instance = new DBConnection(db);
+		} else if (instance.getConnection().isClosed()) {
+			instance = new DBConnection(db);
+		}
+
+		return instance;
+	}
 }
-
