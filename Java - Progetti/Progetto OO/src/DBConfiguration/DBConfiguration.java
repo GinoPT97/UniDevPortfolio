@@ -60,7 +60,7 @@ public class DBConfiguration {
 					Statement st = connection.createStatement();
 
 					if (!tableExists("cliente")) {
-						String sql = "CREATE TABLE cliente(\n"
+						String sql = "CREATE TABLE IF NOT EXISTS cliente(\n"
 								+ " codcliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'::text),\n"
 								+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 								+ " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
@@ -94,7 +94,7 @@ public class DBConfiguration {
 					Statement st = connection.createStatement();
 
 					if (!tableExists("dipendente")) {
-						String sql = "CREATE TABLE dipendente (\n"
+						String sql = "CREATE TABLE IF NOT EXISTS dipendente (\n"
 								+ "coddipendente VARCHAR(5) PRIMARY KEY, CHECK(coddipendente ~* '^[0-9]+$'),\n"
 								+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 								+ " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
@@ -128,7 +128,7 @@ public class DBConfiguration {
 					Statement st = connection.createStatement();
 
 					if (!tableExists("tessera")) {
-						String sql = "CREATE TABLE tessera(\n"
+						String sql = "CREATE TABLE IF NOT EXISTS tessera(\n"
 								+ " codtessera VARCHAR(5) PRIMARY KEY, CHECK(codtessera ~* '^[0-9]+$'::text),\n"
 								+ " numeropunti real NOT NULL DEFAULT 0.00,\n"
 								+ " codcliente VARCHAR(5) NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
@@ -159,7 +159,7 @@ public class DBConfiguration {
 					Statement st = connection.createStatement();
 
 					if (!tableExists("prodotto")) {
-						String sql = "CREATE TABLE prodotto(\n"
+						String sql = "CREATE TABLE IF NOT EXISTS prodotto(\n"
 								+ " codprodotto VARCHAR(5) PRIMARY KEY, CHECK(CodProdotto ~* '^[0-9]+$'::text),\n"
 								+ " nome VARCHAR(255) NOT NULL, CHECK(Nome ~* '^[A-Za-z ]+$'),\n"
 								+ " descrizione VARCHAR(500), \n" + " prezzo NUMERIC DEFAULT 0.00, \n "
@@ -195,7 +195,7 @@ public class DBConfiguration {
 					Statement st = connection.createStatement();
 
 					if (!tableExists("ordine")) {
-						String sql = "CREATE TABLE ordine(\n" + " codordine VARCHAR(5) NOT NULL, \n"
+						String sql = "CREATE TABLE IF NOT EXISTS ordine(\n" + " codordine VARCHAR(5) NOT NULL, \n"
 								+ " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
 								+ " dataacquisto date NOT NULL, \n"
 								+ " codcliente VARCHAR(5) NOT NULL CHECK (codcliente ~* '^[0-9]+$'), \n"
@@ -228,17 +228,18 @@ public class DBConfiguration {
 				try {
 					Statement st = connection.createStatement();
 					if (!tableExists("ARTICOLIORDINE")) {
-						String sql = "CREATE TABLE ARTICOLIORDINE (\n"
+						String sql = "CREATE TABLE IF NOT EXISTS ARTICOLIORDINE (\n"
 								+ "CodOrdine VARCHAR(5) NOT NULL CHECK(CodOrdine ~* '^[0-9]+$'),\n"
 								+ "CodProdotto VARCHAR(5) NOT NULL CHECK(CodProdotto ~* '^[0-9]+$'),\n"
-								+ "CodCliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n"
-								+ "Prezzo NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00),\n"
-								+ "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00), \n"
-								+ "NumeroArticoli INT NOT NULL,\n" + "Categoria TIPOLOGIA,\n"
-								+ "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"
-								+ "CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"
-								+ "CONSTRAINT ArtocoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"
-								+ " );";
+								+ "CodCliente VARCHAR(5) NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
+								+ "Prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK(Prezzo >= 0.00),\n"
+								+ "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(NumeroPunti >= 0.00),\n"
+								+ "NumeroArticoli INT NOT NULL,\n"
+								+ "Categoria TIPOLOGIA,\n"
+								+ "CONSTRAINT ArticoliOrdine_Cliente_FK FOREIGN KEY (CodCliente) REFERENCES CLIENTE (CodCliente),\n"
+								+ "CONSTRAINT ArticoliOrdine_Prodotto_FK FOREIGN KEY (CodProdotto) REFERENCES PRODOTTO (CodProdotto),\n"
+								+ "CONSTRAINT ArticoliOrdine_Ordine_FK FOREIGN KEY (CodOrdine) REFERENCES ORDINE (CodOrdine)\n"
+								+ ");";
 						result = st.executeUpdate(sql);
 						st.close();
 					} else {
@@ -252,6 +253,7 @@ public class DBConfiguration {
 			}
 			return result;
 		}
+
 
 		public int createTipologie() throws ConnectionException {
 			int result = -1;
