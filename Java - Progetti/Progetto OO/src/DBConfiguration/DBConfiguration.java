@@ -131,7 +131,7 @@ public class DBConfiguration {
 						String sql = "CREATE TABLE IF NOT EXISTS tessera(\n"
 								+ " codtessera VARCHAR(5) PRIMARY KEY, CHECK(codtessera ~* '^[0-9]+$'::text),\n"
 								+ " numeropunti real NOT NULL DEFAULT 0.00,\n"
-								+ " codcliente VARCHAR(5) NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
+								+ " codcliente VARCHAR(5) NOT NULL UNIQUE CHECK(codcliente ~* '^[0-9]+$'),\n"
 								+ " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
 								+ " ON UPDATE CASCADE \n" + " ON DELETE CASCADE \n " + " );";
 
@@ -161,7 +161,7 @@ public class DBConfiguration {
 					if (!tableExists("prodotto")) {
 						String sql = "CREATE TABLE IF NOT EXISTS prodotto(\n"
 								+ " codprodotto VARCHAR(5) PRIMARY KEY, CHECK(CodProdotto ~* '^[0-9]+$'::text),\n"
-								+ " nome VARCHAR(255) NOT NULL, CHECK(Nome ~* '^[A-Za-z ]+$'),\n"
+								+ " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
 								+ " descrizione VARCHAR(500), \n" + " prezzo NUMERIC DEFAULT 0.00, \n "
 								+ " luogoprovenienza VARCHAR(255), \n" + " dataraccolta DATE,\n "
 								+ " datamungitura DATE, \n " + " glutine BOOLEAN, \n " + " datascadenza DATE, \n "
@@ -198,8 +198,8 @@ public class DBConfiguration {
 						String sql = "CREATE TABLE IF NOT EXISTS ordine(\n" + " codordine VARCHAR(5) NOT NULL, \n"
 								+ " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
 								+ " dataacquisto date NOT NULL, \n"
-								+ " codcliente VARCHAR(5) NOT NULL CHECK (codcliente ~* '^[0-9]+$'), \n"
-								+ " coddipendente VARCHAR(5) NOT NULL CHECK (coddipendente ~* '^[0-9]+$'), \n"
+								+ " codcliente VARCHAR(5) NOT NULL CHECK (codcliente ~* '^[0-9]+$'::text), \n"
+								+ " coddipendente VARCHAR(5) NOT NULL CHECK (coddipendente ~* '^[0-9]+$'::text), \n"
 								+ " CONSTRAINT ordinepk PRIMARY KEY (codordine), \n"
 								+ " CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente) ON UPDATE CASCADE ON DELETE NO ACTION, \n "
 								+ " CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente) ON UPDATE CASCADE ON DELETE NO ACTION\n "
@@ -264,7 +264,9 @@ public class DBConfiguration {
 					String sql = "CREATE TYPE TIPOLOGIA AS ENUM('Ortofrutticoli','Latticini','Inscatolati','Farinacei')";
 					result = st.executeUpdate(sql);
 				} catch (SQLException ex) {
-					System.out.println("SQL Exception in creation type tipologia: " + ex);
+					if (!ex.getMessage().contains("type \"tipologia\" already exists")) {
+						System.out.println("SQL Exception in creation type tipologia: " + ex);
+					}
 				}
 			} else {
 				throw new ConnectionException("A connection must exist!");

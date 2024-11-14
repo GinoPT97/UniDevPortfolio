@@ -24,7 +24,7 @@ public class ProdottoImpl implements ProdottoJDBC {
     private void initStatements() throws SQLException {
         this.getAllProdottiStmt = connection.prepareStatement("SELECT * FROM prodotto ORDER BY nome DESC");
         this.setNewProdottoStmt = connection.prepareStatement(
-            "INSERT INTO prodotto (codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES (NEXTVAL('SCodProdotto'), ?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, CAST(? AS TIPOLOGIA), ?)"
+            "INSERT INTO prodotto VALUES (NEXTVAL('SCodProdotto'), ?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, CAST(? AS TIPOLOGIA), ?)"
         );
         this.updateProdottoStmt = connection.prepareStatement(
             "UPDATE prodotto SET nome=?, descrizione=?, prezzo=?, luogoprovenienza=?, dataraccolta=?, datamungitura=?, glutine=CAST(? AS BOOLEAN), datascadenza=?, categoria=CAST(? AS TIPOLOGIA), scorta=? WHERE codprodotto = ?"
@@ -35,16 +35,7 @@ public class ProdottoImpl implements ProdottoJDBC {
     @Override
     public boolean setNewProdotto(Prodotto prodotto) throws SQLException {
         initStatements(); // Inizializza le query preparate
-        // Retrieve the next value from the sequence and set it in the prodotto object
-        try (PreparedStatement getCodProdottoStmt = connection.prepareStatement("SELECT NEXTVAL('SCodProdotto')")) {
-            try (ResultSet rs = getCodProdottoStmt.executeQuery()) {
-                if (rs.next()) {
-                    prodotto.setCodProd(rs.getString(1));
-                }
-            }
-        }
         setCommonProdottoFields(setNewProdottoStmt, prodotto);
-        setNewProdottoStmt.setString(1, prodotto.getCodProd());
         setNewProdottoStmt.setInt(10, prodotto.getScorta());
 
         boolean result = setNewProdottoStmt.executeUpdate() > 0;

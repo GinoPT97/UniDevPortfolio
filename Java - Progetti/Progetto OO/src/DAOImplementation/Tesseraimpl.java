@@ -10,17 +10,17 @@ import DAOInterface.TesseraJDBC;
 import Model.Cliente;
 import Model.Tessera;
 
-public class TesseraImpl implements TesseraJDBC {
+public class Tesseraimpl implements TesseraJDBC {
 
     private PreparedStatement newtesseraStmt;
     private PreparedStatement getpuntitStmt;
     private PreparedStatement alltesseraStmt;
     private PreparedStatement uppuntiStmt;
 
-    public TesseraImpl(Connection connection) throws SQLException {
+    public Tesseraimpl(Connection connection) throws SQLException {
         // Preparazione delle query
-        newtesseraStmt = connection.prepareStatement("INSERT INTO tessera (codtessera, numeropunti, codcliente) VALUES (SCodTessera.NEXTVAL, ?, ?)");
-        getpuntitStmt = connection.prepareStatement("SELECT numeropunti FROM tessera WHERE SCodTessera = ?");
+        newtesseraStmt = connection.prepareStatement("INSERT INTO tessera VALUES (NEXTVAL('SCodTessera'),?,?)");
+        getpuntitStmt = connection.prepareStatement("SELECT numeropunti FROM tessera WHERE codtessera = ?");
         alltesseraStmt = connection.prepareStatement("SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC");
         uppuntiStmt = connection.prepareStatement("UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = ?");
     }
@@ -77,5 +77,4 @@ public class TesseraImpl implements TesseraJDBC {
         return uppuntiStmt.executeUpdate() > 0; // Restituisce true se l'aggiornamento è andato a buon fine
     }
 }
-
 

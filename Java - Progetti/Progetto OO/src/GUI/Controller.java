@@ -16,7 +16,7 @@ import DAOImplementation.Clienteimpl;
 import DAOImplementation.DipendenteImpl;
 import DAOImplementation.OrdiniImpl;
 import DAOImplementation.ProdottoImpl;
-import DAOImplementation.TesseraImpl;
+import DAOImplementation.Tesseraimpl;
 import DAOInterface.ArticoliJDBC;
 import DAOInterface.ClienteJDBC;
 import DAOInterface.DipendenteJDBC;
@@ -220,7 +220,7 @@ public class Controller {
 			dpjdbc = new DipendenteImpl(connection);
 			prdjdbc = new ProdottoImpl(connection);
 			ordjdbc = new OrdiniImpl(connection);
-			tsjdbc = new TesseraImpl(connection);
+			tsjdbc = new Tesseraimpl(connection);
 			artjdbc = new ArticoliImpl(connection);
 		} catch (SQLException | ConnectionException e) {
 			System.out.println("SQLException: " + e.getMessage());
