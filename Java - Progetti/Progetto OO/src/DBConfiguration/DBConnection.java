@@ -6,22 +6,20 @@ import java.sql.SQLException;
 
 // La classe DBConnection rappresenta una connessione a un database PostgreSQL.
 public class DBConnection {
-    public static DBConnection instance;
+    private static DBConnection instance;
     private Connection connection = null;
+
+    // Configurazione locale
+    private final String LOCAL_URL = "jdbc:postgresql://localhost:5432/";
     private final String LOCAL_USERNAME = "postgres";
     private final String LOCAL_PASSWORD = "admin";
-    private final String LOCAL_IP = "localhost";
-    private final String LOCAL_PORT = "5432";
-    private final String LOCAL_URL = "jdbc:postgresql://" + LOCAL_IP + ":" + LOCAL_PORT + "/";
 
+    // Configurazione Supabase
     private final String SUPABASE_URL = "jdbc:postgresql://aws-0-eu-central-1.pooler.supabase.com:6543/postgres";
     private final String SUPABASE_USERNAME = "postgres.rgdueknjajsikdwrxrga";
     private final String SUPABASE_PASSWORD = "zjjtoXltLwSP0RTp";
 
-    private boolean useSupabase = false;
-
-    // Costruisce un nuovo oggetto DBConnection con il nome del database specificato.
-    private DBConnection(String db) throws SQLException {
+    private DBConnection(boolean useSupabase) throws SQLException {
         try {
             Class.forName("org.postgresql.Driver");
 
@@ -32,14 +30,15 @@ public class DBConnection {
                 );
             } else {
                 // Connessione locale
-                connection = DriverManager.getConnection(LOCAL_URL + db, LOCAL_USERNAME, LOCAL_PASSWORD);
+                connection = DriverManager.getConnection(LOCAL_URL, LOCAL_USERNAME, LOCAL_PASSWORD);
             }
+
         } catch (ClassNotFoundException ex) {
             System.out.println("Creazione della connessione al database fallita: " + ex.getMessage());
         }
     }
 
-    // Restituisce la connessione al database.
+    // Restituisce la connessione al database
     public Connection getConnection() {
         return connection;
     }
@@ -48,12 +47,12 @@ public class DBConnection {
      * Restituisce l'istanza singleton della classe DBConnection. Se l'istanza è
      * nulla o la connessione è chiusa, viene creata una nuova istanza.
      */
-    public static DBConnection getInstance(String db, boolean useSupabase) throws SQLException {
+    public static DBConnection getInstance(boolean useSupabase) throws SQLException {
         if (instance == null || instance.getConnection().isClosed()) {
-            instance = new DBConnection(db);
-            instance.useSupabase = useSupabase;
+            instance = new DBConnection(useSupabase);
         }
         return instance;
     }
 }
+
 
