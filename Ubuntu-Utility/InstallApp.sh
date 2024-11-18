@@ -119,12 +119,14 @@ echo "Installazione di Google Chrome..."
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome-stable_current_amd64.deb
 sudo apt-get install -f -y
+rm -f google-chrome-stable_current_amd64.deb
 
 # Installazione di GitHub Desktop
 echo "Installazione di GitHub Desktop..."
 wget https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb
 sudo dpkg -i GitHubDesktop-linux-2.8.1-linux2.deb
 sudo apt-get install -f -y
+rm -f GitHubDesktop-linux-2.8.1-linux2.deb
 
 # Installazione di estensioni per VS Code
 install_vscode_extensions \
@@ -149,6 +151,10 @@ sudo service tor start
 
 # Esecuzione dello script per aggiornamenti personalizzati
 echo "Esecuzione dello script per aggiornamenti personalizzati..."
-sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Aggiornamenti.sh
+sudo /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh
+
+# Rimozione di file residui .deb e file scaricati
+echo "Rimozione di file residui e temporanei..."
+rm -f *.deb *.run
 
 echo "Installazione completata!"
