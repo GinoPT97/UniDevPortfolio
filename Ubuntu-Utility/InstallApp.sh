@@ -76,9 +76,12 @@ install_packages \
   openjfx \
   ssmtp \
   texlive-latex-base \
-  texlive-latex-extra
+  texlive-latex-extra \
+  git-lfs \
+  gparted \
+  cryptsetup \
+  lvm2
 
-install_packages git-lfs
 git lfs install
 
 # Scarica il file KVRT
