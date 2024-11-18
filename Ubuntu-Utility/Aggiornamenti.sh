@@ -51,6 +51,26 @@ update_python_envs() {
     done
 }
 
+# Funzione per aggiornare Conda
+update_conda() {
+    log_info "Aggiornamento di Conda..."
+    if command -v conda &> /dev/null; then
+        conda update --all -y
+    else
+        log_info "Conda non è installato."
+    fi
+}
+
+# Funzione per pulire i pacchetti obsoleti di Conda
+clean_conda_packages() {
+    log_info "Pulizia dei pacchetti obsoleti di Conda..."
+    if command -v conda &> /dev/null; then
+        conda clean --all -y
+    else
+        log_info "Conda non è installato."
+    fi
+}
+
 # Inizio dello script
 log_info "Inizio aggiornamenti..."
 
@@ -70,12 +90,10 @@ sudo dpkg --configure -a
 update_apt_packages
 
 # Aggiornamento Conda
-log_info "Aggiornamento di Conda..."
-if command -v conda &> /dev/null; then
-    conda update --all -y
-else
-    log_info "Conda non è installato."
-fi
+update_conda
+
+# Pulizia pacchetti obsoleti Conda
+clean_conda_packages
 
 # Aggiornamento Node.js
 update_node

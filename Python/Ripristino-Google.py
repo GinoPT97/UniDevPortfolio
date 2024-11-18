@@ -92,6 +92,32 @@ def extract_zip(zip_path: str, extract_to: str) -> None:
     except Exception as e:
         logging.error(f"Errore durante l'estrazione del file ZIP {zip_path}: {e}")
 
+def create_folders_from_json(json_path: str, base_path: str) -> None:
+    """Crea cartelle in base ai dati JSON."""
+    try:
+        with open(json_path, "r") as f:
+            data = json.load(f)
+            for title, folder_name in data.items():
+                folder_path = os.path.join(base_path, folder_name)
+                create_folder(folder_path)
+                logging.info(f"Creata cartella: {folder_path}")
+    except (json.JSONDecodeError, OSError) as e:
+        logging.error(f"Errore durante la creazione delle cartelle dal file JSON {json_path}: {e}")
+
+def process_unified_data(json_path: str, google_photos_directory: str, base_path: str) -> None:
+    """Elabora i dati unificati e sposta i file nelle cartelle appropriate."""
+    try:
+        with open(json_path, "r") as f:
+            data = json.load(f)
+            for title, folder_name in data.items():
+                folder_path = os.path.join(base_path, folder_name)
+                for root, _, files in os.walk(google_photos_directory):
+                    for file in files:
+                        if file.startswith(title):
+                            move_file(os.path.join(root, file), folder_path)
+    except (json.JSONDecodeError, OSError) as e:
+        logging.error(f"Errore durante l'elaborazione dei dati unificati dal file JSON {json_path}: {e}")
+
 def start_process(base_path_folders: str, google_photos_path: str, is_zip: bool, progress: Progressbar, root: tk.Tk) -> None:
     """Avvia il processo di unificazione ed elaborazione dei file JSON."""
     create_folder(base_path_folders)
