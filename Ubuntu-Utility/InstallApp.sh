@@ -220,4 +220,3 @@ echo "Esecuzione dello script per aggiornamenti personalizzati..."
 sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Aggiornamenti.sh
 
 echo "Installazione completata!"
-
