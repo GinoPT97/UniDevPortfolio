@@ -64,6 +64,9 @@ sudo apt-get autoremove --purge -y
 log_info "Pulizia della cache dei pacchetti APT..."
 sudo apt-get clean -y
 
+sudo apt autoremove --purge
+
+
 log_info "Aggiornamento dei pacchetti con aptitude..."
 if command -v aptitude &> /dev/null; then
     sudo aptitude upgrade -y
