@@ -3,75 +3,37 @@
 # Funzione per installare pacchetti
 install_packages() {
   echo "Installazione di pacchetti: $*"
-  sudo apt install -y "$@"
+  sudo apt install -y "$@" || { echo "Errore durante l'installazione dei pacchetti: $*"; exit 1; }
 }
 
 # Funzione per installare estensioni di Visual Studio Code
 install_vscode_extensions() {
   echo "Installazione di estensioni per VS Code..."
   for extension in "$@"; do
-    code --install-extension "$extension" --force
+    code --install-extension "$extension" --force || { echo "Errore durante l'installazione dell'estensione: $extension"; exit 1; }
   done
 }
 
 # Aggiornamento del sistema
 echo "Aggiornamento del sistema..."
-sudo apt update && sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y || { echo "Errore durante l'aggiornamento del sistema"; exit 1; }
 
 # Installazione di pacchetti generali
 install_packages \
-  ca-certificates \
-  curl \
-  gnupg \
-  lsb-release \
-  software-properties-common \
-  wget \
-  deborphan \
-  apt-transport-https \
-  wireshark \
-  kate \
-  zram-config \
-  preload \
-  bluetooth \
-  bluez \
-  blueman \
-  flatpak \
-  git \
-  gparted \
-  default-jre \
-  openjdk-11-jdk \
-  openjdk-11-jre \
-  clamav \
-  clamtk \
-  postgresql-16 \
-  postgresql-client-16 \
-  postgresql-client-common \
-  postgresql-common \
-  codeblocks \
-  gnome-boxes \
-  arduino \
-  vlc \
-  cmake \
-  deja-dup \
-  libnvidia-gl-535:i386 \
-  tor \
-  aptitude \
-  doxygen \
-  graphviz \
-  net-tools \
-  gdebi \
-  dos2unix \
-  openjfx \
-  ssmtp \
-  texlive-latex-base \
-  texlive-latex-extra \
-  git-lfs \
-  cryptsetup \
-  lvm2 \
-  exfatprogs \
-  nvtop \
-  synaptic \
-  stacer
+  ca-certificates curl gnupg lsb-release software-properties-common wget deborphan \
+  apt-transport-https wireshark kate zram-config preload bluetooth bluez blueman \
+  flatpak git gparted default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk \
+  postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common \
+  codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor \
+  aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base \
+  texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
+  cpufrequtils nvidia-prime
+
+if command -v cpufreq-set &> /dev/null; then
+  sudo cpufreq-set -g powersave
+else
+  echo "cpufrequtils non è installato, saltando la configurazione della frequenza della CPU"
+fi
 
 # Configurazione di Git LFS
 git lfs install
@@ -94,7 +56,7 @@ sudo systemctl enable docker
 
 # Scaricamento del file KVRT
 echo "Scaricamento del file KVRT..."
-wget -O kvrt.run https://bit.ly/4e8RLMg
+wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh | sh || { echo "Errore durante l'installazione di NordVPN"; exit 1; }
 
 # Installazione e configurazione di NordVPN
 echo "Installazione e configurazione di NordVPN..."
@@ -104,7 +66,7 @@ nordvpn set autoconnect on
 
 # Installazione di pgAdmin 4
 echo "Installazione di pgAdmin 4..."
-curl -fsS https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
+sudo /usr/pgadmin4/bin/setup-web.sh || { echo "Errore durante la configurazione di pgAdmin 4"; exit 1; }
 echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list
 sudo apt update
 install_packages pgadmin4 pgadmin4-desktop pgadmin4-web
@@ -143,7 +105,7 @@ code --locale=it
 echo "Installazione di applicazioni tramite Snap..."
 sudo snap install dbeaver-ce openjdk --classic
 sudo snap install --classic code android-studio eclipse pycharm-community
-sudo snap install --classic telegram-desktop discord spotify vlc docker
+sudo service tor start || { echo "Errore durante l'avvio del servizio Tor"; exit 1; }
 
 # Avvio del servizio Tor
 echo "Avvio del servizio Tor..."
