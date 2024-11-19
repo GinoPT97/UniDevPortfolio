@@ -27,7 +27,7 @@ install_packages \
   codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor \
   aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base \
   texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
-  cpufrequtils nvidia-prime
+  cpufrequtils nvidia-prime build-essential libvips-dev
 
 if command -v cpufreq-set &> /dev/null; then
   sudo cpufreq-set -g powersave
@@ -110,6 +110,9 @@ sudo service tor start || { echo "Errore durante l'avvio del servizio Tor"; exit
 # Avvio del servizio Tor
 echo "Avvio del servizio Tor..."
 sudo service tor start
+
+# Installazione di pacchetti npm
+npm install pg
 
 # Esecuzione dello script per aggiornamenti personalizzati
 echo "Esecuzione dello script per aggiornamenti personalizzati..."
