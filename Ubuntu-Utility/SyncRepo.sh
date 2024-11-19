@@ -1,17 +1,33 @@
 #!/bin/bash
 
-# Percorsi delle directory
-BASE_DIR1='/home/kenobi/Documenti/GitHub/UniDevPortfolio'
+# Elenco delle repository
+repos=(
+  "/home/kenobi/Documenti/GitHub/RealDevPortfolio"
+  "/home/kenobi/Documenti/GitHub/UniDevPortfolio"
+)
 
-# Funzione per fare il pull e push di una repository
-function pull_push {
-    local dir="$1"
-    echo "Esegui pull e push per: $dir"
-    git -C "$dir" pull origin main
-    git -C "$dir" push origin main
+# Funzione per eseguire pull
+pull_repo() {
+  local repo_path=$1
+  echo "Eseguendo pull nella repository: $repo_path"
+  cd "$repo_path" || exit
+  git pull origin main
 }
 
-# Esegui pull e push per entrambe le directory
-pull_push "$BASE_DIR1"
+# Funzione per eseguire push
+push_repo() {
+  local repo_path=$1
+  echo "Eseguendo push nella repository: $repo_path"
+  cd "$repo_path" || exit
+  git push origin main
+}
 
-echo "Operazione completata."
+# Esegui il pull per entrambe le repository
+for repo in "${repos[@]}"; do
+  pull_repo "$repo"
+done
+
+# Esegui il push per entrambe le repository
+for repo in "${repos[@]}"; do
+  push_repo "$repo"
+done
