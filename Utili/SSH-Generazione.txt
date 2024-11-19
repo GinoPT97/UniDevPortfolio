@@ -1,11 +1,3 @@
-SSH :
-
-SHA256:6dzFQDEPqg8k4lmx9IxH5oI5Q5gY2E96gtp3Fciv2Ok
-
-Chiave Pubblica :
-
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIe1IPVCeB3UVUirZobykexfhXJKjGylaPLEZw7Oogn8 gino.pt17@gmail.com
-
 COMANDI GENERAZIONE SSH PER IL PUSH DA TERMINALE 
 
 1. Controllare se esiste già :
