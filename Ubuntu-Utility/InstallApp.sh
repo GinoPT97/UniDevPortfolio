@@ -115,6 +115,8 @@ sudo service tor start
 echo "Installazione di pacchetti npm..."
 npm install -g pg express passport passport-google-oauth20 mongoose express-session dotenv \
   passport-local passport-apple passport-linkedin-oauth2 jsonwebtoken bcrypt cors nodemon dotenv-flow helmet
+  npm install express mongoose passport passport-google-oauth20 passport-local passport-apple express-session dotenv jsonwebtoken bcrypt cors helmet
+
 
 # Esecuzione dello script per aggiornamenti personalizzati
 echo "Esecuzione dello script per aggiornamenti personalizzati..."
