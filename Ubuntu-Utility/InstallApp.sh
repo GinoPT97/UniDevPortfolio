@@ -112,7 +112,10 @@ echo "Avvio del servizio Tor..."
 sudo service tor start
 
 # Installazione di pacchetti npm
-npm install pg
+echo "Installazione di pacchetti npm..."
+npm install -g pg express passport passport-google-oauth20 mongoose express-session dotenv \
+  passport-facebook passport-twitter passport-github passport-local passport-apple \
+  passport-github2 passport-linkedin-oauth2 jsonwebtoken bcrypt cors nodemon dotenv-flow helmet csurf
 
 # Esecuzione dello script per aggiornamenti personalizzati
 echo "Esecuzione dello script per aggiornamenti personalizzati..."

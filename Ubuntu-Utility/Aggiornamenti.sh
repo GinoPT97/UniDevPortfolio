@@ -86,6 +86,8 @@ while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
 done
 sudo dpkg --configure -a
 
+npm audit fix
+
 # Aggiornamento APT
 update_apt_packages
 
