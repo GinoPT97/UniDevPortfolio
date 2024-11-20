@@ -5,6 +5,20 @@ log_info() {
     echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - $1"
 }
 
+# Funzione per gestire Git per UniDevPortfolio
+update_unidev_repo() {
+    log_info "Aggiornamento del repository UniDevPortfolio..."
+    git -C /home/kenobi/Documenti/GitHub/UniDevPortfolio pull origin main
+    git -C /home/kenobi/Documenti/GitHub/UniDevPortfolio push origin main
+}
+
+# Funzione per gestire Git per RealDevPortfolio
+update_realdev_repo() {
+    log_info "Aggiornamento del repository RealDevPortfolio..."
+    git -C /home/kenobi/Documenti/GitHub/RealDevPortfolio pull origin main
+    git -C /home/kenobi/Documenti/GitHub/RealDevPortfolio push origin main
+}
+
 # Funzione per aggiornare pacchetti APT
 update_apt_packages() {
     log_info "Aggiornamento dell'elenco dei pacchetti..."
