@@ -26,12 +26,19 @@ clean_apt_packages() {
     sudo apt-get clean -y
 }
 
-# Funzione per aggiornare Node.js
+# Funzione per aggiornare Node.js e gestire i pacchetti npm
 update_node() {
     log_info "Aggiornamento di Node.js..."
     if command -v node &> /dev/null; then
         sudo npm install -g n
         sudo n stable
+
+        # Aggiornamento pacchetti npm
+        log_info "Aggiornamento dei pacchetti npm globali..."
+        sudo npm update -g
+        sudo npm audit fix
+        log_info "Rimozione pacchetti npm obsoleti..."
+        sudo npm prune -g
     else
         log_info "Node.js non è installato."
     fi
@@ -86,8 +93,6 @@ while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
 done
 sudo dpkg --configure -a
 
-npm audit fix
-
 # Aggiornamento APT
 update_apt_packages
 
@@ -97,7 +102,7 @@ update_conda
 # Pulizia pacchetti obsoleti Conda
 clean_conda_packages
 
-# Aggiornamento Node.js
+# Aggiornamento Node.js e npm
 update_node
 
 # Aggiornamento ambienti virtuali Python
