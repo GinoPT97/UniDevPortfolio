@@ -110,7 +110,8 @@ sudo service tor start || { echo "Errore durante l'avvio del servizio Tor"; exit
 # Installazione di pacchetti npm
 echo "Installazione di pacchetti npm..."
 npm install -g pg express passport passport-google-oauth20 mongoose express-session dotenv \
-  passport-local passport-apple passport-linkedin-oauth2 jsonwebtoken bcrypt cors nodemon dotenv-flow helmet
+  passport-local passport-apple passport-linkedin-oauth2 jsonwebtoken bcrypt cors nodemon dotenv-flow helmet \
+  express-validator @types/express npm-force-resolutions
 
 # Esecuzione dello script per aggiornamenti personalizzati
 echo "Esecuzione dello script per aggiornamenti personalizzati..."
