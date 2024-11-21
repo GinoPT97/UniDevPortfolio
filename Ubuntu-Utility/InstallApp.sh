@@ -107,11 +107,13 @@ sudo snap install --classic code android-studio eclipse pycharm-community
 echo "Avvio del servizio Tor..."
 sudo service tor start || { echo "Errore durante l'avvio del servizio Tor"; exit 1; }
 
-# Installazione di pacchetti npm
 echo "Installazione di pacchetti npm..."
-npm install -g pg express passport passport-google-oauth20 mongoose express-session dotenv \
-  passport-local passport-apple passport-linkedin-oauth2 jsonwebtoken bcrypt cors nodemon dotenv-flow helmet \
-  express-validator @types/express npm-force-resolutions
+
+npm install -g \
+  pg express mongoose cors nodemon dotenv helmet morgan compression uuid axios lodash validator dayjs \
+  passport passport-local passport-google-oauth20 passport-facebook passport-apple passport-jwt passport-linkedin-oauth2 \
+  jsonwebtoken bcrypt bcryptjs express-session apollo-server-express graphql graphql-request express-validator \
+  @types/express @types/chai chai supertest typescript ts-node jest npm-force-resolutions winston node-cache
 
 # Esecuzione dello script per aggiornamenti personalizzati
 echo "Esecuzione dello script per aggiornamenti personalizzati..."
