@@ -29,6 +29,7 @@ install_packages \
   texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
   cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon
 
+sudo powerprofilesctl set balanced
 
 if command -v cpufreq-set &> /dev/null; then
   sudo cpufreq-set -g powersave
@@ -55,10 +56,6 @@ install_packages docker-ce docker-ce-cli containerd.io
 sudo systemctl start docker
 sudo systemctl enable docker
 
-# Scaricamento del file KVRT
-echo "Scaricamento del file KVRT..."
-wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh | sh || { echo "Errore durante l'installazione di NordVPN"; exit 1; }
-
 # Installazione e configurazione di NordVPN
 echo "Installazione e configurazione di NordVPN..."
 sh <(wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh)
@@ -67,11 +64,10 @@ nordvpn set autoconnect on
 
 # Installazione di pgAdmin 4
 echo "Installazione di pgAdmin 4..."
-sudo /usr/pgadmin4/bin/setup-web.sh || { echo "Errore durante la configurazione di pgAdmin 4"; exit 1; }
 echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list
 sudo apt update
 install_packages pgadmin4 pgadmin4-desktop pgadmin4-web
-sudo /usr/pgadmin4/bin/setup-web.sh
+sudo /usr/pgadmin4/bin/setup-web.sh || { echo "Errore durante la configurazione di pgAdmin 4"; exit 1; }
 
 # Configurazione della password dell'utente PostgreSQL
 echo "Configurazione della password dell'utente PostgreSQL..."
@@ -106,18 +102,15 @@ code --locale=it
 echo "Installazione di applicazioni tramite Snap..."
 sudo snap install dbeaver-ce openjdk --classic
 sudo snap install --classic code android-studio eclipse pycharm-community
-sudo service tor start || { echo "Errore durante l'avvio del servizio Tor"; exit 1; }
 
 # Avvio del servizio Tor
 echo "Avvio del servizio Tor..."
-sudo service tor start
+sudo service tor start || { echo "Errore durante l'avvio del servizio Tor"; exit 1; }
 
 # Installazione di pacchetti npm
 echo "Installazione di pacchetti npm..."
 npm install -g pg express passport passport-google-oauth20 mongoose express-session dotenv \
   passport-local passport-apple passport-linkedin-oauth2 jsonwebtoken bcrypt cors nodemon dotenv-flow helmet
-  npm install express mongoose passport passport-google-oauth20 passport-local passport-apple express-session dotenv jsonwebtoken bcrypt cors helmet
-
 
 # Esecuzione dello script per aggiornamenti personalizzati
 echo "Esecuzione dello script per aggiornamenti personalizzati..."
