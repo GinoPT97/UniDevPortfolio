@@ -27,7 +27,8 @@ install_packages \
   codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor \
   aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base \
   texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
-  cpufrequtils nvidia-prime build-essential libvips-dev
+  cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon
+
 
 if command -v cpufreq-set &> /dev/null; then
   sudo cpufreq-set -g powersave
