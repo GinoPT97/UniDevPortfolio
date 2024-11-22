@@ -114,6 +114,15 @@ npm install -g \
   passport passport-local passport-google-oauth20 passport-facebook passport-apple passport-jwt passport-linkedin-oauth2 \
   jsonwebtoken bcrypt bcryptjs express-session apollo-server-express graphql graphql-request express-validator \
   @types/express @types/chai chai supertest typescript ts-node jest npm-force-resolutions winston node-cache
+  # API di Notizie
+npm install axios newsapi passport passport-google-oauth20 passport-facebook passport-apple apollo-server-express graphql jsonwebtoken bcryptjs
+
+# API di Autenticazione
+npm install passport passport-jwt passport-google-oauth20 passport-facebook passport-apple
+
+# Altre librerie per supporto
+npm install express cors helmet morgan express-validator dotenv compression uuid winston node-cache axios dayjs validator lodash
+
 
 # Esecuzione dello script per aggiornamenti personalizzati
 echo "Esecuzione dello script per aggiornamenti personalizzati..."

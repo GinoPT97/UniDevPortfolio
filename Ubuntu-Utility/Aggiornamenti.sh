@@ -38,7 +38,7 @@ update_node() {
         sudo npm update -g
         sudo npm audit fix
         log_info "Rimozione pacchetti npm obsoleti..."
-        sudo npm prune -g
+        sudo npm prune --global
     else
         log_info "Node.js non è installato."
     fi
