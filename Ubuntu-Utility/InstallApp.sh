@@ -92,7 +92,9 @@ install_vscode_extensions \
   github.copilot github.copilot-chat github.remotehub github.vscode-pull-request-github \
   ms-azuretools.azure-dev ms-azuretools.vscode-azureappservice ms-azuretools.vscode-docker \
   christian-kohler.npm-intellisense dbaeumer.vscode-eslint esbenp.prettier-vscode \
-  ms-python.python ms-vscode.cpptools eamodio.gitlens ritwickdey.liveserver
+  ms-python.python ms-vscode.cpptools eamodio.gitlens ritwickdey.LiveServer \
+  amazonwebservices.aws-toolkit-vscode ms-azuretools.vscode-azurestaticwebapps \
+  netlify.netlify-vscode
 
 # Imposta la lingua italiana in Visual Studio Code
 echo '{"locale":"it"}' > ~/.config/Code/User/locale.json
@@ -113,9 +115,14 @@ npm install -g \
   pg express mongoose cors nodemon dotenv helmet morgan compression uuid axios lodash validator dayjs \
   passport passport-local passport-google-oauth20 passport-facebook passport-apple passport-jwt passport-linkedin-oauth2 \
   jsonwebtoken bcrypt bcryptjs express-session apollo-server-express graphql graphql-request express-validator \
-  @types/express @types/chai chai supertest typescript ts-node jest npm-force-resolutions winston node-cache
-  # API di Notizie
+  @types/express @types/chai chai supertest typescript ts-node jest npm-force-resolutions winston node-cache firebase-tools \
+  @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs
+
+# API di Notizie
 npm install axios newsapi passport passport-google-oauth20 passport-facebook passport-apple apollo-server-express graphql jsonwebtoken bcryptjs
+
+# Installazione di pacchetti per TypeScript
+npm install -g typescript ts-node @types/node @types/express @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs
 
 # API di Autenticazione
 npm install passport passport-jwt passport-google-oauth20 passport-facebook passport-apple
