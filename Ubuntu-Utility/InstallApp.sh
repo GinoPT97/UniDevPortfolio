@@ -130,6 +130,11 @@ npm install passport passport-jwt passport-google-oauth20 passport-facebook pass
 # Altre librerie per supporto
 npm install express cors helmet morgan express-validator dotenv compression uuid winston node-cache axios dayjs validator lodash
 
+pip install fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart
+
+sudo apt install redis
+sudo systemctl start redis
+sudo systemctl enable redis
 
 # Esecuzione dello script per aggiornamenti personalizzati
 echo "Esecuzione dello script per aggiornamenti personalizzati..."
