@@ -111,24 +111,16 @@ sudo service tor start || { echo "Errore durante l'avvio del servizio Tor"; exit
 
 echo "Installazione di pacchetti npm..."
 
-npm install -g \
-  pg express mongoose cors nodemon dotenv helmet morgan compression uuid axios lodash validator dayjs \
+npm install \
+  express mongoose pg cors dotenv helmet morgan compression uuid axios lodash validator dayjs \
   passport passport-local passport-google-oauth20 passport-facebook passport-apple passport-jwt passport-linkedin-oauth2 \
   jsonwebtoken bcrypt bcryptjs express-session apollo-server-express graphql graphql-request express-validator \
-  @types/express @types/chai chai supertest typescript ts-node jest npm-force-resolutions winston node-cache firebase-tools \
-  @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs
+  @types/express @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs \
+  axios newsapi apollo-server-express graphql jsonwebtoken bcryptjs \
+  passport passport-jwt passport-google-oauth20 passport-facebook passport-apple
 
-# API di Notizie
-npm install axios newsapi passport passport-google-oauth20 passport-facebook passport-apple apollo-server-express graphql jsonwebtoken bcryptjs
-
-# Installazione di pacchetti per TypeScript
-npm install -g typescript ts-node @types/node @types/express @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs
-
-# API di Autenticazione
-npm install passport passport-jwt passport-google-oauth20 passport-facebook passport-apple
-
-# Altre librerie per supporto
-npm install express cors helmet morgan express-validator dotenv compression uuid winston node-cache axios dayjs validator lodash
+npm install --save-dev \
+  typescript ts-node @types/node @angular/cli
 
 pip install fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart
 
