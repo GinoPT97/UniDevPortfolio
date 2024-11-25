@@ -3,6 +3,7 @@ import json
 import shutil
 import zipfile
 import logging
+import argparse
 
 # Configura il logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -74,9 +75,11 @@ def main(zip_file_path, output_dir):
     process_takeout(temp_dir, output_dir)
 
 if __name__ == "__main__":
-    # Percorso al file ZIP di Google Foto Takeout e directory di output
-    zip_file_path = "path/to/your/google_photos_takeout.zip"  # Modifica con il percorso corretto
-    output_dir = "output"  # Cartella di destinazione per i file processati
+    parser = argparse.ArgumentParser(description="Processa un file ZIP di Google Takeout per ricreare la struttura delle cartelle.")
+    parser.add_argument("zip_file_path", help="Percorso al file ZIP di Google Foto Takeout")
+    parser.add_argument("output_dir", help="Cartella di destinazione per i file processati")
+
+    args = parser.parse_args()
 
     # Avvia il processo
-    main(zip_file_path, output_dir)
+    main(args.zip_file_path, args.output_dir)
