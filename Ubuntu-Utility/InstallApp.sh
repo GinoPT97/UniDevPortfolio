@@ -118,6 +118,9 @@ npm install \
   @types/express @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs \
   axios newsapi apollo-server-express graphql jsonwebtoken bcryptjs \
   passport passport-jwt passport-google-oauth20 passport-facebook passport-apple
+  firebase-admin firebase-functions passport passport-google-oauth20 passport-facebook passport-apple stripe @paypal/checkout-server-sdk axios dotenv winston pino jest supertest sequelize pg pg-hstore cors helmet express lodash moment firebase @angular/fire
+
+
 
 npm install --save-dev \
   typescript ts-node @types/node @angular/cli
