@@ -96,6 +96,8 @@ reload_systemd_and_dpkg() {
     sudo dpkg --configure -a || { log_error "Errore nel configurare dpkg"; exit 1; }
 }
 
+npx jest --clearCachev
+
 # Funzione per installare Snap
 install_snapd() {
     log_info "Verifica e installazione di Snapd..."
