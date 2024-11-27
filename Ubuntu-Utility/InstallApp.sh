@@ -14,9 +14,6 @@ install_vscode_extensions() {
   done
 }
 
-
-pip install python-bidi
-
 # Funzione per installazione sicura di pacchetti .deb
 install_deb_package() {
   local url=$1
@@ -51,7 +48,7 @@ install_packages \
 sudo powerprofilesctl set balanced
 
 # Installazione pacchetti Python
-pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart
+pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart python-bidi
 
 # Configurazione di CPU
 if command -v cpufreq-set &> /dev/null; then
@@ -135,6 +132,9 @@ npm install \
 
 npm install --save-dev \
   typescript ts-node @types/node @angular/cli
+
+# Rimozione giochi preinstallati
+sudo apt remove --purge gnome-mahjongg gnome-mines gnome-sudoku -y
 
 # Installazione e avvio Redis
 install_packages redis
