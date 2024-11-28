@@ -1,0 +1,21 @@
+extends ./base-layout.pug
+
+block content 
+  .py-5.my-5.text-center
+    img(class=".d-block.mx-auto.mb-4.px-4" src='/img/express.png' alt='Express Logo' width='240px')
+    h1.display-5.fw-bold.text-body-emphasis To-do App
+    .col-lg-6.mx-auto
+      p.lead.mb-4.pt-2
+        | A simple web app built using 
+        strong Node.js 20.9.0 
+        | and 
+        strong Express 4.18.2
+        | .
+        | The app uses <a href="https://sequelize.org/">Sequelize</a> as an ORM.
+        | Source code and Docker environment available on Github.
+      p.lead.mb-4
+        strong Beware:
+        |  This web app is intended as a basic first example to showcase
+        |  the express framework. It may contain security vulnerabilities and is definitely not production-ready!
+      .d-grid.gap-2.d-sm-flex.justify-content-sm-center
+        a.btn.btn-primary.btn-lg.px-4.gap-3(href='/todo') Manage your To-do List

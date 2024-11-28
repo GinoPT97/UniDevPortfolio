@@ -1,0 +1,27 @@
+extends ./base-layout.pug
+
+block content
+  h1 Welcome to your To-do List
+  p
+  |  Welcome to our Express To-do list web app! Links to reset the list or to go back
+  |  to the homepage are on the navbar above.
+  |  Use the form below to add items to the To-Do list!
+  
+
+  form(class="row g-3 align-items-end py-4" action="/todo" method="POST")
+    .col-md-9
+      label(for="todo" class="form-label") To-do Item
+      input(type="text" class="form-control" id="todo" name="todo" required)
+    .col-md-3
+      button(class="btn btn-primary w-100" type="submit") Save To-do
+
+  .list-group
+    each item in todoItems
+      div(class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="#")
+        span(class=`${item.done ? "todo-done" : ""}`)= item.todo 
+        div(class="btn-group" role="group" aria-label="Basic mixed styles example")
+          a(class="btn btn-outline-success btn-sm" href='todo/done/' + item.id) #{item.done ? "Mark as to-do" : "Mark as done"}
+          a(class="btn btn-outline-primary btn-sm" href='todo/edit/' + item.id) Edit
+          a(class="btn btn-outline-danger btn-sm"  href='todo/delete/' + item.id) Delete
+    else 
+      p(class="text-danger") The To-do list is currently empty! Add the first item using the form above.

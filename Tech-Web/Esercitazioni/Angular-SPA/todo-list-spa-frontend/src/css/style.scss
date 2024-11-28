@@ -1,0 +1,91 @@
+$main-color: rgb(22, 119, 144);
+$accent-color: rgb(255, 234, 0);
+
+html {
+  color: darken($main-color, 70%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+input {
+  padding:5px; 
+  border:2px solid #ccc; 
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+input:focus {
+  border-color: $main-color;
+}
+
+button {
+  padding:5px 15px; 
+  background: $main-color; 
+  color: $accent-color;
+  border:0 none;
+  cursor:pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px; 
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  
+  main {
+    flex: 1;
+  }
+
+  nav, main, footer {
+    padding: 1em;
+  }
+
+  nav {
+    border-bottom: 2px solid darken($main-color, 20%);
+  }
+}
+
+h1 {
+  color: $main-color;
+  font-size: 2.3rem;
+  margin-bottom: .5rem;
+}
+
+nav {
+  display: flex;
+}
+
+nav a {
+  margin-right: .75em;
+  color: $main-color;
+}
+
+p {
+  margin-bottom: 2rem;
+}
+
+click-counter button {
+  font-weight: 600;
+  border: 2px solid darken($main-color, 5%);
+  border-radius: 5px;
+  color: $accent-color;
+  background-color: $main-color;
+  width: 8.5rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  transition: opacity .1s, $main-color .1s;
+  cursor: pointer;
+}
+click-counter button:active {
+  background-color: darken($main-color, 10%);
+}
+
+footer {
+  background-color: darken($main-color, 10%);
+  color: $accent-color;
+}

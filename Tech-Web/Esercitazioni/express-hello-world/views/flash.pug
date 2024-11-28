@@ -1,0 +1,10 @@
+h1 Flash messages demonstration 
+p This is a page to demonstrate flash messages. Try to reload the page after being redirected here.
+
+ul 
+  each info in infos 
+    li(style="color: blue") #{info}
+  each success in successes 
+    li(style="color: green") #{success}
+  each error in errors 
+    li(style="color: red") #{error}

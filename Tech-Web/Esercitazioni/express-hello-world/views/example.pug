@@ -1,0 +1,9 @@
+//- file: /views/example.pug
+doctype html 
+html 
+  head 
+    title List of Exams
+  body 
+    h1 List of Exams 
+    each exam in items 
+      li #{exam.name} grade #{exam.grade}

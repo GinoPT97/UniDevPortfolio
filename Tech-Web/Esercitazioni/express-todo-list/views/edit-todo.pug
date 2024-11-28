@@ -1,0 +1,11 @@
+extends ./base-layout.pug
+
+block content
+  h1 Edit To-do Item
+  
+  form(class="row g-3 align-items-end py-4" action="/todo/edit/"+item.id method="POST")
+    .col-md-9
+      label(for="todo" class="form-label") To-do Item
+      input(type="text" class="form-control" id="todo" name="todo" value=item.todo required)
+    .col-md-3
+      button(class="btn btn-primary w-100" type="submit") Update To-do
