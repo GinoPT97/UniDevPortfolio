@@ -42,8 +42,11 @@ update_node() {
         sudo npm update -g || { log_error "Errore nell'aggiornamento dei pacchetti npm globali"; exit 1; }
         sudo npm audit fix || { log_error "Errore nell'esecuzione di npm audit fix"; exit 1; }
 
+        log_info "Controllo pacchetti npm obsoleti..."
+        npm outdated -g || { log_error "Errore nel controllo dei pacchetti obsoleti npm"; exit 1; }
+
         log_info "Rimozione pacchetti npm obsoleti..."
-        sudo npm prune -g || { log_error "Errore nella rimozione dei pacchetti obsoleti npm"; exit 1; }
+        npm uninstall -g $(npm outdated -g --parseable --depth=0 | cut -d: -f2) || { log_error "Errore nella rimozione dei pacchetti obsoleti npm"; exit 1; }
     else
         log_info "Node.js non è installato."
     fi
