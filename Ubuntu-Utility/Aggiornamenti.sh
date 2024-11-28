@@ -96,8 +96,6 @@ reload_systemd_and_dpkg() {
     sudo dpkg --configure -a || { log_error "Errore nel configurare dpkg"; exit 1; }
 }
 
-npx jest --clearCachev
-
 # Funzione per installare Snap
 install_snapd() {
     log_info "Verifica e installazione di Snapd..."
@@ -138,7 +136,6 @@ sudo do-release-upgrade -f DistUpgradeViewNonInteractive || { log_error "Errore 
 
 # Sblocco della sospensione energetica del Wi-Fi
 log_info "Sblocco della sospensione energetica del Wi-Fi..."
-sudo rfkill unblock wifi
 sudo rfkill unblock all
 
 # Pulizia pacchetti APT
@@ -164,5 +161,9 @@ fi
 # Riavvio di Ubuntu Software
 log_info "Riavvio di Ubuntu Software..."
 sudo systemctl restart snapd || { log_error "Errore nel riavvio di Ubuntu Software"; exit 1; }
+
+# Pulizia della cache di Jest
+log_info "Pulizia della cache di Jest..."
+npx jest --clearCache || { log_error "Errore nella pulizia della cache di Jest"; exit 1; }
 
 log_info "Aggiornamenti completati!"
