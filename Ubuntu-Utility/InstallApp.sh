@@ -129,6 +129,21 @@ npm install \
   axios newsapi apollo-server-express graphql jsonwebtoken bcryptjs \
   passport passport-jwt passport-google-oauth20 passport-facebook passport-apple \
   firebase-admin firebase-functions passport passport-google-oauth20 passport-facebook passport-apple stripe @paypal/checkout-server-sdk axios dotenv winston pino jest supertest sequelize pg pg-hstore cors helmet express lodash moment firebase @angular/fire
+  
+  npm install @angular/core @angular/common @angular/forms @angular/router
+npm install @angular/platform-browser @angular/platform-server
+npm install react react-dom
+npm install --save-dev @types/react @types/react-dom
+npm install react-router-dom
+npm install --save-dev webpack webpack-cli
+npm install --save-dev eslint
+npm install bootstrap
+npm install tailwindcss postcss autoprefixer
+npx tailwindcss init
+
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+
 
 npm install --save-dev \
   typescript ts-node @types/node @angular/cli
