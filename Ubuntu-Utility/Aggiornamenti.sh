@@ -43,6 +43,9 @@ update_node() {
         log_info "Aggiornamento di Node.js alla versione stabile..."
         sudo npm install -g n && sudo n stable
 
+        log_info "Pulizia della cache npm..."
+        sudo npm cache clean --force
+
         log_info "Aggiornamento dei pacchetti npm globali..."
         sudo npm update -g
         sudo npm audit fix

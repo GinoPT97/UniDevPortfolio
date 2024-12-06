@@ -48,7 +48,7 @@ install_packages \
 sudo powerprofilesctl set balanced
 
 # Installazione pacchetti Python
-pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart python-bidi
+pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart python-bidi || { echo "Errore durante l'installazione dei pacchetti Python"; exit 1; }
 
 # Configurazione di CPU
 if command -v cpufreq-set &> /dev/null; then
@@ -64,8 +64,8 @@ git lfs install
 echo "Installazione di Node.js..."
 curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 install_packages nodejs
-sudo npm install -g n
-sudo n latest
+sudo npm install -g n || { echo "Errore durante l'installazione di npm"; exit 1; }
+sudo n latest || { echo "Errore durante l'aggiornamento di Node.js"; exit 1; }
 
 # Installazione Docker
 echo "Installazione di Docker..."
@@ -79,8 +79,9 @@ run_command sudo systemctl enable docker
 # Installazione NordVPN
 echo "Installazione e configurazione di NordVPN..."
 sh <(wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh)
-nordvpn connect
-nordvpn set autoconnect on
+nordvpn login || { echo "Errore durante il login a NordVPN"; exit 1; }
+nordvpn connect || { echo "Errore durante la connessione a NordVPN"; exit 1; }
+nordvpn set autoconnect on || { echo "Errore durante l'impostazione di autoconnect per NordVPN"; exit 1; }
 
 # Installazione pgAdmin 4
 echo "Installazione di pgAdmin 4..."
@@ -120,7 +121,6 @@ echo "Avvio del servizio Tor..."
 run_command sudo service tor start
 
 # Installazione pacchetti npm
-echo "Installazione pacchetti npm..."
 npm install \
   express mongoose pg cors dotenv helmet morgan compression uuid axios lodash validator dayjs \
   passport passport-local passport-google-oauth20 passport-facebook passport-apple passport-jwt passport-linkedin-oauth2 \
@@ -128,22 +128,26 @@ npm install \
   @types/express @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs \
   axios newsapi apollo-server-express graphql jsonwebtoken bcryptjs \
   passport passport-jwt passport-google-oauth20 passport-facebook passport-apple \
-  firebase-admin firebase-functions passport passport-google-oauth20 passport-facebook passport-apple stripe @paypal/checkout-server-sdk axios dotenv winston pino jest supertest sequelize pg pg-hstore cors helmet express lodash moment firebase @angular/fire
-  
-  npm install @angular/core @angular/common @angular/forms @angular/router
-npm install @angular/platform-browser @angular/platform-server
-npm install react react-dom
-npm install --save-dev @types/react @types/react-dom
-npm install react-router-dom
-npm install --save-dev webpack webpack-cli
-npm install --save-dev eslint
-npm install bootstrap
-npm install tailwindcss postcss autoprefixer
-npx tailwindcss init
+  firebase-admin firebase-functions passport passport-google-oauth20 passport-facebook passport-apple stripe @paypal/checkout-server-sdk axios dotenv winston pino jest supertest sequelize pg pg-hstore cors helmet express lodash moment firebase @angular/fire || { echo "Errore durante l'installazione dei pacchetti npm"; exit 1; }
 
+npm install @angular/core @angular/common @angular/forms @angular/router || { echo "Errore durante l'installazione dei pacchetti Angular"; exit 1; }
+npm install @angular/platform-browser @angular/platform-server || { echo "Errore durante l'installazione dei pacchetti Angular"; exit 1; }
+npm install react react-dom || { echo "Errore durante l'installazione dei pacchetti React"; exit 1; }
+npm install --save-dev @types/react @types/react-dom || { echo "Errore durante l'installazione dei pacchetti React types"; exit 1; }
+npm install react-router-dom || { echo "Errore durante l'installazione dei pacchetti React Router"; exit 1; }
+npm install --save-dev webpack webpack-cli || { echo "Errore durante l'installazione dei pacchetti Webpack"; exit 1; }
+npm install --save-dev eslint || { echo "Errore durante l'installazione dei pacchetti ESLint"; exit 1; }
+npm install bootstrap || { echo "Errore durante l'installazione dei pacchetti Bootstrap"; exit 1; }
+npm install tailwindcss postcss autoprefixer || { echo "Errore durante l'installazione dei pacchetti TailwindCSS"; exit 1; }
+npx tailwindcss init || { echo "Errore durante l'inizializzazione di TailwindCSS"; exit 1; }
+npm install express-validator || { echo "Errore durante l'installazione dei pacchetti Express Validator"; exit 1; }
+npm install winston || { echo "Errore durante l'installazione dei pacchetti Winston"; exit 1; }
+npm install helmet || { echo "Errore durante l'installazione dei pacchetti Helmet"; exit 1; }
+npm install sequelize pg pg-hstore || { echo "Errore durante l'installazione dei pacchetti Sequelize"; exit 1; }
+npm install bull || { echo "Errore durante l'installazione dei pacchetti Bull"; exit 1; }
+npm install bull
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
-
 
 npm install --save-dev \
   typescript ts-node @types/node @angular/cli
