@@ -39,7 +39,7 @@ install_packages \
   apt-transport-https wireshark kate zram-config preload bluetooth bluez blueman \
   flatpak git gparted default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk \
   postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common \
-  codeblocks gnome-boxes arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor \
+  codeblocks arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor \
   aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base \
   texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
   cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon jest
@@ -105,7 +105,7 @@ install_vscode_extensions \
   christian-kohler.npm-intellisense dbaeumer.vscode-eslint esbenp.prettier-vscode \
   ms-python.python ms-vscode.cpptools eamodio.gitlens ritwickdey.LiveServer \
   amazonwebservices.aws-toolkit-vscode ms-azuretools.vscode-azurestaticwebapps \
-  netlify.netlify-vscode
+  netlify.netlify-vscode dsznajder.es7-react-js-snippets steoates.autoimport coenraads.bracket-pair-colorizer-2
 
 # Impostazione lingua italiana per VS Code
 echo '{"locale":"it"}' > ~/.config/Code/User/locale.json
@@ -128,29 +128,16 @@ npm install \
   @types/express @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs \
   axios newsapi apollo-server-express graphql jsonwebtoken bcryptjs \
   passport passport-jwt passport-google-oauth20 passport-facebook passport-apple \
-  firebase-admin firebase-functions passport passport-google-oauth20 passport-facebook passport-apple stripe @paypal/checkout-server-sdk axios dotenv winston pino jest supertest sequelize pg pg-hstore cors helmet express lodash moment firebase @angular/fire || { echo "Errore durante l'installazione dei pacchetti npm"; exit 1; }
+  firebase-admin firebase-functions passport passport-google-oauth20 passport-facebook passport-apple stripe @paypal/checkout-server-sdk axios dotenv winston pino jest supertest sequelize pg pg-hstore cors helmet express lodash moment firebase @angular/fire \
+  @angular/core @angular/common @angular/forms @angular/router @angular/platform-browser @angular/platform-server \
+  react react-dom @types/react @types/react-dom react-router-dom \
+  webpack webpack-cli eslint bootstrap tailwindcss postcss autoprefixer express-validator winston helmet sequelize pg pg-hstore bull config jsonwebtoken redis swagger-jsdoc swagger-ui-express http-errors connect-redis express-session prom-client csurf express-rate-limit
 
-npm install @angular/core @angular/common @angular/forms @angular/router || { echo "Errore durante l'installazione dei pacchetti Angular"; exit 1; }
-npm install @angular/platform-browser @angular/platform-server || { echo "Errore durante l'installazione dei pacchetti Angular"; exit 1; }
-npm install react react-dom || { echo "Errore durante l'installazione dei pacchetti React"; exit 1; }
-npm install --save-dev @types/react @types/react-dom || { echo "Errore durante l'installazione dei pacchetti React types"; exit 1; }
-npm install react-router-dom || { echo "Errore durante l'installazione dei pacchetti React Router"; exit 1; }
-npm install --save-dev webpack webpack-cli || { echo "Errore durante l'installazione dei pacchetti Webpack"; exit 1; }
-npm install --save-dev eslint || { echo "Errore durante l'installazione dei pacchetti ESLint"; exit 1; }
-npm install bootstrap || { echo "Errore durante l'installazione dei pacchetti Bootstrap"; exit 1; }
-npm install tailwindcss postcss autoprefixer || { echo "Errore durante l'installazione dei pacchetti TailwindCSS"; exit 1; }
 npx tailwindcss init || { echo "Errore durante l'inizializzazione di TailwindCSS"; exit 1; }
-npm install express-validator || { echo "Errore durante l'installazione dei pacchetti Express Validator"; exit 1; }
-npm install winston || { echo "Errore durante l'installazione dei pacchetti Winston"; exit 1; }
-npm install helmet || { echo "Errore durante l'installazione dei pacchetti Helmet"; exit 1; }
-npm install sequelize pg pg-hstore || { echo "Errore durante l'installazione dei pacchetti Sequelize"; exit 1; }
-npm install bull || { echo "Errore durante l'installazione dei pacchetti Bull"; exit 1; }
-npm install bull
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
 
-npm install --save-dev \
-  typescript ts-node @types/node @angular/cli
+npm install --save-dev typescript ts-node @types/node @angular/cli
 
 # Rimozione giochi preinstallati
 sudo apt remove --purge gnome-mahjongg gnome-mines gnome-sudoku -y
