@@ -44,7 +44,7 @@ execute_command "sudo journalctl --vacuum-time=7d" "Pulizia dei log di sistema v
 # Pulizia della cache del browser
 log_info "Pulizia della cache dei browser..."
 if command -v google-chrome &>/dev/null; then
-    execute_command "google-chrome --clear-cache" "Pulizia cache Google Chrome"
+    execute_command "google-chrome --no-sandbox --clear-cache" "Pulizia cache Google Chrome"
 else
     log_info "Google Chrome non installato. Salto la pulizia."
 fi

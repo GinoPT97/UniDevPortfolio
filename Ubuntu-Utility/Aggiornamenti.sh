@@ -50,15 +50,17 @@ update_node() {
 # Funzione per aggiornare ambienti virtuali Python
 update_python_envs() {
     log_info "Ricerca di ambienti virtuali Python..."
-    for venv in $(find ~/ -type d -name "env*" -or -name "venv*"); do
-        if [ -d "$venv/bin" ]; then
-            log_info "Aggiornamento dell'ambiente virtuale: $venv..."
-            source "$venv/bin/activate"
-            pip install --upgrade pip
-            pip list --outdated | awk '{print $1}' | tail -n +3 | xargs -n 1 pip install --upgrade
-            deactivate
-        fi
-    done
+    find ~/ -type d \( -name "env*" -or -name "venv*" \) -exec bash -c '
+        for venv; do
+            if [ -d "$venv/bin" ]; then
+                log_info "Aggiornamento dell\'ambiente virtuale: $venv..."
+                source "$venv/bin/activate"
+                pip install --upgrade pip
+                pip list --outdated | awk "{print \$1}" | tail -n +3 | xargs -n 1 pip install --upgrade
+                deactivate
+            fi
+        done
+    ' bash {} +
 }
 
 # Funzione per aggiornare Conda
