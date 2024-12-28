@@ -19,7 +19,6 @@ def get_folder_from_json(json_file):
     try:
         with open(json_file, "r", encoding='utf-8') as f:
             data = json.load(f)
-        # Estrai il nome della cartella dal JSON
         return data.get("googlePhotosOrigin", {}).get(
             "mobileUpload", {}).get("deviceFolder", {}).get("localFolderName", None)
     except (json.JSONDecodeError, FileNotFoundError) as e:
@@ -31,30 +30,25 @@ def process_takeout(temp_dir, output_dir):
     json_processed = 0
     media_processed = 0
 
-    # Cammina nella directory dei file estratti
     for root, _, files in os.walk(temp_dir):
         for file in files:
             file_path = os.path.join(root, file)
 
-            # Identifica i file JSON
             if file.endswith(".json"):
                 folder_name = get_folder_from_json(file_path)
 
                 if folder_name:
                     target_folder = os.path.join(output_dir, folder_name)
-                    os.makedirs(target_folder, exist_ok=True)  # Crea la cartella di destinazione se non esiste
+                    os.makedirs(target_folder, exist_ok=True)
 
-                    # Cerca il file multimediale associato
                     media_file = file.replace(".json", "")
                     media_path = os.path.join(root, media_file)
 
-                    # Sposta il file multimediale se esiste
                     if os.path.exists(media_path):
                         shutil.move(media_path, os.path.join(target_folder, media_file))
                         media_processed += 1
                         logging.info(f"Spostato: {media_file} in {target_folder}")
 
-                    # Sposta il file JSON
                     shutil.move(file_path, os.path.join(target_folder, file))
                     json_processed += 1
                 else:
@@ -64,15 +58,16 @@ def process_takeout(temp_dir, output_dir):
 
 def main(zip_file_path, output_dir):
     """Funzione principale che gestisce l'estrazione e il processo."""
-    # Crea la cartella di destinazione se non esiste
     os.makedirs(output_dir, exist_ok=True)
 
-    # Estrai il contenuto del file ZIP
+    if not os.path.exists(zip_file_path):
+        logging.error(f"Il file ZIP non esiste: {zip_file_path}")
+        return
+
     temp_dir = os.path.join(output_dir, 'takeout')
     extract_zip(zip_file_path, temp_dir)
-
-    # Processa i file estratti
     process_takeout(temp_dir, output_dir)
+    shutil.rmtree(temp_dir)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Processa un file ZIP di Google Takeout per ricreare la struttura delle cartelle.")
@@ -80,6 +75,4 @@ if __name__ == "__main__":
     parser.add_argument("output_dir", help="Cartella di destinazione per i file processati")
 
     args = parser.parse_args()
-
-    # Avvia il processo
     main(args.zip_file_path, args.output_dir)
