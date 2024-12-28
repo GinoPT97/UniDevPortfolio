@@ -37,6 +37,18 @@ clean_apt_packages() {
     sudo apt-get clean -y
 }
 
+# Funzione per installare Node.js e npm
+install_node_and_npm() {
+    log_info "Aggiornamento dell'elenco dei pacchetti..."
+    sudo apt update -y
+
+    log_info "Installazione di Node.js e npm..."
+    sudo apt install -y nodejs npm
+
+    log_info "Installazione dei pacchetti npm..."
+    npm install
+}
+
 # Funzione per aggiornare Node.js
 update_node() {
     if command -v node &> /dev/null; then
@@ -50,17 +62,15 @@ update_node() {
 # Funzione per aggiornare ambienti virtuali Python
 update_python_envs() {
     log_info "Ricerca di ambienti virtuali Python..."
-    find ~/ -type d \( -name "env*" -or -name "venv*" \) -exec bash -c '
-        for venv; do
-            if [ -d "$venv/bin" ]; then
-                log_info "Aggiornamento dell\'ambiente virtuale: $venv..."
-                source "$venv/bin/activate"
-                pip install --upgrade pip
-                pip list --outdated | awk "{print \$1}" | tail -n +3 | xargs -n 1 pip install --upgrade
-                deactivate
-            fi
-        done
-    ' bash {} +
+    for venv in $(find ~/ -type d -name "env*" -or -name "venv*"); do
+        if [ -d "$venv/bin" ]; then
+            log_info "Aggiornamento dell'ambiente virtuale: $venv..."
+            source "$venv/bin/activate"
+            pip install --upgrade pip
+            pip list --outdated | awk '{print $1}' | tail -n +3 | xargs -n 1 pip install --upgrade
+            deactivate
+        fi
+    done
 }
 
 # Funzione per aggiornare Conda
@@ -123,6 +133,7 @@ log_info "Inizio aggiornamenti..."
 reload_systemd_and_dpkg
 update_apt_packages
 clean_apt_packages
+install_node_and_npm
 update_node
 update_python_envs
 update_conda
