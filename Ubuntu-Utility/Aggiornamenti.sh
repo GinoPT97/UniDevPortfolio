@@ -37,7 +37,6 @@ clean_apt_packages() {
     sudo apt-get clean -y
 }
 
-<<<<<<< HEAD
 # Funzione per installare Node.js e npm
 install_node_and_npm() {
     log_info "Installazione di Node.js e npm..."
@@ -47,21 +46,6 @@ install_node_and_npm() {
     npm install
 }
 
-||||||| 6db0525
-=======
-# Funzione per installare Node.js e npm
-install_node_and_npm() {
-    log_info "Aggiornamento dell'elenco dei pacchetti..."
-    sudo apt update -y
-
-    log_info "Installazione di Node.js e npm..."
-    sudo apt install -y nodejs npm
-
-    log_info "Installazione dei pacchetti npm..."
-    npm install
-}
-
->>>>>>> 9451166f64a3badfc58b30e4fc30a1ed7ce88912
 # Funzione per aggiornare Node.js
 update_node() {
     if command -v node &> /dev/null; then
@@ -69,7 +53,7 @@ update_node() {
         sudo npm install -g n && sudo n stable
     else
         log_info "Node.js non è installato. Salto questo passaggio."
-    }
+    fi
 }
 
 # Funzione per aggiornare ambienti virtuali Python
