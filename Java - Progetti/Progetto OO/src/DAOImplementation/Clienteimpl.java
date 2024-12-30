@@ -14,6 +14,7 @@ import Model.Tessera;
 public class Clienteimpl implements ClienteJDBC {
     private PreparedStatement setNewCt, cercaCl, updateCl;
     private Statement getAllCt, idCl;
+
     // Costruttore
     public Clienteimpl(Connection connection) throws SQLException {
         getAllCt = connection.createStatement();
@@ -60,10 +61,10 @@ public class Clienteimpl implements ClienteJDBC {
         cercaCl.setString(3, codicefiscale);
         try (ResultSet rs = cercaCl.executeQuery()) {
             if (rs.next()) {
-				return rs.getString("codcliente");
-			} else {
-				return null;
-			}
+                return rs.getString("codcliente");
+            } else {
+                return null;
+            }
         }
     }
 

@@ -33,200 +33,202 @@ import Model.Ordine;
 import Model.Prodotto;
 
 public class Controller {
-	private LoginFrame logf;
-	private NuovoProdottoFrame nprodf;
-	private AdminFrame adminf;
-	private DipendenteFrame dipf;
-	private VisioneDipendentiFrame vdipf;
-	private VisioneProdottiFrame vprodf;
-	public ModificaProdottiFrame modprodf;
-	private StatisticheDipendentiFrame statdipf;
-	private CarrelloFrame carrf;
-	private VisioneClienteFrame visctf;
-	private NuovoDipendenteFrame ndipf;
-	public ModificaDipendenteFrame updipf;
-	private NuovoClienteFrame nclf;
-	public ModificaClienteFrame upclf;
-	private VisioneOrdineFrame visordf;
-	private RicercaFrame searchf;
-	private DBConnection dbconn;
-	private DBConfiguration config = null;
-	private Connection connection = null;
-	private ClienteJDBC cljdbc = null;
-	private DipendenteJDBC dpjdbc = null;
-	private ProdottoJDBC prdjdbc = null;
-	private OrdiniJDBC ordjdbc = null;
-	private TesseraJDBC tsjdbc = null;
-	private ArticoliJDBC artjdbc = null;
-	public DefaultTableModel clienteModel = new DefaultTableModel(new Object[]{"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"}, 0);
-	public DefaultTableModel dipModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
-	public DefaultTableModel prodModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"}, 0);
-	public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Codice Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
-	public String iddip;
-	private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
+    // Dichiarazione dei frame
+    private LoginFrame logf;
+    private NuovoProdottoFrame nprodf;
+    private AdminFrame adminf;
+    private DipendenteFrame dipf;
+    private VisioneDipendentiFrame vdipf;
+    private VisioneProdottiFrame vprodf;
+    public ModificaProdottiFrame modprodf;
+    private StatisticheDipendentiFrame statdipf;
+    private CarrelloFrame carrf;
+    private VisioneClienteFrame visctf;
+    private NuovoDipendenteFrame ndipf;
+    public ModificaDipendenteFrame updipf;
+    private NuovoClienteFrame nclf;
+    public ModificaClienteFrame upclf;
+    private VisioneOrdineFrame visordf;
+    private RicercaFrame searchf;
+    private DBConnection dbconn;
+    private DBConfiguration config = null;
+    private Connection connection = null;
+    private ClienteJDBC cljdbc = null;
+    private DipendenteJDBC dpjdbc = null;
+    private ProdottoJDBC prdjdbc = null;
+    private OrdiniJDBC ordjdbc = null;
+    private TesseraJDBC tsjdbc = null;
+    private ArticoliJDBC artjdbc = null;
+    public DefaultTableModel clienteModel = new DefaultTableModel(new Object[]{"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"}, 0);
+    public DefaultTableModel dipModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
+    public DefaultTableModel prodModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"}, 0);
+    public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Codice Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
+    public String iddip;
+    private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
 
-	public Controller() throws SQLException, IOException {
-		logf = new LoginFrame("Login - Ortofrutta", this);
-		adminf = new AdminFrame("Admin Area", this);
-		dipf = new DipendenteFrame("Dipendente Area", this);
-		nprodf = new NuovoProdottoFrame("Nuovo Prodotto", this);
-		ndipf = new NuovoDipendenteFrame("Nuovo Dipendente", this);
-		nclf = new NuovoClienteFrame("Nuovo Cliente", this);
-		vdipf = new VisioneDipendentiFrame("Gestione Dipendenti", this);
-		vprodf = new VisioneProdottiFrame("Gestione Prodotti", this);
-		visctf = new VisioneClienteFrame("Gestione Clienti", this);
-		upclf = new ModificaClienteFrame("Modifica Cliente", this);
-		updipf = new ModificaDipendenteFrame("Modifica Dipendente", this);
-		modprodf = new ModificaProdottiFrame("Modifica Prodotti", this);
-		statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti", this);
-		carrf = new CarrelloFrame("Carrello", this);
-		visordf = new VisioneOrdineFrame("Visione Ordini", this);
-		searchf = new RicercaFrame("Ricerca Clienti", this);
-		logf.setVisible(true);
-	}
+    public Controller() throws SQLException, IOException {
+        // Inizializzazione dei frame
+        logf = new LoginFrame("Login - Ortofrutta", this);
+        adminf = new AdminFrame("Admin Area", this);
+        dipf = new DipendenteFrame("Dipendente Area", this);
+        nprodf = new NuovoProdottoFrame("Nuovo Prodotto", this);
+        ndipf = new NuovoDipendenteFrame("Nuovo Dipendente", this);
+        nclf = new NuovoClienteFrame("Nuovo Cliente", this);
+        vdipf = new VisioneDipendentiFrame("Gestione Dipendenti", this);
+        vprodf = new VisioneProdottiFrame("Gestione Prodotti", this);
+        visctf = new VisioneClienteFrame("Gestione Clienti", this);
+        upclf = new ModificaClienteFrame("Modifica Cliente", this);
+        updipf = new ModificaDipendenteFrame("Modifica Dipendente", this);
+        modprodf = new ModificaProdottiFrame("Modifica Prodotti", this);
+        statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti", this);
+        carrf = new CarrelloFrame("Carrello", this);
+        visordf = new VisioneOrdineFrame("Visione Ordini", this);
+        searchf = new RicercaFrame("Ricerca Clienti", this);
+        logf.setVisible(true);
+    }
 
-	public void returnToLastFrame() {
-	    // Mostra l'ultimo frame visibile e nasconde gli altri frame
-	    setVisibleFrame(lastFrame, searchf, visordf, vprodf, vdipf, statdipf, visctf, carrf, nprodf, ndipf, nclf, modprodf, upclf, updipf);
-	}
+    public void returnToLastFrame() {
+        // Mostra l'ultimo frame visibile e nasconde gli altri frame
+        setVisibleFrame(lastFrame, searchf, visordf, vprodf, vdipf, statdipf, visctf, carrf, nprodf, ndipf, nclf, modprodf, upclf, updipf);
+    }
 
-	private void setVisibleFrame(Frame toShow, Frame... toHide) {
-	    for (Frame frame : toHide) {
-	        if (frame != null) {
-	            frame.setVisible(false); // Nascondi il frame
-	        }
-	    }
-	    if (toShow != null) {
-	        toShow.setVisible(true); // Mostra il frame specificato
-	    }
-	}
+    private void setVisibleFrame(Frame toShow, Frame... toHide) {
+        for (Frame frame : toHide) {
+            if (frame != null) {
+                frame.setVisible(false); // Nascondi il frame
+            }
+        }
+        if (toShow != null) {
+            toShow.setVisible(true); // Mostra il frame specificato
+        }
+    }
 
-	public void logout(int x) {
-	    // Cambia il frame visibile in base al tipo di logout
-	    setVisibleFrame(logf, (x == 1) ? adminf : dipf);
-	}
+    public void logout(int x) {
+        // Cambia il frame visibile in base al tipo di logout
+        setVisibleFrame(logf, (x == 1) ? adminf : dipf);
+    }
 
-	public void logtoutente(int x) {
-	    logf.setVisible(false); // Nasconde il frame di logout
-	    // Mostra il frame appropriato in base al tipo di utente
-	    setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
-	}
+    public void logtoutente(int x) {
+        logf.setVisible(false); // Nasconde il frame di logout
+        // Mostra il frame appropriato in base al tipo di utente
+        setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
+    }
 
-	public void adminAndElem(int x) {
-	    lastFrame = adminf; // Imposta il frame admin come ultimo frame
-	    switch (x) {
-	        case 1 -> setVisibleFrame(vdipf, adminf, vprodf, statdipf, visordf); // Mostra Visione Dipendenti
-	        case 2 -> setVisibleFrame(vprodf, adminf, vdipf, statdipf, visordf); // Mostra Visione Prodotti
-	        case 3 -> setVisibleFrame(statdipf, adminf, vdipf, vprodf, visordf); // Mostra Statistiche
-	        case 4 -> setVisibleFrame(visordf, adminf, vdipf, vprodf, statdipf); // Mostra Visione Ordini
-	        case 5 -> setVisibleFrame(lastFrame, adminf, vdipf, vprodf, statdipf, visordf); // Torna all'ultimo frame salvato
-	        case 6 -> setVisibleFrame(searchf, adminf, dipf); // Mostra ricerca
-	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
-	    }
-	}
+    public void adminAndElem(int x) {
+        lastFrame = adminf; // Imposta il frame admin come ultimo frame
+        switch (x) {
+            case 1 -> setVisibleFrame(vdipf, adminf, vprodf, statdipf, visordf); // Mostra Visione Dipendenti
+            case 2 -> setVisibleFrame(vprodf, adminf, vdipf, statdipf, visordf); // Mostra Visione Prodotti
+            case 3 -> setVisibleFrame(statdipf, adminf, vdipf, vprodf, visordf); // Mostra Statistiche
+            case 4 -> setVisibleFrame(visordf, adminf, vdipf, vprodf, statdipf); // Mostra Visione Ordini
+            case 5 -> setVisibleFrame(lastFrame, adminf, vdipf, vprodf, statdipf, visordf); // Torna all'ultimo frame salvato
+            case 6 -> setVisibleFrame(searchf, adminf, dipf); // Mostra ricerca
+            default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
+        }
+    }
 
-	public void dipAndElem(int x) {
-	    if (lastFrame == null) lastFrame = dipf; // Inizializza lastFrame se non già impostato
-	    switch (x) {
-	        case 1 -> setVisibleFrame(visctf, dipf); // Mostra Visione Clienti
-	        case 2 -> setVisibleFrame(vprodf, dipf); // Mostra Visione Prodotti
-	        case 3 -> setVisibleFrame(visordf, dipf); // Mostra Visione Ordini
-	        case 4 -> setVisibleFrame(lastFrame, visctf, vprodf, visordf, dipf); // Torna all'ultimo frame salvato
-	        case 5 -> setVisibleFrame(searchf, dipf, adminf); // Mostra ricerca
-	        default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
-	    }
-	}
+    public void dipAndElem(int x) {
+        if (lastFrame == null) lastFrame = dipf; // Inizializza lastFrame se non già impostato
+        switch (x) {
+            case 1 -> setVisibleFrame(visctf, dipf); // Mostra Visione Clienti
+            case 2 -> setVisibleFrame(vprodf, dipf); // Mostra Visione Prodotti
+            case 3 -> setVisibleFrame(visordf, dipf); // Mostra Visione Ordini
+            case 4 -> setVisibleFrame(lastFrame, visctf, vprodf, visordf, dipf); // Torna all'ultimo frame salvato
+            case 5 -> setVisibleFrame(searchf, dipf, adminf); // Mostra ricerca
+            default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
+        }
+    }
 
-	public void visAndElem(int context, int x) {
-	    switch (context) {
-	        case 1: // Carrello
-	            switch (x) {
-	                case 1 -> setVisibleFrame(carrf, visordf); // Mostra il frame carrello
-	                case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
-	            }
-	            break;
+    public void visAndElem(int context, int x) {
+        switch (context) {
+            case 1: // Carrello
+                switch (x) {
+                    case 1 -> setVisibleFrame(carrf, visordf); // Mostra il frame carrello
+                    case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
+                }
+                break;
 
-	        case 2: // Dipendente
-	            switch (x) {
-	                case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
-	                case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
-	                case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
-	            }
-	            break;
+            case 2: // Dipendente
+                switch (x) {
+                    case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
+                    case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
+                    case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
+                }
+                break;
 
-	        case 3: // Cliente
-	            switch (x) {
-	                case 1 -> setVisibleFrame(nclf, visctf); // Nuovo cliente
-	                case 2 -> setVisibleFrame(upclf, visctf); // Modifica cliente
-	                case 3 -> setVisibleFrame(visctf, nclf, upclf); // Vista clienti
-	            }
-	            break;
+            case 3: // Cliente
+                switch (x) {
+                    case 1 -> setVisibleFrame(nclf, visctf); // Nuovo cliente
+                    case 2 -> setVisibleFrame(upclf, visctf); // Modifica cliente
+                    case 3 -> setVisibleFrame(visctf, nclf, upclf); // Vista clienti
+                }
+                break;
 
-	        case 4: // Prodotto
-	            switch (x) {
-	                case 1 -> setVisibleFrame(nprodf, vprodf); // Nuovo prodotto
-	                case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
-	                case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
-	            }
-	            break;
+            case 4: // Prodotto
+                switch (x) {
+                    case 1 -> setVisibleFrame(nprodf, vprodf); // Nuovo prodotto
+                    case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
+                    case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
+                }
+                break;
 
-	        default:
-	            // Handle invalid context if needed, or simply do nothing
-				break;
-		}
-	}
+            default:
+                // Handle invalid context if needed, or simply do nothing
+                break;
+        }
+    }
 
-	public static void main(String[] args) {
-	    // Utilizza EventQueue per garantire che l'app venga eseguita nel thread dell'EDT
-	    EventQueue.invokeLater(() -> {
-	        try {
-	            new Controller();
-	        } catch (SQLException | IOException e) {
-	            e.printStackTrace();
-	        }
-	    });
-	}
+    public static void main(String[] args) {
+        // Utilizza EventQueue per garantire che l'app venga eseguita nel thread dell'EDT
+        EventQueue.invokeLater(() -> {
+            try {
+                new Controller();
+            } catch (SQLException | IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
-	// Metodo generico per popolare il modello della tabella
-	private <T> void populateTable(List<T> items, DefaultTableModel model, Function<T, Object[]> mapper) {
-	    model.setRowCount(0); // Resetta il modello per evitare duplicati
-	    for (T item : items) {
-	        model.addRow(mapper.apply(item)); // Aggiungi riga al modello
-	    }
-	}
+    // Metodo generico per popolare il modello della tabella
+    private <T> void populateTable(List<T> items, DefaultTableModel model, Function<T, Object[]> mapper) {
+        model.setRowCount(0); // Resetta il modello per evitare duplicati
+        for (T item : items) {
+            model.addRow(mapper.apply(item)); // Aggiungi riga al modello
+        }
+    }
 
     // Metodo di supporto per verificare se un campo è nullo o vuoto
     private String checkNull(Object value) {
         return (value == null || value.toString().trim().isEmpty()) ? "---" : value.toString();
     }
 
-	public void connect() throws SQLException {
-		try {
-			dbconn = DBConnection.getInstance(true);
-			connection = dbconn.getConnection();
-			config = new DBConfiguration(connection);
-			// Metodi per la definizione del DB:
-			config.createTipologie();
-			config.createSequences();
-			config.createTableCliente();
-			config.createTableDipendente();
-			config.createTableOrdine();
-			config.createTableProdotto();
-			config.createTableTessera();
-			config.createTableArticoliOrdine();
-			config.FromatTables();
-			config.populateDatabase();
-			cljdbc = new Clienteimpl(connection);
-			dpjdbc = new DipendenteImpl(connection);
-			prdjdbc = new ProdottoImpl(connection);
-			ordjdbc = new OrdiniImpl(connection);
-			tsjdbc = new Tesseraimpl(connection);
-			artjdbc = new ArticoliImpl(connection);
-		} catch (SQLException | ConnectionException e) {
-			System.out.println("SQLException: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
+    public void connect() throws SQLException {
+        try {
+            dbconn = DBConnection.getInstance(true);
+            connection = dbconn.getConnection();
+            config = new DBConfiguration(connection);
+            // Metodi per la definizione del DB:
+            config.createTipologie();
+            config.createSequences();
+            config.createTableCliente();
+            config.createTableDipendente();
+            config.createTableOrdine();
+            config.createTableProdotto();
+            config.createTableTessera();
+            config.createTableArticoliOrdine();
+            config.FromatTables();
+            config.populateDatabase();
+            cljdbc = new Clienteimpl(connection);
+            dpjdbc = new DipendenteImpl(connection);
+            prdjdbc = new ProdottoImpl(connection);
+            ordjdbc = new OrdiniImpl(connection);
+            tsjdbc = new Tesseraimpl(connection);
+            artjdbc = new ArticoliImpl(connection);
+        } catch (SQLException | ConnectionException e) {
+            System.out.println("SQLException: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     // Verifica se l'ID è presente nel database
     public boolean verifyid(String ID) throws SQLException {

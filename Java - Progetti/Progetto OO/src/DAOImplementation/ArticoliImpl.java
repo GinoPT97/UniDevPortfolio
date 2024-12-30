@@ -40,10 +40,10 @@ public class ArticoliImpl implements ArticoliJDBC {
                 JOIN articoliordine AS AO ON C.codcliente = AO.codcliente
                 GROUP BY C.codcliente, C.nome, C.cognome, AO.categoria
                 """;
-        
-        try (Statement searchClient = connection.createStatement(); 
+
+        try (Statement searchClient = connection.createStatement();
              ResultSet rs = searchClient.executeQuery(query)) {
-             
+
             while (rs.next()) {
                 clienti.add(new Cliente(
                         null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null,
