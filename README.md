@@ -8,15 +8,15 @@ In questo repository, troverai una varietà di progetti sviluppati in linguaggi 
 
 Il repository è organizzato in diverse cartelle, ciascuna dedicata a uno specifico corso o progetto. Ecco cosa puoi aspettarti di trovare:
 
-- **Laboratorio di Programmazione (C)**: Codice sviluppato per affrontare problemi di programmazione in linguaggio C, con un focus su risoluzione di algoritmi complessi e gestione della memoria.
-- **Laboratorio di Algoritmi e Strutture Dati (C)**: Soluzioni a esercizi e progetti focalizzati su algoritmi avanzati, strutture dati come liste, alberi e grafi, e ottimizzazione delle soluzioni.
-- **Basi di Dati (SQL)**: Script SQL per la progettazione e gestione di basi di dati, con particolare attenzione a query avanzate, normalizzazione e gestione dei dati.
-- **Programmazione Orientata agli Oggetti (Java)**: Progetti sviluppati in Java per applicare i principi della programmazione orientata agli oggetti, come ereditarietà, polimorfismo e incapsulamento.
-- **Tech-Web (JavaScript, HTML, CSS)**: Sviluppo di applicazioni web, con un focus su front-end e back-end, utilizzando tecnologie come JavaScript, HTML e CSS.
-- **Sistemi Operativi (C, Bash)**: Progetti che esplorano concetti di sistemi operativi, inclusi la gestione dei processi e della memoria, con applicazioni pratiche in C e Bash. Creazione di server in C per comprendere la comunicazione tra processi e reti.
-- **Architettura degli Elaboratori (Assembly)**: Progetti sviluppati per comprendere la programmazione a basso livello, con esercizi in Assembly per la manipolazione diretta dell'hardware.
-- **Sviluppo Android (Android Studio)**: Creazione di applicazioni Android con un focus sul design dell'interfaccia utente (UI) e sulla gestione dei dati attraverso l'uso di Android Studio.
-- **Altri linguaggi**: Alcuni studi ed esercitazioni personali sono stati svolti in **C++** e **Python**, esplorando concetti avanzati e tecniche moderne.
+- **Laboratorio di Programmazione (C)**: Codice sviluppato per affrontare problemi di programmazione in linguaggio C, con un focus su risoluzione di algoritmi complessi e gestione della memoria. Esempi includono implementazioni di algoritmi di ordinamento e gestione dinamica della memoria.
+- **Laboratorio di Algoritmi e Strutture Dati (C)**: Soluzioni a esercizi e progetti focalizzati su algoritmi avanzati, strutture dati come liste, alberi e grafi, e ottimizzazione delle soluzioni. Progetti includono implementazioni di algoritmi di ricerca e strutture dati personalizzate.
+- **Basi di Dati (SQL)**: Script SQL per la progettazione e gestione di basi di dati, con particolare attenzione a query avanzate, normalizzazione e gestione dei dati. Progetti includono la creazione di database relazionali e l'ottimizzazione delle query.
+- **Programmazione Orientata agli Oggetti (Java)**: Progetti sviluppati in Java per applicare i principi della programmazione orientata agli oggetti, come ereditarietà, polimorfismo e incapsulamento. Esempi includono sistemi di gestione di biblioteche e applicazioni di gestione di inventari.
+- **Tech-Web (JavaScript, HTML, CSS)**: Sviluppo di applicazioni web, con un focus su front-end e back-end, utilizzando tecnologie come JavaScript, HTML e CSS. Progetti includono siti web dinamici e applicazioni web interattive.
+- **Sistemi Operativi (C, Bash)**: Progetti che esplorano concetti di sistemi operativi, inclusi la gestione dei processi e della memoria, con applicazioni pratiche in C e Bash. Creazione di server in C per comprendere la comunicazione tra processi e reti. Esempi includono simulazioni di scheduler di CPU e script di automazione.
+- **Architettura degli Elaboratori (Assembly)**: Progetti sviluppati per comprendere la programmazione a basso livello, con esercizi in Assembly per la manipolazione diretta dell'hardware. Esempi includono programmi per la gestione di periferiche e l'ottimizzazione delle prestazioni.
+- **Sviluppo Android (Android Studio)**: Creazione di applicazioni Android con un focus sul design dell'interfaccia utente (UI) e sulla gestione dei dati attraverso l'uso di Android Studio. Progetti includono app per la gestione di attività e applicazioni di social networking.
+- **Altri linguaggi**: Alcuni studi ed esercitazioni personali sono stati svolti in **C++** e **Python**, esplorando concetti avanzati e tecniche moderne. Esempi includono algoritmi di machine learning in Python e progetti di simulazione in C++.
 
 ## Linguaggi e tecnologie utilizzate
 
@@ -34,6 +34,16 @@ Questo portfolio copre una vasta gamma di linguaggi di programmazione e tecnolog
 - **Android Studio**: Per lo sviluppo di applicazioni Android, con focus sulla gestione dell'interfaccia utente e dei dati.
 - **Python**: Per studi ed esercitazioni personali in programmazione ad alto livello e analisi dei dati.
 
+## Installazione
+
+Per clonare questo repository, esegui il seguente comando nel terminale:
+
+```bash
+git clone https://github.com/kenobi/UniDevPortfolio.git
+```
+
+Assicurati di avere installato Git sul tuo sistema. Puoi trovare le istruzioni per l'installazione di Git [qui](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+
 ## Perché questo repository è rilevante
 
 - **Applicazione pratica della teoria**: Ogni progetto rappresenta un'applicazione concreta dei concetti appresi durante i corsi universitari, con particolare attenzione alla qualità del codice e alla corretta implementazione degli algoritmi.
@@ -42,7 +52,9 @@ Questo portfolio copre una vasta gamma di linguaggi di programmazione e tecnolog
 
 ## Come utilizzare questo repository
 
-Se sei interessato a esplorare o contribuire a questo progetto, puoi iniziare clonando il repository. Ogni cartella contiene progetti indipendenti che puoi esaminare, modificare e adattare alle tue esigenze. Se hai suggerimenti, miglioramenti o correzioni, sentiti libero di aprire una pull request!
+Se sei interessato a esplorare o contribuire a questo progetto, puoi iniziare clonando il repository come descritto nella sezione "Installazione". Ogni cartella contiene progetti indipendenti che puoi esaminare, modificare e adattare alle tue esigenze.
+
+Per esplorare un progetto specifico, naviga nella cartella corrispondente e segui le istruzioni nel file README di quella cartella, se presente. Se hai suggerimenti, miglioramenti o correzioni, sentiti libero di aprire una pull request!
 
 ## License
 
