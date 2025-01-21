@@ -56,6 +56,16 @@ Se sei interessato a esplorare o contribuire a questo progetto, puoi iniziare cl
 
 Per esplorare un progetto specifico, naviga nella cartella corrispondente e segui le istruzioni nel file README di quella cartella, se presente. Se hai suggerimenti, miglioramenti o correzioni, sentiti libero di aprire una pull request!
 
+## Contributi
+
+Se desideri contribuire a questo repository, segui questi passaggi:
+
+1. Fai un fork del repository.
+2. Crea un nuovo branch (`git checkout -b feature/nome-feature`).
+3. Fai le tue modifiche e committale (`git commit -am 'Aggiungi nuova feature'`).
+4. Fai il push del branch (`git push origin feature/nome-feature`).
+5. Apri una pull request.
+
 ## License
 
 Questo progetto è rilasciato sotto la **MIT License** - consulta il file [LICENSE](LICENSE) per i dettagli.

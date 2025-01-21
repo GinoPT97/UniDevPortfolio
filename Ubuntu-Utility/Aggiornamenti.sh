@@ -87,10 +87,17 @@ enable_firewall() {
 # Inizio dello script
 log "INFO" "Inizio aggiornamenti..."
 
+# Ricarica i demoni di sistema e gestisce eventuali blocchi di dpkg
 reload_systemd_and_dpkg
+
+# Aggiorna e pulisce i pacchetti APT
 update_apt_packages
 clean_apt_packages
+
+# Rimuove i file nella directory /etc/apt/sources.list.d/
 remove_apt_sources
+
+# Aggiorna Conda, sblocca il Wi-Fi, installa Snapd e abilita il firewall
 update_conda
 unblock_wifi
 install_snapd
