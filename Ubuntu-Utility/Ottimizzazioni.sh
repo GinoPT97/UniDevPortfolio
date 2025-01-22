@@ -6,114 +6,80 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-# Funzione per loggare informazioni
-log_info() {
-    echo "[INFO] $(date '+%Y-%m-%d %H:%M:%S') - $1"
+# Funzione per loggare messaggi
+log() {
+    local level="$1"
+    local message="$2"
+    echo "[$level] $(date '+%Y-%m-%d %H:%M:%S') - $message"
 }
 
-# Funzione per loggare errori
-log_error() {
-    echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - $1"
-}
-
-# Funzione per eseguire un comando in modo sicuro
+# Esecuzione sicura di comandi
 execute_command() {
     eval "$1"
     if [[ $? -ne 0 ]]; then
-        log_error "$2 fallita"
+        log "ERROR" "$2 fallita"
     else
-        log_info "$2 completata con successo."
+        log "INFO" "$2 completata con successo."
     fi
 }
 
-# Pulizia dei log di sistema e temporanei
-log_info "Pulizia dei log di sistema e file temporanei..."
-execute_command "sudo journalctl --vacuum-files=1" "Pulizia dei log di sistema"
-execute_command "sudo rm -rf /tmp/* /var/tmp/*" "Pulizia dei file temporanei"
+# Pulizia dei file temporanei e della cache
+log "INFO" "Avvio pulizia sistema..."
+execute_command "journalctl --vacuum-files=1" "Pulizia log di sistema"
+execute_command "rm -rf /tmp/* /var/tmp/*" "Pulizia file temporanei"
+execute_command "apt-get clean" "Pulizia cache APT"
+execute_command "apt-get autoremove --purge -y" "Rimozione pacchetti obsoleti"
+execute_command "fc-cache -f -v" "Aggiornamento cache font"
+execute_command "journalctl --vacuum-time=7d" "Rimozione log vecchi di 7 giorni"
 
-# Pulizia della cache di APT, pacchetti obsoleti e font
-log_info "Pulizia della cache di APT e pacchetti obsoleti..."
-execute_command "sudo apt-get clean" "Pulizia della cache APT"
-execute_command "sudo apt-get autoremove --purge -y" "Rimozione pacchetti obsoleti"
-execute_command "sudo fc-cache -f -v" "Pulizia della cache dei font"
-
-# Pulizia dei log di sistema più vecchi di 7 giorni
-log_info "Pulizia dei log di sistema più vecchi di 7 giorni..."
-execute_command "sudo journalctl --vacuum-time=7d" "Pulizia dei log di sistema vecchi"
-
-# Pulizia della cache del browser
-log_info "Pulizia della cache dei browser..."
+# Pulizia cache browser
+log "INFO" "Pulizia cache browser..."
 if command -v google-chrome &>/dev/null; then
     execute_command "google-chrome --no-sandbox --clear-cache" "Pulizia cache Google Chrome"
 else
-    log_info "Google Chrome non installato. Salto la pulizia."
+    log "INFO" "Google Chrome non installato."
 fi
-if [ -d "~/.cache/mozilla/firefox/" ]; then
-    execute_command "rm -rf ~/.cache/mozilla/firefox/*" "Pulizia cache Firefox"
+if [ -d "$HOME/.cache/mozilla/firefox/" ]; then
+    execute_command "rm -rf $HOME/.cache/mozilla/firefox/*" "Pulizia cache Firefox"
 else
-    log_info "Firefox non trovato o cache non presente."
+    log "INFO" "Cache di Firefox non trovata."
 fi
 
-# Pulizia dei log di Apache
+# Pulizia log Apache
 if [ -d "/var/log/apache2/" ]; then
-    log_info "Pulizia dei log di Apache..."
-    execute_command "sudo rm -f /var/log/apache2/*.log" "Pulizia log Apache"
+    execute_command "rm -f /var/log/apache2/*.log" "Pulizia log Apache"
 else
-    log_info "Apache non trovato. Salto la pulizia dei log."
+    log "INFO" "Apache non installato."
 fi
 
-# Compattazione e deframmentazione
-log_info "Compattazione e deframmentazione del filesystem..."
+# Ottimizzazione file system e spazio libero
 if command -v e4defrag &>/dev/null; then
-    execute_command "sudo e4defrag /" "Deframmentazione del filesystem"
+    execute_command "e4defrag /" "Deframmentazione filesystem"
 else
-    log_info "Strumento e4defrag non installato. Salto la deframmentazione."
+    log "INFO" "e4defrag non disponibile."
 fi
 
-# Verifica dello stato della partizione radice
-log_info "Controllo della partizione radice..."
-mounted=$(findmnt -n -o SOURCE /)
-if [[ "$mounted" == "" ]]; then
-    log_error "Impossibile trovare la partizione radice. Controlla il sistema."
-else
-    log_info "La partizione radice è montata come $mounted. Nessuna azione necessaria."
-fi
-
-# Ottimizzazione dello spazio libero
-log_info "Ottimizzazione dello spazio libero..."
 if command -v fstrim &>/dev/null; then
-    execute_command "sudo fstrim -av" "Ottimizzazione spazio libero"
+    execute_command "fstrim -av" "Ottimizzazione spazio libero"
 else
-    log_info "Strumento fstrim non installato. Salto l'ottimizzazione."
+    log "INFO" "fstrim non disponibile."
 fi
 
-# Pulizia dei log di systemd
-log_info "Pulizia dei log di systemd..."
-execute_command "sudo journalctl --vacuum-size=50M" "Pulizia log systemd"
-
-# Pulizia con BleachBit, se installato
+# Pulizia con BleachBit
 if command -v bleachbit &>/dev/null; then
-    log_info "Pulizia con BleachBit..."
-    execute_command "sudo bleachbit --cleanup --quiet" "Pulizia con BleachBit"
+    execute_command "bleachbit --cleanup --quiet" "Pulizia con BleachBit"
 else
-    log_info "BleachBit non trovato. Salto la pulizia."
+    log "INFO" "BleachBit non installato."
 fi
 
-# Rimozione dei pacchetti orfani e aggiornamenti di sicurezza
-log_info "Aggiornamenti e rimozione dei pacchetti orfani..."
-execute_command "sudo apt-get update" "Aggiornamento lista pacchetti"
-execute_command "sudo apt-get upgrade -y" "Aggiornamenti di sicurezza"
+# Aggiornamenti e controllo sistema
+log "INFO" "Aggiornamento pacchetti e controllo sistema..."
+execute_command "apt-get update" "Aggiornamento lista pacchetti"
+execute_command "apt-get upgrade -y" "Aggiornamento pacchetti"
+df -h | log "INFO" "Stato disco verificato."
+free -h | log "INFO" "Stato memoria verificato."
 
-# Controllo dello spazio su disco
-log_info "Controllo dello spazio su disco..."
-df -h | tee >(log_info "Controllo spazio disco eseguito.")
+# Ottimizzazione memoria swap
+execute_command "swapoff -a && swapon -a" "Ottimizzazione swap"
 
-# Controllo della memoria
-log_info "Controllo della memoria..."
-free -h | tee >(log_info "Controllo memoria eseguito.")
-
-# Ottimizzazione della memoria swap
-log_info "Ottimizzazione della memoria swap..."
-execute_command "sudo swapoff -a && sudo swapon -a" "Ottimizzazione della swap"
-
-log_info "Script completato con successo!"
+log "INFO" "Ottimizzazioni completate con successo!"

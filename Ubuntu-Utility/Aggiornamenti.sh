@@ -24,10 +24,35 @@ clean_apt_packages() {
     sudo apt-get clean -y
 }
 
-# Funzione per rimuovere i file nella directory /etc/apt/sources.list.d/
-remove_apt_sources() {
-    log "INFO" "Rimozione dei file nella directory /etc/apt/sources.list.d/..."
-    sudo rm /etc/apt/sources.list.d/*
+# Funzione per installare Node.js e npm
+install_node_and_npm() {
+    log "INFO" "Installazione di Node.js e npm..."
+    sudo apt install -y nodejs npm
+
+    log "INFO" "Installazione dei pacchetti npm..."
+    npm install
+}
+
+# Funzione per aggiornare Node.js
+update_node() {
+    if command -v node &> /dev/null; then
+        log "INFO" "Aggiornamento di Node.js alla versione stabile..."
+        sudo npm install -g n && sudo n stable
+
+        log "INFO" "Verifica dei pacchetti npm obsoleti..."
+        npm outdated
+
+        log "INFO" "Aggiornamento dei pacchetti npm..."
+        npm update
+
+        log "INFO" "Reinstallazione dei pacchetti npm..."
+        npm install
+
+        log "INFO" "Correzione delle vulnerabilità npm..."
+        npm audit fix --force
+    else
+        log "INFO" "Node.js non è installato. Salto questo passaggio."
+    fi
 }
 
 # Funzione per aggiornare Conda
@@ -87,17 +112,12 @@ enable_firewall() {
 # Inizio dello script
 log "INFO" "Inizio aggiornamenti..."
 
-# Ricarica i demoni di sistema e gestisce eventuali blocchi di dpkg
 reload_systemd_and_dpkg
-
-# Aggiorna e pulisce i pacchetti APT
 update_apt_packages
 clean_apt_packages
-
-# Rimuove i file nella directory /etc/apt/sources.list.d/
-remove_apt_sources
-
-# Aggiorna Conda, sblocca il Wi-Fi, installa Snapd e abilita il firewall
+install_node_and_npm
+update_node
+update_python_envs
 update_conda
 unblock_wifi
 install_snapd
