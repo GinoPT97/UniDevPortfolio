@@ -82,4 +82,19 @@ free -h | log "INFO" "Stato memoria verificato."
 # Ottimizzazione memoria swap
 execute_command "swapoff -a && swapon -a" "Ottimizzazione swap"
 
+# Generazione file pacchettidriver.txt
+log "INFO" "Generazione file pacchettidriver.txt..."
+(echo "### Pacchetti APT installati ###" && dpkg-query -W -f='${binary:Package}\t${Version}\n' | sort && \
+ echo -e "\n### Pacchetti Snap installati ###" && snap list | column -t && \
+ echo -e "\n### Driver disponibili (APT e Snap) ###" && \
+ ubuntu-drivers devices | awk '/recommended|manual/ {print}' | sort && \
+ echo -e "\n### Moduli del Kernel (Driver caricati) ###" && \
+ lsmod | sort && \
+ echo -e "\n### Dettagli moduli NVIDIA (se presenti) ###" && \
+ modinfo nvidia 2>/dev/null && \
+ echo -e "\n### Dettagli moduli di rete ###" && \
+ lsmod | grep -i net && \
+ echo -e "\n### Informazioni hardware (inclusi driver) ###" && \
+ sudo lshw -short) > ~/Documenti/pacchettidriver.txt
+
 log "INFO" "Ottimizzazioni completate con successo!"
