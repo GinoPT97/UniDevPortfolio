@@ -1,40 +1,41 @@
-COMANDI GENERAZIONE SSH PER IL PUSH DA TERMINALE 
+COMANDI GENERAZIONE SSH PER IL PUSH DA TERMINALE
 
-1. Controllare se esiste già :
+1. Controllare se esiste già:
+   ```bash
+   ls -al ~/.ssh
+   ```
 
-ls -al ~/.ssh
+2. Genera una nuova chiave SSH:
+   ```bash
+   ssh-keygen -t ed25519 -C "tuo@email.com"
+   ```
+   Sostituisci "tuo@email.com" con l'email associata al tuo account GitHub.
+   Premi Invio per accettare il percorso predefinito (/home/kenobi/.ssh/id_ed25519).
+   Se vuoi una sicurezza extra, puoi impostare una passphrase; altrimenti premi Invio per lasciarla vuota.
 
-2. Genera una nuova chiave SSH: Nel terminale, esegui il comando:
+3. Aggiungi la chiave SSH appena creata all'agente SSH:
+   ```bash
+   eval "$(ssh-agent -s)"
+   ssh-add ~/.ssh/id_ed25519
+   ```
 
-ssh-keygen -t ed25519 -C "tuo@email.com"
-
-Sostituisci "tuo@email.com" con l'email associata al tuo account GitHub.
-
-Se preferisci un tipo di chiave diverso, puoi usare rsa al posto di ed25519, anche se ed25519 è più sicura e consigliata.
-
-Premi Invio per accettare il percorso predefinito (/home/kenobi/.ssh/id_ed25519).
-
-Se vuoi una sicurezza extra, puoi impostare una passphrase; altrimenti premi Invio per lasciarla vuota.
-
-3. Aggiungi la chiave SSH appena creata all'agente SSH: Esegui questi comandi:
-
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519
-
-4. Copia la chiave pubblica: Usa questo comando per copiare la chiave pubblica:
-
-cat ~/.ssh/id_ed25519.pub
+4. Copia la chiave pubblica:
+   ```bash
+   cat ~/.ssh/id_ed25519.pub
+   ```
 
 5. Aggiungi la chiave SSH al tuo account GitHub:
    Vai su GitHub e apri Impostazioni SSH.
-Clicca su New SSH key, incolla la chiave copiata e dai un nome alla chiave, ad esempio "Ubuntu Laptop".
+   Clicca su New SSH key, incolla la chiave copiata e dai un nome alla chiave, ad esempio "Ubuntu Laptop".
 
-6. Configura l'URL remoto per usare SSH: Nel tuo repository locale, sostituisci l'URL remoto HTTPS con quello SSH:
-
-git remote set-url origin git@github.com:Kenobi1797/CodicePersonale.git
+6. Configura l'URL remoto per usare SSH:
+   ```bash
+   git remote set-url origin git@github.com:Kenobi1797/CodicePersonale.git
+   ```
 
 Ora, prova a fare il push:
-
-git push origin main
+   ```bash
+   git push origin main
+   ```
 
 

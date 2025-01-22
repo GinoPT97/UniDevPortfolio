@@ -1,59 +1,67 @@
-Aprire il file cron da terminale con questa riga di comando :
+Aprire il file cron da terminale con questa riga di comando:
+   ```bash
+   sudo crontab -e
+   ```
 
-sudo crontab-e
+Righe da inserire:
+   ```plaintext
+   # Aggiornamenti ogni ora
+   0 * * * * sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/Aggiornamenti.sh >> /home/kenobi/Documenti/aggiornamenti_log.txt 2>&1
 
-Righe da inserire :
+   # Pull e poi Push ogni 30 minuti
+   */30 * * * * git -C /home/kenobi/Documenti/GitHub/CodicePersonale pull origin main >> /home/kenobi/Documenti/pull_log.txt 2>&1
+   */30 * * * * git -C /home/kenobi/Documenti/GitHub/CodicePersonale push origin main >> /home/kenobi/Documenti/push_log.txt 2>&1
 
-# Aggiornamenti ogni ora
-0 * * * * sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/Aggiornamenti.sh >> /home/kenobi/Documenti/aggiornamenti_log.txt 2>&1
+   # Ottimizzazioni ogni 2 ore
+   0 */2 * * * sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/Ottimizzazioni.sh >> /home/kenobi/Documenti/ottimizzazioni_log.txt 2>&1
+   ```
 
-# Pull e poi Push ogni 30 minuti
-*/30 * * * * git -C /home/kenobi/Documenti/GitHub/CodicePersonale pull origin main >> /home/kenobi/Documenti/pull_log.txt 2>&1
-*/30 * * * * git -C /home/kenobi/Documenti/GitHub/CodicePersonale push origin main >> /home/kenobi/Documenti/push_log.txt 2>&1
+# Se non inserisco source ~/.bashrc non carica gli alias e quindi non li riconosce
 
-# Ottimizzazioni ogni 2 ore
-0 */2 * * * sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/Ottimizzazioni.sh >> /home/kenobi/Documenti/ottimizzazioni_log.txt 2>&1
+Per concedere i permessi aprire visudo:
+   ```bash
+   sudo visudo
+   ```
 
-#Se non inserisco source ~/.bashrc non carica gli alias e quindi non li riconosce
+Aggiungere queste righe sotto alla riga # User privilege specification:
+   ```plaintext
+   kenobi ALL=(ALL) NOPASSWD: /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Aggiornamenti.sh
+   kenobi ALL=(ALL) NOPASSWD: /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Ottimizzazioni.sh
+   kenobi ALL=(ALL) NOPASSWD: /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/InstallApp.sh
+   ```
 
+Concedere permessi ed eseguibili:
+   ```bash
+   sudo chmod u+x InstallApp.sh
+   sudo chmod u+x Aggiornamenti.sh
+   sudo chmod u+x Ottimizzazioni.sh
+   sudo chmod u+x PermessiSSh.sh
+   ```
 
-Per concedere i permessi aprire visudo :
+Generare un report dei pacchetti e driver installati:
+   ```bash
+   (echo "### Pacchetti APT installati ###" && dpkg-query -W -f='${binary:Package}\t${Version}\n' | sort && \
+   echo -e "\n### Pacchetti Snap installati ###" && snap list | column -t && \
+   echo -e "\n### Driver disponibili (APT e Snap) ###" && \
+   ubuntu-drivers devices | awk '/recommended|manual/ {print}' | sort && \
+   echo -e "\n### Moduli del Kernel (Driver caricati) ###" && \
+   lsmod | sort && \
+   echo -e "\n### Dettagli moduli NVIDIA (se presenti) ###" && \
+   modinfo nvidia 2>/dev/null && \
+   echo -e "\n### Dettagli moduli di rete ###" && \
+   lsmod | grep -i net && \
+   echo -e "\n### Informazioni hardware (inclusi driver) ###" && \
+   sudo lshw -short) > /home/kenobi/Documenti/pacchettidriver.txt
+   ```
 
-sudo visudo
+Permessi:
+   ```bash
+   # Modifica le autorizzazioni sul file chiave SSH privata
+   sudo chmod 600 ~/.ssh/id_rsa
 
-Aggiungere queste righe sotto alla riga # User privilege specification :
+   # Aggiungi la chiave SSH privata all'agente SSH
+   ssh-add ~/.ssh/id_rsa
 
-kenobi ALL=(ALL) NOPASSWD: /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Aggiornamenti.sh
-kenobi ALL=(ALL) NOPASSWD: /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Ottimizzazioni.sh
-kenobi ALL=(ALL) NOPASSWD: /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/InstallApp.sh
-
-Concedere permessi ed eseguibili :
-
-sudo chmod u+x InstallApp.sh
-sudo chmod u+x Aggiornamenti.sh
-sudo chmod u+x Ottimizzazioni.sh
-sudo chmod u+x PermessiSSh.sh
-
-(echo "### Pacchetti APT installati ###" && dpkg-query -W -f='${binary:Package}\t${Version}\n' | sort && \
- echo -e "\n### Pacchetti Snap installati ###" && snap list | column -t && \
- echo -e "\n### Driver disponibili (APT e Snap) ###" && \
- ubuntu-drivers devices | awk '/recommended|manual/ {print}' | sort && \
- echo -e "\n### Moduli del Kernel (Driver caricati) ###" && \
- lsmod | sort && \
- echo -e "\n### Dettagli moduli NVIDIA (se presenti) ###" && \
- modinfo nvidia 2>/dev/null && \
- echo -e "\n### Dettagli moduli di rete ###" && \
- lsmod | grep -i net && \
- echo -e "\n### Informazioni hardware (inclusi driver) ###" && \
- sudo lshw -short) > /home/kenobi/Documenti/pacchettidriver.txt
-
-Permessi
-
-# Modifica le autorizzazioni sul file chiave SSH privata
-sudo chmod 600 ~/.ssh/id_rsa
-
-# Aggiungi la chiave SSH privata all'agente SSH
-ssh-add ~/.ssh/id_rsa
-
-# Verifica che la chiave SSH privata sia stata aggiunta all'agente SSH
-ssh-add -l
+   # Verifica che la chiave SSH privata sia stata aggiunta all'agente SSH
+   ssh-add -l
+   ```

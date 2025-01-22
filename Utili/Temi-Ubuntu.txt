@@ -1,4 +1,4 @@
-Settare il tema predifinito:
+Settare il tema predefinito:
 
 gsettings reset org.gnome.desktop.interface gtk-theme && \
 gsettings reset org.gnome.desktop.interface icon-theme && \
