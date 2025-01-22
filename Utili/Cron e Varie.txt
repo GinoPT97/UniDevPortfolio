@@ -34,6 +34,19 @@ sudo chmod u+x Aggiornamenti.sh
 sudo chmod u+x Ottimizzazioni.sh
 sudo chmod u+x PermessiSSh.sh
 
+(echo "### Pacchetti APT installati ###" && dpkg-query -W -f='${binary:Package}\t${Version}\n' | sort && \
+ echo -e "\n### Pacchetti Snap installati ###" && snap list | column -t && \
+ echo -e "\n### Driver disponibili (APT e Snap) ###" && \
+ ubuntu-drivers devices | awk '/recommended|manual/ {print}' | sort && \
+ echo -e "\n### Moduli del Kernel (Driver caricati) ###" && \
+ lsmod | sort && \
+ echo -e "\n### Dettagli moduli NVIDIA (se presenti) ###" && \
+ modinfo nvidia 2>/dev/null && \
+ echo -e "\n### Dettagli moduli di rete ###" && \
+ lsmod | grep -i net && \
+ echo -e "\n### Informazioni hardware (inclusi driver) ###" && \
+ sudo lshw -short) > /home/kenobi/Documenti/pacchettidriver.txt
+
 Permessi
 
 # Modifica le autorizzazioni sul file chiave SSH privata

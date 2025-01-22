@@ -95,6 +95,6 @@ log "INFO" "Generazione file pacchettidriver.txt..."
  echo -e "\n### Dettagli moduli di rete ###" && \
  lsmod | grep -i net && \
  echo -e "\n### Informazioni hardware (inclusi driver) ###" && \
- sudo lshw -short) > ~/Documenti/pacchettidriver.txt
+sudo lshw -short) > /home/kenobi/Documenti/pacchettidriver.txt 2>&1
 
 log "INFO" "Ottimizzazioni completate con successo!"
