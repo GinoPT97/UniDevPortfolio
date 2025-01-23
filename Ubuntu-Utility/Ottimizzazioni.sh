@@ -84,7 +84,7 @@ execute_command "swapoff -a && swapon -a" "Ottimizzazione swap"
 
 # Generazione file pacchettidriver.txt
 log "INFO" "Generazione file pacchettidriver.txt..."
-(echo "### Pacchetti APT installati ###" && dpkg-query -W -f='${binary:Package}\t${Version}\n' | sort && \
+(echo "### Pacchetti APT installati ###" && dpkg --get-selections | sort && \
  echo -e "\n### Pacchetti Snap installati ###" && snap list | column -t && \
  echo -e "\n### Driver disponibili (APT e Snap) ###" && \
  ubuntu-drivers devices | awk '/recommended|manual/ {print}' | sort && \
