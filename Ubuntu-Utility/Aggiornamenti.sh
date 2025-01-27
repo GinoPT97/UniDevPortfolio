@@ -10,59 +10,26 @@ log() {
 # Funzione per aggiornare pacchetti APT
 update_apt_packages() {
     log "INFO" "Aggiornamento dell'elenco dei pacchetti..."
-    sudo apt-get update -y
-    log "INFO" "Elenco pacchetti aggiornato."
+    if sudo apt-get update -y; then
+        log "INFO" "Elenco pacchetti aggiornato."
+    else
+        log "ERROR" "Errore durante l'aggiornamento dell'elenco dei pacchetti."
+        exit 1
+    fi
 
     log "INFO" "Aggiornamento dei pacchetti APT..."
-    sudo apt-get upgrade -y
+    if sudo apt-get upgrade -y; then
+        log "INFO" "Pacchetti APT aggiornati."
+    else
+        log "ERROR" "Errore durante l'aggiornamento dei pacchetti APT."
+        exit 1
+    fi
 }
 
 # Funzione per pulire i pacchetti APT
 clean_apt_packages() {
     log "INFO" "Pulizia dei pacchetti inutili e della cache..."
-    sudo apt-get autoremove --purge -y
-    sudo apt-get clean -y
-}
-
-# Funzione per installare Node.js e npm
-install_node_and_npm() {
-    log "INFO" "Installazione di Node.js e npm..."
-    sudo apt install -y nodejs npm
-
-    log "INFO" "Installazione dei pacchetti npm..."
-    npm install
-}
-
-# Funzione per aggiornare Node.js
-update_node() {
-    if command -v node &> /dev/null; then
-        log "INFO" "Aggiornamento di Node.js alla versione stabile..."
-        sudo npm install -g n && sudo n stable
-
-        log "INFO" "Verifica dei pacchetti npm obsoleti..."
-        npm outdated
-
-        log "INFO" "Aggiornamento dei pacchetti npm..."
-        npm update
-
-        log "INFO" "Reinstallazione dei pacchetti npm..."
-        npm install
-
-        log "INFO" "Correzione delle vulnerabilità npm..."
-        npm audit fix --force
-    else
-        log "INFO" "Node.js non è installato. Salto questo passaggio."
-    fi
-}
-
-# Funzione per aggiornare Conda
-update_conda() {
-    if command -v conda &> /dev/null; then
-        log "INFO" "Aggiornamento di Conda..."
-        conda update --all -y
-    else
-        log "INFO" "Conda non è installato. Salto questo passaggio."
-    fi
+    sudo apt-get autoremove --purge -y && sudo apt-get clean -y
 }
 
 # Funzione per sbloccare il Wi-Fi
@@ -115,10 +82,6 @@ log "INFO" "Inizio aggiornamenti..."
 reload_systemd_and_dpkg
 update_apt_packages
 clean_apt_packages
-install_node_and_npm
-update_node
-update_python_envs
-update_conda
 unblock_wifi
 install_snapd
 enable_firewall

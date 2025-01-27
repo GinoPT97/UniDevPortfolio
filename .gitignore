@@ -81,3 +81,12 @@ nb-configuration.xml
 # Windows specific files
 Thumbs.db
 desktop.ini
+
+# Python files
+*.pyc
+__pycache__/
+
+# Node.js files
+node_modules/
+npm-debug.log
+yarn-error.log
