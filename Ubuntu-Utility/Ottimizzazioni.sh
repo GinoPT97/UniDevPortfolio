@@ -53,12 +53,6 @@ else
 fi
 
 # Ottimizzazione file system e spazio libero
-if command -v e4defrag &>/dev/null; then
-    execute_command "e4defrag /" "Deframmentazione filesystem"
-else
-    log "INFO" "e4defrag non disponibile."
-fi
-
 if command -v fstrim &>/dev/null; then
     execute_command "fstrim -av" "Ottimizzazione spazio libero"
 else
@@ -76,8 +70,8 @@ fi
 log "INFO" "Aggiornamento pacchetti e controllo sistema..."
 execute_command "apt-get update" "Aggiornamento lista pacchetti"
 execute_command "apt-get upgrade -y" "Aggiornamento pacchetti"
-df -h | log "INFO" "Stato disco verificato."
-free -h | log "INFO" "Stato memoria verificato."
+df -h | while read line; do log "INFO" "Stato disco: $line"; done
+free -h | while read line; do log "INFO" "Stato memoria: $line"; done
 
 # Ottimizzazione memoria swap
 execute_command "swapoff -a && swapon -a" "Ottimizzazione swap"
