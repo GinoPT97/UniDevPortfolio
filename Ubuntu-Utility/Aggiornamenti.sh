@@ -76,6 +76,34 @@ enable_firewall() {
     fi
 }
 
+# Funzione per eseguire un comando e loggare il risultato
+execute_command() {
+    local command="$1"
+    local message="$2"
+    log "INFO" "Esecuzione: $message..."
+    if eval "$command"; then
+        log "INFO" "$message completato con successo."
+    else
+        log "ERROR" "Errore durante: $message."
+        exit 1
+    fi
+}
+
+# Funzione per aggiornare alla nuova versione di Ubuntu
+upgrade_ubuntu() {
+    log "INFO" "Aggiornamento alla nuova versione di Ubuntu..."
+    if sudo do-release-upgrade; then
+        log "INFO" "Aggiornamento alla nuova versione di Ubuntu completato con successo."
+    else
+        if grep -q "Non è stato trovato alcun nuovo rilascio" /var/log/dist-upgrade/main.log; then
+            log "INFO" "Non è stato trovato alcun nuovo rilascio di Ubuntu."
+        else
+            log "ERROR" "Errore durante l'aggiornamento alla nuova versione di Ubuntu."
+            exit 1
+        fi
+    fi
+}
+
 # Inizio dello script
 log "INFO" "Inizio aggiornamenti..."
 
@@ -85,5 +113,12 @@ clean_apt_packages
 unblock_wifi
 install_snapd
 enable_firewall
+
+# Aggiungi i comandi per aggiornare il sistema Ubuntu 24.10
+log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
+update_apt_packages
+execute_command "apt-get full-upgrade -y" "Aggiornamento completo"
+execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
+upgrade_ubuntu
 
 log "INFO" "Aggiornamenti completati!"
