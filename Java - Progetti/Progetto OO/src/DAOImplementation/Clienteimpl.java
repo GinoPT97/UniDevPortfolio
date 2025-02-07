@@ -20,7 +20,7 @@ public class Clienteimpl implements ClienteJDBC {
         getAllCt = connection.createStatement();
         cercaCl = connection.prepareStatement(
                 "SELECT codcliente FROM cliente WHERE nome = ? AND cognome = ? AND codicefiscale = ?");
-        setNewCt = connection.prepareStatement("INSERT INTO cliente VALUES (nextval('SCodCliente'), ?, ?, ?, ?, ?, ?)");
+        setNewCt = connection.prepareStatement("INSERT INTO cliente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES (?, ?, ?, ?, ?, ?)");
         updateCl = connection.prepareStatement(
                 "UPDATE cliente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE codcliente = ?");
         idCl = connection.createStatement();

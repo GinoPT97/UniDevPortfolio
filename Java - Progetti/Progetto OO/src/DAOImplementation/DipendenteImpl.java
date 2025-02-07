@@ -22,7 +22,7 @@ public class DipendenteImpl implements DipendenteJDBC {
     public DipendenteImpl(Connection connection) throws SQLException {
         getAllDip = connection.createStatement();
         setNewDip = connection.prepareStatement(
-                "INSERT INTO dipendente VALUES (NEXTVAL('SCodDipendente'), ?, ?, ?, ?, ?, ?)");
+                "INSERT INTO dipendente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES (?, ?, ?, ?, ?, ?)");
         updateDip = connection.prepareStatement(
                 "UPDATE dipendente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE coddipendente = ?");
         getDip = connection.createStatement();
@@ -41,7 +41,7 @@ public class DipendenteImpl implements DipendenteJDBC {
     public boolean verifyID(String id) throws SQLException {
         String query = "SELECT coddipendente FROM dipendente WHERE coddipendente = ?";
         try (PreparedStatement ps = verifyId.getConnection().prepareStatement(query)) {
-            ps.setString(1, id);
+            ps.setInt(1, Integer.parseInt(id));
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
             }
@@ -115,7 +115,7 @@ public class DipendenteImpl implements DipendenteJDBC {
     @Override
     public boolean updatedipendente(Dipendente dipendente) throws SQLException {
         setPreparedStatement(updateDip, dipendente);
-        updateDip.setString(7, dipendente.getCodDIP());
+        updateDip.setInt(7, Integer.parseInt(dipendente.getCodDIP()));
         return updateDip.executeUpdate() > 0;
     }
 

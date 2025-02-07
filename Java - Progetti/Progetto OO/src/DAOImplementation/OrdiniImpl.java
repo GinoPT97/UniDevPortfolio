@@ -19,7 +19,7 @@ public class OrdiniImpl implements OrdiniJDBC {
     public OrdiniImpl(Connection connection) throws SQLException {
         this.connection = connection;
         // Preparazione delle query
-        newOrdineStmt = connection.prepareStatement("INSERT INTO ordine VALUES (NEXTVAL('SCodOrdine'), ?, ?, ?, ?)");
+        newOrdineStmt = connection.prepareStatement("INSERT INTO ordine (prezzototale, dataacquisto, codcliente, coddipendente) VALUES (?, ?, ?, ?)");
         getAllOrdiniStmt = connection.prepareStatement("SELECT * FROM ordine ORDER BY dataacquisto DESC");
     }
 
@@ -67,7 +67,7 @@ public class OrdiniImpl implements OrdiniJDBC {
 
     @Override
     public String getCurrentCod() throws SQLException {
-        String query = "SELECT currval('SCodOrdine') AS codordine";
+        String query = "SELECT currval(pg_get_serial_sequence('ordine', 'codordine')) AS codordine";
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             if (rs.next()) {

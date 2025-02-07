@@ -13,41 +13,15 @@ public class DBConfiguration {
         this.connection = connection;
     }
 
-    // Verifica l'istanza di connection
     private boolean connectionExists() {
         return !(connection == null);
     }
 
-    // Verifica l'esistenza delle tabelle
     private boolean tableExists(String table_name) throws SQLException {
         DatabaseMetaData metadata = connection.getMetaData();
         try (ResultSet tables = metadata.getTables(null, null, table_name, null)) {
             return tables.next();
         }
-    }
-
-    // Crea una sequenza per autogenerare le chiavi primarie di tutte le relazioni
-    public int createSequences() throws ConnectionException, SQLException {
-        int result = -1;
-        if (connectionExists()) {
-            try (Statement st = connection.createStatement()) {
-                String[] sequences = {
-                    "SCodCliente",
-                    "SCodDipendente",
-                    "SCodProdotto",
-                    "SCodOrdine",
-                    "SCodTessera"
-                };
-
-                for (String sequence : sequences) {
-                    String sql = String.format("CREATE SEQUENCE %s INCREMENT BY 1 MINVALUE 1 MAXVALUE 99999 START WITH 1;", sequence);
-                    result += st.executeUpdate(sql);
-                }
-            } catch (SQLException ex) {
-                System.out.println("SQL Exception in Creation Sequence : " + ex);
-            }
-        }
-        return result;
     }
 
     public int createTableCliente() throws ConnectionException {
@@ -57,7 +31,7 @@ public class DBConfiguration {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("cliente")) {
                     String sql = "CREATE TABLE IF NOT EXISTS cliente(\n"
-                            + " codcliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n"
+                            + " codcliente SERIAL PRIMARY KEY,\n"
                             + " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
                             + " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
                             + " codicefiscale CHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),\n "
@@ -87,7 +61,7 @@ public class DBConfiguration {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("dipendente")) {
                     String sql = "CREATE TABLE IF NOT EXISTS dipendente (\n"
-                            + "coddipendente VARCHAR(5) PRIMARY KEY, CHECK(coddipendente ~* '^[0-9]+$'),\n"
+                            + "coddipendente SERIAL PRIMARY KEY,\n"
                             + " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
                             + " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
                             + " codicefiscale CHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),\n "
@@ -117,9 +91,9 @@ public class DBConfiguration {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("tessera")) {
                     String sql = "CREATE TABLE IF NOT EXISTS tessera(\n"
-                            + " codtessera VARCHAR(5) PRIMARY KEY, CHECK(codtessera ~* '^[0-9]+$'),\n"
+                            + " codtessera SERIAL PRIMARY KEY,\n"
                             + " numeropunti real NOT NULL DEFAULT 0.00,\n"
-                            + " codcliente VARCHAR(5) NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
+                            + " codcliente INTEGER NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
                             + " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
                             + " ON UPDATE CASCADE \n" + " ON DELETE CASCADE \n " + " );";
 
@@ -144,7 +118,7 @@ public class DBConfiguration {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("prodotto")) {
                     String sql = "CREATE TABLE IF NOT EXISTS prodotto(\n"
-                            + " codprodotto VARCHAR(5) PRIMARY KEY, CHECK(CodProdotto ~* '^[0-9]+$'),\n"
+                            + " codprodotto SERIAL PRIMARY KEY,\n"
                             + " nome VARCHAR(255) NOT NULL, CHECK(Nome ~* '^[A-Za-z ]+$'),\n"
                             + " descrizione VARCHAR(500), \n" + " prezzo NUMERIC DEFAULT 0.00, \n "
                             + " luogoprovenienza VARCHAR(255), \n" + " dataraccolta DATE,\n "
@@ -175,11 +149,11 @@ public class DBConfiguration {
         if (connectionExists()) {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("ordine")) {
-                    String sql = "CREATE TABLE IF NOT EXISTS ordine(\n" + " codordine VARCHAR(5) NOT NULL, \n"
+                    String sql = "CREATE TABLE IF NOT EXISTS ordine(\n" + " codordine SERIAL NOT NULL, \n"
                             + " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
                             + " dataacquisto date NOT NULL, \n"
-                            + " codcliente VARCHAR(5) NOT NULL CHECK (codcliente ~* '^[0-9]+$'), \n"
-                            + " coddipendente VARCHAR(5) NOT NULL CHECK (coddipendente ~* '^[0-9]+$'), \n"
+                            + " codcliente INTEGER NOT NULL CHECK (codcliente ~* '^[0-9]+$'), \n"
+                            + " coddipendente INTEGER NOT NULL CHECK (coddipendente ~* '^[0-9]+$'), \n"
                             + " CONSTRAINT ordinepk PRIMARY KEY (codordine), \n"
                             + " CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente) ON UPDATE CASCADE ON DELETE NO ACTION, \n "
                             + " CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente) ON UPDATE CASCADE ON DELETE NO ACTION\n "
@@ -206,9 +180,9 @@ public class DBConfiguration {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("ARTICOLIORDINE")) {
                     String sql = "CREATE TABLE IF NOT EXISTS ARTICOLIORDINE (\n"
-                            + "CodOrdine VARCHAR(5) NOT NULL CHECK(CodOrdine ~* '^[0-9]+$'),\n"
-                            + "CodProdotto VARCHAR(5) NOT NULL CHECK(CodProdotto ~* '^[0-9]+$'),\n"
-                            + "CodCliente VARCHAR(5) PRIMARY KEY, CHECK(codcliente ~* '^[0-9]+$'),\n"
+                            + "CodOrdine INTEGER NOT NULL CHECK(CodOrdine ~* '^[0-9]+$'),\n"
+                            + "CodProdotto INTEGER NOT NULL CHECK(CodProdotto ~* '^[0-9]+$'),\n"
+                            + "CodCliente SERIAL PRIMARY KEY,\n"
                             + "Prezzo NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00),\n"
                             + "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00), \n"
                             + "NumeroArticoli INT NOT NULL,\n" + "Categoria TIPOLOGIA,\n"
@@ -254,7 +228,6 @@ public class DBConfiguration {
         }
 
         try (Statement st = connection.createStatement()) {
-            // Prima eliminare le righe dalle tabelle figlie
             String sqlDeleteArticoliordine = "DELETE FROM Articoliordine;";
             result += st.executeUpdate(sqlDeleteArticoliordine);
 
@@ -267,7 +240,6 @@ public class DBConfiguration {
             String sqlDeleteTessera = "DELETE FROM Tessera;";
             result += st.executeUpdate(sqlDeleteTessera);
 
-            // Poi eliminare le righe dalle tabelle madri
             String sqlDeleteDipendente = "DELETE FROM Dipendente;";
             result += st.executeUpdate(sqlDeleteDipendente);
 
@@ -284,13 +256,11 @@ public class DBConfiguration {
     public int populateDatabase() throws ConnectionException {
         int result = 0;
 
-        // Verifica che la connessione esista
         if (!connectionExists()) {
             throw new ConnectionException("A connection must exist!");
         }
 
         try (Statement st = connection.createStatement()) {
-            // Popola la tabella Cliente
             String sqlCliente = "INSERT INTO cliente (codcliente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
                     + "('11111','aldo','marzante','BBBBBB11B11B111B', 'Via Don Matteo','1234567890','aldo@arte.it'),"
                     + "('22222','luca','benson','AAAAAA22A22A222A', 'Via Don Corleone','1234567890','luca@arte.it'),"
@@ -302,7 +272,6 @@ public class DBConfiguration {
                     + "('88899','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it');";
             result += st.executeUpdate(sqlCliente);
 
-            // Popola la tabella Dipendente
             String sqlDipendente = "INSERT INTO dipendente (coddipendente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
                     + "('89899','dario','forte','FFFFFF11F11F111F','via andromeda','1234567890','dario@arte.it'),"
                     + "('79799','sandro','romano','LLLLLL22L22L222L','via omega','1234567890','sandro@arte.it'),"
@@ -313,7 +282,6 @@ public class DBConfiguration {
                     + "('44444','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it');";
             result += st.executeUpdate(sqlDipendente);
 
-            // Popola la tabella Tessera
             String sqlTessera = "INSERT INTO tessera (codtessera, numeropunti, codcliente) VALUES "
                     + "('55555','20','11111'),"
                     + "('44444','30','22222'),"
@@ -325,7 +293,6 @@ public class DBConfiguration {
                     + "('33333','150','88899');";
             result += st.executeUpdate(sqlTessera);
 
-            // Popola la tabella Prodotto
             String sqlProdotto = "INSERT INTO prodotto (codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES "
                     + "('11111', 'Mela Rossa', 'Mela italiana rossa', 1.50, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Ortofrutticoli', 100),"
                     + "('22222', 'Formaggio Parmigiano', 'Formaggio Parmigiano Reggiano', 15.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 50),"
@@ -337,7 +304,6 @@ public class DBConfiguration {
                     + "('88888', 'Farina', 'Farina di grano tenero tipo \"00\"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200);";
             result += st.executeUpdate(sqlProdotto);
 
-            // Popola la tabella Ordine
             String sqlOrdine = "INSERT INTO ordine (codordine, prezzototale, dataacquisto, codcliente, coddipendente) VALUES "
                     + "('12122','57','2001-02-12','11111','89899'),"
                     + "('11112','45','2010-03-22','11111','89899'),"
@@ -356,7 +322,6 @@ public class DBConfiguration {
                     + "('20202','55','2024-02-28','88899','79799');";
             result += st.executeUpdate(sqlOrdine);
 
-            // Popola la tabella ArticoliOrdine
             String sqlArticoliOrdine = "INSERT INTO articoliordine (CodOrdine, CodProdotto, CodCliente, prezzo, numeropunti, numeroarticoli, categoria) VALUES "
                     + "('12122','88888','11111', '0.80', '2', '10', 'Farinacei'),"
                     + "('11112','88888','11111', '0.80', '2', '10', 'Farinacei'),"

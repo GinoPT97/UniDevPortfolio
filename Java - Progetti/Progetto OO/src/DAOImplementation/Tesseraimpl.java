@@ -19,7 +19,7 @@ public class Tesseraimpl implements TesseraJDBC {
 
     public Tesseraimpl(Connection connection) throws SQLException {
         // Preparazione delle query
-        newtesseraStmt = connection.prepareStatement("INSERT INTO tessera VALUES (NEXTVAL('SCodTessera'),?,?)");
+        newtesseraStmt = connection.prepareStatement("INSERT INTO tessera (numeropunti, codcliente) VALUES (?, ?)");
         getpuntitStmt = connection.prepareStatement("SELECT numeropunti FROM tessera WHERE codtessera = ?");
         alltesseraStmt = connection.prepareStatement("SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC");
         uppuntiStmt = connection.prepareStatement("UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = ?");

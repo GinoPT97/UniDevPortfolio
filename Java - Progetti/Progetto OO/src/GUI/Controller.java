@@ -209,7 +209,6 @@ public class Controller {
             config = new DBConfiguration(connection);
             // Metodi per la definizione del DB:
             config.createTipologie();
-            config.createSequences();
             config.createTableCliente();
             config.createTableDipendente();
             config.createTableOrdine();
