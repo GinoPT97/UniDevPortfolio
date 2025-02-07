@@ -121,7 +121,7 @@ public class Controller {
             case 2 -> setVisibleFrame(vprodf, adminf, vdipf, statdipf, visordf); // Mostra Visione Prodotti
             case 3 -> setVisibleFrame(statdipf, adminf, vdipf, vprodf, visordf); // Mostra Statistiche
             case 4 -> setVisibleFrame(visordf, adminf, vdipf, vprodf, statdipf); // Mostra Visione Ordini
-            case 5 -> setVisibleFrame(lastFrame, adminf, vdipf, vprodf, statdipf, visordf); // Torna all'ultimo frame salvato
+            case 5 -> returnToLastFrame(); // Torna all'ultimo frame salvato
             case 6 -> setVisibleFrame(searchf, adminf, dipf); // Mostra ricerca
             default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
         }
@@ -133,7 +133,7 @@ public class Controller {
             case 1 -> setVisibleFrame(visctf, dipf); // Mostra Visione Clienti
             case 2 -> setVisibleFrame(vprodf, dipf); // Mostra Visione Prodotti
             case 3 -> setVisibleFrame(visordf, dipf); // Mostra Visione Ordini
-            case 4 -> setVisibleFrame(lastFrame, visctf, vprodf, visordf, dipf); // Torna all'ultimo frame salvato
+            case 4 -> returnToLastFrame(); // Torna all'ultimo frame salvato
             case 5 -> setVisibleFrame(searchf, dipf, adminf); // Mostra ricerca
             default -> throw new IllegalArgumentException("Valore di x non valido: " + x);
         }

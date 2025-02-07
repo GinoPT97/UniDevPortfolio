@@ -20,11 +20,16 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import Model.ImagePanel;
+
+import javax.swing.ImageIcon;
+
 public class LoginFrame extends JFrame {
     private JPanel contentPane;
     private JButton logbutt, clearbutt;
     private JTextField idtf;
-    
+    private ImagePanel imagePanel;
+
     private void elementi() {
         setBounds(100, 100, 700, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,9 +42,13 @@ public class LoginFrame extends JFrame {
 
         JPanel titlepanel = new JPanel();
         titlepanel.setBackground(new Color(0, 128, 0));
+        titlepanel.setLayout(new BorderLayout());
         JLabel titlelabel = new JLabel("Ortofrutta 2.0", SwingConstants.CENTER);
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlepanel.add(titlelabel);
+        titlepanel.add(titlelabel, BorderLayout.CENTER);
+
+        imagePanel = new ImagePanel("/Immagini/ImmLog-1.png");
+        titlepanel.add(imagePanel, BorderLayout.WEST);
 
         JPanel infopanel = new JPanel();
         infopanel.setLayout(new BoxLayout(infopanel, BoxLayout.Y_AXIS));
@@ -71,7 +80,7 @@ public class LoginFrame extends JFrame {
         infopanel.add(Box.createVerticalStrut(20)); // Spazio tra il campo ID e i bottoni
         infopanel.add(buttonpanel);
 
-        contentPane.add(titlepanel, BorderLayout.WEST);
+        contentPane.add(titlepanel, BorderLayout.NORTH);
         contentPane.add(infopanel, BorderLayout.CENTER);
     }
 
