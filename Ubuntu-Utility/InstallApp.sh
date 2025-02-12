@@ -44,18 +44,8 @@ install_packages \
   texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
   cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon jest
 
-# Impostazione modalità bilanciata
-sudo powerprofilesctl set balanced
-
 # Installazione pacchetti Python
 pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart python-bidi || { echo "Errore durante l'installazione dei pacchetti Python"; exit 1; }
-
-# Configurazione di CPU
-if command -v cpufreq-set &> /dev/null; then
-  sudo cpufreq-set -g powersave
-else
-  echo "cpufrequtils non trovato, salto la configurazione della CPU."
-fi
 
 # Configurazione Git LFS
 git lfs install
@@ -75,13 +65,6 @@ run_command sudo apt update
 install_packages docker-ce docker-ce-cli containerd.io
 run_command sudo systemctl start docker
 run_command sudo systemctl enable docker
-
-# Installazione NordVPN
-echo "Installazione e configurazione di NordVPN..."
-sh <(wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh)
-nordvpn login || { echo "Errore durante il login a NordVPN"; exit 1; }
-nordvpn connect || { echo "Errore durante la connessione a NordVPN"; exit 1; }
-nordvpn set autoconnect on || { echo "Errore durante l'impostazione di autoconnect per NordVPN"; exit 1; }
 
 # Installazione pgAdmin 4
 echo "Installazione di pgAdmin 4..."
@@ -114,28 +97,21 @@ code --locale=it
 # Installazione applicazioni tramite Snap
 echo "Installazione applicazioni Snap..."
 sudo snap install dbeaver-ce openjdk --classic
-sudo snap install --classic code android-studio eclipse pycharm-community
+sudo snap install --classic code android-studio eclipse
 
 # Avvio del servizio Tor
 echo "Avvio del servizio Tor..."
 run_command sudo service tor start
 
 # Installazione pacchetti npm
-npm install \
-  express mongoose pg cors dotenv helmet morgan compression uuid axios lodash validator dayjs \
+npm install express mongoose pg cors dotenv helmet morgan compression uuid axios lodash validator dayjs \
   passport passport-local passport-google-oauth20 passport-facebook passport-apple passport-jwt passport-linkedin-oauth2 \
   jsonwebtoken bcrypt bcryptjs express-session apollo-server-express graphql graphql-request express-validator \
   @types/express @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs \
-  axios newsapi apollo-server-express graphql jsonwebtoken bcryptjs \
-  passport passport-jwt passport-google-oauth20 passport-facebook passport-apple \
-  firebase-admin firebase-functions passport passport-google-oauth20 passport-facebook passport-apple stripe @paypal/checkout-server-sdk axios dotenv winston pino jest supertest sequelize pg pg-hstore cors helmet express lodash moment firebase @angular/fire \
-  @angular/core @angular/common @angular/forms @angular/router @angular/platform-browser @angular/platform-server \
-  react react-dom @types/react @types/react-dom react-router-dom \
-  webpack webpack-cli eslint bootstrap tailwindcss postcss autoprefixer express-validator winston helmet sequelize pg pg-hstore bull config jsonwebtoken redis swagger-jsdoc swagger-ui-express http-errors connect-redis express-session prom-client csurf express-rate-limit
+  axios newsapi apollo-server-express graphql jsonwebtoken bcryptjs passport passport-jwt passport-google-oauth20 passport-facebook passport-apple \
+  firebase-admin firebase-functions stripe @paypal/checkout-server-sdk
 
 npx tailwindcss init || { echo "Errore durante l'inizializzazione di TailwindCSS"; exit 1; }
-
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
 
 npm install --save-dev typescript ts-node @types/node @angular/cli
 
@@ -146,10 +122,6 @@ sudo apt remove --purge gnome-mahjongg gnome-mines gnome-sudoku -y
 install_packages redis
 run_command sudo systemctl start redis
 run_command sudo systemctl enable redis
-
-# Esecuzione aggiornamenti personalizzati
-echo "Esecuzione aggiornamenti personalizzati..."
-run_command sudo /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh
 
 # Pulizia file temporanei
 echo "Pulizia file temporanei..."
