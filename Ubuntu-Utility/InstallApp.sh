@@ -5,7 +5,6 @@ echo "Aggiornamento del sistema..."
 sudo apt update && sudo apt upgrade -y
 
 # Installa curl (se non è già presente)
-sudo apt update
 sudo apt install -y curl
 
 echo "Installazione pacchetti: ca-certificates curl gnupg lsb-release software-properties-common wget apt-transport-https wireshark kate zram-config preload bluetooth bluez blueman flatpak git gparted default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common codeblocks arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon jest"
@@ -23,16 +22,11 @@ sudo powerprofilesctl set balanced
 
 pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart python-bidi
 
-# Se "cpufreq-set" è presente, viene eseguito; altrimenti viene stampato un messaggio
-# command -v cpufreq-set > /dev/null && sudo cpufreq-set -g powersave || echo "cpufrequtils non trovato, salto la configurazione della CPU."
-
 git lfs install
 
 echo "Installazione di Node.js..."
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt install -y nodejs
-sudo npm install -g n
-sudo n latest
+sudo apt install -y npm
 
 echo "Installazione di Docker..."
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -49,14 +43,12 @@ nordvpn connect
 nordvpn set autoconnect on
 
 echo "Installazione di pgAdmin 4..."
-sudo apt update
 sudo apt install curl ca-certificates gnupg
 curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
 sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/mantic pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list'
 sudo snap install pgadmin4
 sudo apt update
 sudo apt install pgadmin4 pgadmin4-desktop pgadmin4-web
-
 
 echo "Configurazione della password PostgreSQL..."
 sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'admin';"
@@ -107,11 +99,8 @@ sudo snap install --classic android-studio
 sudo snap install --classic eclipse
 
 echo "Avvio del servizio Tor..."
-sudo apt update
 sudo apt install tor
 sudo systemctl start tor
-
-sudo apt install npm
 
 echo "Installazione pacchetti npm..."
 npm install \
@@ -127,14 +116,6 @@ npm install \
   webpack webpack-cli eslint bootstrap tailwindcss postcss autoprefixer express-validator winston helmet sequelize pg pg-hstore bull config jsonwebtoken redis swagger-jsdoc swagger-ui-express http-errors connect-redis express-session prom-client csurf express-rate-limit
 
 npx tailwindcss init
-
-# Scarica e configura il repository per Node.js (versione 16, ad esempio)
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-
-# Installa Node.js (npm viene installato insieme)
-sudo apt install -y nodejs
-
-npm install --save-dev typescript ts-node @types/node @angular/cli
 
 sudo apt remove --purge gnome-mahjongg gnome-mines gnome-sudoku -y
 
