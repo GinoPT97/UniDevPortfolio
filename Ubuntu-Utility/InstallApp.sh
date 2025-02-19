@@ -12,13 +12,13 @@ sudo apt install -y \
   ca-certificates curl gnupg lsb-release software-properties-common wget \
   apt-transport-https wireshark kate zram-config preload bluetooth bluez blueman \
   flatpak git gparted default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk \
-  postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common \
   codeblocks arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor \
   aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base \
   texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
   cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon jest
-
-sudo powerprofilesctl set balanced
+  sudo apt update
+  sudo apt-get install libpq-dev
+sudo apt install libcurl4-openssl-dev libjson-c-dev
 
 pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart python-bidi
 
@@ -49,6 +49,10 @@ sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] h
 sudo snap install pgadmin4
 sudo apt update
 sudo apt install pgadmin4 pgadmin4-desktop pgadmin4-web
+
+echo "Installazione di PostgreSQL..."
+sudo apt update
+sudo apt install -y postgresql postgresql-contrib
 
 echo "Configurazione della password PostgreSQL..."
 sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'admin';"
