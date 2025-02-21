@@ -16,9 +16,8 @@ sudo apt install -y \
   aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base \
   texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
   cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon jest
-  sudo apt update
-  sudo apt-get install libpq-dev
-sudo apt install libcurl4-openssl-dev libjson-c-dev
+
+sudo powerprofilesctl set balanced
 
 pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart python-bidi
 
