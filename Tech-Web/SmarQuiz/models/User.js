@@ -1,4 +1,4 @@
-const config = require('../config');
+const config = require('../backend/config');
 const bcrypt = require('bcrypt');
 
 const createUser = async (name, email, password) => {
