@@ -17,6 +17,10 @@ sudo apt install -y \
   texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
   cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon jest
 
+echo "Installazione di OpenJDK 17 e 21..."
+sudo apt update
+sudo apt install -y openjdk-17-jdk openjdk-21-jdk openjdk-17-jre
+
 sudo powerprofilesctl set balanced
 
 pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart python-bidi
