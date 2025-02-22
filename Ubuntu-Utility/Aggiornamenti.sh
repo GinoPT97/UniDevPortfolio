@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Funzione per loggare messaggi
+# Funzione per registrare i messaggi
 log() {
     local type="$1"
     shift
     echo "[$type] $(date '+%Y-%m-%d %H:%M:%S') - $*"
 }
 
-# Funzione per aggiornare pacchetti APT
+# Funzione per aggiornare i pacchetti APT
 update_apt_packages() {
     log "INFO" "Aggiornamento dell'elenco dei pacchetti..."
     if sudo apt-get update -y; then
@@ -52,7 +52,7 @@ install_snapd() {
     sudo snap refresh
 }
 
-# Funzione per gestire eventuali blocchi di dpkg
+# Funzione per gestire i potenziali blocchi di dpkg
 reload_systemd_and_dpkg() {
     log "INFO" "Ricaricamento dei demoni di sistema..."
     sudo systemctl daemon-reload
@@ -76,7 +76,7 @@ enable_firewall() {
     fi
 }
 
-# Funzione per eseguire un comando e loggare il risultato
+# Funzione per eseguire un comando e registrare il risultato
 execute_command() {
     local command="$1"
     local message="$2"
@@ -114,7 +114,7 @@ unblock_wifi
 install_snapd
 enable_firewall
 
-# Aggiungi i comandi per aggiornare il sistema Ubuntu 24.10
+# Aggiungi comandi per aggiornare il sistema Ubuntu 24.10
 log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
 update_apt_packages
 execute_command "apt-get full-upgrade -y" "Aggiornamento completo"
