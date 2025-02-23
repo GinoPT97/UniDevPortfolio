@@ -24,8 +24,8 @@ import javax.swing.border.EmptyBorder;
 public class StatisticheDipendentiFrame extends JFrame {
     // Definizione dei componenti principali dell'interfaccia
     private JPanel contentPane;
-    private String[] datacb = { "3 mesi", "6 mesi", "9 mesi", "12 mesi", "Tutti" }; // Opzioni per il JComboBox
-    private LocalDate dataod = LocalDate.now(); // Data corrente
+    private String[] datacb = { "3 mesi", "6 mesi", "9 mesi", "12 mesi", "Tutti" };
+    private LocalDate dataod = LocalDate.now();
     private JPanel searchPanel, introitiPanel, venditePanel, buttonPanel, titlePanel;
     private JButton selectButton, backButton, clearButton, searchButton;
     private JComboBox<String> periodoCB;
@@ -36,7 +36,7 @@ public class StatisticheDipendentiFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 870, 450);
         contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(0, 0, 10, 0)); // Rimosso margine superiore
+        contentPane.setBorder(new EmptyBorder(0, 0, 10, 0));
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(10, 10));
         setLocationRelativeTo(null);
@@ -58,9 +58,9 @@ public class StatisticheDipendentiFrame extends JFrame {
 
         periodoLab = new JLabel("Periodo ricerca (YYYY-MM-DD)");
         startLab = new JLabel("Da : ");
-        startTF = new JTextField(10); // Ridotto il numero di colonne
+        startTF = new JTextField(10);
         finalLab = new JLabel("Fino a :");
-        finalTF = new JTextField(10); // Ridotto il numero di colonne
+        finalTF = new JTextField(10);
         periodoCB = new JComboBox<>(datacb);
         periodoCB.setMaximumRowCount(5);
         selectButton = new JButton("Seleziona");
@@ -212,24 +212,22 @@ public class StatisticheDipendentiFrame extends JFrame {
     }
 
     private void azioni(Controller c) throws SQLException {
-        String oldDate = c.OldDate(); // Recupero della data più vecchia dal controller
+        String oldDate = c.OldDate();
 
-        // Gestione del pulsante selezione
         selectButton.addActionListener(e -> {
-            finalTF.setText(dataod.toString()); // Imposta la data corrente come data finale
+            finalTF.setText(dataod.toString());
             String selectedPeriod = (String) periodoCB.getSelectedItem();
             String startDate = switch (selectedPeriod) {
                 case "3 mesi" -> dataod.minusMonths(3).toString();
                 case "6 mesi" -> dataod.minusMonths(6).toString();
                 case "9 mesi" -> dataod.minusMonths(9).toString();
                 case "12 mesi" -> dataod.minusMonths(12).toString();
-                case "Tutti" -> oldDate; // Se "Tutti", la data di inizio resta quella più vecchia
+                case "Tutti" -> oldDate;
                 default -> oldDate;
             };
-            startTF.setText(startDate); // Imposta la data di inizio calcolata
+            startTF.setText(startDate);
         });
 
-        // Gestione del pulsante cerca
         searchButton.addActionListener(e -> {
             if (startTF.getText().isEmpty() || finalTF.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Inserire le date di ricerca!");
@@ -240,21 +238,19 @@ public class StatisticheDipendentiFrame extends JFrame {
                 java.sql.Date di = java.sql.Date.valueOf(startTF.getText());
                 java.sql.Date df = java.sql.Date.valueOf(finalTF.getText());
 
-                // Recupero dei dati dal Controller
                 List<String> ordInt = c.introitidip(di, df);
                 List<String> ordVen = c.venditedip(di, df);
 
                 if (ordInt.isEmpty() || ordVen.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
-                    clean(); // Pulizia dei campi se non ci sono risultati
+                    clean();
                 } else {
-                    // Popolamento dei campi con i dati ottenuti
-                    nomeIntroitiTF.setText(ordInt.get(0));   // Imposta il nome nel campo introiti
-                    cognomeIntroitiTF.setText(ordInt.get(1)); // Imposta il cognome nel campo introiti
-                    introitiTF.setText(ordInt.get(2));        // Imposta il valore introiti
-                    nomeVenditeTF.setText(ordVen.get(0));     // Imposta il nome nel campo vendite
-                    cognomeVenditeTF.setText(ordVen.get(1));  // Imposta il cognome nel campo vendite
-                    venditeTF.setText(ordVen.get(2));         // Imposta il valore vendite
+                    nomeIntroitiTF.setText(ordInt.get(0));
+                    cognomeIntroitiTF.setText(ordInt.get(1));
+                    introitiTF.setText(ordInt.get(2));
+                    nomeVenditeTF.setText(ordVen.get(0));
+                    cognomeVenditeTF.setText(ordVen.get(1));
+                    venditeTF.setText(ordVen.get(2));
                 }
             } catch (SQLException e1) {
                 JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1);
@@ -263,13 +259,11 @@ public class StatisticheDipendentiFrame extends JFrame {
             }
         });
 
-        // Gestione del pulsante pulisci
         clearButton.addActionListener(e -> clean());
 
-        // Gestione del pulsante indietro
         backButton.addActionListener(e -> {
             clean();
-            c.returnToLastFrame(); // Richiama il metodo per tornare all'ultimo frame
+            c.returnToLastFrame();
         });
     }
 
@@ -284,11 +278,9 @@ public class StatisticheDipendentiFrame extends JFrame {
         venditeTF.setText("");
     }
 
-   public StatisticheDipendentiFrame(String title, Controller c) throws SQLException {
-          super(title);
-          this.elementi();
-          this.azioni(c);
-   }
+    public StatisticheDipendentiFrame(String title, Controller c) throws SQLException {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
 }
-
-
