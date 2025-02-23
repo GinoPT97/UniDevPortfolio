@@ -22,8 +22,6 @@ import javax.swing.border.EmptyBorder;
 
 import Model.ImagePanel;
 
-import javax.swing.ImageIcon;
-
 public class LoginFrame extends JFrame {
     private JPanel contentPane;
     private JButton logbutt, clearbutt;

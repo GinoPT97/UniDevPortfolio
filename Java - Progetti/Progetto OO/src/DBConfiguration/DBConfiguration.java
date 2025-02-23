@@ -61,7 +61,7 @@ public class DBConfiguration {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("dipendente")) {
                     String sql = "CREATE TABLE IF NOT EXISTS dipendente (\n"
-                            + "coddipendente SERIAL PRIMARY KEY,\n"
+                            + " coddipendente SERIAL PRIMARY KEY,\n"
                             + " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
                             + " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
                             + " codicefiscale CHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),\n "
@@ -93,7 +93,7 @@ public class DBConfiguration {
                     String sql = "CREATE TABLE IF NOT EXISTS tessera(\n"
                             + " codtessera SERIAL PRIMARY KEY,\n"
                             + " numeropunti real NOT NULL DEFAULT 0.00,\n"
-                            + " codcliente INTEGER NOT NULL UNIQUE CHECK(CodCliente ~* '^[0-9]+$'),\n"
+                            + " codcliente INTEGER NOT NULL UNIQUE,\n"
                             + " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
                             + " ON UPDATE CASCADE \n" + " ON DELETE CASCADE \n " + " );";
 
@@ -119,7 +119,7 @@ public class DBConfiguration {
                 if (!tableExists("prodotto")) {
                     String sql = "CREATE TABLE IF NOT EXISTS prodotto(\n"
                             + " codprodotto SERIAL PRIMARY KEY,\n"
-                            + " nome VARCHAR(255) NOT NULL, CHECK(Nome ~* '^[A-Za-z ]+$'),\n"
+                            + " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
                             + " descrizione VARCHAR(500), \n" + " prezzo NUMERIC DEFAULT 0.00, \n "
                             + " luogoprovenienza VARCHAR(255), \n" + " dataraccolta DATE,\n "
                             + " datamungitura DATE, \n " + " glutine BOOLEAN, \n " + " datascadenza DATE, \n "
@@ -152,8 +152,8 @@ public class DBConfiguration {
                     String sql = "CREATE TABLE IF NOT EXISTS ordine(\n" + " codordine SERIAL NOT NULL, \n"
                             + " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
                             + " dataacquisto date NOT NULL, \n"
-                            + " codcliente INTEGER NOT NULL CHECK (codcliente ~* '^[0-9]+$'), \n"
-                            + " coddipendente INTEGER NOT NULL CHECK (coddipendente ~* '^[0-9]+$'), \n"
+                            + " codcliente INTEGER NOT NULL, \n"
+                            + " coddipendente INTEGER NOT NULL, \n"
                             + " CONSTRAINT ordinepk PRIMARY KEY (codordine), \n"
                             + " CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente) ON UPDATE CASCADE ON DELETE NO ACTION, \n "
                             + " CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente) ON UPDATE CASCADE ON DELETE NO ACTION\n "
@@ -180,11 +180,11 @@ public class DBConfiguration {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("ARTICOLIORDINE")) {
                     String sql = "CREATE TABLE IF NOT EXISTS ARTICOLIORDINE (\n"
-                            + "CodOrdine INTEGER NOT NULL CHECK(CodOrdine ~* '^[0-9]+$'),\n"
-                            + "CodProdotto INTEGER NOT NULL CHECK(CodProdotto ~* '^[0-9]+$'),\n"
+                            + "CodOrdine INTEGER NOT NULL,\n"
+                            + "CodProdotto INTEGER NOT NULL,\n"
                             + "CodCliente SERIAL PRIMARY KEY,\n"
-                            + "Prezzo NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00),\n"
-                            + "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00, CHECK(Prezzo >= 0.00), \n"
+                            + "Prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK(Prezzo >= 0.00),\n"
+                            + "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(Prezzo >= 0.00), \n"
                             + "NumeroArticoli INT NOT NULL,\n" + "Categoria TIPOLOGIA,\n"
                             + "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"
                             + "CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"
@@ -261,6 +261,7 @@ public class DBConfiguration {
         }
 
         try (Statement st = connection.createStatement()) {
+            // Inserimento dati nella tabella cliente
             String sqlCliente = "INSERT INTO cliente (codcliente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
                     + "('11111','aldo','marzante','BBBBBB11B11B111B', 'Via Don Matteo','1234567890','aldo@arte.it'),"
                     + "('22222','luca','benson','AAAAAA22A22A222A', 'Via Don Corleone','1234567890','luca@arte.it'),"
@@ -269,9 +270,11 @@ public class DBConfiguration {
                     + "('44455','giorgio','rossi','WWWWWW55W55W555W', 'Via Don Carlo','1234567890','giorgio@arte.it'),"
                     + "('55566','paolo','verdi','QQQQQQ66Q66Q666Q', 'Via Don Alberto','1234567890','paolo@arte.it'),"
                     + "('66677','simone','bianchi','UUUUUU77U77U777U','Via Don Giuseppe','1234567890','simone@arte.it'),"
-                    + "('88899','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it');";
+                    + "('88899','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it') "
+                    + "ON CONFLICT (codcliente) DO NOTHING;";
             result += st.executeUpdate(sqlCliente);
 
+            // Inserimento dati nella tabella dipendente
             String sqlDipendente = "INSERT INTO dipendente (coddipendente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
                     + "('89899','dario','forte','FFFFFF11F11F111F','via andromeda','1234567890','dario@arte.it'),"
                     + "('79799','sandro','romano','LLLLLL22L22L222L','via omega','1234567890','sandro@arte.it'),"
@@ -279,9 +282,11 @@ public class DBConfiguration {
                     + "('11111','mario','rossi','YYYYYY11Y11Y111Y','via parma','1234567890','mario@arte.it'),"
                     + "('22222','andrea','verdi','HHHHHH22H22H222H','via milano','1234567890','andrea@arte.it'),"
                     + "('33333','giuseppe','bianchi','KKKKKK88K88K888K','via torino','1234567890','giuseppe@arte.it'),"
-                    + "('44444','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it');";
+                    + "('44444','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it') "
+                    + "ON CONFLICT (coddipendente) DO NOTHING;";
             result += st.executeUpdate(sqlDipendente);
 
+            // Inserimento dati nella tabella tessera
             String sqlTessera = "INSERT INTO tessera (codtessera, numeropunti, codcliente) VALUES "
                     + "('55555','20','11111'),"
                     + "('44444','30','22222'),"
@@ -290,9 +295,11 @@ public class DBConfiguration {
                     + "('77777','50','44455'),"
                     + "('66667','80','55566'),"
                     + "('55551','10','66677'),"
-                    + "('33333','150','88899');";
+                    + "('33333','150','88899') "
+                    + "ON CONFLICT (codtessera) DO NOTHING;";
             result += st.executeUpdate(sqlTessera);
 
+            // Inserimento dati nella tabella prodotto
             String sqlProdotto = "INSERT INTO prodotto (codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES "
                     + "('11111', 'Mela Rossa', 'Mela italiana rossa', 1.50, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Ortofrutticoli', 100),"
                     + "('22222', 'Formaggio Parmigiano', 'Formaggio Parmigiano Reggiano', 15.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 50),"
@@ -304,6 +311,7 @@ public class DBConfiguration {
                     + "('88888', 'Farina', 'Farina di grano tenero tipo \"00\"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200);";
             result += st.executeUpdate(sqlProdotto);
 
+            // Inserimento dati nella tabella ordine
             String sqlOrdine = "INSERT INTO ordine (codordine, prezzototale, dataacquisto, codcliente, coddipendente) VALUES "
                     + "('12122','57','2001-02-12','11111','89899'),"
                     + "('11112','45','2010-03-22','11111','89899'),"
@@ -322,6 +330,7 @@ public class DBConfiguration {
                     + "('20202','55','2024-02-28','88899','79799');";
             result += st.executeUpdate(sqlOrdine);
 
+            // Inserimento dati nella tabella articoliordine
             String sqlArticoliOrdine = "INSERT INTO articoliordine (CodOrdine, CodProdotto, CodCliente, prezzo, numeropunti, numeroarticoli, categoria) VALUES "
                     + "('12122','88888','11111', '0.80', '2', '10', 'Farinacei'),"
                     + "('11112','88888','11111', '0.80', '2', '10', 'Farinacei'),"
@@ -337,7 +346,8 @@ public class DBConfiguration {
                     + "('12132','55555','88899', '1.20', '3', '25', 'Ortofrutticoli'),"
                     + "('18181','55555','44455', '1.20', '3', '20', 'Ortofrutticoli'),"
                     + "('19191','77777','66677', '3.50', '2', '30', 'Inscatolati'),"
-                    + "('20202','33333','88899', '2.00', '5', '12', 'Inscatolati');";
+                    + "('20202','33333','88899', '2.00', '5', '12', 'Inscatolati') "
+                    + "ON CONFLICT (CodCliente) DO NOTHING;";
             result += st.executeUpdate(sqlArticoliOrdine);
 
         } catch (SQLException e) {

@@ -10,7 +10,7 @@ public class DBConnection {
 
     private final String LOCAL_URL = "jdbc:postgresql://localhost:5432/";
     private final String LOCAL_USERNAME = "postgres";
-    private final String LOCAL_PASSWORD = "admin";
+    private final String LOCAL_PASSWORD = "postgres";
 
     private DBConnection(boolean useSupabase) throws SQLException {
         try {
