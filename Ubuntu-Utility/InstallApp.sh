@@ -5,17 +5,11 @@ echo "Aggiornamento del sistema..."
 sudo apt update && sudo apt upgrade -y
 
 echo "Reinstallazione dei pacchetti dalla lista salvata..."
-sudo dpkg --set-selections < $HOME/Documenti/Lista-Pacchetti/pacchetti.txt
+sudo dpkg --set-selections < $HOME/Documenti/ListaPacchetti/pacchetti.txt
 sudo apt-get dselect-upgrade
 
 echo "Reinstallazione dei pacchetti Snap dalla lista salvata..."
-awk 'NR>1 {print $1}' $HOME/Documenti/Lista-Pacchetti/pacchetti_snap.txt | xargs -n1 sudo snap install
-
-echo "Reinstallazione dei pacchetti npm globali dalla lista salvata..."
-xargs npm install -g < $HOME/Documenti/pacchetti_npm.txt
-
-echo "Esecuzione aggiornamenti personalizzati..."
-sudo /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh
+awk 'NR>1 {print $1}' $HOME/Documenti/ListaPacchetti/pacchetti_snap.txt | xargs -n1 sudo snap install
 
 # Installa curl (se non è già presente)
 sudo apt install -y curl
@@ -146,6 +140,9 @@ sudo apt remove --purge gnome-mahjongg gnome-mines gnome-sudoku -y
 sudo apt install -y redis
 sudo systemctl start redis
 sudo systemctl enable redis
+
+echo "Esecuzione aggiornamenti personalizzati..."
+sudo /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh
 
 echo "Pulizia file temporanei..."
 rm -f *.deb *.run
