@@ -104,6 +104,10 @@ sudo snap install --classic openjdk
 sudo snap install --classic code
 sudo snap install --classic android-studio
 sudo snap install --classic eclipse
+sudo snap install telegram-desktop
+sudo snap install spotify
+sudo snap install whatsdesk
+sudo snap install teams-for-linux
 
 echo "Avvio del servizio Tor..."
 sudo apt install tor
