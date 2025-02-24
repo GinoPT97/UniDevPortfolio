@@ -8,14 +8,19 @@ public class ImagePanel extends JPanel {
 
     // Costruttore che riceve il percorso dell'immagine (da usare se l'immagine è inclusa nelle risorse)
     public ImagePanel(String imagePath) {
-        // Carica l'immagine tramite getResource
-        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
-        this.image = icon.getImage();
+        this(new ImageIcon(ImagePanel.class.getResource(imagePath)).getImage());
     }
 
     // Costruttore che riceve direttamente un oggetto Image
     public ImagePanel(Image image) {
         this.image = image;
+        setLayout(new BorderLayout());
+    }
+
+    // Costruttore che riceve un componente da sovrapporre all'immagine di sfondo
+    public ImagePanel(String imagePath, JComponent overlayComponent) {
+        this(imagePath);
+        add(overlayComponent);
     }
 
     // Metodo per aggiornare l'immagine in seguito (utile se l'immagine cambia dinamicamente)
