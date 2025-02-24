@@ -32,7 +32,7 @@ import Model.Prodotto;
 
 public class ModificaProdottiFrame extends JFrame {
     private JPanel contentPane;
-    private String cod;  // Variabile globale per il codice prodotto
+    private String cod;
     private JTextField nometf;
     private JTextField provtf;
     private JTextField prezzotf;
@@ -185,7 +185,7 @@ public class ModificaProdottiFrame extends JFrame {
 	            categoriacb.setSelectedIndex(3);
 	            break;
 	        default:
-	            categoriacb.setSelectedIndex(-1); // O gestione alternativa se la categoria non è riconosciuta
+	            categoriacb.setSelectedIndex(-1);
 	            break;
 	    }
 	}
@@ -267,7 +267,6 @@ public class ModificaProdottiFrame extends JFrame {
 	                                    .findFirst().orElse(-1);
 
 	            if (rowIndex != -1) {
-	                // Aggiorna i valori nella riga corrispondente del modello
 	                Object[] updatedValues = {
 	                    prodotto.getNome(),
 	                    prodotto.getDescrizione(),
@@ -289,8 +288,8 @@ public class ModificaProdottiFrame extends JFrame {
 	                JOptionPane.showMessageDialog(this, "Prodotto non trovato!", "Errore", JOptionPane.ERROR_MESSAGE);
 	            }
 
-	            clean(); // Pulisce i campi dopo l'aggiornamento
-	            c.visAndElem(4, 3); // Torna alla schermata precedente
+	            clean();
+	            c.visAndElem(4, 3);
 	        } catch (NumberFormatException | ParseException ex) {
 	            JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 	        }
@@ -303,6 +302,3 @@ public class ModificaProdottiFrame extends JFrame {
 		this.azioni(c);
 	}
 }
-
-
-

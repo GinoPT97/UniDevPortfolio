@@ -71,13 +71,13 @@ public class ModificaDipendenteFrame extends JFrame {
 
 	    // Pannello per i bottoni
 	    buttonpanel = new JPanel();
-	    buttonpanel.setLayout(new FlowLayout(FlowLayout.CENTER)); // Centrato
+	    buttonpanel.setLayout(new FlowLayout(FlowLayout.CENTER)); 
 	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
 	    // Bottone Inserisci
 	    addbutton = new JButton("Inserisci");
 	    addbutton.setBackground(Color.BLUE);
-	    addbutton.setForeground(Color.WHITE); // Colore del testo bianco per contrasto
+	    addbutton.setForeground(Color.WHITE);
 	    buttonpanel.add(addbutton);
 
 	    // Bottone Pulisci
@@ -87,17 +87,17 @@ public class ModificaDipendenteFrame extends JFrame {
 	    // Bottone Indietro
 	    backbutton = new JButton("Indietro");
 	    backbutton.setBackground(Color.RED);
-	    backbutton.setForeground(Color.WHITE); // Colore del testo bianco per contrasto
+	    backbutton.setForeground(Color.WHITE);
 	    buttonpanel.add(backbutton);
 
 	    // Pannello per gli elementi di input
 	    elempanel = new JPanel();
-	    elempanel.setBorder(new EmptyBorder(20, 50, 20, 50)); // Migliora il padding
-	    elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS)); // Layout verticale per gli input
+	    elempanel.setBorder(new EmptyBorder(20, 50, 20, 50));
+	    elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
 	    contentPane.add(elempanel, BorderLayout.CENTER);
 
 	    // Nome
-	    nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Centrato
+	    nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    nomelab = new JLabel("Nome :");
 	    nomepanel.add(nomelab);
 	    nometf = new JTextField(10);
@@ -105,7 +105,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	    elempanel.add(nomepanel);
 
 	    // Cognome
-	    cognomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Centrato
+	    cognomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    cognomelab = new JLabel("Cognome :");
 	    cognomepanel.add(cognomelab);
 	    cognometf = new JTextField(10);
@@ -113,7 +113,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	    elempanel.add(cognomepanel);
 
 	    // Codice Fiscale
-	    codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Centrato
+	    codfiscpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    codfisclab = new JLabel("Codice Fiscale :");
 	    codfiscpanel.add(codfisclab);
 	    codfisctf = new JTextField(10);
@@ -121,7 +121,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	    elempanel.add(codfiscpanel);
 
 	    // Email
-	    emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Centrato
+	    emailpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    emaillab = new JLabel("Email :");
 	    emailpanel.add(emaillab);
 	    emailtf = new JTextField(10);
@@ -129,7 +129,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	    elempanel.add(emailpanel);
 
 	    // Indirizzo
-	    indirizzopanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Centrato
+	    indirizzopanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    indirizzolab = new JLabel("Indirizzo :");
 	    indirizzopanel.add(indirizzolab);
 	    indirizzotf = new JTextField(10);
@@ -137,7 +137,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	    elempanel.add(indirizzopanel);
 
 	    // Telefono
-	    telefonopanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Centrato
+	    telefonopanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 	    telefonolab = new JLabel("Telefono : +39");
 	    telefonopanel.add(telefonolab);
 	    telefonotf = new JTextField(10);
