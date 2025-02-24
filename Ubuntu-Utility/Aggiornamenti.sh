@@ -121,4 +121,13 @@ execute_command "apt-get full-upgrade -y" "Aggiornamento completo"
 execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
 upgrade_ubuntu
 
+log "INFO" "Salvataggio della lista dei pacchetti installati..."
+dpkg --get-selections > $HOME/Documenti/Lista-Pacchetti/pacchetti.txt
+
+log "INFO" "Salvataggio della lista dei pacchetti Snap installati..."
+snap list > $HOME/Documenti/Lista-Pacchetti/pacchetti_snap.txt
+
+log "INFO" "Salvataggio della lista dei pacchetti npm globali installati..."
+npm list -g --depth=0 --json | jq -r '.dependencies | keys[]' > $HOME/Documenti/Lista-Pacchetti/pacchetti_npm.txt
+
 log "INFO" "Aggiornamenti completati!"
