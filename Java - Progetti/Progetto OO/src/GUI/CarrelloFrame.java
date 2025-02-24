@@ -48,7 +48,7 @@ public class CarrelloFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 1100, 500);
         setLocationRelativeTo(null);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(AdminFrame.class.getResource("/Immagini/ImmIcon.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(CarrelloFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         contentPane = new JPanel();
         contentPane.setBackground(Color.WHITE);

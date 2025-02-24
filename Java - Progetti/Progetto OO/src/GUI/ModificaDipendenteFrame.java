@@ -53,7 +53,7 @@ public class ModificaDipendenteFrame extends JFrame {
 	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	    setBounds(100, 100, 700, 500);
 	    setLocationRelativeTo(null);
-	    setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
+	    setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaDipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
 	    // Pannello principale
 	    contentPane = new JPanel();

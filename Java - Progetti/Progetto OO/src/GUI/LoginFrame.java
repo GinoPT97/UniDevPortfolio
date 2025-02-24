@@ -32,7 +32,7 @@ public class LoginFrame extends JFrame {
         setBounds(100, 100, 700, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         contentPane = new JPanel(new BorderLayout());
         contentPane.setBackground(new Color(238, 238, 238));
