@@ -41,7 +41,7 @@ public class LoginFrame extends JFrame {
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlelabel.setForeground(Color.WHITE); // Imposta il colore del testo
 
-        ImagePanel titlepanel = new ImagePanel("/Immagini/ImmLog-1.png", titlelabel);
+        ImagePanel titlepanel = new ImagePanel("/Immagini/ImmLog-3.png", titlelabel);
         contentPane.add(titlepanel, BorderLayout.WEST);
 
         JPanel infopanel = new JPanel();
