@@ -19,14 +19,12 @@ public class ImagePanel extends JPanel {
     public ImagePanel(Image image) {
         this.image = image;
         setLayout(new BorderLayout());
-        // Rimuovo setPreferredSize per evitare che il pannello imponga dimensioni troppo grandi
-        // e si adatti dinamicamente in base allo spazio disponibile.
     }
 
     // Costruttore che riceve un componente da sovrapporre all'immagine di sfondo
     public ImagePanel(String imagePath, JComponent overlayComponent) {
         this(imagePath);
-        overlayComponent.setOpaque(false); // Assicura che l'overlay sia trasparente
+        overlayComponent.setOpaque(false); 
         add(overlayComponent, BorderLayout.CENTER);
     }
 
