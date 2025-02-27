@@ -115,6 +115,7 @@ sudo snap install telegram-desktop
 sudo snap install spotify
 sudo snap install whatsdesk
 sudo snap install teams-for-linux
+sudo snap install docker  
 
 echo "Avvio del servizio Tor..."
 sudo apt install tor
