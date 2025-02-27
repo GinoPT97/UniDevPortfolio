@@ -85,7 +85,7 @@ public class VisioneProdottiFrame extends JFrame {
         searchbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
         buttonpanel.add(searchbutton);
 
-        filterComboBox = new JComboBox<>(new String[]{"Tutti", "Codice", "Nome", "Categoria"});
+        filterComboBox = new JComboBox<>(new String[]{"Tutti", "Nome", "Descrizione", "Prezzo", "Provenienza", "Categoria"});
         buttonpanel.add(filterComboBox);
 
         addbutton = new JButton("Aggiungi");
@@ -116,7 +116,7 @@ public class VisioneProdottiFrame extends JFrame {
                 table.setRowSorter(null);
             } else {
                 try {
-                    int columnIndex = filterComboBox.getSelectedIndex() - 1;
+                    int columnIndex = filterComboBox.getSelectedIndex();
                     if (columnIndex >= 0) {
                         sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query, columnIndex));
                     } else {
