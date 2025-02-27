@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,6 +37,7 @@ public class VisioneProdottiFrame extends JFrame {
     private JLabel titlelabel;
     private JButton searchbutton;
     private JTextField searchtf;
+    private JComboBox<String> filterComboBox;
 
     public void elementi(Controller c) throws SQLException {
         // Imposta le caratteristiche di base della finestra
@@ -83,6 +85,9 @@ public class VisioneProdottiFrame extends JFrame {
         searchbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
         buttonpanel.add(searchbutton);
 
+        filterComboBox = new JComboBox<>(new String[]{"Tutti", "Codice", "Nome", "Categoria"});
+        buttonpanel.add(filterComboBox);
+
         addbutton = new JButton("Aggiungi");
         addbutton.setBackground(Color.GREEN);
         addbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
@@ -111,7 +116,12 @@ public class VisioneProdottiFrame extends JFrame {
                 table.setRowSorter(null);
             } else {
                 try {
-                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+                    int columnIndex = filterComboBox.getSelectedIndex() - 1;
+                    if (columnIndex >= 0) {
+                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query, columnIndex));
+                    } else {
+                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+                    }
                     table.setRowSorter(sorter);
                 } catch (PatternSyntaxException ex) {
                     JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(),
