@@ -62,7 +62,7 @@ public class Controller {
     public DefaultTableModel clienteModel = new DefaultTableModel(new Object[]{"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"}, 0);
     public DefaultTableModel dipModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
     public DefaultTableModel prodModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"}, 0);
-    public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Codice Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
+    public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
     public String iddip;
     private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
 
