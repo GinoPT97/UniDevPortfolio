@@ -92,21 +92,17 @@ public class VisioneOrdineFrame extends JFrame {
 	    // Configura il pulsante di ricerca
 	    searchbutton.addActionListener(e -> {
 	        String query = searchtf.getText().trim().toLowerCase();
+	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.ordModel);
 	        if (query.isEmpty()) {
-	            // Se la query è vuota, mostra tutti i dati
-	            table.setRowSorter(null); // Rimuove il filtro
+	            table.setRowSorter(null);
 	        } else {
-	            // Applica il filtro sulla tabella
-	            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.ordModel);
 	            try {
-	                // Imposta il filtro della tabella con la query
 	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+	                table.setRowSorter(sorter);
 	            } catch (PatternSyntaxException ex) {
-	                // Mostra un messaggio di errore se la sintassi dell'espressione regolare è errata
-	                JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(), "Errore di Filtro", JOptionPane.ERROR_MESSAGE);
-	                return; // Esci se c'è un errore di sintassi
+	                JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(),
+	                                              "Errore di Filtro", JOptionPane.ERROR_MESSAGE);
 	            }
-	            table.setRowSorter(sorter);
 	        }
 	    });
 

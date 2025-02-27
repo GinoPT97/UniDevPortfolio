@@ -105,17 +105,15 @@ public class VisioneProdottiFrame extends JFrame {
 
         // Gestione della ricerca
         searchbutton.addActionListener(e -> {
-            String query = searchtf.getText().trim().toLowerCase(); // Rimuove spazi e converte in minuscolo
-            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel); // Crea un sorter per la tabella
+            String query = searchtf.getText().trim().toLowerCase();
+            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel);
             if (query.isEmpty()) {
-                table.setRowSorter(null); // Se la ricerca è vuota, rimuove il filtro
+                table.setRowSorter(null);
             } else {
                 try {
-                    // Applica il filtro case insensitive alla tabella
                     sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-                    table.setRowSorter(sorter); // Applica il sorter
+                    table.setRowSorter(sorter);
                 } catch (PatternSyntaxException ex) {
-                    // Gestione dell'errore di sintassi dell'espressione regolare
                     JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(),
                                                   "Errore", JOptionPane.ERROR_MESSAGE);
                 }

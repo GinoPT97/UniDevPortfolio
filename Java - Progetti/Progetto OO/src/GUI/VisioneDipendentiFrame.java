@@ -95,17 +95,15 @@ public class VisioneDipendentiFrame extends JFrame {
 	        String query = searchtf.getText().trim().toLowerCase();
 	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.dipModel);
 	        if (query.isEmpty()) {
-	            // Se la query è vuota, mostra tutti i dati
-	            table.setRowSorter(null); // Rimuove il filtro
+	            table.setRowSorter(null);
 	        } else {
 	            try {
-	                // Applica il filtro sulla tabella con flag case insensitive
 	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+	                table.setRowSorter(sorter);
 	            } catch (PatternSyntaxException ex) {
-	                System.out.println("Errore nella sintassi dell'espressione regolare: " + ex.getMessage());
-	                return; // Esci se c'è un errore di sintassi
+	                JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(),
+	                                              "Errore", JOptionPane.ERROR_MESSAGE);
 	            }
-	            table.setRowSorter(sorter);
 	        }
 	    });
 

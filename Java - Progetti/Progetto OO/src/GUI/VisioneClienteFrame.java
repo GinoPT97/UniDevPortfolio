@@ -95,15 +95,14 @@ public class VisioneClienteFrame extends JFrame {
 	        String query = searchtf.getText().trim().toLowerCase();
 	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.clienteModel);
 	        if (query.isEmpty()) {
-	            // Se la query è vuota, mostra tutti i dati
-	            table.setRowSorter(null); // Rimuove il filtro
+	            table.setRowSorter(null);
 	        } else {
 	            try {
-	                // Utilizza RowFilter.regexFilter con il flag CASE_INSENSITIVE per il filtro case insensitive
 	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
 	                table.setRowSorter(sorter);
 	            } catch (PatternSyntaxException ex) {
-	                JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+	                JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(),
+	                                              "Errore", JOptionPane.ERROR_MESSAGE);
 	            }
 	        }
 	    });
