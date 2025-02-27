@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -37,7 +36,6 @@ public class VisioneProdottiFrame extends JFrame {
     private JLabel titlelabel;
     private JButton searchbutton;
     private JTextField searchtf;
-    private JComboBox<String> filterComboBox;
 
     public void elementi(Controller c) throws SQLException {
         // Imposta le caratteristiche di base della finestra
@@ -85,9 +83,6 @@ public class VisioneProdottiFrame extends JFrame {
         searchbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
         buttonpanel.add(searchbutton);
 
-        filterComboBox = new JComboBox<>(new String[]{"Tutti", "Nome", "Descrizione", "Prezzo", "Provenienza", "Categoria"});
-        buttonpanel.add(filterComboBox);
-
         addbutton = new JButton("Aggiungi");
         addbutton.setBackground(Color.GREEN);
         addbutton.setForeground(Color.WHITE); // Migliora la visibilità del testo
@@ -112,17 +107,12 @@ public class VisioneProdottiFrame extends JFrame {
         searchbutton.addActionListener(e -> {
             String query = searchtf.getText().trim().toLowerCase();
             TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel);
+            table.setRowSorter(sorter);
             if (query.isEmpty()) {
-                table.setRowSorter(null);
+                sorter.setRowFilter(null);
             } else {
                 try {
-                    int columnIndex = filterComboBox.getSelectedIndex();
-                    if (columnIndex >= 0) {
-                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query, columnIndex));
-                    } else {
-                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-                    }
-                    table.setRowSorter(sorter);
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
                 } catch (PatternSyntaxException ex) {
                     JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(),
                                                   "Errore", JOptionPane.ERROR_MESSAGE);

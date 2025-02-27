@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,7 +33,6 @@ public class VisioneClienteFrame extends JFrame {
 	private JButton updatebutton;
 	private JTextField searchtf;
 	private JButton searchbutton;
-	private JComboBox<String> filterComboBox;
 
 	public void elementi(Controller c) {
 	    // Imposta le proprietà della finestra principale
@@ -75,10 +73,6 @@ public class VisioneClienteFrame extends JFrame {
 	    searchbutton.setBackground(new Color(107, 142, 35));
 	    buttonpanel.add(searchbutton);
 
-	    // Aggiungi JComboBox per i filtri
-	    filterComboBox = new JComboBox<>(new String[]{"Tutti", "Nome", "Cognome"});
-	    buttonpanel.add(filterComboBox);
-
 	    addbutton = new JButton("Aggiungi");
 	    addbutton.setBackground(Color.GREEN);
 	    buttonpanel.add(addbutton);
@@ -100,17 +94,12 @@ public class VisioneClienteFrame extends JFrame {
 	    searchbutton.addActionListener(e -> {
 	        String query = searchtf.getText().trim().toLowerCase();
 	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.clienteModel);
+	        table.setRowSorter(sorter);
 	        if (query.isEmpty()) {
-	            table.setRowSorter(null);
+	            sorter.setRowFilter(null);
 	        } else {
 	            try {
-	                int columnIndex = filterComboBox.getSelectedIndex() - 1;
-	                if (columnIndex >= 0) {
-	                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query, columnIndex));
-	                } else {
-	                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-	                }
-	                table.setRowSorter(sorter);
+	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
 	            } catch (PatternSyntaxException ex) {
 	                JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(),
 	                                              "Errore", JOptionPane.ERROR_MESSAGE);
