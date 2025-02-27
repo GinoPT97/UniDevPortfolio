@@ -76,7 +76,7 @@ public class VisioneDipendentiFrame extends JFrame {
 	    buttonpanel.add(searchbutton);
 
 	    // Aggiungi JComboBox per i filtri
-	    filterComboBox = new JComboBox<>(new String[]{"Tutti", "ID", "Nome", "Cognome"});
+	    filterComboBox = new JComboBox<>(new String[]{"Tutti", "Nome", "Cognome"});
 	    buttonpanel.add(filterComboBox);
 
 	    addbutton = new JButton("Aggiungi");

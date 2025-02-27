@@ -79,7 +79,7 @@ public class VisioneOrdineFrame extends JFrame {
 	    buttonpanel.add(searchbutton);
 
 	    // Aggiungi JComboBox per i filtri
-	    filterComboBox = new JComboBox<>(new String[]{"Tutti", "ID Ordine", "Cliente", "Data"});
+	    filterComboBox = new JComboBox<>(new String[]{"Tutti", "Cliente", "Data"});
 	    buttonpanel.add(filterComboBox);
 
 	    ordinebutton = new JButton("Nuovo Ordine");
