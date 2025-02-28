@@ -53,7 +53,6 @@ public class ImagePanel extends JPanel {
         repaint();
     }
 
-    // Override per rimuovere eventuali margini
     @Override
     public Insets getInsets() {
         return new Insets(0, 0, 0, 0);
@@ -64,7 +63,6 @@ public class ImagePanel extends JPanel {
         if (getParent() != null) {
             int parentWidth = getParent().getWidth();
             int parentHeight = getParent().getHeight();
-            // Imposta la larghezza a metà del genitore
             return new Dimension(parentWidth / 2, parentHeight);
         }
         return super.getPreferredSize();

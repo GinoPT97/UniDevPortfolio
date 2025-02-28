@@ -30,7 +30,7 @@ public class LoginFrame extends JFrame {
     private JTextField idtf;
 
     private void elementi(ImagePanel titlePanel) {
-        setTitle("Titolo");
+        setTitle("Ortofrutta 2.0");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
         setBounds(100, 100, 700, 450);
