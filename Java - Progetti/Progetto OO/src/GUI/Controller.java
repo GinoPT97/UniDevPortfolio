@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 import DAOImplementation.ArticoliImpl;
@@ -31,6 +32,8 @@ import Model.Cliente;
 import Model.Dipendente;
 import Model.Ordine;
 import Model.Prodotto;
+import Model.ImagePanel;
+import java.awt.Image;
 
 public class Controller {
     // Dichiarazione dei frame
@@ -68,7 +71,8 @@ public class Controller {
 
     public Controller() throws SQLException, IOException {
         // Inizializzazione dei frame
-        logf = new LoginFrame("Login - Ortofrutta", this);
+        ImagePanel titlePanel = createImagePanel("/Immagini/ImmLog-3.png");
+        logf = new LoginFrame("Login - Ortofrutta", this, titlePanel);
         adminf = new AdminFrame("Admin Area", this);
         dipf = new DipendenteFrame("Dipendente Area", this);
         nprodf = new NuovoProdottoFrame("Nuovo Prodotto", this);
@@ -85,6 +89,11 @@ public class Controller {
         visordf = new VisioneOrdineFrame("Visione Ordini", this);
         searchf = new RicercaFrame("Ricerca Clienti", this);
         logf.setVisible(true);
+    }
+
+    private ImagePanel createImagePanel(String imagePath) {
+        Image image = new ImageIcon(ImagePanel.class.getResource(imagePath)).getImage();
+        return new ImagePanel(image);
     }
 
     public void returnToLastFrame() {

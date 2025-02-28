@@ -15,10 +15,6 @@ public class ImagePanel extends JPanel {
     private int lastWidth = -1;
     private int lastHeight = -1;
 
-    public ImagePanel(String imagePath) {
-        this(new ImageIcon(ImagePanel.class.getResource(imagePath)).getImage());
-    }
-
     public ImagePanel(Image image) {
         this.image = image;
         setLayout(new BorderLayout(0, 0)); // Imposta il layout senza gap
@@ -32,19 +28,6 @@ public class ImagePanel extends JPanel {
                 updateScaledImage();
             }
         });
-    }
-
-    public ImagePanel(String imagePath, JComponent overlayComponent) {
-        this(imagePath);
-        overlayComponent.setOpaque(false);
-        add(overlayComponent, BorderLayout.CENTER);
-    }
-
-    public static ImagePanel createWithOverlay(String imagePath, JComponent overlayComponent) {
-        ImagePanel panel = new ImagePanel(imagePath);
-        overlayComponent.setOpaque(false);
-        panel.add(overlayComponent, BorderLayout.CENTER);
-        return panel;
     }
 
     public void resetImage(Image newImage) {

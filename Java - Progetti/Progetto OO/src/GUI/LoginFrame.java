@@ -29,7 +29,7 @@ public class LoginFrame extends JFrame {
     private JButton logbutt, clearbutt;
     private JTextField idtf;
 
-    private void elementi() {
+    private void elementi(ImagePanel titlePanel) {
         setTitle("Titolo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
@@ -45,7 +45,7 @@ public class LoginFrame extends JFrame {
         titleLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setBorder(null); // Rimuovi i bordi
-        ImagePanel titlePanel = new ImagePanel("/Immagini/ImmLog-3.png", titleLabel);
+        titlePanel.add(titleLabel, BorderLayout.CENTER);
 
         // Creazione del pannello destro con i controlli di login
         JPanel infoPanel = new JPanel();
@@ -123,11 +123,11 @@ public class LoginFrame extends JFrame {
         JOptionPane.showMessageDialog(contentPane, message);
     }
 
-    public LoginFrame(String title, Controller c) throws SQLException {
+    public LoginFrame(String title, Controller c, ImagePanel titlePanel) throws SQLException {
         super(title);
         c.connect();
         SwingUtilities.invokeLater(() -> {
-            elementi();
+            elementi(titlePanel);
             azioni(c);
         });
     }
