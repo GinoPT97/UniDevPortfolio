@@ -41,9 +41,10 @@ public class LoginFrame extends JFrame {
         setContentPane(contentPane);
 
         // Creazione del pannello sinistro con l'immagine e il titolo
-        JLabel titleLabel = new JLabel("Ortofrutta 2.0", SwingConstants.CENTER); 
+        JLabel titleLabel = new JLabel("Ortofrutta 2.0", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titleLabel.setForeground(Color.WHITE);
+        titleLabel.setBorder(null); // Rimuovi i bordi
         ImagePanel titlePanel = new ImagePanel("/Immagini/ImmLog-3.png", titleLabel);
 
         // Creazione del pannello destro con i controlli di login
@@ -81,6 +82,7 @@ public class LoginFrame extends JFrame {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, titlePanel, infoPanel);
         splitPane.setDividerSize(0);
         splitPane.setResizeWeight(0.5); // Distribuisce lo spazio equamente
+        splitPane.setBorder(null); // Rimuove il bordo esterno del JSplitPane
         contentPane.add(splitPane, BorderLayout.CENTER);
     }
 

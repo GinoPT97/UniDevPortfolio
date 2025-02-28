@@ -17,7 +17,8 @@ public class ImagePanel extends JPanel {
 
     public ImagePanel(Image image) {
         this.image = image;
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(0, 0)); // Imposta il layout senza gap
+        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Rimuovi eventuali bordi
     }
 
     public ImagePanel(String imagePath, JComponent overlayComponent) {
@@ -54,6 +55,12 @@ public class ImagePanel extends JPanel {
         setPreferredSize(newSize);
         revalidate();
         repaint();
+    }
+
+    // Override per rimuovere eventuali margini
+    @Override
+    public Insets getInsets() {
+        return new Insets(0, 0, 0, 0);
     }
 
     @Override
