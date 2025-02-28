@@ -55,25 +55,11 @@ public class ImagePanel extends JPanel {
         if (image != null) {
             int panelWidth = getWidth();
             int panelHeight = getHeight();
-            int imageWidth = image.getWidth(this);
-            int imageHeight = image.getHeight(this);
 
-            if (imageWidth > 0 && imageHeight > 0) {
-                double scaleX = (double) panelWidth / imageWidth;
-                double scaleY = (double) panelHeight / imageHeight;
-                double scale = Math.max(scaleX, scaleY);
-
-                int drawWidth = (int) (imageWidth * scale);
-                int drawHeight = (int) (imageHeight * scale);
-
-                int x = (panelWidth - drawWidth) / 2;
-                int y = (panelHeight - drawHeight) / 2;
-
-                Graphics2D g2d = (Graphics2D) g.create();
-                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                g2d.drawImage(image, x, y, drawWidth, drawHeight, this);
-                g2d.dispose();
-            }
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.drawImage(image, 0, 0, panelWidth, panelHeight, this);
+            g2d.dispose();
         }
     }
 }
