@@ -2,6 +2,8 @@ package Model;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +23,15 @@ public class ImagePanel extends JPanel {
         this.image = image;
         setLayout(new BorderLayout(0, 0)); // Imposta il layout senza gap
         setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Rimuovi eventuali bordi
+        setDoubleBuffered(true); // Abilita il double buffering
+
+        // Aggiorna l'immagine scalata quando il pannello viene ridimensionato
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateScaledImage();
+            }
+        });
     }
 
     public ImagePanel(String imagePath, JComponent overlayComponent) {
@@ -76,21 +87,44 @@ public class ImagePanel extends JPanel {
         return super.getPreferredSize();
     }
 
+    private void updateScaledImage() {
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+        if (panelWidth <= 0 || panelHeight <= 0) {
+            return;
+        }
+        // Aggiorna solo se le dimensioni sono cambiate
+        if (panelWidth != lastWidth || panelHeight != lastHeight) {
+            BufferedImage bufferedScaledImage = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = bufferedScaledImage.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(image, 0, 0, panelWidth, panelHeight, null);
+            g2.dispose();
+            scaledImage = bufferedScaledImage;
+            lastWidth = panelWidth;
+            lastHeight = panelHeight;
+        }
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (image != null) {
-            int panelWidth = getWidth();
-            int panelHeight = getHeight();
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+        if (panelWidth <= 0 || panelHeight <= 0) return;
 
-            // Se le dimensioni sono cambiate, aggiorna l'immagine scalata
-            if (panelWidth != lastWidth || panelHeight != lastHeight) {
-                scaledImage = image.getScaledInstance(panelWidth, panelHeight, Image.SCALE_SMOOTH);
-                lastWidth = panelWidth;
-                lastHeight = panelHeight;
-            }
-
-            g.drawImage(scaledImage, 0, 0, this);
+        // Se non esiste una scaledImage o le dimensioni non corrispondono a quelle correnti, ricalcola
+        if (scaledImage == null || scaledImage.getWidth(this) != panelWidth || scaledImage.getHeight(this) != panelHeight) {
+            BufferedImage bufferedScaledImage = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = bufferedScaledImage.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(image, 0, 0, panelWidth, panelHeight, null);
+            g2.dispose();
+            scaledImage = bufferedScaledImage;
+            lastWidth = panelWidth;
+            lastHeight = panelHeight;
         }
+
+        g.drawImage(scaledImage, 0, 0, this);
     }
 }
