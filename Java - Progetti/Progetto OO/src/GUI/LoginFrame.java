@@ -22,14 +22,12 @@ import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.SwingUtilities;
 
-import Model.ImagePanel;
-
 public class LoginFrame extends JFrame {
     private JPanel contentPane;
     private JButton logbutt, clearbutt;
     private JTextField idtf;
 
-    private void elementi(ImagePanel titlePanel) {
+    private void elementi(JPanel titlePanel) {
         setTitle("Ortofrutta 2.0");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
@@ -44,7 +42,7 @@ public class LoginFrame extends JFrame {
         JLabel titleLabel = new JLabel("Ortofrutta 2.0", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titleLabel.setForeground(Color.WHITE);
-        titleLabel.setBorder(null); // Rimuovi i bordi
+        titleLabel.setBorder(null);
         titlePanel.add(titleLabel, BorderLayout.CENTER);
 
         // Creazione del pannello destro con i controlli di login
@@ -81,8 +79,8 @@ public class LoginFrame extends JFrame {
         // Utilizza JSplitPane per dividere dinamicamente lo spazio tra i pannelli
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, titlePanel, infoPanel);
         splitPane.setDividerSize(0);
-        splitPane.setResizeWeight(0.5); // Distribuisce lo spazio equamente
-        splitPane.setBorder(null); // Rimuove il bordo esterno del JSplitPane
+        splitPane.setResizeWeight(0.5);
+        splitPane.setBorder(null);
         contentPane.add(splitPane, BorderLayout.CENTER);
     }
 
@@ -123,7 +121,7 @@ public class LoginFrame extends JFrame {
         JOptionPane.showMessageDialog(contentPane, message);
     }
 
-    public LoginFrame(String title, Controller c, ImagePanel titlePanel) throws SQLException {
+    public LoginFrame(String title, Controller c, JPanel titlePanel) throws SQLException {
         super(title);
         c.connect();
         SwingUtilities.invokeLater(() -> {

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
 import DAOImplementation.ArticoliImpl;
@@ -71,7 +72,7 @@ public class Controller {
 
     public Controller() throws SQLException, IOException {
         // Inizializzazione dei frame
-        ImagePanel titlePanel = createImagePanel("/Immagini/ImmLog-3.png");
+        JPanel titlePanel = createImagePanel("/Immagini/ImmLog-3.png");
         logf = new LoginFrame("Login - Ortofrutta", this, titlePanel);
         adminf = new AdminFrame("Admin Area", this);
         dipf = new DipendenteFrame("Dipendente Area", this);
@@ -91,7 +92,7 @@ public class Controller {
         logf.setVisible(true);
     }
 
-    private ImagePanel createImagePanel(String imagePath) {
+    private JPanel createImagePanel(String imagePath) {
         Image image = new ImageIcon(ImagePanel.class.getResource(imagePath)).getImage();
         return new ImagePanel(image);
     }
