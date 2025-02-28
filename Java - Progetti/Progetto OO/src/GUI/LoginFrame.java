@@ -41,7 +41,7 @@ public class LoginFrame extends JFrame {
         setContentPane(contentPane);
 
         // Creazione del pannello sinistro con l'immagine e il titolo
-        JLabel titleLabel = new JLabel("Ortofrutta 2.0", SwingConstants.LEFT);
+        JLabel titleLabel = new JLabel("Ortofrutta 2.0", SwingConstants.CENTER); 
         titleLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titleLabel.setForeground(Color.WHITE);
         ImagePanel titlePanel = new ImagePanel("/Immagini/ImmLog-3.png", titleLabel);
@@ -68,7 +68,7 @@ public class LoginFrame extends JFrame {
         logbutt.setAlignmentX(CENTER_ALIGNMENT);
         buttonPanel.add(logbutt);
 
-        buttonPanel.add(Box.createVerticalStrut(10)); // Spazio tra i bottoni
+        buttonPanel.add(Box.createVerticalStrut(10));
 
         clearbutt = new JButton("Clear");
         clearbutt.setAlignmentX(CENTER_ALIGNMENT);
@@ -124,7 +124,6 @@ public class LoginFrame extends JFrame {
     public LoginFrame(String title, Controller c) throws SQLException {
         super(title);
         c.connect();
-        // Assicurati che la creazione e l'aggiornamento dei componenti Swing avvengano sull'EDT
         SwingUtilities.invokeLater(() -> {
             elementi();
             azioni(c);
