@@ -49,6 +49,12 @@ public class ImagePanel extends JPanel {
         }
     }
 
+    public void resizePanel(Dimension newSize) {
+        setPreferredSize(newSize);
+        revalidate();
+        repaint();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.sql.SQLException;
 
 import javax.swing.Box;
@@ -43,6 +45,15 @@ public class LoginFrame extends JFrame {
 
         ImagePanel titlepanel = new ImagePanel("/Immagini/ImmLog-3.png", titlelabel);
         contentPane.add(titlepanel, BorderLayout.WEST);
+
+        // Aggiungi un listener per ridimensionare ImagePanel quando la finestra viene ridimensionata
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Dimension newSize = new Dimension(getWidth() / 2, getHeight());
+                titlepanel.resizePanel(newSize);
+            }
+        });
 
         JPanel infopanel = new JPanel();
         infopanel.setLayout(new BoxLayout(infopanel, BoxLayout.Y_AXIS));
