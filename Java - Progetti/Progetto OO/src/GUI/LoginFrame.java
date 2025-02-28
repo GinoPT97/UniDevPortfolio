@@ -7,8 +7,6 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.sql.SQLException;
 
 import javax.swing.Box;
@@ -20,7 +18,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.SwingUtilities;
 
 import Model.ImagePanel;
 
@@ -30,62 +30,58 @@ public class LoginFrame extends JFrame {
     private JTextField idtf;
 
     private void elementi() {
-        setBounds(100, 100, 700, 450);
+        setTitle("Titolo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
+        setBounds(100, 100, 700, 450);
+        setLocationRelativeTo(null);
 
+        // Utilizza un pannello contenitore con BorderLayout
         contentPane = new JPanel(new BorderLayout());
-        contentPane.setBackground(new Color(238, 238, 238));
         setContentPane(contentPane);
 
-        JLabel titlelabel = new JLabel("Ortofrutta 2.0", SwingConstants.LEFT);
-        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlelabel.setForeground(Color.WHITE); // Imposta il colore del testo
+        // Creazione del pannello sinistro con l'immagine e il titolo
+        JLabel titleLabel = new JLabel("Ortofrutta 2.0", SwingConstants.LEFT);
+        titleLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titleLabel.setForeground(Color.WHITE);
+        ImagePanel titlePanel = new ImagePanel("/Immagini/ImmLog-3.png", titleLabel);
 
-        ImagePanel titlepanel = new ImagePanel("/Immagini/ImmLog-3.png", titlelabel);
-        contentPane.add(titlepanel, BorderLayout.WEST);
+        // Creazione del pannello destro con i controlli di login
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBorder(new EmptyBorder(150, 100, 100, 100));
 
-        // Aggiungi un listener per ridimensionare ImagePanel quando la finestra viene ridimensionata
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                Dimension newSize = new Dimension(getWidth() / 2, getHeight());
-                titlepanel.resizePanel(newSize);
-            }
-        });
-
-        JPanel infopanel = new JPanel();
-        infopanel.setLayout(new BoxLayout(infopanel, BoxLayout.Y_AXIS));
-        infopanel.setBorder(new EmptyBorder(150, 100, 100, 100));
-
-        JLabel idlab = new JLabel("ID :");
-        idlab.setAlignmentX(CENTER_ALIGNMENT);
-        infopanel.add(idlab);
+        JLabel idLab = new JLabel("ID :");
+        idLab.setAlignmentX(CENTER_ALIGNMENT);
+        infoPanel.add(idLab);
 
         idtf = new JTextField("00000", 10);
         idtf.setHorizontalAlignment(SwingConstants.CENTER);
         idtf.setMaximumSize(new Dimension(200, 30));
-        infopanel.add(idtf);
+        infoPanel.add(idtf);
 
-        JPanel buttonpanel = new JPanel();
-        buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
         logbutt = new JButton("Login");
         logbutt.setBackground(Color.GREEN);
         logbutt.setAlignmentX(CENTER_ALIGNMENT);
-        buttonpanel.add(logbutt);
+        buttonPanel.add(logbutt);
 
-        buttonpanel.add(Box.createVerticalStrut(10)); // Spazio tra i bottoni
+        buttonPanel.add(Box.createVerticalStrut(10)); // Spazio tra i bottoni
 
         clearbutt = new JButton("Clear");
         clearbutt.setAlignmentX(CENTER_ALIGNMENT);
-        buttonpanel.add(clearbutt);
+        buttonPanel.add(clearbutt);
 
-        infopanel.add(Box.createVerticalStrut(20)); // Spazio tra il campo ID e i bottoni
-        infopanel.add(buttonpanel);
+        infoPanel.add(Box.createVerticalStrut(20));
+        infoPanel.add(buttonPanel);
 
-        contentPane.add(infopanel, BorderLayout.CENTER);
+        // Utilizza JSplitPane per dividere dinamicamente lo spazio tra i pannelli
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, titlePanel, infoPanel);
+        splitPane.setDividerSize(0);
+        splitPane.setResizeWeight(0.5); // Distribuisce lo spazio equamente
+        contentPane.add(splitPane, BorderLayout.CENTER);
     }
 
     private void azioni(Controller c) {
@@ -128,12 +124,13 @@ public class LoginFrame extends JFrame {
     public LoginFrame(String title, Controller c) throws SQLException {
         super(title);
         c.connect();
-        this.elementi();
-        this.azioni(c);
+        // Assicurati che la creazione e l'aggiornamento dei componenti Swing avvengano sull'EDT
+        SwingUtilities.invokeLater(() -> {
+            elementi();
+            azioni(c);
+        });
     }
 }
-
-
 
 
 

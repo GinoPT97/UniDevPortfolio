@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 
 public class ImagePanel extends JPanel {
     private Image image;
+    private Image scaledImage;
 
     public ImagePanel(String imagePath) {
         this(new ImageIcon(ImagePanel.class.getResource(imagePath)).getImage());
@@ -56,16 +57,29 @@ public class ImagePanel extends JPanel {
     }
 
     @Override
+    public Dimension getPreferredSize() {
+        if (getParent() != null) {
+            int parentWidth = getParent().getWidth();
+            int parentHeight = getParent().getHeight();
+            // Imposta la larghezza a metà del genitore
+            return new Dimension(parentWidth / 2, parentHeight);
+        }
+        return super.getPreferredSize();
+    }
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (image != null) {
             int panelWidth = getWidth();
             int panelHeight = getHeight();
 
-            Graphics2D g2d = (Graphics2D) g.create();
-            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g2d.drawImage(image, 0, 0, panelWidth, panelHeight, this);
-            g2d.dispose();
+            // Se le dimensioni sono cambiate, aggiorna l'immagine scalata
+            if (scaledImage == null || scaledImage.getWidth(this) != panelWidth || scaledImage.getHeight(this) != panelHeight) {
+                scaledImage = image.getScaledInstance(panelWidth, panelHeight, Image.SCALE_SMOOTH);
+            }
+
+            g.drawImage(scaledImage, 0, 0, this);
         }
     }
 }
