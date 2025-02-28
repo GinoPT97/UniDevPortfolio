@@ -10,6 +10,8 @@ import javax.imageio.ImageIO;
 public class ImagePanel extends JPanel {
     private Image image;
     private Image scaledImage;
+    private int lastWidth = -1;
+    private int lastHeight = -1;
 
     public ImagePanel(String imagePath) {
         this(new ImageIcon(ImagePanel.class.getResource(imagePath)).getImage());
@@ -82,8 +84,10 @@ public class ImagePanel extends JPanel {
             int panelHeight = getHeight();
 
             // Se le dimensioni sono cambiate, aggiorna l'immagine scalata
-            if (scaledImage == null || scaledImage.getWidth(this) != panelWidth || scaledImage.getHeight(this) != panelHeight) {
+            if (panelWidth != lastWidth || panelHeight != lastHeight) {
                 scaledImage = image.getScaledInstance(panelWidth, panelHeight, Image.SCALE_SMOOTH);
+                lastWidth = panelWidth;
+                lastHeight = panelHeight;
             }
 
             g.drawImage(scaledImage, 0, 0, this);
