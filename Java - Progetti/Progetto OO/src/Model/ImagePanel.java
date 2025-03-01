@@ -17,9 +17,9 @@ public class ImagePanel extends JPanel {
 
     public ImagePanel(Image image) {
         this.image = image;
-        setLayout(new BorderLayout(0, 0)); // Imposta il layout senza gap
-        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Rimuovi eventuali bordi
-        setDoubleBuffered(true); // Abilita il double buffering
+        setLayout(new BorderLayout(0, 0));
+        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        setDoubleBuffered(true);
 
         // Aggiorna l'immagine scalata quando il pannello viene ridimensionato
         addComponentListener(new ComponentAdapter() {
