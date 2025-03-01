@@ -39,8 +39,8 @@ public class LoginFrame extends JFrame {
         setContentPane(contentPane);
 
         // Creazione del pannello sinistro con l'immagine e il titolo
-        JLabel titleLabel = new JLabel("Green Market Point", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        JLabel titleLabel = new JLabel("Dalla terra al banco!", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Tahoma", Font.BOLD, 25));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setBorder(null);
         titlePanel.add(titleLabel, BorderLayout.CENTER);
@@ -124,7 +124,7 @@ public class LoginFrame extends JFrame {
     public LoginFrame(String title, Controller c) throws SQLException {
         super(title);
         c.connect();
-        JPanel titlePanel = c.createImagePanel("/Immagini/ImmLog-3.png");
+        JPanel titlePanel = c.createImagePanel("/Immagini/ImmLog-2.jpg");
         SwingUtilities.invokeLater(() -> {
             elementi(titlePanel);
             azioni(c);
