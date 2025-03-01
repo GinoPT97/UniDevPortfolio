@@ -72,8 +72,7 @@ public class Controller {
 
     public Controller() throws SQLException, IOException {
         // Inizializzazione dei frame
-        JPanel titlePanel = createImagePanel("/Immagini/ImmLog-3.png");
-        logf = new LoginFrame("Login - Ortofrutta", this, titlePanel);
+        logf = new LoginFrame("Login - Ortofrutta", this);
         adminf = new AdminFrame("Admin Area", this);
         dipf = new DipendenteFrame("Dipendente Area", this);
         nprodf = new NuovoProdottoFrame("Nuovo Prodotto", this);
@@ -92,7 +91,7 @@ public class Controller {
         logf.setVisible(true);
     }
 
-    private JPanel createImagePanel(String imagePath) {
+    public JPanel createImagePanel(String imagePath) {
         Image image = new ImageIcon(ImagePanel.class.getResource(imagePath)).getImage();
         return new ImagePanel(image);
     }

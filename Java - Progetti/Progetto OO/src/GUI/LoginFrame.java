@@ -121,16 +121,13 @@ public class LoginFrame extends JFrame {
         JOptionPane.showMessageDialog(contentPane, message);
     }
 
-    public LoginFrame(String title, Controller c, JPanel titlePanel) throws SQLException {
+    public LoginFrame(String title, Controller c) throws SQLException {
         super(title);
         c.connect();
+        JPanel titlePanel = c.createImagePanel("/Immagini/ImmLog-3.png");
         SwingUtilities.invokeLater(() -> {
             elementi(titlePanel);
             azioni(c);
         });
     }
 }
-
-
-
-

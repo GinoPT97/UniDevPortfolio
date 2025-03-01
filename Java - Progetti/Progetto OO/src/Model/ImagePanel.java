@@ -32,6 +32,7 @@ public class ImagePanel extends JPanel {
 
     public void resetImage(Image newImage) {
         this.image = newImage;
+        updateScaledImage();
         revalidate();
         repaint();
     }
