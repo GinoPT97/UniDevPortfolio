@@ -28,7 +28,7 @@ public class LoginFrame extends JFrame {
     private JTextField idtf;
 
     private void elementi(JPanel titlePanel) {
-        setTitle("Ortofrutta 2.0");
+        setTitle("Green Market Point");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
         setBounds(100, 100, 700, 450);
@@ -39,7 +39,7 @@ public class LoginFrame extends JFrame {
         setContentPane(contentPane);
 
         // Creazione del pannello sinistro con l'immagine e il titolo
-        JLabel titleLabel = new JLabel("Ortofrutta 2.0", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Green Market Point", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setBorder(null);
