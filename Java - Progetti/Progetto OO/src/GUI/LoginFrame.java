@@ -28,7 +28,6 @@ public class LoginFrame extends JFrame {
     private JTextField idtf;
 
     private void elementi(JPanel titlePanel) {
-        setTitle("Green Market Point");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
         setBounds(100, 100, 700, 450);

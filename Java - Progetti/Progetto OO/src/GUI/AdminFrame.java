@@ -70,7 +70,7 @@ public class AdminFrame extends JFrame {
         buttonpanel.add(Box.createVerticalGlue()); // Spazio dopo i bottoni
 
         // Etichetta del titolo
-        titlelabel = new JLabel("Admin Area", SwingConstants.CENTER);
+        titlelabel = new JLabel("Admin Point", SwingConstants.CENTER);
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlelabel.setForeground(Color.WHITE); // Migliora la visibilità del testo
         titlePanel.add(titlelabel, BorderLayout.NORTH);

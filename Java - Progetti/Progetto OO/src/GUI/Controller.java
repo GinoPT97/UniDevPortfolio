@@ -72,22 +72,22 @@ public class Controller {
 
     public Controller() throws SQLException, IOException {
         // Inizializzazione dei frame
-        logf = new LoginFrame("Login - Ortofrutta", this);
-        adminf = new AdminFrame("Admin Area", this);
-        dipf = new DipendenteFrame("Dipendente Area", this);
-        nprodf = new NuovoProdottoFrame("Nuovo Prodotto", this);
-        ndipf = new NuovoDipendenteFrame("Nuovo Dipendente", this);
-        nclf = new NuovoClienteFrame("Nuovo Cliente", this);
-        vdipf = new VisioneDipendentiFrame("Gestione Dipendenti", this);
-        vprodf = new VisioneProdottiFrame("Gestione Prodotti", this);
-        visctf = new VisioneClienteFrame("Gestione Clienti", this);
-        upclf = new ModificaClienteFrame("Modifica Cliente", this);
-        updipf = new ModificaDipendenteFrame("Modifica Dipendente", this);
-        modprodf = new ModificaProdottiFrame("Modifica Prodotti", this);
-        statdipf = new StatisticheDipendentiFrame("Statistiche Dipendenti", this);
-        carrf = new CarrelloFrame("Carrello", this);
-        visordf = new VisioneOrdineFrame("Visione Ordini", this);
-        searchf = new RicercaFrame("Ricerca Clienti", this);
+        logf = new LoginFrame("Green Market Point - Login", this);
+        adminf = new AdminFrame("Green Market Point - Admin Point", this);
+        dipf = new DipendenteFrame("Green Market Point - Dipendente Point", this);
+        nprodf = new NuovoProdottoFrame("Green Market Point - Nuovo Prodotto", this);
+        ndipf = new NuovoDipendenteFrame("Green Market Point - Nuovo Dipendente", this);
+        nclf = new NuovoClienteFrame("Green Market Point - Nuovo Cliente", this);
+        vdipf = new VisioneDipendentiFrame("Green Market Point - Gestione Dipendenti", this);
+        vprodf = new VisioneProdottiFrame("Green Market Point - Gestione Prodotti", this);
+        visctf = new VisioneClienteFrame("Green Market Point - Gestione Clienti", this);
+        upclf = new ModificaClienteFrame("Green Market Point - Modifica Cliente", this);
+        updipf = new ModificaDipendenteFrame("Green Market Point - Modifica Dipendente", this);
+        modprodf = new ModificaProdottiFrame("Green Market Point - Modifica Prodotti", this);
+        statdipf = new StatisticheDipendentiFrame("Green Market Point - Statistiche Dipendenti", this);
+        carrf = new CarrelloFrame("Green Market Point - Carrello", this);
+        visordf = new VisioneOrdineFrame("Green Market Point - Visione Ordini", this);
+        searchf = new RicercaFrame("Green Market Point - Ricerca Clienti", this);
         logf.setVisible(true);
     }
 

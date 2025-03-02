@@ -39,7 +39,7 @@ public class DipendenteFrame extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello del titolo con sfondo arancione
-        titlelab = new JLabel("Area Dipendenti", SwingConstants.CENTER);
+        titlelab = new JLabel("Dipendenti Point", SwingConstants.CENTER);
         titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlelab.setForeground(Color.WHITE); // Migliora la visibilità del testo
         titlePanel.add(titlelab, BorderLayout.NORTH);
