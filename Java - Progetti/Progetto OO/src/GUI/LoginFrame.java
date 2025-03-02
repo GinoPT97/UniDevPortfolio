@@ -124,7 +124,7 @@ public class LoginFrame extends JFrame {
     public LoginFrame(String title, Controller c) throws SQLException {
         super(title);
         c.connect();
-        JPanel titlePanel = c.createImagePanel("/Immagini/ImmLog-2.jpg");
+        JPanel titlePanel = c.createImagePanel("/Immagini/ImmLog.jpg");
         SwingUtilities.invokeLater(() -> {
             elementi(titlePanel);
             azioni(c);
