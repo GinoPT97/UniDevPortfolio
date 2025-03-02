@@ -27,7 +27,7 @@ public class DipendenteFrame extends JFrame {
     private JPanel buttonpanel;
     private JButton prodButton;
 
-    public void elementi() {
+    public void elementi(JPanel titlePanel) {
         // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 450);
@@ -39,22 +39,16 @@ public class DipendenteFrame extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello del titolo con sfondo arancione
-        JPanel titlepanel = new JPanel();
-        titlepanel.setBackground(Color.ORANGE);
-        contentPane.add(titlepanel, BorderLayout.WEST);
-        titlepanel.setLayout(new BorderLayout(0, 0));
-
-        // Titolo centrato
-        titlelab = new JLabel("Area Dipendenti");
+        titlelab = new JLabel("Area Dipendenti", SwingConstants.CENTER);
         titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlelab.setHorizontalAlignment(SwingConstants.CENTER);
-        titlepanel.add(titlelab, BorderLayout.CENTER);
+        titlelab.setForeground(Color.WHITE); // Migliora la visibilità del testo
+        titlePanel.add(titlelab, BorderLayout.NORTH);
 
         // Bottone di logout esteso orizzontalmente
         logoututton = new JButton("Logout");
         logoututton.setBackground(Color.RED);
         logoututton.setForeground(Color.WHITE);
-        titlepanel.add(logoututton, BorderLayout.SOUTH);
+        titlePanel.add(logoututton, BorderLayout.SOUTH);
 
         // Pannello per i bottoni centrati
         buttonpanel = new JPanel();
@@ -88,6 +82,9 @@ public class DipendenteFrame extends JFrame {
         buttonpanel.add(prodButton);
 
         buttonpanel.add(Box.createVerticalGlue()); // Spazio sotto i bottoni
+
+        // Aggiungi il pannello dell'immagine
+        contentPane.add(titlePanel, BorderLayout.WEST);
     }
 
     public void azioni(Controller c) {
@@ -109,7 +106,8 @@ public class DipendenteFrame extends JFrame {
 
     public DipendenteFrame(String title, Controller c) {
         super(title);
-        this.elementi();
+        JPanel titlePanel = c.createImagePanel("/Immagini/ImmDipendenti.png");
+        this.elementi(titlePanel);
         this.azioni(c);
     }
 }

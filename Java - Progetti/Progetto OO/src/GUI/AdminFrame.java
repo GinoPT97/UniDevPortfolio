@@ -23,11 +23,10 @@ public class AdminFrame extends JFrame {
     private JButton dipbutton;
     private JButton visordbutt;
     private JButton prodbutton;
-    private JPanel titlepanel;
     private JLabel titlelabel;
     private JButton searchbutton;
 
-    public void elementi() {
+    public void elementi(JPanel titlePanel) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 400);
         contentPane = new JPanel();
@@ -70,25 +69,20 @@ public class AdminFrame extends JFrame {
 
         buttonpanel.add(Box.createVerticalGlue()); // Spazio dopo i bottoni
 
-        // Pannello del titolo
-        titlepanel = new JPanel();
-        titlepanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-        titlepanel.setBackground(new Color(30, 144, 255));
-        contentPane.add(titlepanel, BorderLayout.WEST);
-        titlepanel.setLayout(new BorderLayout(0, 0));
-
         // Etichetta del titolo
-        titlelabel = new JLabel("Admin Area");
+        titlelabel = new JLabel("Admin Area", SwingConstants.CENTER);
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlelabel.setForeground(Color.BLACK);
-        titlelabel.setHorizontalAlignment(SwingConstants.CENTER); // Allineamento orizzontale al centro
-        titlepanel.add(titlelabel, BorderLayout.CENTER);
+        titlelabel.setForeground(Color.WHITE); // Migliora la visibilità del testo
+        titlePanel.add(titlelabel, BorderLayout.NORTH);
 
         // Bottone di logout che occupa l'intera larghezza del pannello
         logoutbutton = new JButton("Logout");
         logoutbutton.setBackground(Color.RED);
         logoutbutton.setForeground(Color.WHITE);
-        titlepanel.add(logoutbutton, BorderLayout.SOUTH); // Estende il bottone di logout a tutta la larghezza
+        titlePanel.add(logoutbutton, BorderLayout.SOUTH); // Estende il bottone di logout a tutta la larghezza
+
+        // Aggiungi il pannello dell'immagine
+        contentPane.add(titlePanel, BorderLayout.WEST);
     }
 
     public void azioni(Controller c) {
@@ -111,11 +105,12 @@ public class AdminFrame extends JFrame {
         searchbutton.addActionListener(e -> c.adminAndElem(6));
     }
 
-	public AdminFrame(String title, Controller c) {
-		super(title);
-		this.elementi();
-		this.azioni(c);
-	}
+    public AdminFrame(String title, Controller c) {
+        super(title);
+        JPanel titlePanel = c.createImagePanel("/Immagini/ImmAdmin.png");
+        this.elementi(titlePanel);
+        this.azioni(c);
+    }
 }
 
 
