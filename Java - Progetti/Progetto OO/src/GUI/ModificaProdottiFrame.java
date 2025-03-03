@@ -27,6 +27,8 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
+import javax.swing.JComponent;
+import javax.swing.BorderFactory;
 
 import Model.Prodotto;
 
@@ -64,92 +66,32 @@ public class ModificaProdottiFrame extends JFrame {
         contentPane.add(elempanel, BorderLayout.CENTER);
         elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
 
-        // Pannelli per input con FlowLayout.CENTER
-        JPanel nomepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel nomelab = new JLabel("Nome :");
-        nomepanel.add(nomelab);
-        nometf = new JTextField(10);
-        nomepanel.add(nometf);
-        elempanel.add(nomepanel);
-
-        JPanel descrizionepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel descrlab = new JLabel("Descrizione :");
-        descrizionepanel.add(descrlab);
-        descta = new JTextArea(1, 10);
-        descrizionepanel.add(descta);
-        elempanel.add(descrizionepanel);
-
-        JPanel provenienzapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel provlab = new JLabel("Provenienza :");
-        provenienzapanel.add(provlab);
-        provtf = new JTextField(10);
-        provenienzapanel.add(provtf);
-        elempanel.add(provenienzapanel);
-
-        JPanel prezzopanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel prezzolab = new JLabel("Prezzo :");
-        prezzopanel.add(prezzolab);
-        prezzotf = new JTextField(10);
-        prezzopanel.add(prezzotf);
-        elempanel.add(prezzopanel);
-
-        JPanel raccoltapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel racclab = new JLabel("Data Raccolta (YYYY-MM-DD) :");
-        raccoltapanel.add(racclab);
-        racctf = new JTextField(10);
-        racctf.setEditable(false);
-        raccoltapanel.add(racctf);
-        elempanel.add(raccoltapanel);
-
-        JPanel mungiturapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel munglab = new JLabel("Data Mungitura (YYYY-MM-DD) :");
-        mungiturapanel.add(munglab);
-        mungtf = new JTextField(10);
-        mungtf.setEditable(false);
-        mungiturapanel.add(mungtf);
-        elempanel.add(mungiturapanel);
-
-        JPanel glutinepanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel glutlab = new JLabel("Glutine :");
-        glutinepanel.add(glutlab);
-        glutcb = new JCheckBox("Si");
-        glutcb.setEnabled(false);
-        glutinepanel.add(glutcb);
-        elempanel.add(glutinepanel);
-
-        JPanel scadenzapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel scadlab = new JLabel("Data Scadenza (YYYY-MM-DD) :");
-        scadenzapanel.add(scadlab);
-        scadtf = new JTextField(10);
-        scadtf.setEditable(false);
-        scadenzapanel.add(scadtf);
-        elempanel.add(scadenzapanel);
-
-        JPanel scortapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel scortalab = new JLabel("Scorta :");
-        scortapanel.add(scortalab);
-        scortatf = new JTextField(10);
-        scortapanel.add(scortatf);
-        elempanel.add(scortapanel);
+        // Metodo per creare i pannelli di input
+        elempanel.add(createInputPanel("Nome :", nometf = new JTextField(10)));
+        elempanel.add(createInputPanel("Descrizione :", descta = new JTextArea(1, 10)));
+        elempanel.add(createInputPanel("Provenienza :", provtf = new JTextField(10)));
+        elempanel.add(createInputPanel("Prezzo :", prezzotf = new JTextField(10)));
+        elempanel.add(createInputPanel("Data Raccolta (YYYY-MM-DD) :", racctf = new JTextField(10), false));
+        elempanel.add(createInputPanel("Data Mungitura (YYYY-MM-DD) :", mungtf = new JTextField(10), false));
+        elempanel.add(createInputPanel("Glutine :", glutcb = new JCheckBox("Si"), false));
+        elempanel.add(createInputPanel("Data Scadenza (YYYY-MM-DD) :", scadtf = new JTextField(10), false));
+        elempanel.add(createInputPanel("Scorta :", scortatf = new JTextField(10)));
 
         // Pannello per categorie
         JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         categoriacb = new JComboBox<>(new String[] { "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei" });
         categoriapanel.add(categoriacb);
-        JButton selbutton = new JButton("Seleziona");
+        JButton selbutton = creaButton("Seleziona", new Color(46, 139, 87));
         categoriapanel.add(selbutton);
         elempanel.add(categoriapanel);
 
         // Pannello dei bottoni
         JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        updatebutton = new JButton("Inserisci");
-        updatebutton.setBackground(Color.BLUE);
+        updatebutton = creaButton("Inserisci", new Color(34, 139, 34));
         buttonpanel.add(updatebutton);
-        clearbutton = new JButton("Pulisci");
-        clearbutton.setBackground(Color.WHITE);
+        clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
         buttonpanel.add(clearbutton);
-        backbutton = new JButton("Indietro");
-        backbutton.setBackground(Color.RED);
+        backbutton = creaButton("Indietro", new Color(178, 34, 34));
         buttonpanel.add(backbutton);
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
@@ -159,146 +101,173 @@ public class ModificaProdottiFrame extends JFrame {
         contentPane.add(panel, BorderLayout.NORTH);
         JLabel titlelabel = new JLabel("Modifica Prodotto");
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlelabel.setForeground(Color.WHITE);
         panel.add(titlelabel);
     }
 
-	public void viewprod(Prodotto pe) {
-	    cod = pe.getCodProd();
-	    nometf.setText(pe.getNome());
-	    descta.setText(pe.getDescrizione());
-	    provtf.setText(pe.getLuogoProv());
-	    prezzotf.setText(String.valueOf(pe.getPrezzo()));
-	    scortatf.setText(String.valueOf(pe.getScorta()));
-	    glutcb.setSelected(pe.isGlutine());
+    private JPanel createInputPanel(String labelText, JComponent inputComponent) {
+        return createInputPanel(labelText, inputComponent, true);
+    }
 
-	    switch (pe.getCategoria()) {
-	        case "Ortofrutticoli":
-	            categoriacb.setSelectedIndex(0);
-	            break;
-	        case "Inscatolati":
-	            categoriacb.setSelectedIndex(1);
-	            break;
-	        case "Latticini":
-	            categoriacb.setSelectedIndex(2);
-	            break;
-	        case "Farinacei":
-	            categoriacb.setSelectedIndex(3);
-	            break;
-	        default:
-	            categoriacb.setSelectedIndex(-1);
-	            break;
-	    }
-	}
+    private JPanel createInputPanel(String labelText, JComponent inputComponent, boolean editable) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel label = new JLabel(labelText);
+        panel.add(label);
+        if (inputComponent instanceof JTextField) {
+            ((JTextField) inputComponent).setEditable(editable);
+        } else if (inputComponent instanceof JCheckBox) {
+            ((JCheckBox) inputComponent).setEnabled(editable);
+        }
+        panel.add(inputComponent);
+        return panel;
+    }
 
-	public void clean() {
-	    nometf.setText("");
-	    descta.setText("");
-	    prezzotf.setText("");
-	    provtf.setText("");
-	    scortatf.setText("");
-	    racctf.setText("");
-	    mungtf.setText("");
-	    scadtf.setText("");
-	    glutcb.setSelected(false);
-	}
+    private JButton creaButton(String text, Color color) {
+        JButton button = new JButton(text);
+        button.setBackground(color);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        return button;
+    }
 
-	public void azioni(Controller c) {
-	    // Gestione del pulsante "Indietro"
-	    backbutton.addActionListener(e -> {
-	        clean(); // Pulisce i campi
-	        c.visAndElem(4, 3); // Torna alla schermata precedente
-	    });
+    public void viewprod(Prodotto pe) {
+        cod = pe.getCodProd();
+        nometf.setText(pe.getNome());
+        descta.setText(pe.getDescrizione());
+        provtf.setText(pe.getLuogoProv());
+        prezzotf.setText(String.valueOf(pe.getPrezzo()));
+        scortatf.setText(String.valueOf(pe.getScorta()));
+        glutcb.setSelected(pe.isGlutine());
 
-	    // Gestione del pulsante "Pulisci"
-	    clearbutton.addActionListener(e -> clean()); // Pulisce i campi
+        switch (pe.getCategoria()) {
+            case "Ortofrutticoli":
+                categoriacb.setSelectedIndex(0);
+                break;
+            case "Inscatolati":
+                categoriacb.setSelectedIndex(1);
+                break;
+            case "Latticini":
+                categoriacb.setSelectedIndex(2);
+                break;
+            case "Farinacei":
+                categoriacb.setSelectedIndex(3);
+                break;
+            default:
+                categoriacb.setSelectedIndex(-1);
+                break;
+        }
+    }
 
-	    // Gestione della selezione della categoria tramite JComboBox
-	    categoriacb.addItemListener(e -> {
-	        if (e.getStateChange() == ItemEvent.SELECTED) {
-	            String selectedCategory = (String) categoriacb.getSelectedItem();
+    public void clean() {
+        nometf.setText("");
+        descta.setText("");
+        prezzotf.setText("");
+        provtf.setText("");
+        scortatf.setText("");
+        racctf.setText("");
+        mungtf.setText("");
+        scadtf.setText("");
+        glutcb.setSelected(false);
+    }
 
-	            // Mappa campi legati alla categoria
-	            Map<String, JTextField> categoryFields = Map.of(
-	                "Ortofrutticoli", racctf,
-	                "Latticini", mungtf,
-	                "Inscatolati", scadtf
-	            );
+    public void azioni(Controller c) {
+        // Gestione del pulsante "Indietro"
+        backbutton.addActionListener(e -> {
+            clean(); // Pulisce i campi
+            c.visAndElem(4, 3); // Torna alla schermata precedente
+        });
 
-	            // Disabilita tutti i campi relativi alle categorie
-	            categoryFields.values().forEach(field -> field.setEnabled(false));
+        // Gestione del pulsante "Pulisci"
+        clearbutton.addActionListener(e -> clean()); // Pulisce i campi
 
-	            // Abilita solo il campo pertinente alla categoria selezionata
-	            JTextField fieldToEnable = categoryFields.getOrDefault(selectedCategory, null);
-	            if (fieldToEnable != null) {
-	                fieldToEnable.setEnabled(true);
-	            }
-	        }
-	    });
+        // Gestione della selezione della categoria tramite JComboBox
+        categoriacb.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                String selectedCategory = (String) categoriacb.getSelectedItem();
 
-	    // Gestione del pulsante "Inserisci/Modifica"
-	    updatebutton.addActionListener(e -> {
-	        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	        try {
-	            // Verifica se i campi obbligatori sono compilati
-	            List<JTextComponent> mandatoryFields = List.of(nometf, descta, prezzotf, provtf, scortatf);
-	            if (mandatoryFields.stream().anyMatch(field -> field.getText().isEmpty())) {
-	                JOptionPane.showMessageDialog(this, "Inserisci tutti i campi obbligatori", "Errore", JOptionPane.WARNING_MESSAGE);
-	                return;
-	            }
+                // Mappa campi legati alla categoria
+                Map<String, JTextField> categoryFields = Map.of(
+                    "Ortofrutticoli", racctf,
+                    "Latticini", mungtf,
+                    "Inscatolati", scadtf
+                );
 
-	            // Crea il prodotto
-	            Prodotto prodotto = new Prodotto(
-	                cod,
-	                nometf.getText(),
-	                descta.getText(),
-	                Double.parseDouble(prezzotf.getText()),
-	                provtf.getText(),
-	                "Ortofrutticoli".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(racctf.getText()) : null,
-	                "Latticini".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(mungtf.getText()) : null,
-	                glutcb.isSelected(),
-	                "Inscatolati".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(scadtf.getText()) : null,
-	                categoriacb.getSelectedItem().toString(),
-	                Integer.parseInt(scortatf.getText())
-	            );
+                // Disabilita tutti i campi relativi alle categorie
+                categoryFields.values().forEach(field -> field.setEnabled(false));
 
-	            // Cerca la riga corrispondente nel modello
-	            int rowIndex = IntStream.range(0, c.prodModel.getRowCount())
-	                                    .filter(i -> c.prodModel.getValueAt(i, 0).equals(cod))
-	                                    .findFirst().orElse(-1);
+                // Abilita solo il campo pertinente alla categoria selezionata
+                JTextField fieldToEnable = categoryFields.getOrDefault(selectedCategory, null);
+                if (fieldToEnable != null) {
+                    fieldToEnable.setEnabled(true);
+                }
+            }
+        });
 
-	            if (rowIndex != -1) {
-	                Object[] updatedValues = {
-	                    prodotto.getNome(),
-	                    prodotto.getDescrizione(),
-	                    prodotto.getPrezzo(),
-	                    prodotto.getLuogoProv(),
-	                    prodotto.getCategoria(),
-	                    prodotto.getScorta(),
-	                    prodotto.getDataraccolta() != null ? dateFormat.format(prodotto.getDataraccolta()) : null,
-	                    prodotto.getDatamungitura() != null ? dateFormat.format(prodotto.getDatamungitura()) : null,
-	                    prodotto.getDatascadenza() != null ? dateFormat.format(prodotto.getDatascadenza()) : null
-	                };
+        // Gestione del pulsante "Inserisci/Modifica"
+        updatebutton.addActionListener(e -> {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                // Verifica se i campi obbligatori sono compilati
+                List<JTextComponent> mandatoryFields = List.of(nometf, descta, prezzotf, provtf, scortatf);
+                if (mandatoryFields.stream().anyMatch(field -> field.getText().isEmpty())) {
+                    JOptionPane.showMessageDialog(this, "Inserisci tutti i campi obbligatori", "Errore", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-	                for (int col = 1; col < updatedValues.length; col++) {
-	                    c.prodModel.setValueAt(updatedValues[col - 1], rowIndex, col);
-	                }
+                // Crea il prodotto
+                Prodotto prodotto = new Prodotto(
+                    cod,
+                    nometf.getText(),
+                    descta.getText(),
+                    Double.parseDouble(prezzotf.getText()),
+                    provtf.getText(),
+                    "Ortofrutticoli".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(racctf.getText()) : null,
+                    "Latticini".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(mungtf.getText()) : null,
+                    glutcb.isSelected(),
+                    "Inscatolati".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(scadtf.getText()) : null,
+                    categoriacb.getSelectedItem().toString(),
+                    Integer.parseInt(scortatf.getText())
+                );
 
-	                JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
-	            } else {
-	                JOptionPane.showMessageDialog(this, "Prodotto non trovato!", "Errore", JOptionPane.ERROR_MESSAGE);
-	            }
+                // Cerca la riga corrispondente nel modello
+                int rowIndex = IntStream.range(0, c.prodModel.getRowCount())
+                                        .filter(i -> c.prodModel.getValueAt(i, 0).equals(cod))
+                                        .findFirst().orElse(-1);
 
-	            clean();
-	            c.visAndElem(4, 3);
-	        } catch (NumberFormatException | ParseException ex) {
-	            JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-	        }
-	    });
-	}
+                if (rowIndex != -1) {
+                    Object[] updatedValues = {
+                        prodotto.getNome(),
+                        prodotto.getDescrizione(),
+                        prodotto.getPrezzo(),
+                        prodotto.getLuogoProv(),
+                        prodotto.getCategoria(),
+                        prodotto.getScorta(),
+                        prodotto.getDataraccolta() != null ? dateFormat.format(prodotto.getDataraccolta()) : null,
+                        prodotto.getDatamungitura() != null ? dateFormat.format(prodotto.getDatamungitura()) : null,
+                        prodotto.getDatascadenza() != null ? dateFormat.format(prodotto.getDatascadenza()) : null
+                    };
 
-	public ModificaProdottiFrame(String title, Controller c) throws SQLException {
-		super(title);
-		this.elementi();
-		this.azioni(c);
-	}
+                    for (int col = 1; col < updatedValues.length; col++) {
+                        c.prodModel.setValueAt(updatedValues[col - 1], rowIndex, col);
+                    }
+
+                    JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Prodotto non trovato!", "Errore", JOptionPane.ERROR_MESSAGE);
+                }
+
+                clean();
+                c.visAndElem(4, 3);
+            } catch (NumberFormatException | ParseException ex) {
+                JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+    }
+
+    public ModificaProdottiFrame(String title, Controller c) throws SQLException {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
 }
