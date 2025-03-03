@@ -153,6 +153,8 @@ public class CarrelloFrame extends JFrame {
         totalelab.setText("Totale :  0.00");
         quantitatf.setText("");
         ordModel.setRowCount(0);
+        clienteComboBox.setSelectedIndex(-1);
+        categoriacb.setSelectedIndex(0);
     }
 
     // Calcola il totale
