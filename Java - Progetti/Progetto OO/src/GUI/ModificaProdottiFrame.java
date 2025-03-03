@@ -54,7 +54,7 @@ public class ModificaProdottiFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 650, 500); // Aumenta l'altezza della finestra
         contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10)); // Aggiungi margini
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(0, 0));
         setLocationRelativeTo(null);
@@ -62,7 +62,7 @@ public class ModificaProdottiFrame extends JFrame {
 
         // Pannello centrale con layout BoxLayout
         JPanel elempanel = new JPanel();
-        elempanel.setBorder(new EmptyBorder(20, 100, 20, 100));
+        elempanel.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
         contentPane.add(elempanel, BorderLayout.CENTER);
         elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
 

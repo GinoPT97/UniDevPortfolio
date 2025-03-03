@@ -56,13 +56,13 @@ public class NuovoProdottoFrame extends JFrame {
 
         // Pannello principale
         contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10)); // Aggiungi margini
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
         contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
 
         // Pannello per il contenuto centrale
         JPanel elempanel = new JPanel();
-        elempanel.setBorder(new EmptyBorder(10, 50, 10, 50));
+        elempanel.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
         elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
         contentPane.add(elempanel, BorderLayout.CENTER);
 
