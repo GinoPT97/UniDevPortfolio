@@ -41,7 +41,7 @@ public class DipendenteFrame extends JFrame {
         // Pannello del titolo con sfondo arancione
         titlelab = new JLabel("Dipendenti Point", SwingConstants.CENTER);
         titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlelab.setForeground(Color.WHITE); // Migliora la visibilità del testo
+        titlelab.setForeground(Color.WHITE);
         titlePanel.add(titlelab, BorderLayout.NORTH);
 
         // Bottone di logout esteso orizzontalmente
@@ -56,33 +56,32 @@ public class DipendenteFrame extends JFrame {
         buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS));
 
         // Creazione e aggiunta dei bottoni al pannello
-        buttonpanel.add(Box.createVerticalGlue()); // Spazio sopra i bottoni
+        buttonpanel.add(Box.createVerticalGlue()); 
 
         clientebutton = new JButton("Clienti");
         clientebutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(clientebutton);
 
-        buttonpanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spazio tra i bottoni
+        buttonpanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         searchbutton = new JButton("Ricerca Clienti");
         searchbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(searchbutton);
 
-        buttonpanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spazio tra i bottoni
+        buttonpanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         ordineutton = new JButton("Ordine");
         ordineutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(ordineutton);
 
-        buttonpanel.add(Box.createRigidArea(new Dimension(0, 20))); // Spazio tra i bottoni
+        buttonpanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         // Bottone per la gestione dei prodotti
         prodButton = new JButton("Prodotti");
         prodButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(prodButton);
 
-        buttonpanel.add(Box.createVerticalGlue()); // Spazio sotto i bottoni
-
+        buttonpanel.add(Box.createVerticalGlue());
         // Aggiungi il pannello dell'immagine
         contentPane.add(titlePanel, BorderLayout.WEST);
     }

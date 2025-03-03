@@ -39,9 +39,9 @@ public class AdminFrame extends JFrame {
         // Pannello per i bottoni
         JPanel buttonpanel = new JPanel();
         contentPane.add(buttonpanel, BorderLayout.CENTER);
-        buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS)); // Disposizione verticale
+        buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS));
 
-        buttonpanel.add(Box.createVerticalGlue()); // Spazio prima dei bottoni
+        buttonpanel.add(Box.createVerticalGlue());
 
         dipbutton = new JButton("Dipendenti");
         dipbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -67,19 +67,19 @@ public class AdminFrame extends JFrame {
         visordbutt.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(visordbutt);
 
-        buttonpanel.add(Box.createVerticalGlue()); // Spazio dopo i bottoni
+        buttonpanel.add(Box.createVerticalGlue());
 
         // Etichetta del titolo
         titlelabel = new JLabel("Admin Point", SwingConstants.CENTER);
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlelabel.setForeground(Color.WHITE); // Migliora la visibilità del testo
+        titlelabel.setForeground(Color.WHITE);
         titlePanel.add(titlelabel, BorderLayout.NORTH);
 
         // Bottone di logout che occupa l'intera larghezza del pannello
         logoutbutton = new JButton("Logout");
         logoutbutton.setBackground(Color.RED);
         logoutbutton.setForeground(Color.WHITE);
-        titlePanel.add(logoutbutton, BorderLayout.SOUTH); // Estende il bottone di logout a tutta la larghezza
+        titlePanel.add(logoutbutton, BorderLayout.SOUTH); 
 
         // Aggiungi il pannello dell'immagine
         contentPane.add(titlePanel, BorderLayout.WEST);
