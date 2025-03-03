@@ -123,7 +123,7 @@ public class CarrelloFrame extends JFrame {
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         centerpanel.add(topPanel);
 
-        categoriacb = new JComboBox<>(new String[]{"Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
+        categoriacb = new JComboBox<>(new String[]{"Tutti", "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
         categoriacb.setMaximumSize(categoriacb.getPreferredSize());
         topPanel.add(categoriacb);
 
@@ -206,7 +206,7 @@ public class CarrelloFrame extends JFrame {
 
         for (int i = 0; i < c.prodModel.getRowCount(); i++) {
             String categoriaProdotto = c.prodModel.getValueAt(i, 9).toString();
-            if (categoriaProdotto.equalsIgnoreCase(categoriaSelezionata)) {
+            if (categoriaSelezionata.equalsIgnoreCase("Tutti") || categoriaProdotto.equalsIgnoreCase(categoriaSelezionata)) {
                 filteredModel.addRow(new Object[]{
                     c.prodModel.getValueAt(i, 0),
                     c.prodModel.getValueAt(i, 1),
