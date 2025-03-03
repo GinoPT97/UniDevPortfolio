@@ -69,23 +69,21 @@ public class StatisticheDipendentiFrame extends JFrame {
         searchLayout.setAutoCreateContainerGaps(true);
 
         searchLayout.setHorizontalGroup(
-            searchLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(searchLayout.createSequentialGroup()
-                    .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(periodoLab)
-                        .addComponent(startLab)
-                        .addComponent(finalLab)
-                        .addComponent(periodoCB))
-                    .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(startTF)
-                        .addComponent(finalTF)
-                        .addComponent(selectButton)))
+            searchLayout.createSequentialGroup()
+                .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(periodoLab)
+                    .addComponent(startLab)
+                    .addComponent(finalLab)
+                    .addComponent(periodoCB))
+                .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(startTF)
+                    .addComponent(finalTF)
+                    .addComponent(selectButton))
         );
 
         searchLayout.setVerticalGroup(
             searchLayout.createSequentialGroup()
-                .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(periodoLab))
+                .addComponent(periodoLab)
                 .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(startLab)
                     .addComponent(startTF))
@@ -119,16 +117,15 @@ public class StatisticheDipendentiFrame extends JFrame {
         introitiLayout.setAutoCreateContainerGaps(true);
 
         introitiLayout.setHorizontalGroup(
-            introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(introitiLayout.createSequentialGroup()
-                    .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(nomeLab)
-                        .addComponent(cognomeLab)
-                        .addComponent(introitiValLab))
-                    .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(nomeIntroitiTF)
-                        .addComponent(cognomeIntroitiTF)
-                        .addComponent(introitiTF)))
+            introitiLayout.createSequentialGroup()
+                .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(nomeLab)
+                    .addComponent(cognomeLab)
+                    .addComponent(introitiValLab))
+                .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(nomeIntroitiTF)
+                    .addComponent(cognomeIntroitiTF)
+                    .addComponent(introitiTF))
         );
 
         introitiLayout.setVerticalGroup(
@@ -166,16 +163,15 @@ public class StatisticheDipendentiFrame extends JFrame {
         venditeLayout.setAutoCreateContainerGaps(true);
 
         venditeLayout.setHorizontalGroup(
-            venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(venditeLayout.createSequentialGroup()
-                    .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(nomeVenditeLab)
-                        .addComponent(cognomeVenditeLab)
-                        .addComponent(venditeValLab))
-                    .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(nomeVenditeTF)
-                        .addComponent(cognomeVenditeTF)
-                        .addComponent(venditeTF)))
+            venditeLayout.createSequentialGroup()
+                .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(nomeVenditeLab)
+                    .addComponent(cognomeVenditeLab)
+                    .addComponent(venditeValLab))
+                .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(nomeVenditeTF)
+                    .addComponent(cognomeVenditeTF)
+                    .addComponent(venditeTF))
         );
 
         venditeLayout.setVerticalGroup(

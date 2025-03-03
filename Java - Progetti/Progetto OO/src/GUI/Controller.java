@@ -201,9 +201,7 @@ public class Controller {
     // Metodo generico per popolare il modello della tabella
     private <T> void populateTable(List<T> items, DefaultTableModel model, Function<T, Object[]> mapper) {
         model.setRowCount(0); // Resetta il modello per evitare duplicati
-        for (T item : items) {
-            model.addRow(mapper.apply(item)); // Aggiungi riga al modello
-        }
+        items.forEach(item -> model.addRow(mapper.apply(item))); // Aggiungi riga al modello
     }
 
     // Metodo di supporto per verificare se un campo è nullo o vuoto
