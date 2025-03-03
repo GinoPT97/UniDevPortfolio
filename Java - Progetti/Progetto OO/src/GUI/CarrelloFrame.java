@@ -1,30 +1,11 @@
 package GUI;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
 import Model.Articoli;
 import Model.Ordine;
 
@@ -50,10 +31,9 @@ public class CarrelloFrame extends JFrame {
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(CarrelloFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-        contentPane = new JPanel();
+        contentPane = new JPanel(new BorderLayout(0, 0));
         contentPane.setBackground(Color.WHITE);
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        contentPane.setLayout(new BorderLayout(0, 0));
         setContentPane(contentPane);
 
         titlepanel = new JPanel();
@@ -65,8 +45,7 @@ public class CarrelloFrame extends JFrame {
         titlelabel.setForeground(Color.WHITE);
         titlepanel.add(titlelabel);
 
-        bottonpanel = new JPanel();
-        bottonpanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        bottonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         contentPane.add(bottonpanel, BorderLayout.SOUTH);
 
         datalab = new JLabel("Data Odierna: " + dataod.toString());
@@ -96,8 +75,7 @@ public class CarrelloFrame extends JFrame {
         prodottiscrollPane = new JScrollPane();
         prodottopanel.add(prodottiscrollPane, BorderLayout.CENTER);
 
-        prodottotable = new JTable();
-        prodottotable.setModel(new DefaultTableModel(new Object[]{"Id", "Nome", "Prezzo", "Categoria", "Scorta"}, 0));
+        prodottotable = new JTable(new DefaultTableModel(prodcolonne, 0));
         prodottotable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         prodottiscrollPane.setViewportView(prodottotable);
 
@@ -108,9 +86,8 @@ public class CarrelloFrame extends JFrame {
         ordinescrollPane = new JScrollPane();
         ordinepanel.add(ordinescrollPane, BorderLayout.CENTER);
 
-        ordinetable = new JTable();
+        ordinetable = new JTable(ordModel);
         ordModel.setColumnIdentifiers(ordinecolonne);
-        ordinetable.setModel(ordModel);
         ordinetable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ordinescrollPane.setViewportView(ordinetable);
 
@@ -119,8 +96,7 @@ public class CarrelloFrame extends JFrame {
         centerpanel.setLayout(new BoxLayout(centerpanel, BoxLayout.Y_AXIS));
         contentPane.add(centerpanel, BorderLayout.CENTER);
 
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         centerpanel.add(topPanel);
 
         categoriacb = new JComboBox<>(new String[]{"Tutti", "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
@@ -130,8 +106,7 @@ public class CarrelloFrame extends JFrame {
         selectbutton = new JButton("Seleziona");
         topPanel.add(selectbutton);
 
-        JPanel middlePanel = new JPanel();
-        middlePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        JPanel middlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         centerpanel.add(middlePanel);
 
         quantitalab = new JLabel("Seleziona Quantità:");
@@ -145,8 +120,7 @@ public class CarrelloFrame extends JFrame {
         totalelab.setFont(new Font("Tahoma", Font.BOLD, 14));
         middlePanel.add(totalelab);
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         centerpanel.add(bottomPanel);
 
         removebutton = new JButton("Rimuovi");
@@ -336,8 +310,8 @@ public class CarrelloFrame extends JFrame {
     }
 
     public CarrelloFrame(String title, Controller c) throws SQLException {
-        super(title);
-        this.elementi();
-        this.azioni(c);
+       super(title);
+       this.elementi();
+       this.azioni(c);
     }
 }
