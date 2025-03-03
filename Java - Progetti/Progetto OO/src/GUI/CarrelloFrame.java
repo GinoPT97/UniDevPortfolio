@@ -38,6 +38,7 @@ public class CarrelloFrame extends JFrame {
 
         titlepanel = new JPanel();
         titlepanel.setBackground(new Color(0, 0, 139));
+        titlepanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.add(titlepanel, BorderLayout.NORTH);
 
         titlelabel = new JLabel("Nuovo Ordine");
@@ -46,6 +47,7 @@ public class CarrelloFrame extends JFrame {
         titlepanel.add(titlelabel);
 
         bottonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        bottonpanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.add(bottonpanel, BorderLayout.SOUTH);
 
         datalab = new JLabel("Data Odierna: " + dataod.toString());
@@ -59,13 +61,17 @@ public class CarrelloFrame extends JFrame {
         bottonpanel.add(clienteComboBox);
 
         ordinebutton = new JButton("Inserisci Ordine");
-        ordinebutton.setBackground(Color.GREEN);
+        ordinebutton.setBackground(new Color(34, 139, 34));
         ordinebutton.setForeground(Color.WHITE);
+        ordinebutton.setFocusPainted(false);
+        ordinebutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         bottonpanel.add(ordinebutton);
 
         backbutton = new JButton("Indietro");
-        backbutton.setBackground(Color.RED);
+        backbutton.setBackground(new Color(178, 34, 34));
         backbutton.setForeground(Color.WHITE);
+        backbutton.setFocusPainted(false);
+        backbutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         bottonpanel.add(backbutton);
 
         prodottopanel = new JPanel(new BorderLayout());
@@ -104,6 +110,10 @@ public class CarrelloFrame extends JFrame {
         topPanel.add(categoriacb);
 
         selectbutton = new JButton("Seleziona");
+        selectbutton.setBackground(new Color(70, 130, 180));
+        selectbutton.setForeground(Color.WHITE);
+        selectbutton.setFocusPainted(false);
+        selectbutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         topPanel.add(selectbutton);
 
         JPanel middlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -124,13 +134,17 @@ public class CarrelloFrame extends JFrame {
         centerpanel.add(bottomPanel);
 
         removebutton = new JButton("Rimuovi");
-        removebutton.setBackground(Color.RED);
+        removebutton.setBackground(new Color(178, 34, 34));
         removebutton.setForeground(Color.WHITE);
+        removebutton.setFocusPainted(false);
+        removebutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         bottomPanel.add(removebutton);
 
         insertbutton = new JButton("Inserisci");
         insertbutton.setBackground(new Color(0, 153, 255));
         insertbutton.setForeground(Color.WHITE);
+        insertbutton.setFocusPainted(false);
+        insertbutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         bottomPanel.add(insertbutton);
     }
 
