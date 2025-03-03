@@ -50,13 +50,13 @@ public class NuovoProdottoFrame extends JFrame {
     public void elementi() {
         // Configurazione della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 650, 450);
+        setBounds(100, 100, 650, 500); // Aumenta l'altezza della finestra
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoProdottoFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello principale
         contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        contentPane.setBorder(new EmptyBorder(10, 10, 10, 10)); // Aggiungi margini
         contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
 
