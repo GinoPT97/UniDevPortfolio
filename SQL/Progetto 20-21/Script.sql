@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS ordine (
 CREATE TABLE IF NOT EXISTS articoliordine (
     codordine INTEGER NOT NULL,
     codprodotto INTEGER NOT NULL,
-    codcliente SERIAL PRIMARY KEY,  -- Colonna auto-incrementata che diventa chiave primaria
+    codcliente SERIAL PRIMARY KEY,  
     prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK (prezzo >= 0.00),
     numeropunti NUMERIC NOT NULL DEFAULT 0.00 CHECK (numeropunti >= 0.00),
     numeroarticoli INT NOT NULL,
