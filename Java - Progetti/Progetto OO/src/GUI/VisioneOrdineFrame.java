@@ -12,13 +12,18 @@ public class VisioneOrdineFrame extends JFrame {
     private JPanel contentPane;
     private JTable table;
     private JScrollPane scrollPane;
-    private JPanel buttonpanel;
     private JPanel titlepanel;
     private JButton backbutton;
     private JLabel titlelabel;
     private JButton ordinebutton;
     private JButton searchbutton;
     private JTextField searchtf;
+
+    public VisioneOrdineFrame(String title, Controller c) throws SQLException {
+        super(title);
+        this.elementi(c);
+        this.azioni(c);
+    }
 
     public void elementi(Controller c) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -43,12 +48,11 @@ public class VisioneOrdineFrame extends JFrame {
         scrollPane = new JScrollPane();
         contentPane.add(scrollPane, BorderLayout.CENTER);
 
-        table = new JTable();
-        table.setModel(c.ordModel);
+        table = new JTable(c.ordModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(table);
 
-        buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonpanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
@@ -95,11 +99,5 @@ public class VisioneOrdineFrame extends JFrame {
 
         ordinebutton.addActionListener(e -> c.visAndElem(1, 1));
         backbutton.addActionListener(e -> c.returnToLastFrame());
-    }
-
-    public VisioneOrdineFrame(String title, Controller c) throws SQLException {
-        super(title);
-        this.elementi(c);
-        this.azioni(c);
     }
 }

@@ -1,138 +1,122 @@
 package GUI;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import Model.Cliente;
+import Model.Cliente; // Aggiungi l'importazione mancante
 
 public class VisioneClienteFrame extends JFrame {
-	private JPanel contentPane;
-	private JTable table;
-	private JButton backbutton;
-	private JButton addbutton;
-	private JButton updatebutton;
-	private JTextField searchtf;
-	private JButton searchbutton;
+    private JPanel contentPane;
+    private JTable table;
+    private JButton backbutton;
+    private JButton addbutton;
+    private JButton updatebutton;
+    private JTextField searchtf;
+    private JButton searchbutton;
 
-	public void elementi(Controller c) {
-	    // Imposta le proprietà della finestra principale
-	    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	    setBounds(100, 100, 850, 450);
-	    setLocationRelativeTo(null);
-	    setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
+    public VisioneClienteFrame(String title, Controller c) throws SQLException {
+        super(title);
+        this.elementi(c);
+        this.azioni(c);
+    }
 
-	    // Crea e imposta il pannello principale con layout BorderLayout
-	    contentPane = new JPanel(new BorderLayout());
-	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-	    setContentPane(contentPane);
+    public void elementi(Controller c) {
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setBounds(100, 100, 850, 450);
+        setLocationRelativeTo(null);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-	    // Crea e configura la tabella con scroll pane
-	    table = new JTable(c.clienteModel);
-	    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        contentPane = new JPanel(new BorderLayout());
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        setContentPane(contentPane);
 
-	    JScrollPane scrollPane = new JScrollPane(table);
-	    contentPane.add(scrollPane, BorderLayout.CENTER);
+        JPanel titlepanel = new JPanel();
+        titlepanel.setBackground(new Color(0, 128, 0));
+        titlepanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        contentPane.add(titlepanel, BorderLayout.NORTH);
 
-	    // Crea e configura il pannello del titolo
-	    JPanel titlepanel = new JPanel();
-	    titlepanel.setBackground(new Color(0, 128, 0));
-	    JLabel titlelab = new JLabel("Amministrazione Clienti");
-	    titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
-	    titlepanel.add(titlelab);
-	    contentPane.add(titlepanel, BorderLayout.NORTH);
+        JLabel titlelab = new JLabel("Amministrazione Clienti");
+        titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlelab.setForeground(Color.WHITE);
+        titlepanel.add(titlelab);
 
-	    // Crea e configura il pannello dei bottoni
-	    JPanel buttonpanel = new JPanel();
-	    buttonpanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); // Aggiungi padding tra i bottoni
-	    contentPane.add(buttonpanel, BorderLayout.SOUTH);
+        JScrollPane scrollPane = new JScrollPane();
+        contentPane.add(scrollPane, BorderLayout.CENTER);
 
-	    searchtf = new JTextField(10);
-	    buttonpanel.add(searchtf);
+        table = new JTable(c.clienteModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        scrollPane.setViewportView(table);
 
-	    searchbutton = new JButton("Cerca");
-	    searchbutton.setBackground(new Color(107, 142, 35));
-	    buttonpanel.add(searchbutton);
+        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonpanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-	    addbutton = new JButton("Aggiungi");
-	    addbutton.setBackground(Color.GREEN);
-	    buttonpanel.add(addbutton);
+        searchtf = new JTextField(10);
+        buttonpanel.add(searchtf);
 
-	    updatebutton = new JButton("Modifica");
-	    updatebutton.setBackground(new Color(70, 130, 180));
-	    buttonpanel.add(updatebutton);
+        searchbutton = creaButton("Cerca", new Color(107, 142, 35));
+        buttonpanel.add(searchbutton);
 
-	    backbutton = new JButton("Indietro");
-	    backbutton.setBackground(Color.RED);
-	    buttonpanel.add(backbutton);
-	}
+        addbutton = creaButton("Aggiungi", new Color(34, 139, 34));
+        buttonpanel.add(addbutton);
 
-	public void azioni(Controller c) throws SQLException {
-	    // Carica i dati iniziali nella tabella
-	    c.allCliente();
+        updatebutton = creaButton("Modifica", new Color(70, 130, 180));
+        buttonpanel.add(updatebutton);
 
-	    // Aggiungi ActionListener al pulsante di ricerca
-	    searchbutton.addActionListener(e -> {
-	        String query = searchtf.getText().trim().toLowerCase();
-	        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.clienteModel);
-	        table.setRowSorter(sorter);
-	        if (query.isEmpty()) {
-	            sorter.setRowFilter(null);
-	        } else {
-	            try {
-	                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-	            } catch (PatternSyntaxException ex) {
-	                JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(),
-	                                              "Errore", JOptionPane.ERROR_MESSAGE);
-	            }
-	        }
-	    });
+        backbutton = creaButton("Indietro", new Color(178, 34, 34));
+        buttonpanel.add(backbutton);
+    }
 
-	    // Aggiungi ActionListener al pulsante di aggiunta
-	    addbutton.addActionListener(e -> c.visAndElem(3, 1));
+    private JButton creaButton(String text, Color color) {
+        JButton button = new JButton(text);
+        button.setBackground(color);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        return button;
+    }
 
-	    // Aggiungi ActionListener al pulsante di aggiornamento
-	    updatebutton.addActionListener(e -> {
-	        int selectedRow = table.getSelectedRow();
-	        if (selectedRow >= 0) {
-	            String[] clienteData = new String[7];
-	            for (int i = 0; i < clienteData.length; i++) {
-	                clienteData[i] = table.getValueAt(selectedRow, i).toString();
-	            }
+    public void azioni(Controller c) throws SQLException {
+        c.allCliente();
 
-	            c.visAndElem(3, 2);
-	            c.upclf.viewct(new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null));
-	        } else {
-	            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
-	        }
-	    });
+        searchbutton.addActionListener(e -> {
+            String query = searchtf.getText().trim().toLowerCase();
+            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.clienteModel);
+            table.setRowSorter(sorter);
+            if (query.isEmpty()) {
+                sorter.setRowFilter(null);
+            } else {
+                try {
+                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
+                } catch (PatternSyntaxException ex) {
+                    JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(),
+                            "Errore", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
-	 // Aggiungi ActionListener al pulsante di ritorno
-	 backbutton.addActionListener(e -> c.returnToLastFrame());
-	}
+        addbutton.addActionListener(e -> c.visAndElem(3, 1));
 
-	public VisioneClienteFrame(String title, Controller c) throws SQLException {
-		super(title);
-		this.elementi(c);
-		this.azioni(c);
-	}
+        updatebutton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                String[] clienteData = new String[7];
+                for (int i = 0; i < clienteData.length; i++) {
+                    clienteData[i] = table.getValueAt(selectedRow, i).toString();
+                }
+
+                c.visAndElem(3, 2);
+                c.upclf.viewct(new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null));
+            } else {
+                JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        backbutton.addActionListener(e -> c.returnToLastFrame());
+    }
 }
