@@ -16,7 +16,7 @@ public class CarrelloFrame extends JFrame {
     private Object[] ordinecolonne = { "Id", "Nome", "Prezzo", "Categoria", "Quantita" };
     private LocalDate dataod = LocalDate.now();
     private JPanel bottonpanel, prodottopanel, ordinepanel, centerpanel, titlepanel;
-    private JLabel datalab, quantitalab, totalelab, titlelabel;
+    private JLabel datalab, quantitalab, totalelab, titlelabel, prodottiLabel, ordineLabel;
     private JTextField quantitatf;
     private JButton backbutton, ordinebutton, selectbutton, removebutton, insertbutton;
     private JComboBox<String> categoriacb, clienteComboBox;
@@ -70,6 +70,11 @@ public class CarrelloFrame extends JFrame {
         prodottopanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         contentPane.add(prodottopanel, BorderLayout.WEST);
 
+        prodottiLabel = new JLabel("Prodotti Disponibili");
+        prodottiLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        prodottiLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        prodottopanel.add(prodottiLabel, BorderLayout.NORTH);
+
         prodottiscrollPane = new JScrollPane();
         prodottopanel.add(prodottiscrollPane, BorderLayout.CENTER);
 
@@ -80,6 +85,11 @@ public class CarrelloFrame extends JFrame {
         ordinepanel = new JPanel(new BorderLayout());
         ordinepanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         contentPane.add(ordinepanel, BorderLayout.EAST);
+
+        ordineLabel = new JLabel("Ordine Corrente");
+        ordineLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        ordineLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        ordinepanel.add(ordineLabel, BorderLayout.NORTH);
 
         ordinescrollPane = new JScrollPane();
         ordinepanel.add(ordinescrollPane, BorderLayout.CENTER);
