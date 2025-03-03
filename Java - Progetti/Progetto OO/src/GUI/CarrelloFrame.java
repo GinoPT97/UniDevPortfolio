@@ -60,18 +60,10 @@ public class CarrelloFrame extends JFrame {
         clienteComboBox.setPreferredSize(new Dimension(200, 25));
         bottonpanel.add(clienteComboBox);
 
-        ordinebutton = new JButton("Inserisci Ordine");
-        ordinebutton.setBackground(new Color(34, 139, 34));
-        ordinebutton.setForeground(Color.WHITE);
-        ordinebutton.setFocusPainted(false);
-        ordinebutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        ordinebutton = creaButton("Inserisci Ordine", new Color(34, 139, 34));
         bottonpanel.add(ordinebutton);
 
-        backbutton = new JButton("Indietro");
-        backbutton.setBackground(new Color(178, 34, 34));
-        backbutton.setForeground(Color.WHITE);
-        backbutton.setFocusPainted(false);
-        backbutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        backbutton = creaButton("Indietro", new Color(178, 34, 34));
         bottonpanel.add(backbutton);
 
         prodottopanel = new JPanel(new BorderLayout());
@@ -109,11 +101,7 @@ public class CarrelloFrame extends JFrame {
         categoriacb.setMaximumSize(categoriacb.getPreferredSize());
         topPanel.add(categoriacb);
 
-        selectbutton = new JButton("Seleziona");
-        selectbutton.setBackground(new Color(70, 130, 180));
-        selectbutton.setForeground(Color.WHITE);
-        selectbutton.setFocusPainted(false);
-        selectbutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        selectbutton = creaButton("Seleziona", new Color(70, 130, 180));
         topPanel.add(selectbutton);
 
         JPanel middlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -133,19 +121,20 @@ public class CarrelloFrame extends JFrame {
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         centerpanel.add(bottomPanel);
 
-        removebutton = new JButton("Rimuovi");
-        removebutton.setBackground(new Color(178, 34, 34));
-        removebutton.setForeground(Color.WHITE);
-        removebutton.setFocusPainted(false);
-        removebutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        removebutton = creaButton("Rimuovi", new Color(178, 34, 34));
         bottomPanel.add(removebutton);
 
-        insertbutton = new JButton("Inserisci");
-        insertbutton.setBackground(new Color(0, 153, 255));
-        insertbutton.setForeground(Color.WHITE);
-        insertbutton.setFocusPainted(false);
-        insertbutton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        insertbutton = creaButton("Inserisci", new Color(0, 153, 255));
         bottomPanel.add(insertbutton);
+    }
+
+    private JButton creaButton(String text, Color color) {
+        JButton button = new JButton(text);
+        button.setBackground(color);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        return button;
     }
 
     // Pulisce i campi
@@ -326,8 +315,8 @@ public class CarrelloFrame extends JFrame {
     }
 
     public CarrelloFrame(String title, Controller c) throws SQLException {
-       super(title);
-       this.elementi();
-       this.azioni(c);
+        super(title);
+        this.elementi();
+        this.azioni(c);
     }
 }
