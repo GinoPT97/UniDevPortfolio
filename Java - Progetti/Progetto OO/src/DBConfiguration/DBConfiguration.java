@@ -182,7 +182,7 @@ public class DBConfiguration {
                     String sql = "CREATE TABLE IF NOT EXISTS ARTICOLIORDINE (\n"
                             + "CodOrdine INTEGER NOT NULL,\n"
                             + "CodProdotto INTEGER NOT NULL,\n"
-                            + "CodCliente SERIAL PRIMARY KEY,\n"
+                            + "CodCliente INTEGER NOT NULL,\n"
                             + "Prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK(Prezzo >= 0.00),\n"
                             + "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(Prezzo >= 0.00), \n"
                             + "NumeroArticoli INT NOT NULL,\n" + "Categoria TIPOLOGIA,\n"
@@ -346,8 +346,7 @@ public class DBConfiguration {
                     + "('12132','55555','88899', '1.20', '3', '25', 'Ortofrutticoli'),"
                     + "('18181','55555','44455', '1.20', '3', '20', 'Ortofrutticoli'),"
                     + "('19191','77777','66677', '3.50', '2', '30', 'Inscatolati'),"
-                    + "('20202','33333','88899', '2.00', '5', '12', 'Inscatolati') "
-                    + "ON CONFLICT (CodCliente) DO NOTHING;";
+                    + "('20202','33333','88899', '2.00', '5', '12', 'Inscatolati');";
             result += st.executeUpdate(sqlArticoliOrdine);
 
         } catch (SQLException e) {
