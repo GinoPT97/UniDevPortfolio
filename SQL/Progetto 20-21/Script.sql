@@ -73,13 +73,17 @@ CREATE TABLE IF NOT EXISTS ordine (
 CREATE TABLE IF NOT EXISTS articoliordine (
     codordine INTEGER NOT NULL,
     codprodotto INTEGER NOT NULL,
-    codcliente SERIAL PRIMARY KEY,  
+    codcliente INTEGER NOT NULL,
     prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK (prezzo >= 0.00),
     numeropunti NUMERIC NOT NULL DEFAULT 0.00 CHECK (numeropunti >= 0.00),
     numeroarticoli INT NOT NULL,
     categoria TIPOLOGIA,
+    CONSTRAINT PK_ArticoliOrdine PRIMARY KEY (codordine, codprodotto),
     CONSTRAINT articoliordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente),
     CONSTRAINT articoliordineprodottofk FOREIGN KEY (codprodotto) REFERENCES prodotto (codprodotto),
     CONSTRAINT articoliordineordinek FOREIGN KEY (codordine) REFERENCES ordine (codordine)
 );
+
+-- Aggiunta di un indice per ottimizzare le query basate su codcliente
+CREATE INDEX idx_articoliordine_codcliente ON articoliordine (codcliente);
 

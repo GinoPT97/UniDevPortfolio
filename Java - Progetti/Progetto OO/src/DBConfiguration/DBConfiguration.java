@@ -184,13 +184,19 @@ public class DBConfiguration {
                             + "CodProdotto INTEGER NOT NULL,\n"
                             + "CodCliente INTEGER NOT NULL,\n"
                             + "Prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK(Prezzo >= 0.00),\n"
-                            + "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(Prezzo >= 0.00), \n"
-                            + "NumeroArticoli INT NOT NULL,\n" + "Categoria TIPOLOGIA,\n"
+                            + "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(NumeroPunti >= 0.00),\n"
+                            + "NumeroArticoli INT NOT NULL,\n"
+                            + "Categoria TIPOLOGIA,\n"
+                            + "CONSTRAINT PK_ArticoliOrdine PRIMARY KEY (CodOrdine, CodProdotto),\n"
                             + "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"
-                            + "CONSTRAINT ArtocoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"
-                            + "CONSTRAINT ArtocoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"
-                            + " );";
+                            + "CONSTRAINT ArticoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"
+                            + "CONSTRAINT ArticoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"
+                            + ");";
                     result = st.executeUpdate(sql);
+
+                    // Aggiunta di un indice per ottimizzare le query basate su CodCliente
+                    String indexSql = "CREATE INDEX idx_articoliordine_codcliente ON ARTICOLIORDINE (CodCliente);";
+                    result += st.executeUpdate(indexSql);
                 } else {
                     System.out.println("Table 'ARTICOLIORDINE' already exists!");
                 }
