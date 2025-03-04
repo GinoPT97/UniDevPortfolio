@@ -42,7 +42,7 @@ public class DipendenteFrame extends JFrame {
         titlelab = new JLabel("Dipendenti Point", SwingConstants.CENTER);
         titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlelab.setForeground(Color.WHITE);
-        titlePanel.add(titlelab, BorderLayout.NORTH);
+        titlePanel.add(titlelab, BorderLayout.CENTER); 
 
         // Bottone di logout esteso orizzontalmente
         logoututton = new JButton("Logout");
@@ -56,7 +56,7 @@ public class DipendenteFrame extends JFrame {
         buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS));
 
         // Creazione e aggiunta dei bottoni al pannello
-        buttonpanel.add(Box.createVerticalGlue()); 
+        buttonpanel.add(Box.createVerticalGlue());
 
         clientebutton = new JButton("Clienti");
         clientebutton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -105,7 +105,7 @@ public class DipendenteFrame extends JFrame {
 
     public DipendenteFrame(String title, Controller c) {
         super(title);
-        JPanel titlePanel = c.createImagePanel("/Immagini/ImmDipendenti.png");
+        JPanel titlePanel = c.createImagePanel("/Immagini/ImmDipendenti.jpg");
         this.elementi(titlePanel);
         this.azioni(c);
     }
