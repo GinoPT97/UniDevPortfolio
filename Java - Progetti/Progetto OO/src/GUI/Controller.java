@@ -137,7 +137,7 @@ public class Controller {
     }
 
     public void dipAndElem(int x) {
-        if (lastFrame == null) lastFrame = dipf; // Inizializza lastFrame se non già impostato
+        lastFrame = dipf; // Imposta il frame dipendente come ultimo frame
         switch (x) {
             case 1 -> setVisibleFrame(visctf, dipf); // Mostra Visione Clienti
             case 2 -> setVisibleFrame(vprodf, dipf); // Mostra Visione Prodotti
