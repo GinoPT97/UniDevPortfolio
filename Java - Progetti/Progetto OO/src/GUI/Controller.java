@@ -91,38 +91,41 @@ public class Controller {
         logf.setVisible(true);
     }
 
+    // Crea un pannello con un'immagine
     public JPanel createImagePanel(String imagePath) {
         Image image = new ImageIcon(ImagePanel.class.getResource(imagePath)).getImage();
         return new ImagePanel(image);
     }
 
+    // Torna all'ultimo frame visibile
     public void returnToLastFrame() {
-        // Mostra l'ultimo frame visibile e nasconde gli altri frame
         setVisibleFrame(lastFrame, searchf, visordf, vprodf, vdipf, statdipf, visctf, carrf, nprodf, ndipf, nclf, modprodf, upclf, updipf);
     }
 
+    // Gestisce la visibilità dei frame
     private void setVisibleFrame(Frame toShow, Frame... toHide) {
         for (Frame frame : toHide) {
             if (frame != null) {
-                frame.setVisible(false); // Nascondi il frame
+                frame.setVisible(false);
             }
         }
         if (toShow != null) {
-            toShow.setVisible(true); // Mostra il frame specificato
+            toShow.setVisible(true);
         }
     }
 
+    // Cambia il frame visibile in base al tipo di logout
     public void logout(int x) {
-        // Cambia il frame visibile in base al tipo di logout
         setVisibleFrame(logf, (x == 1) ? adminf : dipf);
     }
 
+    // Mostra il frame appropriato in base al tipo di utente
     public void logtoutente(int x) {
-        logf.setVisible(false); // Nasconde il frame di logout
-        // Mostra il frame appropriato in base al tipo di utente
+        logf.setVisible(false);
         setVisibleFrame((x == 1) ? adminf : dipf, (x == 1) ? dipf : adminf);
     }
 
+    // Gestisce la visibilità dei frame per l'admin
     public void adminAndElem(int x) {
         lastFrame = adminf; // Imposta il frame admin come ultimo frame
         switch (x) {
