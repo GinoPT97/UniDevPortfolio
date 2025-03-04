@@ -191,7 +191,6 @@ public class Controller {
     }
 
     public static void main(String[] args) {
-        // Utilizza EventQueue per garantire che l'app venga eseguita nel thread dell'EDT
         EventQueue.invokeLater(() -> {
             try {
                 new Controller();
@@ -209,7 +208,7 @@ public class Controller {
 
     // Metodo di supporto per verificare se un campo è nullo o vuoto
     private String checkNull(Object value) {
-        return (value == null || value.toString().trim().isEmpty()) ? "---" : value.toString();
+        return (value == null || value.toString().trim().isEmpty()) ? "N/A" : value.toString();
     }
 
     public void connect() throws SQLException {
