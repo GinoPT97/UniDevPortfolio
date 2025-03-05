@@ -26,11 +26,11 @@ public class OrdiniImpl implements OrdiniJDBC {
     @Override
     public boolean newordine(Ordine ordine) throws SQLException {
         newOrdineStmt.setDouble(1, ordine.getPrezzoTotale());
-        newOrdineStmt.setDate(2, ordine.getDataAcquisto());
+        newOrdineStmt.setDate(2, (java.sql.Date) ordine.getDataAcquisto());
         newOrdineStmt.setInt(3, ordine.getIdCliente());
         newOrdineStmt.setInt(4, ordine.getIdDipendente());
 
-        return newOrdineStmt.executeUpdate() > 0; 
+        return newOrdineStmt.executeUpdate() > 0;
     }
 
     @Override

@@ -267,7 +267,7 @@ public class CarrelloFrame extends JFrame {
 
     private void creaOrdine(Controller c) {
         try {
-            java.sql.Date sd = java.sql.Date.valueOf(dataod);
+            java.sql.Date sd = java.sql.Date.valueOf(dataod.toString()); // Assicurati che la data sia correttamente formattata
             String clienteSelezionato = (String) clienteComboBox.getSelectedItem();
             Integer idCliente = null;
 
@@ -295,17 +295,17 @@ public class CarrelloFrame extends JFrame {
 
                 c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente, idDipendente));
 
-                for (int j = 0; j < c.ordModel.getRowCount(); j++) {
-                    int quantita = Integer.parseInt(c.ordModel.getValueAt(j, 4).toString());
-                    String codiceProdotto = c.ordModel.getValueAt(j, 0).toString();
-                    double prezzoUnitario = Double.parseDouble(c.ordModel.getValueAt(j, 2).toString());
+                for (int j = 0; j < ordModel.getRowCount(); j++) {
+                    int quantita = Integer.parseInt(ordModel.getValueAt(j, 4).toString());
+                    String codiceProdotto = ordModel.getValueAt(j, 0).toString();
+                    double prezzoUnitario = Double.parseDouble(ordModel.getValueAt(j, 2).toString());
 
                     c.upscorte(quantita, codiceProdotto);
-                    Articoli articoli = new Articoli(c.CurrOrd(), idCliente.toString(), prezzoUnitario, prezzoUnitario * quantita, quantita, c.ordModel.getValueAt(j, 3).toString());
+                    Articoli articoli = new Articoli(c.CurrOrd(), codiceProdotto, prezzoUnitario, prezzoUnitario * quantita, quantita, ordModel.getValueAt(j, 3).toString());
                     c.newarticoli(articoli);
                 }
 
-                c.uppunti(idCliente.toString(), totaleOrdine);
+                c.uppunti(String.valueOf(idCliente), totaleOrdine); // Assicurati che l'ID cliente sia passato come stringa
                 JOptionPane.showMessageDialog(null, "Ordine aggiunto");
                 System.out.println("Ordine aggiunto");
                 clean();
