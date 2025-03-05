@@ -215,6 +215,7 @@ public class CarrelloFrame extends JFrame {
 
         if (selectedRow == -1 || quantitaText.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Seleziona un prodotto e inserisci una quantità!");
+            System.err.println("Seleziona un prodotto e inserisci una quantità!");
             return;
         }
 
@@ -223,10 +224,12 @@ public class CarrelloFrame extends JFrame {
             quantita = Integer.parseInt(quantitaText);
             if (quantita <= 0) {
                 JOptionPane.showMessageDialog(null, "La quantità deve essere un numero positivo!", "Errore", JOptionPane.ERROR_MESSAGE);
+                System.err.println("La quantità deve essere un numero positivo!");
                 return;
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(null, "Quantità non valida! Assicurati di inserire un numero intero.", "Errore", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Quantità non valida! Assicurati di inserire un numero intero.");
             return;
         }
 
@@ -239,6 +242,7 @@ public class CarrelloFrame extends JFrame {
 
             if (scorte < quantita) {
                 JOptionPane.showMessageDialog(null, "Scorte insufficienti!");
+                System.err.println("Scorte insufficienti!");
                 return;
             }
 
@@ -257,6 +261,7 @@ public class CarrelloFrame extends JFrame {
             totale();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(null, "Dati non validi nel prodotto selezionato!", "Errore", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Dati non validi nel prodotto selezionato!");
         }
     }
 
@@ -279,10 +284,16 @@ public class CarrelloFrame extends JFrame {
             }
 
             if (idCliente != null) {
-                String idDipendente = c.iddip;
+                int idDipendente = Integer.parseInt(c.iddip);
+                if (!c.verifyid(String.valueOf(idDipendente))) {
+                    JOptionPane.showMessageDialog(null, "Dipendente non valido!");
+                    System.err.println("Dipendente non valido!");
+                    return;
+                }
+
                 double totaleOrdine = totale();
 
-                c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente.toString(), idDipendente));
+                c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente, idDipendente));
 
                 for (int j = 0; j < c.ordModel.getRowCount(); j++) {
                     int quantita = Integer.parseInt(c.ordModel.getValueAt(j, 4).toString());
@@ -296,14 +307,18 @@ public class CarrelloFrame extends JFrame {
 
                 c.uppunti(idCliente.toString(), totaleOrdine);
                 JOptionPane.showMessageDialog(null, "Ordine aggiunto");
+                System.out.println("Ordine aggiunto");
                 clean();
             } else {
                 JOptionPane.showMessageDialog(null, "Cliente non trovato!");
+                System.err.println("Cliente non trovato!");
             }
         } catch (SQLException e1) {
             JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Errore!\nTipo di errore: " + e1.getMessage());
         } catch (IllegalArgumentException e2) {
             JOptionPane.showMessageDialog(null, "Data non valida!", "Errore", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Data non valida!");
         }
     }
 

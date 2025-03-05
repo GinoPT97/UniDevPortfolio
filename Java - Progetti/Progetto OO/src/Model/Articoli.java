@@ -8,8 +8,7 @@ public class Articoli {
 	private int numeroArticoli;
 	private String categoria;
 
-	public Articoli(String codOrdine, String codProdotto, double prezzo, double numPunti, int numeroArticoli,
-			String categoria) {
+	public Articoli(String codOrdine, String codProdotto, double prezzo, double numPunti, int numeroArticoli, String categoria) {
 		this.codOrdine = codOrdine;
 		this.codProdotto = codProdotto;
 		this.prezzo = prezzo;

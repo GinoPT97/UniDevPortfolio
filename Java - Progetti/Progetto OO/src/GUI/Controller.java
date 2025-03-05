@@ -185,7 +185,6 @@ public class Controller {
                 break;
 
             default:
-                // Handle invalid context if needed, or simply do nothing
                 break;
         }
     }
@@ -202,8 +201,8 @@ public class Controller {
 
     // Metodo generico per popolare il modello della tabella
     private <T> void populateTable(List<T> items, DefaultTableModel model, Function<T, Object[]> mapper) {
-        model.setRowCount(0); // Resetta il modello per evitare duplicati
-        items.forEach(item -> model.addRow(mapper.apply(item))); // Aggiungi riga al modello
+        model.setRowCount(0);
+        items.forEach(item -> model.addRow(mapper.apply(item)));
     }
 
     // Metodo di supporto per verificare se un campo è nullo o vuoto
@@ -387,8 +386,8 @@ public class Controller {
             String dipendenteNome = "N/A";
 
             try {
-                Dipendente d = dpjdbc.getOneDip(o.getIdDipendente());
-                Cliente ct = cljdbc.getCtByid(o.getIdCliente());
+                Dipendente d = dpjdbc.getOneDip(String.valueOf(o.getIdDipendente()));
+                Cliente ct = cljdbc.getCtByid(String.valueOf(o.getIdCliente()));
                 dipendenteNome = checkNull(d != null ? d.getCognome() + " " + d.getNome() : null);
                 clienteNome = checkNull(ct != null ? ct.getCognome() + " " + ct.getNome() : null);
             } catch (SQLException e) {

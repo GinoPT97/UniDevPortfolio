@@ -27,10 +27,10 @@ public class OrdiniImpl implements OrdiniJDBC {
     public boolean newordine(Ordine ordine) throws SQLException {
         newOrdineStmt.setDouble(1, ordine.getPrezzoTotale());
         newOrdineStmt.setDate(2, ordine.getDataAcquisto());
-        newOrdineStmt.setString(3, ordine.getIdCliente());
-        newOrdineStmt.setString(4, ordine.getIdDipendente());
+        newOrdineStmt.setInt(3, ordine.getIdCliente());
+        newOrdineStmt.setInt(4, ordine.getIdDipendente());
 
-        return newOrdineStmt.executeUpdate() > 0; // Restituisce true se l'inserimento ha avuto successo
+        return newOrdineStmt.executeUpdate() > 0; 
     }
 
     @Override
@@ -42,8 +42,8 @@ public class OrdiniImpl implements OrdiniJDBC {
                     rs.getString("codordine"),
                     rs.getDate("dataacquisto"),
                     rs.getDouble("prezzototale"),
-                    rs.getString("codcliente"),
-                    rs.getString("coddipendente")
+                    rs.getInt("codcliente"),
+                    rs.getInt("coddipendente")
                 ));
             }
         }

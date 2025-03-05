@@ -6,10 +6,10 @@ public class Ordine {
 	private String codordine;
 	private Date datacquisto;
 	private double prezzotot;
-	private String idct;
-	private String iddip;
+	private int idct; // Modificato da String a int
+	private int iddip; // Modificato da String a int
 
-	public Ordine(String codordine, Date datacquisto, double prezzotot, String idct, String iddip) {
+	public Ordine(String codordine, Date datacquisto, double prezzotot, int idct, int iddip) {
 		this.codordine = codordine;
 		this.datacquisto = datacquisto;
 		this.prezzotot = prezzotot;
@@ -41,19 +41,19 @@ public class Ordine {
 		this.prezzotot = prezzotot;
 	}
 
-	public String getIdCliente() {
+	public int getIdCliente() {
 		return idct;
 	}
 
-	public void setIdCliente(String idct) {
+	public void setIdCliente(int idct) {
 		this.idct = idct;
 	}
 
-	public String getIdDipendente() {
+	public int getIdDipendente() {
 		return iddip;
 	}
 
-	public void setIdDipendente(String iddip) {
+	public void setIdDipendente(int iddip) {
 		this.iddip = iddip;
 	}
 
