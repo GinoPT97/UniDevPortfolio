@@ -264,7 +264,7 @@ public class CarrelloFrame extends JFrame {
         try {
             java.sql.Date sd = java.sql.Date.valueOf(dataod);
             String clienteSelezionato = (String) clienteComboBox.getSelectedItem();
-            String idCliente = null;
+            Integer idCliente = null;
 
             for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
                 String idClienteTemp = c.clienteModel.getValueAt(i, 0).toString();
@@ -273,7 +273,7 @@ public class CarrelloFrame extends JFrame {
                 String nomeCognome = idClienteTemp + " - " + nome + " " + cognome;
 
                 if (clienteSelezionato.equals(nomeCognome)) {
-                    idCliente = idClienteTemp;
+                    idCliente = Integer.parseInt(idClienteTemp);
                     break;
                 }
             }
@@ -282,7 +282,7 @@ public class CarrelloFrame extends JFrame {
                 String idDipendente = c.iddip;
                 double totaleOrdine = totale();
 
-                c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente, idDipendente));
+                c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente.toString(), idDipendente));
 
                 for (int j = 0; j < c.ordModel.getRowCount(); j++) {
                     int quantita = Integer.parseInt(c.ordModel.getValueAt(j, 4).toString());
@@ -290,11 +290,11 @@ public class CarrelloFrame extends JFrame {
                     double prezzoUnitario = Double.parseDouble(c.ordModel.getValueAt(j, 2).toString());
 
                     c.upscorte(quantita, codiceProdotto);
-                    Articoli articoli = new Articoli(c.CurrOrd(), idCliente, prezzoUnitario, prezzoUnitario * quantita, quantita, c.ordModel.getValueAt(j, 3).toString());
+                    Articoli articoli = new Articoli(c.CurrOrd(), idCliente.toString(), prezzoUnitario, prezzoUnitario * quantita, quantita, c.ordModel.getValueAt(j, 3).toString());
                     c.newarticoli(articoli);
                 }
 
-                c.uppunti(idCliente, totaleOrdine);
+                c.uppunti(idCliente.toString(), totaleOrdine);
                 JOptionPane.showMessageDialog(null, "Ordine aggiunto");
                 clean();
             } else {

@@ -193,10 +193,6 @@ public class DBConfiguration {
                             + "CONSTRAINT ArticoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"
                             + ");";
                     result = st.executeUpdate(sql);
-
-                    // Aggiunta di un indice per ottimizzare le query basate su CodCliente
-                    String indexSql = "CREATE INDEX idx_articoliordine_codcliente ON ARTICOLIORDINE (CodCliente);";
-                    result += st.executeUpdate(indexSql);
                 } else {
                     System.out.println("Table 'ARTICOLIORDINE' already exists!");
                 }
