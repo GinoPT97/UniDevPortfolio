@@ -35,26 +35,32 @@ def process_takeout(temp_dir, output_dir):
             file_path = os.path.join(root, file)
 
             if file.endswith(".json"):
-                folder_name = get_folder_from_json(file_path)
-
-                if folder_name:
-                    target_folder = os.path.join(output_dir, folder_name)
-                    os.makedirs(target_folder, exist_ok=True)
-
-                    media_file = file.replace(".json", "")
-                    media_path = os.path.join(root, media_file)
-
-                    if os.path.exists(media_path):
-                        shutil.move(media_path, os.path.join(target_folder, media_file))
-                        media_processed += 1
-                        logging.info(f"Spostato: {media_file} in {target_folder}")
-
-                    shutil.move(file_path, os.path.join(target_folder, file))
-                    json_processed += 1
-                else:
-                    logging.warning(f"Cartella originale non trovata per il JSON: {file}")
+                json_processed, media_processed = process_json_file(file_path, root, output_dir, json_processed, media_processed)
 
     logging.info(f"Processati {json_processed} file JSON e {media_processed} file multimediali.")
+
+def process_json_file(file_path, root, output_dir, json_processed, media_processed):
+    """Processa un singolo file JSON."""
+    folder_name = get_folder_from_json(file_path)
+
+    if folder_name:
+        target_folder = os.path.join(output_dir, folder_name)
+        os.makedirs(target_folder, exist_ok=True)
+
+        media_file = os.path.basename(file_path).replace(".json", "")
+        media_path = os.path.join(root, media_file)
+
+        if os.path.exists(media_path):
+            shutil.move(media_path, os.path.join(target_folder, media_file))
+            media_processed += 1
+            logging.info(f"Spostato: {media_file} in {target_folder}")
+
+        shutil.move(file_path, os.path.join(target_folder, os.path.basename(file_path)))
+        json_processed += 1
+    else:
+        logging.warning(f"Cartella originale non trovata per il JSON: {os.path.basename(file_path)}")
+
+    return json_processed, media_processed
 
 def main(zip_file_path, output_dir):
     """Funzione principale che gestisce l'estrazione e il processo."""
