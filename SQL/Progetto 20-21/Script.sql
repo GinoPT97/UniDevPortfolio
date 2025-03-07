@@ -1,6 +1,3 @@
--- Se il tipo esiste già, rimuoverlo (attenzione: questo può impattare sulle tabelle già create)
-DROP TYPE IF EXISTS TIPOLOGIA CASCADE;
-
 -- Creare il nuovo tipo ENUM con le categorie corrette
 CREATE TYPE TIPOLOGIA AS ENUM ('Frutta', 'Verdura', 'Farinacei', 'Latticini', 'Uova', 'Confezionati');
 
