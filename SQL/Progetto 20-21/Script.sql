@@ -1,5 +1,8 @@
--- (Opzionale) Definizione del tipo TIPOLOGIA se non esiste già:
-CREATE TYPE TIPOLOGIA AS ENUM ('Ortofrutticoli', 'Latticini', 'Inscatolati', 'Farinacei');
+-- Se il tipo esiste già, rimuoverlo (attenzione: questo può impattare sulle tabelle già create)
+DROP TYPE IF EXISTS TIPOLOGIA CASCADE;
+
+-- Creare il nuovo tipo ENUM con le categorie corrette
+CREATE TYPE TIPOLOGIA AS ENUM ('Frutta', 'Verdura', 'Farinacei', 'Latticini', 'Uova', 'Confezionati');
 
 -- Tabella cliente
 CREATE TABLE IF NOT EXISTS cliente (
@@ -44,13 +47,57 @@ CREATE TABLE IF NOT EXISTS prodotto (
     datamungitura DATE,
     glutine BOOLEAN,
     datascadenza DATE,
+    dataproduzione DATE,
     categoria TIPOLOGIA,
     scorta INT CHECK (scorta >= 0),
     CONSTRAINT categoria_check CHECK (
-        (categoria = 'Ortofrutticoli' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
-        (categoria = 'Latticini' AND dataraccolta IS NULL AND datamungitura IS NOT NULL AND datascadenza IS NULL AND glutine IS NULL) OR
-        (categoria = 'Inscatolati' AND dataraccolta IS NULL AND datamungitura IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
-        (categoria = 'Farinacei' AND dataraccolta IS NULL AND datamungitura IS NULL AND datascadenza IS NULL AND glutine IS NOT NULL)
+        -- Frutta e Verdura: deve essere presente la data di raccolta
+        ((categoria = 'Frutta' OR categoria = 'Verdura')
+          AND dataraccolta IS NOT NULL
+          AND datamungitura IS NULL
+          AND dataproduzione IS NULL
+          AND datascadenza IS NULL
+          AND glutine IS NULL)
+
+        OR
+
+        -- Latticini: devono avere sia la data di mungitura che la data di produzione
+        (categoria = 'Latticini'
+          AND dataraccolta IS NULL
+          AND datamungitura IS NOT NULL
+          AND dataproduzione IS NOT NULL
+          AND datascadenza IS NULL
+          AND glutine IS NULL)
+
+        OR
+
+        -- Farinacei: ad esempio, si impone la presenza di glutine (o meglio: l'indicazione se contiene glutine)
+        (categoria = 'Farinacei'
+          AND dataraccolta IS NULL
+          AND datamungitura IS NULL
+          AND dataproduzione IS NULL
+          AND datascadenza IS NULL
+          AND glutine IS NOT NULL)
+
+        OR
+
+        -- Uova: se si decide di non obbligare nessun campo extra, oppure si può richiedere la data di scadenza
+        (categoria = 'Uova'
+          AND dataraccolta IS NULL
+          AND datamungitura IS NULL
+          AND dataproduzione IS NULL
+          AND datascadenza IS NOT NULL
+          AND glutine IS NULL)
+
+        OR
+
+        -- Confezionati: devono avere la data di scadenza valorizzata
+        (categoria = 'Confezionati'
+          AND dataraccolta IS NULL
+          AND datamungitura IS NULL
+          AND dataproduzione IS NULL
+          AND datascadenza IS NOT NULL
+          AND glutine IS NULL)
     )
 );
 
@@ -73,11 +120,9 @@ CREATE TABLE IF NOT EXISTS ordine (
 CREATE TABLE IF NOT EXISTS articoliordine (
     codordine INTEGER NOT NULL,
     codprodotto INTEGER NOT NULL,
-    codcliente INTEGER NOT NULL,
     prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK (prezzo >= 0.00),
     numeropunti NUMERIC NOT NULL DEFAULT 0.00 CHECK (numeropunti >= 0.00),
     numeroarticoli INT NOT NULL,
-    categoria TIPOLOGIA,
     CONSTRAINT PK_ArticoliOrdine PRIMARY KEY (codordine, codprodotto),
     CONSTRAINT articoliordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente),
     CONSTRAINT articoliordineprodottofk FOREIGN KEY (codprodotto) REFERENCES prodotto (codprodotto),
