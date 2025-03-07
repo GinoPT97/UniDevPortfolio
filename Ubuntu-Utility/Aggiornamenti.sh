@@ -92,16 +92,7 @@ execute_command() {
 # Funzione per aggiornare alla nuova versione di Ubuntu
 upgrade_ubuntu() {
     log "INFO" "Aggiornamento alla nuova versione di Ubuntu..."
-    if sudo do-release-upgrade; then
-        log "INFO" "Aggiornamento alla nuova versione di Ubuntu completato con successo."
-    else
-        if grep -q "Non è stato trovato alcun nuovo rilascio" /var/log/dist-upgrade/main.log; then
-            log "INFO" "Non è stato trovato alcun nuovo rilascio di Ubuntu."
-        else
-            log "ERROR" "Errore durante l'aggiornamento alla nuova versione di Ubuntu."
-            exit 1
-        fi
-    fi
+    sudo do-release-upgrade
 }
 
 # Inizio dello script
@@ -120,11 +111,5 @@ update_apt_packages
 execute_command "apt-get full-upgrade -y" "Aggiornamento completo"
 execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
 upgrade_ubuntu
-
-log "INFO" "Salvataggio della lista dei pacchetti installati..."
-dpkg --get-selections > $HOME/Documenti/ListaPacchetti/pacchetti.txt
-
-log "INFO" "Salvataggio della lista dei pacchetti Snap installati..."
-snap list > $HOME/Documenti/ListaPacchetti/pacchetti_snap.txt
 
 log "INFO" "Aggiornamenti completati!"

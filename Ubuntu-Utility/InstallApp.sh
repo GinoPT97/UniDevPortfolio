@@ -4,6 +4,19 @@ set -e
 echo "Aggiornamento del sistema..."
 sudo apt update && sudo apt upgrade -y
 
+echo "Reinstallazione dei pacchetti dalla lista salvata..."
+sudo dpkg --set-selections < $HOME/Documenti/Lista-Pacchetti/pacchetti.txt
+sudo apt-get dselect-upgrade
+
+echo "Reinstallazione dei pacchetti Snap dalla lista salvata..."
+awk 'NR>1 {print $1}' $HOME/Documenti/Lista-Pacchetti/pacchetti_snap.txt | xargs -n1 sudo snap install
+
+echo "Reinstallazione dei pacchetti npm globali dalla lista salvata..."
+xargs npm install -g < $HOME/Documenti/pacchetti_npm.txt
+
+echo "Esecuzione aggiornamenti personalizzati..."
+sudo /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh
+
 # Installa curl (se non è già presente)
 sudo apt install -y curl
 
@@ -16,6 +29,10 @@ sudo apt install -y \
   aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base \
   texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
   cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon jest
+
+echo "Installazione di OpenJDK 17 e 21..."
+sudo apt update
+sudo apt install -y openjdk-17-jdk openjdk-21-jdk openjdk-17-jre
 
 sudo powerprofilesctl set balanced
 
@@ -100,6 +117,10 @@ sudo snap install --classic openjdk
 sudo snap install --classic code
 sudo snap install --classic android-studio
 sudo snap install --classic eclipse
+sudo snap install telegram-desktop
+sudo snap install spotify
+sudo snap install whatsdesk
+sudo snap install teams-for-linux
 
 echo "Avvio del servizio Tor..."
 sudo apt install tor
@@ -125,9 +146,6 @@ sudo apt remove --purge gnome-mahjongg gnome-mines gnome-sudoku -y
 sudo apt install -y redis
 sudo systemctl start redis
 sudo systemctl enable redis
-
-echo "Esecuzione aggiornamenti personalizzati..."
-sudo /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh
 
 echo "Pulizia file temporanei..."
 rm -f *.deb *.run
