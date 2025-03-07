@@ -84,4 +84,3 @@ INSERT INTO articoliordine (CodOrdine, CodProdotto, CodCliente, prezzo, numeropu
 ('19191', '77777', '77777', '2.50', '6.00', '3', 'Farinacei'),
 ('20202', '44444', '77777', '1.20', '3.00', '2', 'Farinacei'),
 ('20202', '55555', '44455', '1.00', '2.50', '2', 'Ortofrutticoli');
-

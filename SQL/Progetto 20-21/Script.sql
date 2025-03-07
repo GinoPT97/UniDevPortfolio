@@ -83,7 +83,3 @@ CREATE TABLE IF NOT EXISTS articoliordine (
     CONSTRAINT articoliordineprodottofk FOREIGN KEY (codprodotto) REFERENCES prodotto (codprodotto),
     CONSTRAINT articoliordineordinek FOREIGN KEY (codordine) REFERENCES ordine (codordine)
 );
-
--- Aggiunta di un indice per ottimizzare le query basate su codcliente
-CREATE INDEX idx_articoliordine_codcliente ON articoliordine (codcliente);
-
