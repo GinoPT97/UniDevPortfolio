@@ -39,7 +39,7 @@ AS
 $$
 BEGIN
     UPDATE ORDINE SET PrezzoTotale = PrezzoTotale + (SELECT AO.Prezzo
-                                                     FROM ARTICOLIORDINE AS AO 
+                                                     FROM ARTICOLIORDINE AS AO
                                                      WHERE AO.CodProdotto = NEW.CodProdotto);
     RETURN NEW;
 END;
@@ -57,7 +57,7 @@ BEGIN
 END;
 $$;
 
--- Funzione che controlla la disponibilità del prodotto; 
+-- Funzione che controlla la disponibilità del prodotto;
 -- se la scorta è sufficiente a soddisfare la domanda, permette di lanciare il trigger updateScorta.
 -- Qualora la scorta non fosse sufficiente, lancia un eccezione e notifica all'utente l'esaurimento delle scorte
 CREATE OR REPLACE FUNCTION checkScorta()
@@ -82,13 +82,13 @@ RETURNS TRIGGER
 LANGUAGE plpgsql
 AS
 $$
-DECLARE 
+DECLARE
     temp NUMERIC;
 BEGIN
     SELECT P.Prezzo * NumeroArticoli INTO temp
     FROM PRODOTTO AS P
     WHERE P.CodProdotto = NEW.CodProdotto;
-    UPDATE TESSERA 
+    UPDATE TESSERA
     SET NumeroPunti = NumeroPunti + (temp * 10) / 100
     WHERE CodCliente = (SELECT O.CodCliente
                         FROM ORDINE AS O
@@ -116,13 +116,13 @@ RETURNS TRIGGER
 LANGUAGE plpgsql
 AS
 $$
-DECLARE 
+DECLARE
     temp NUMERIC;
 BEGIN
     SELECT P.Prezzo * NumeroArticoli INTO temp
     FROM PRODOTTO AS P
     WHERE P.CodProdotto = OLD.CodProdotto;
-    UPDATE TESSERA 
+    UPDATE TESSERA
     SET NumeroPunti = NumeroPunti - (temp * 10) / 100
     WHERE CodCliente = (SELECT O.CodCliente
                         FROM ORDINE AS O
@@ -145,11 +145,11 @@ EXECUTE PROCEDURE selectPrezzo();
 
 -- Trigger che chiama la funzione updatePrezzo() dopo che un articolo è stato selezionato
 CREATE TRIGGER updatePrezzo
-AFTER INSERT ON ARTICOLIORDINE 
+AFTER INSERT ON ARTICOLIORDINE
 FOR EACH ROW
 EXECUTE PROCEDURE updatePrezzo();
 
--- Trigger che chiama la funzione updateDeletePrezzo() dopo che un articolo è stato rimosso 
+-- Trigger che chiama la funzione updateDeletePrezzo() dopo che un articolo è stato rimosso
 CREATE TRIGGER updateDeletePrezzo
 AFTER DELETE ON ARTICOLIORDINE
 FOR EACH ROW

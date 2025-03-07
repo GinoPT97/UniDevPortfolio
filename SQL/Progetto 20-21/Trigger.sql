@@ -12,7 +12,7 @@ EXECUTE FUNCTION selectPrezzo();
 
 -- Trigger per aggiornare il prezzo totale dell'ordine
 CREATE TRIGGER updatePrezzo
-AFTER INSERT OR UPDATE ON ARTICOLIORDINE 
+AFTER INSERT OR UPDATE ON ARTICOLIORDINE
 FOR EACH ROW
 EXECUTE FUNCTION updatePrezzo();
 
