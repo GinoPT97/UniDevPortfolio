@@ -23,7 +23,7 @@ CREATE OR REPLACE VIEW vendite_periodo AS
 SELECT D.nome, D.cognome, COUNT(O.codordine) AS Tordini
 FROM dipendente AS D
 JOIN ordine AS O ON O.coddipendente = D.coddipendente
-WHERE O.dataacquisto >= '2025-01-01' AND O.dataacquisto <= '2025-03-01'
+WHERE O.dataacquisto >= $1 AND O.dataacquisto <= $2
 GROUP BY D.nome, D.cognome
 ORDER BY Tordini DESC;
 
@@ -32,7 +32,7 @@ CREATE OR REPLACE VIEW introiti_periodo AS
 SELECT D.nome, D.cognome, SUM(O.prezzototale) AS Sordine
 FROM dipendente AS D
 JOIN ordine AS O ON O.coddipendente = D.coddipendente
-WHERE O.dataacquisto >= '2025-01-01' AND O.dataacquisto <= '2025-03-01'
+WHERE O.dataacquisto >= $1 AND O.dataacquisto <= $2
 GROUP BY D.nome, D.cognome
 ORDER BY Sordine DESC;
 
