@@ -131,6 +131,18 @@ BEGIN
 END;
 $$;
 
-
-
-
+-- Funzione che aggiorna i punti del cliente dopo l'inserimento di un articolo
+CREATE OR REPLACE FUNCTION updatePuntiInserimento()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+    UPDATE TESSERA
+    SET NumeroPunti = NumeroPunti + (NEW.prezzo * 0.10)
+    WHERE CodCliente = (SELECT O.CodCliente
+                        FROM ORDINE AS O
+                        WHERE O.CodOrdine = NEW.CodOrdine);
+    RETURN NEW;
+END;
+$$;

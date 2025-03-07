@@ -45,3 +45,9 @@ CREATE TRIGGER updateDeletePunti
 AFTER DELETE ON ARTICOLIORDINE
 FOR EACH ROW
 EXECUTE FUNCTION updateDeletePunti();
+
+-- Trigger per aggiornare i punti del cliente dopo l'inserimento di un articolo
+CREATE TRIGGER updatePuntiInserimento
+AFTER INSERT ON ARTICOLIORDINE
+FOR EACH ROW
+EXECUTE FUNCTION updatePunti();

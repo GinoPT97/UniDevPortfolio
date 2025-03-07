@@ -18,6 +18,24 @@ GROUP BY D.nome, D.cognome
 ORDER BY Sordine DESC
 LIMIT 1;
 
+-- Vista per la ricerca di dipendenti con il maggior numero di vendite in un determinato periodo
+CREATE OR REPLACE VIEW vendite_periodo AS
+SELECT D.nome, D.cognome, COUNT(O.codordine) AS Tordini
+FROM dipendente AS D
+JOIN ordine AS O ON O.coddipendente = D.coddipendente
+WHERE O.dataacquisto >= '2025-01-01' AND O.dataacquisto <= '2025-03-01'
+GROUP BY D.nome, D.cognome
+ORDER BY Tordini DESC;
+
+-- Vista per la ricerca di dipendenti con il maggior introito in un determinato periodo
+CREATE OR REPLACE VIEW introiti_periodo AS
+SELECT D.nome, D.cognome, SUM(O.prezzototale) AS Sordine
+FROM dipendente AS D
+JOIN ordine AS O ON O.coddipendente = D.coddipendente
+WHERE O.dataacquisto >= '2025-01-01' AND O.dataacquisto <= '2025-03-01'
+GROUP BY D.nome, D.cognome
+ORDER BY Sordine DESC;
+
 -- Query per la ricerca di dipendenti in base al numero di ordini in un determinato periodo --
 
 SELECT D.nome, D.cognome, COUNT(O.codordine) AS Tordini

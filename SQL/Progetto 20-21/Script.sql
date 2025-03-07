@@ -78,19 +78,19 @@ ALTER TABLE prodotto ADD CONSTRAINT check_latticini CHECK (
 -- Farinacei
 ALTER TABLE prodotto ADD CONSTRAINT check_farinacei CHECK (
   categoria <> 'Farinacei' OR
-  (categoria = 'Farinacei' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NOT NULL)
+  (categoria = 'Farinacei' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL E glutine IS NOT NULL)
 );
 
 -- Uova
 ALTER TABLE prodotto ADD CONSTRAINT check_uova CHECK (
   categoria <> 'Uova' OR
-  (categoria = 'Uova' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)
+  (categoria = 'Uova' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL E glutine IS NULL)
 );
 
 -- Confezionati
 ALTER TABLE prodotto ADD CONSTRAINT check_confezionati CHECK (
   categoria <> 'Confezionati' OR
-  (categoria = 'Confezionati' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)
+  (categoria = 'Confezionati' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL E glutine IS NULL)
 );
 
 -- Tabella ordine
