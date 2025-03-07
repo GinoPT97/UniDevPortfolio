@@ -131,53 +131,6 @@ BEGIN
 END;
 $$;
 
--- Trigger che chiama la funzione updateScorta() dopo che un articolo è stato selezionato
-CREATE TRIGGER updateScorta
-AFTER INSERT ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE PROCEDURE updateScorta();
-
--- Trigger che chiama la funzione selectPrezzo() dopo che un articolo è stato selezionato
-CREATE TRIGGER selectPrezzo
-AFTER INSERT ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE PROCEDURE selectPrezzo();
-
--- Trigger che chiama la funzione updatePrezzo() dopo che un articolo è stato selezionato
-CREATE TRIGGER updatePrezzo
-AFTER INSERT ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE PROCEDURE updatePrezzo();
-
--- Trigger che chiama la funzione updateDeletePrezzo() dopo che un articolo è stato rimosso
-CREATE TRIGGER updateDeletePrezzo
-AFTER DELETE ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE PROCEDURE updateDeletePrezzo();
-
--- Trigger che chiama la funzione checkScorta() prima che un articolo venga selezionato dall'utente
-CREATE TRIGGER checkScorta
-BEFORE INSERT ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE PROCEDURE checkScorta();
-
--- Trigger che chiama la funzione updatePunti() dopo l'aggiornamento del totale sull'ordine
-CREATE TRIGGER updatePunti
-AFTER UPDATE OF PrezzoTotale ON ORDINE
-FOR EACH ROW
-EXECUTE PROCEDURE updatePunti();
-
--- Trigger che chiama la funzione restoreScorta() dopo che un articolo viene rimosso da un ordine (ARTICOLIORDINE)
-CREATE TRIGGER restoreScorta
-AFTER DELETE ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE PROCEDURE restoreScorta();
-
--- Trigger che chiama la funzione updateDeletePunti() dopo che un articolo viene rimosso dall'ordine
-CREATE TRIGGER updateDeletePunti
-AFTER DELETE ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE PROCEDURE updateDeletePunti();
 
 
 
