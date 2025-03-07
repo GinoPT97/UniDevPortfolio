@@ -32,14 +32,20 @@ INSERT INTO tessera (codtessera, numeropunti, codcliente) VALUES
 
 -- Prodotto
 INSERT INTO prodotto (codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES
-('11111', 'Mela Rossa', 'Mela italiana rossa', 1.50, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Ortofrutticoli', 100),
+('11111', 'Mela Rossa', 'Mela italiana rossa', 1.50, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Frutta', 100),
 ('22222', 'Formaggio Parmigiano', 'Formaggio Parmigiano Reggiano', 15.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 50),
-('33333', 'Pomodori in scatola', 'Pomodori pelati in scatola', 2.00, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Inscatolati', 200),
+('33333', 'Pomodori in scatola', 'Pomodori pelati in scatola', 2.00, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Confezionati', 200),
 ('44444', 'Spaghetti', 'Spaghetti di grano duro', 1.20, 'Italia', NULL, NULL, TRUE, NULL, 'Farinacei', 300),
-('55555', 'Arance', 'Arance siciliane', 1.20, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Ortofrutticoli', 150),
+('55555', 'Arance', 'Arance siciliane', 1.20, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Frutta', 150),
 ('66666', 'Parmigiano', 'Parmigiano Reggiano DOP', 18.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 70),
-('77777', 'Tonno in scatola', 'Tonno al naturale in scatola', 3.50, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Inscatolati', 100),
-('88888', 'Farina', 'Farina di grano tenero tipo "00"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200);
+('77777', 'Tonno in scatola', 'Tonno al naturale in scatola', 3.50, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Confezionati', 100),
+('88888', 'Farina', 'Farina di grano tenero tipo "00"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200),
+('99999', 'Latte', 'Latte fresco intero', 1.20, 'Italia', NULL, '2023-07-01', NULL, '2023-07-10', 'Latticini', 80),
+('10101', 'Uova', 'Uova biologiche', 2.50, 'Italia', NULL, NULL, NULL, '2023-07-15', 'Uova', 150),
+('20202', 'Carote', 'Carote fresche', 1.00, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Verdura', 120),
+('30303', 'Pane', 'Pane integrale', 1.50, 'Italia', NULL, NULL, TRUE, NULL, 'Farinacei', 180),
+('40404', 'Yogurt', 'Yogurt naturale', 0.90, 'Italia', NULL, '2023-07-01', NULL, '2023-07-20', 'Latticini', 90),
+('50505', 'Biscotti', 'Biscotti al cioccolato', 2.00, 'Italia', NULL, NULL, TRUE, '2024-12-31', 'Confezionati', 250);
 
 -- Ordine
 INSERT INTO ordine (codordine, prezzototale, dataacquisto, codcliente, coddipendente) VALUES
