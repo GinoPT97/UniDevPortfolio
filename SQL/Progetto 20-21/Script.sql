@@ -49,56 +49,48 @@ CREATE TABLE IF NOT EXISTS prodotto (
     datascadenza DATE,
     dataproduzione DATE,
     categoria TIPOLOGIA,
-    scorta INT CHECK (scorta >= 0),
-    CONSTRAINT categoria_check CHECK (
-        -- Frutta e Verdura: deve essere presente la data di raccolta
-        ((categoria = 'Frutta' OR categoria = 'Verdura')
-          AND dataraccolta IS NOT NULL
-          AND datamungitura IS NULL
-          AND dataproduzione IS NULL
-          AND datascadenza IS NULL
-          AND glutine IS NULL)
+    scorta INT CHECK (scorta >= 0)
+);
 
-        OR
+-- Rimuovere il vincolo CHECK unificato
+ALTER TABLE prodotto DROP CONSTRAINT IF EXISTS categoria_check;
 
-        -- Latticini: devono avere sia la data di mungitura che la data di produzione
-        (categoria = 'Latticini'
-          AND dataraccolta IS NULL
-          AND datamungitura IS NOT NULL
-          AND dataproduzione IS NOT NULL
-          AND datascadenza IS NULL
-          AND glutine IS NULL)
+-- Aggiungere i vincoli CHECK separati per ogni categoria
 
-        OR
+-- Frutta
+ALTER TABLE prodotto ADD CONSTRAINT check_frutta CHECK (
+  categoria <> 'Frutta' OR
+  (categoria = 'Frutta' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL)
+);
 
-        -- Farinacei: ad esempio, si impone la presenza di glutine (o meglio: l'indicazione se contiene glutine)
-        (categoria = 'Farinacei'
-          AND dataraccolta IS NULL
-          AND datamungitura IS NULL
-          AND dataproduzione IS NULL
-          AND datascadenza IS NULL
-          AND glutine IS NOT NULL)
+-- Verdura
+ALTER TABLE prodotto ADD CONSTRAINT check_verdura CHECK (
+  categoria <> 'Verdura' OR
+  (categoria = 'Verdura' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL)
+);
 
-        OR
+-- Latticini
+ALTER TABLE prodotto ADD CONSTRAINT check_latticini CHECK (
+  categoria <> 'Latticini' OR
+  (categoria = 'Latticini' AND dataraccolta IS NULL AND datamungitura IS NOT NULL AND dataproduzione IS NOT NULL AND datascadenza IS NULL AND glutine IS NULL)
+);
 
-        -- Uova: se si decide di non obbligare nessun campo extra, oppure si può richiedere la data di scadenza
-        (categoria = 'Uova'
-          AND dataraccolta IS NULL
-          AND datamungitura IS NULL
-          AND dataproduzione IS NULL
-          AND datascadenza IS NOT NULL
-          AND glutine IS NULL)
+-- Farinacei
+ALTER TABLE prodotto ADD CONSTRAINT check_farinacei CHECK (
+  categoria <> 'Farinacei' OR
+  (categoria = 'Farinacei' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NOT NULL)
+);
 
-        OR
+-- Uova
+ALTER TABLE prodotto ADD CONSTRAINT check_uova CHECK (
+  categoria <> 'Uova' OR
+  (categoria = 'Uova' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)
+);
 
-        -- Confezionati: devono avere la data di scadenza valorizzata
-        (categoria = 'Confezionati'
-          AND dataraccolta IS NULL
-          AND datamungitura IS NULL
-          AND dataproduzione IS NULL
-          AND datascadenza IS NOT NULL
-          AND glutine IS NULL)
-    )
+-- Confezionati
+ALTER TABLE prodotto ADD CONSTRAINT check_confezionati CHECK (
+  categoria <> 'Confezionati' OR
+  (categoria = 'Confezionati' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)
 );
 
 -- Tabella ordine
