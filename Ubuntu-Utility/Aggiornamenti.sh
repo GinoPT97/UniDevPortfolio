@@ -102,6 +102,37 @@ clean_docker_system() {
     docker volume prune -f
 }
 
+# Funzione per pulire le vecchie versioni delle immagini Docker
+clean_old_docker_images() {
+    log "INFO" "Pulizia delle vecchie versioni delle immagini Docker (mantenendo la più recente per repository)..."
+
+    # Ottieni la lista delle immagini: ogni riga contiene "repository ID"
+    # L'output di docker images è ordinato per data di creazione decrescente (la più recente compare per prima)
+    mapfile -t images < <(docker images --format '{{.Repository}} {{.ID}}')
+
+    # Array associativo per tenere traccia dei repository già visti
+    declare -A seen
+
+    for line in "${images[@]}"; do
+        repo=$(echo "$line" | awk '{print $1}')
+        id=$(echo "$line" | awk '{print $2}')
+
+        # Salta immagini senza repository valido
+        if [[ -z "$repo" || "$repo" == "<none>" ]]; then
+            continue
+        fi
+
+        # Se non abbiamo ancora incontrato questo repository, manteniamo l'immagine più recente
+        if [[ -z "${seen[$repo]}" ]]; then
+            seen[$repo]=1
+            log "INFO" "Mantenuta immagine più recente per $repo: $id"
+        else
+            log "INFO" "Rimozione immagine vecchia per $repo: $id"
+            docker rmi "$id"
+        fi
+    done
+}
+
 # Inizio dello script
 log "INFO" "Inizio aggiornamenti..."
 
@@ -114,6 +145,9 @@ enable_firewall
 
 # Pulizia del sistema Docker
 clean_docker_system
+
+# Pulizia delle vecchie versioni delle immagini Docker
+clean_old_docker_images
 
 # Aggiungi comandi per aggiornare il sistema Ubuntu 24.10
 log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
