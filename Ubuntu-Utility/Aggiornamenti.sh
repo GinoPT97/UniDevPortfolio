@@ -95,6 +95,13 @@ upgrade_ubuntu() {
     sudo do-release-upgrade
 }
 
+# Funzione per pulire il sistema Docker
+clean_docker_system() {
+    log "INFO" "Pulizia del sistema Docker..."
+    docker system prune -a -f
+    docker volume prune -f
+}
+
 # Inizio dello script
 log "INFO" "Inizio aggiornamenti..."
 
@@ -104,6 +111,9 @@ clean_apt_packages
 unblock_wifi
 install_snapd
 enable_firewall
+
+# Pulizia del sistema Docker
+clean_docker_system
 
 # Aggiungi comandi per aggiornare il sistema Ubuntu 24.10
 log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
