@@ -95,37 +95,11 @@ upgrade_ubuntu() {
     sudo do-release-upgrade
 }
 
-# Funzione per mantenere solo l'ultimo container creato per ogni immagine Docker
+# Funzione per mantenere solo i container con la data più recente basata sull'etichetta created_at
 clean_old_docker_containers() {
-    log "INFO" "Pulizia dei vecchi container Docker (mantenendo solo l'ultimo per immagine)..."
-
-    # Per ogni immagine usata dai container:
-    for image in $(docker ps -a --format '{{.Image}}' | sort | uniq); do
-        log "INFO" "Processing image: $image"
-
-        # Ottiene gli ID dei container per questa immagine, ordinati per data di creazione (i più vecchi per primi)
-        mapfile -t containers < <(
-            for id in $(docker ps -a --filter "ancestor=$image" --format '{{.ID}}'); do
-                echo "$(docker inspect -f '{{.Created}}' "$id") $id"
-            done | sort | awk '{print $2}'
-        )
-
-        count=${#containers[@]}
-        log "INFO" "Trovati $count container per $image"
-
-        # Se ci sono più di un container, elimina tutti tranne l'ultimo (più recente)
-        if (( count > 1 )); then
-            n_to_remove=$(( count - 1 ))
-            log "INFO" "Elimino $n_to_remove container (i più vecchi) per $image"
-            for ((i=0; i<n_to_remove; i++)); do
-                log "INFO" "Rimuovo container: ${containers[i]}"
-                docker rm "${containers[i]}"
-            done
-        else
-            log "INFO" "Per $image non ci sono container da eliminare."
-        fi
-        log "INFO" "------"
-    done
+    log "INFO" "Pulizia dei vecchi container Docker (mantenendo solo quelli con la data più recente)..."
+    latest=$(docker ps -a --format '{{.Label "created_at"}}' | sort -r | head -n1)
+    docker ps -a --filter "label=created_at!=$latest" -q | xargs -r docker rm
 }
 
 # Inizio dello script
