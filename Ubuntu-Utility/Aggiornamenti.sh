@@ -95,41 +95,36 @@ upgrade_ubuntu() {
     sudo do-release-upgrade
 }
 
-# Funzione per pulire il sistema Docker
-clean_docker_system() {
-    log "INFO" "Pulizia del sistema Docker..."
-    docker system prune -a -f
-    docker volume prune -f
-}
+# Funzione per mantenere solo l'ultimo container creato per ogni immagine Docker
+clean_old_docker_containers() {
+    log "INFO" "Pulizia dei vecchi container Docker (mantenendo solo l'ultimo per immagine)..."
 
-# Funzione per pulire le vecchie versioni delle immagini Docker
-clean_old_docker_images() {
-    log "INFO" "Pulizia delle vecchie versioni delle immagini Docker (mantenendo la più recente per repository)..."
+    # Per ogni immagine usata dai container:
+    for image in $(docker ps -a --format '{{.Image}}' | sort | uniq); do
+        log "INFO" "Processing image: $image"
 
-    # Ottieni la lista delle immagini: ogni riga contiene "repository ID"
-    # L'output di docker images è ordinato per data di creazione decrescente (la più recente compare per prima)
-    mapfile -t images < <(docker images --format '{{.Repository}} {{.ID}}')
+        # Ottiene gli ID dei container per questa immagine, ordinati per data di creazione (i più vecchi per primi)
+        mapfile -t containers < <(
+            for id in $(docker ps -a --filter "ancestor=$image" --format '{{.ID}}'); do
+                echo "$(docker inspect -f '{{.Created}}' "$id") $id"
+            done | sort | awk '{print $2}'
+        )
 
-    # Array associativo per tenere traccia dei repository già visti
-    declare -A seen
+        count=${#containers[@]}
+        log "INFO" "Trovati $count container per $image"
 
-    for line in "${images[@]}"; do
-        repo=$(echo "$line" | awk '{print $1}')
-        id=$(echo "$line" | awk '{print $2}')
-
-        # Salta immagini senza repository valido
-        if [[ -z "$repo" || "$repo" == "<none>" ]]; then
-            continue
-        fi
-
-        # Se non abbiamo ancora incontrato questo repository, manteniamo l'immagine più recente
-        if [[ -z "${seen[$repo]}" ]]; then
-            seen[$repo]=1
-            log "INFO" "Mantenuta immagine più recente per $repo: $id"
+        # Se ci sono più di un container, elimina tutti tranne l'ultimo (più recente)
+        if (( count > 1 )); then
+            n_to_remove=$(( count - 1 ))
+            log "INFO" "Elimino $n_to_remove container (i più vecchi) per $image"
+            for ((i=0; i<n_to_remove; i++)); do
+                log "INFO" "Rimuovo container: ${containers[i]}"
+                docker rm "${containers[i]}"
+            done
         else
-            log "INFO" "Rimozione immagine vecchia per $repo: $id"
-            docker rmi "$id"
+            log "INFO" "Per $image non ci sono container da eliminare."
         fi
+        log "INFO" "------"
     done
 }
 
@@ -143,11 +138,8 @@ unblock_wifi
 install_snapd
 enable_firewall
 
-# Pulizia del sistema Docker
-clean_docker_system
-
-# Pulizia delle vecchie versioni delle immagini Docker
-clean_old_docker_images
+# Pulizia dei vecchi container Docker
+clean_old_docker_containers
 
 # Aggiungi comandi per aggiornare il sistema Ubuntu 24.10
 log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
