@@ -99,7 +99,13 @@ upgrade_ubuntu() {
 clean_old_docker_containers() {
     log "INFO" "Pulizia dei vecchi container Docker (mantenendo solo quelli con la data più recente)..."
     latest=$(docker ps -a --format '{{.Label "created_at"}}' | sort -r | head -n1)
-    docker ps -a --filter "label=created_at!=$latest" -q | xargs -r docker rm
+    containers_to_remove=$(docker ps -a --filter "label=created_at!=$latest" -q)
+    if [ -n "$containers_to_remove" ]; then
+        log "INFO" "Container da eliminare: $containers_to_remove"
+        echo "$containers_to_remove" | xargs -r docker rm
+    else
+        log "INFO" "Nessun container da eliminare."
+    fi
 }
 
 # Inizio dello script
@@ -112,14 +118,14 @@ unblock_wifi
 install_snapd
 enable_firewall
 
-# Pulizia dei vecchi container Docker
-clean_old_docker_containers
-
 # Aggiungi comandi per aggiornare il sistema Ubuntu 24.10
 log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
 update_apt_packages
 execute_command "apt-get full-upgrade -y" "Aggiornamento completo"
 execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
 upgrade_ubuntu
+
+# Pulizia dei vecchi container Docker
+clean_old_docker_containers
 
 log "INFO" "Aggiornamenti completati!"
