@@ -95,19 +95,6 @@ upgrade_ubuntu() {
     sudo do-release-upgrade
 }
 
-# Funzione per mantenere solo i container con la data più recente basata sull'etichetta created_at
-clean_old_docker_containers() {
-    log "INFO" "Pulizia dei vecchi container Docker (mantenendo solo quelli con la data più recente)..."
-    latest=$(docker ps -a --format '{{.Label "created_at"}}' | sort -r | head -n1)
-    containers_to_remove=$(docker ps -a --filter "label=created_at!=$latest" -q)
-    if [ -n "$containers_to_remove" ]; then
-        log "INFO" "Container da eliminare: $containers_to_remove"
-        echo "$containers_to_remove" | xargs -r docker rm
-    else
-        log "INFO" "Nessun container da eliminare."
-    fi
-}
-
 # Inizio dello script
 log "INFO" "Inizio aggiornamenti..."
 
@@ -126,6 +113,7 @@ execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
 upgrade_ubuntu
 
 # Pulizia dei vecchi container Docker
-clean_old_docker_containers
+log "INFO" "Pulizia dei vecchi container Docker (mantenendo solo quelli con la data più recente)..."
+docker system prune --filter "until=24h" -f
 
 log "INFO" "Aggiornamenti completati!"
