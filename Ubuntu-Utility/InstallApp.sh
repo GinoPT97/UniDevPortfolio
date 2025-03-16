@@ -20,18 +20,22 @@ sudo /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.
 # Installa curl (se non è già presente)
 sudo apt install -y curl
 
-echo "Installazione pacchetti: ca-certificates curl gnupg lsb-release software-properties-common wget apt-transport-https wireshark kate zram-config preload bluetooth bluez blueman flatpak git gparted default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common codeblocks arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon jest"
-sudo apt install -y \
-  ca-certificates curl gnupg lsb-release software-properties-common wget \
-  apt-transport-https wireshark kate zram-config preload bluetooth bluez blueman \
-  flatpak git gparted default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk \
-  codeblocks arduino vlc cmake deja-dup libnvidia-gl-535:i386 tor \
-  aptitude doxygen graphviz net-tools gdebi dos2unix openjfx ssmtp texlive-latex-base \
-  texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs nvtop synaptic stacer tlp \
-  cpufrequtils nvidia-prime build-essential libvips-dev power-profiles-daemon jest
+# Definizione della lista dei pacchetti da installare
+packages=(
+  ca-certificates curl gnupg lsb-release software-properties-common wget apt-transport-https
+  wireshark kate zram-config preload bluetooth bluez blueman flatpak git gparted
+  default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-16 postgresql-client-16
+  postgresql-client-common postgresql-common codeblocks arduino vlc cmake deja-dup
+  tor aptitude doxygen graphviz net-tools gdebi dos2unix openjfx
+  ssmtp texlive-latex-base texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs
+  nvtop synaptic stacer tlp cpufrequtils nvidia-prime build-essential libvips-dev
+  jest
+)
+
+echo "Installazione pacchetti: ${packages[*]}"
+sudo apt install -y "${packages[@]}"
 
 echo "Installazione di OpenJDK 17 e 21..."
-sudo apt update
 sudo apt install -y openjdk-17-jdk openjdk-21-jdk openjdk-17-jre openjdk-21-jre
 
 git lfs install
@@ -53,21 +57,6 @@ sh <(wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh)
 nordvpn login
 nordvpn connect
 nordvpn set autoconnect on
-
-echo "Installazione di pgAdmin 4..."
-sudo apt install curl ca-certificates gnupg
-curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/packages-pgadmin-org.gpg
-sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/packages-pgadmin-org.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/mantic pgadmin4 main" > /etc/apt/sources.list.d/pgadmin4.list'
-sudo snap install pgadmin4
-sudo apt update
-sudo apt install pgadmin4 pgadmin4-desktop pgadmin4-web
-
-echo "Installazione di PostgreSQL..."
-sudo apt update
-sudo apt install -y postgresql postgresql-contrib
-
-echo "Configurazione della password PostgreSQL..."
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
 
 echo "Installazione di Google Chrome..."
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
@@ -117,6 +106,14 @@ sudo snap install telegram-desktop
 sudo snap install spotify
 sudo snap install whatsdesk
 sudo snap install teams-for-linux
+sudo snap install pgadmin4
+
+echo "Installazione di PostgreSQL..."
+sudo apt update
+sudo apt install -y postgresql postgresql-contrib
+
+echo "Configurazione della password PostgreSQL..."
+sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
 
 echo "Avvio del servizio Tor..."
 sudo apt install tor
