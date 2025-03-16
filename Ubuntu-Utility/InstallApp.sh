@@ -32,11 +32,7 @@ sudo apt install -y \
 
 echo "Installazione di OpenJDK 17 e 21..."
 sudo apt update
-sudo apt install -y openjdk-17-jdk openjdk-21-jdk openjdk-17-jre
-
-sudo powerprofilesctl set balanced
-
-pip install pytesseract opencv-python pandas easyocr fastapi uvicorn celery redis aioredis SQLAlchemy databases python-multipart python-bidi
+sudo apt install -y openjdk-17-jdk openjdk-21-jdk openjdk-17-jre openjdk-21-jre
 
 git lfs install
 
@@ -71,7 +67,7 @@ sudo apt update
 sudo apt install -y postgresql postgresql-contrib
 
 echo "Configurazione della password PostgreSQL..."
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'admin';"
+sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
 
 echo "Installazione di Google Chrome..."
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
@@ -125,23 +121,6 @@ sudo snap install teams-for-linux
 echo "Avvio del servizio Tor..."
 sudo apt install tor
 sudo systemctl start tor
-
-echo "Installazione pacchetti npm..."
-npm install \
-  express mongoose pg cors dotenv helmet morgan compression uuid axios lodash validator dayjs \
-  passport passport-local passport-google-oauth20 passport-facebook passport-apple passport-jwt passport-linkedin-oauth2 \
-  jsonwebtoken bcrypt bcryptjs express-session apollo-server-express graphql graphql-request express-validator \
-  @types/express @types/mongoose @types/cors @types/helmet @types/morgan @types/compression @types/uuid @types/axios @types/lodash @types/validator @types/dayjs \
-  axios newsapi apollo-server-express graphql jsonwebtoken bcryptjs \
-  passport passport-jwt passport-google-oauth20 passport-facebook passport-apple \
-  firebase-admin firebase-functions passport passport-google-oauth20 passport-facebook passport-apple stripe @paypal/checkout-server-sdk axios dotenv winston pino jest supertest sequelize pg pg-hstore cors helmet express lodash moment firebase @angular/fire \
-  @angular/core @angular/common @angular/forms @angular/router @angular/platform-browser @angular/platform-server \
-  react react-dom @types/react @types/react-dom react-router-dom \
-  webpack webpack-cli eslint bootstrap tailwindcss postcss autoprefixer express-validator winston helmet sequelize pg pg-hstore bull config jsonwebtoken redis swagger-jsdoc swagger-ui-express http-errors connect-redis express-session prom-client csurf express-rate-limit
-
-npx tailwindcss init
-
-sudo apt remove --purge gnome-mahjongg gnome-mines gnome-sudoku -y
 
 sudo apt install -y redis
 sudo systemctl start redis
