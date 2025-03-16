@@ -4,16 +4,6 @@ set -e
 echo "Aggiornamento del sistema..."
 sudo apt update && sudo apt upgrade -y
 
-echo "Reinstallazione dei pacchetti dalla lista salvata..."
-sudo dpkg --set-selections < $HOME/Documenti/Lista-Pacchetti/pacchetti.txt
-sudo apt-get dselect-upgrade
-
-echo "Reinstallazione dei pacchetti Snap dalla lista salvata..."
-awk 'NR>1 {print $1}' $HOME/Documenti/Lista-Pacchetti/pacchetti_snap.txt | xargs -n1 sudo snap install
-
-echo "Reinstallazione dei pacchetti npm globali dalla lista salvata..."
-xargs npm install -g < $HOME/Documenti/pacchetti_npm.txt
-
 echo "Esecuzione aggiornamenti personalizzati..."
 sudo /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh
 
