@@ -4,35 +4,41 @@ set -e
 echo "Aggiornamento del sistema..."
 sudo apt update && sudo apt upgrade -y
 
-echo "Esecuzione aggiornamenti personalizzati..."
-sudo /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh
-
 # Installa curl (se non è già presente)
 sudo apt install -y curl
 
-# Definizione della lista dei pacchetti da installare
+echo "Installazione di PostgreSQL..."
+sudo apt update
+sudo apt install -y postgresql postgresql-contrib
+
+echo "Configurazione della password PostgreSQL..."
+sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
+
+echo "Avvio del servizio Tor..."
+sudo apt install tor
+sudo systemctl start tor
+
+sudo apt install -y redis
+sudo systemctl start redis
+sudo systemctl enable redis
+
+# Definizione della lista dei pacchetti da installare (inclusi OpenJDK, Node.js e npm)
 packages=(
+  openjdk-17-jdk openjdk-21-jdk openjdk-17-jre openjdk-21-jre
   ca-certificates curl gnupg lsb-release software-properties-common wget apt-transport-https
   wireshark kate zram-config preload bluetooth bluez blueman flatpak git gparted
-  default-jre openjdk-11-jdk openjdk-11-jre clamav clamtk postgresql-16 postgresql-client-16
-  postgresql-client-common postgresql-common codeblocks arduino vlc cmake deja-dup
-  tor aptitude doxygen graphviz net-tools gdebi dos2unix openjfx
-  ssmtp texlive-latex-base texlive-latex-extra git-lfs cryptsetup lvm2 exfatprogs
-  nvtop synaptic stacer tlp cpufrequtils nvidia-prime build-essential libvips-dev
-  jest
+  clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common
+  arduino vlc cmake deja-dup tor aptitude doxygen graphviz net-tools
+  gdebi dos2unix ssmtp texlive-latex-base texlive-latex-extra git-lfs cryptsetup
+  lvm2 exfatprogs synaptic stacer tlp cpufrequtils
+  build-essential libvips-dev jest
+  nodejs npm
 )
 
-echo "Installazione pacchetti: ${packages[*]}"
+echo "Installazione dei pacchetti: ${packages[*]}"
 sudo apt install -y "${packages[@]}"
 
-echo "Installazione di OpenJDK 17 e 21..."
-sudo apt install -y openjdk-17-jdk openjdk-21-jdk openjdk-17-jre openjdk-21-jre
-
 git lfs install
-
-echo "Installazione di Node.js..."
-sudo apt install -y nodejs
-sudo apt install -y npm
 
 echo "Installazione di Docker..."
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -97,21 +103,6 @@ sudo snap install spotify
 sudo snap install whatsdesk
 sudo snap install teams-for-linux
 sudo snap install pgadmin4
-
-echo "Installazione di PostgreSQL..."
-sudo apt update
-sudo apt install -y postgresql postgresql-contrib
-
-echo "Configurazione della password PostgreSQL..."
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
-
-echo "Avvio del servizio Tor..."
-sudo apt install tor
-sudo systemctl start tor
-
-sudo apt install -y redis
-sudo systemctl start redis
-sudo systemctl enable redis
 
 echo "Pulizia file temporanei..."
 rm -f *.deb *.run
