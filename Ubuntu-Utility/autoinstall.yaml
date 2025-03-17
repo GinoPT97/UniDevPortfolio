@@ -105,5 +105,3 @@ autoinstall:
     - curtin in-target -- snap install telegram-desktop
     - curtin in-target -- snap install spotify
     - curtin in-target -- snap install whats
-
-
