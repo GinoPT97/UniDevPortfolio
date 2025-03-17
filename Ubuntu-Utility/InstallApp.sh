@@ -11,15 +11,15 @@ sudo apt install -y curl
 packages=(
   openjdk-17-jdk openjdk-21-jdk openjdk-17-jre openjdk-21-jre
   ca-certificates curl gnupg lsb-release wget apt-transport-https
-  wireshark kate zram-config preload bluetooth bluez blueman flatpak git gparted
+  zram-config preload bluetooth bluez blueman flatpak git gparted
   clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common
-  arduino vlc cmake aptitude doxygen graphviz net-tools
+  vlc cmake aptitude doxygen graphviz net-tools
   gdebi dos2unix texlive-latex-base texlive-latex-extra git-lfs cryptsetup
   lvm2 synaptic stacer build-essential libvips-dev jest
   nodejs npm
   postgresql postgresql-contrib
   tor redis
-  linux-tools-common linux-tools-generic cpupower-gui indicator-cpufreq
+  linux-tools-common linux-tools-generic
   gnome-shell-extension-system-monitor gnome-tweaks indicator-multiload
 )
 

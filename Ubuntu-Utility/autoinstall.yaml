@@ -1,0 +1,109 @@
+autoinstall:
+  version: 1
+  identity:
+    hostname: nome_del_computer
+    username: nome_utente
+    password: $hashed_password
+  packages:
+    - openjdk-17-jdk
+    - openjdk-21-jdk
+    - openjdk-17-jre
+    - openjdk-21-jre
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+    - wget
+    - apt-transport-https
+    - zram-config
+    - preload
+    - bluetooth
+    - bluez
+    - blueman
+    - flatpak
+    - git
+    - gparted
+    - clamav
+    - clamtk
+    - postgresql-16
+    - postgresql-client-16
+    - postgresql-client-common
+    - postgresql-common
+    - vlc
+    - cmake
+    - aptitude
+    - doxygen
+    - graphviz
+    - net-tools
+    - gdebi
+    - dos2unix
+    - texlive-latex-base
+    - texlive-latex-extra
+    - git-lfs
+    - cryptsetup
+    - lvm2
+    - synaptic
+    - stacer
+    - build-essential
+    - libvips-dev
+    - jest
+    - nodejs
+    - npm
+    - postgresql
+    - postgresql-contrib
+    - tor
+    - redis
+    - linux-tools-common
+    - linux-tools-generic
+    - gnome-shell-extension-system-monitor
+    - gnome-tweaks
+    - indicator-multiload
+  late-commands:
+    - curtin in-target -- bash -c 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg'
+    - curtin in-target -- bash -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list'
+    - curtin in-target -- apt update
+    - curtin in-target -- apt install -y docker-ce docker-ce-cli containerd.io
+    - curtin in-target -- systemctl start docker
+    - curtin in-target -- systemctl enable docker
+    - curtin in-target -- bash -c 'sh <(wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh)'
+    - curtin in-target -- nordvpn login
+    - curtin in-target -- nordvpn connect
+    - curtin in-target -- nordvpn set autoconnect on
+    - curtin in-target -- bash -c 'wget -q --show-progress https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O google-chrome-stable_current_amd64.deb'
+    - curtin in-target -- dpkg -i google-chrome-stable_current_amd64.deb || apt-get install -f -y
+    - curtin in-target -- rm -f google-chrome-stable_current_amd64.deb
+    - curtin in-target -- bash -c 'wget -q --show-progress https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb -O GitHubDesktop-linux-2.8.1-linux2.deb'
+    - curtin in-target -- dpkg -i GitHubDesktop-linux-2.8.1-linux2.deb || apt-get install -f -y
+    - curtin in-target -- rm -f GitHubDesktop-linux-2.8.1-linux2.deb
+    - curtin in-target -- code --install-extension github.copilot --force
+    - curtin in-target -- code --install-extension github.copilot-chat --force
+    - curtin in-target -- code --install-extension github.remotehub --force
+    - curtin in-target -- code --install-extension github.vscode-pull-request-github --force
+    - curtin in-target -- code --install-extension ms-azuretools.azure-dev --force
+    - curtin in-target -- code --install-extension ms-azuretools.vscode-azureappservice --force
+    - curtin in-target -- code --install-extension ms-azuretools.vscode-docker --force
+    - curtin in-target -- code --install-extension christian-kohler.npm-intellisense --force
+    - curtin in-target -- code --install-extension dbaeumer.vscode-eslint --force
+    - curtin in-target -- code --install-extension esbenp.prettier-vscode --force
+    - curtin in-target -- code --install-extension ms-python.python --force
+    - curtin in-target -- code --install-extension ms-vscode.cpptools --force
+    - curtin in-target -- code --install-extension eamodio.gitlens --force
+    - curtin in-target -- code --install-extension ritwickdey.LiveServer --force
+    - curtin in-target -- code --install-extension amazonwebservices.aws-toolkit-vscode --force
+    - curtin in-target -- code --install-extension ms-azuretools.vscode-azurestaticwebapps --force
+    - curtin in-target -- code --install-extension netlify.netlify-vscode --force
+    - curtin in-target -- code --install-extension dsznajder.es7-react-js-snippets --force
+    - curtin in-target -- code --install-extension steoates.autoimport --force
+    - curtin in-target -- code --install-extension coenraads.bracket-pair-colorizer-2 --force
+    - curtin in-target -- bash -c 'echo "{\"locale\":\"it\"}" > ~/.config/Code/User/locale.json'
+    - curtin in-target -- code --locale=it
+    - curtin in-target -- snap install --classic dbeaver-ce
+    - curtin in-target -- snap install --classic openjdk
+    - curtin in-target -- snap install --classic code
+    - curtin in-target -- snap install --classic android-studio
+    - curtin in-target -- snap install --classic eclipse
+    - curtin in-target -- snap install telegram-desktop
+    - curtin in-target -- snap install spotify
+    - curtin in-target -- snap install whats
+
+
