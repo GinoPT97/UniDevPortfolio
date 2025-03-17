@@ -7,38 +7,32 @@ sudo apt update && sudo apt upgrade -y
 # Installa curl (se non è già presente)
 sudo apt install -y curl
 
-echo "Installazione di PostgreSQL..."
-sudo apt update
-sudo apt install -y postgresql postgresql-contrib
-
-echo "Configurazione della password PostgreSQL..."
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
-
-echo "Avvio del servizio Tor..."
-sudo apt install tor
-sudo systemctl start tor
-
-sudo apt install -y redis
-sudo systemctl start redis
-sudo systemctl enable redis
-
 # Definizione della lista dei pacchetti da installare (inclusi OpenJDK, Node.js e npm)
 packages=(
   openjdk-17-jdk openjdk-21-jdk openjdk-17-jre openjdk-21-jre
-  ca-certificates curl gnupg lsb-release software-properties-common wget apt-transport-https
+  ca-certificates curl gnupg lsb-release wget apt-transport-https
   wireshark kate zram-config preload bluetooth bluez blueman flatpak git gparted
   clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common
-  arduino vlc cmake deja-dup tor aptitude doxygen graphviz net-tools
+  arduino vlc cmake aptitude doxygen graphviz net-tools
   gdebi dos2unix ssmtp texlive-latex-base texlive-latex-extra git-lfs cryptsetup
   lvm2 exfatprogs synaptic stacer tlp cpufrequtils
   build-essential libvips-dev jest
   nodejs npm
+  postgresql postgresql-contrib
+  tor redis
 )
 
 echo "Installazione dei pacchetti: ${packages[*]}"
 sudo apt install -y "${packages[@]}"
 
 git lfs install
+
+echo "Configurazione della password PostgreSQL..."
+sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
+
+echo "Avvio e abilitazione dei servizi Tor e Redis..."
+sudo systemctl enable --now tor
+sudo systemctl enable --now redis
 
 echo "Installazione di Docker..."
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -54,18 +48,27 @@ nordvpn login
 nordvpn connect
 nordvpn set autoconnect on
 
+# Funzione per scaricare, installare e pulire un pacchetto .deb
+install_deb() {
+  local url=$1
+  local file=$(basename "$url")
+
+  echo "Scaricamento di $file..."
+  wget -q --show-progress "$url" -O "$file"
+
+  echo "Installazione di $file..."
+  sudo dpkg -i "$file" || sudo apt-get install -f -y
+
+  echo "Pulizia di $file..."
+  rm -f "$file"
+  echo "$file installato correttamente."
+}
+
 echo "Installazione di Google Chrome..."
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-sudo dpkg -i google-chrome-stable_current_amd64.deb && \
-sudo apt --fix-broken install -y && \
-rm google-chrome-stable_current_amd64.deb
+install_deb "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
 
 echo "Installazione di GitHub Desktop..."
-pkg_name=$(basename "https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb")
-wget -q "https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb" -O "$pkg_name"
-sudo dpkg -i "$pkg_name"
-sudo apt-get install -f -y
-rm -f "$pkg_name"
+install_deb "https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb"
 
 echo "Installazione estensioni per VS Code..."
 code --install-extension github.copilot --force
@@ -103,8 +106,5 @@ sudo snap install spotify
 sudo snap install whatsdesk
 sudo snap install teams-for-linux
 sudo snap install pgadmin4
-
-echo "Pulizia file temporanei..."
-rm -f *.deb *.run
 
 echo "Installazione completata!"
