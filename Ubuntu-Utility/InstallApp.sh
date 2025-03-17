@@ -20,6 +20,7 @@ packages=(
   postgresql postgresql-contrib
   tor redis
   linux-tools-common linux-tools-generic cpupower-gui indicator-cpufreq
+  gnome-shell-extension-system-monitor gnome-tweaks indicator-multiload
 )
 
 echo "Installazione dei pacchetti: ${packages[*]}"
