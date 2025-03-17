@@ -14,12 +14,12 @@ packages=(
   wireshark kate zram-config preload bluetooth bluez blueman flatpak git gparted
   clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common
   arduino vlc cmake aptitude doxygen graphviz net-tools
-  gdebi dos2unix ssmtp texlive-latex-base texlive-latex-extra git-lfs cryptsetup
-  lvm2 exfatprogs synaptic stacer tlp cpufrequtils
-  build-essential libvips-dev jest
+  gdebi dos2unix texlive-latex-base texlive-latex-extra git-lfs cryptsetup
+  lvm2 synaptic stacer build-essential libvips-dev jest
   nodejs npm
   postgresql postgresql-contrib
   tor redis
+  linux-tools-common linux-tools-generic cpupower-gui indicator-cpufreq
 )
 
 echo "Installazione dei pacchetti: ${packages[*]}"
