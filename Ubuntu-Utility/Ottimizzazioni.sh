@@ -80,4 +80,27 @@ fi
 # (Opzionale) Ottimizzazione della swap
 run_cmd "swapoff -a && swapon -a" "Ottimizzazione swap"
 
+# Rimozione dei pacchetti orfani
+if command -v deborphan &>/dev/null; then
+    log "INFO" "Rimozione dei pacchetti orfani..."
+    run_cmd "deborphan | xargs -r apt-get remove --purge -y" "Rimozione pacchetti orfani"
+else
+    log "INFO" "deborphan non disponibile, salto questa operazione."
+fi
+
+# Rimozione delle vecchie versioni del kernel
+log "INFO" "Rimozione delle vecchie versioni del kernel..."
+current_kernel=$(uname -r)
+run_cmd "dpkg -l 'linux-image-*' | awk '/^ii/{ print \$2 }' | grep -v \"$current_kernel\" | xargs -r apt-get remove --purge -y" "Rimozione vecchie versioni del kernel"
+
+# Pulizia della cache di APT non più disponibili
+run_cmd "apt-get autoclean -y" "Pulizia dei pacchetti APT non più disponibili"
+
+# Troncamento dei file di log di grandi dimensioni
+log "INFO" "Troncamento dei file di log di grandi dimensioni..."
+run_cmd "find /var/log -type f -name '*.log' -size +100M -exec truncate -s 0 {} \;" "Troncamento file di log di grandi dimensioni"
+
+# Pulizia della cache dei pacchetti Python
+run_cmd "rm -rf ~/.cache/pip" "Pulizia della cache dei pacchetti Python"
+
 log "INFO" "Pulizia completata con successo!"
