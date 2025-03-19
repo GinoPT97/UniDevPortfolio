@@ -112,8 +112,20 @@ execute_command "apt-get full-upgrade -y" "Aggiornamento completo"
 execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
 upgrade_ubuntu
 
-# Pulizia dei vecchi container Docker
-log "INFO" "Pulizia dei vecchi container Docker (mantenendo solo quelli con la data più recente)..."
-docker system prune --filter "until=24h" -f
+# Pulizia dei container inattivi da oltre 24 ore
+log "INFO" "Pulizia dei container inutilizzati da oltre 24h..."
+docker container prune --filter "until=24h" -f
+
+# Pulizia delle immagini inutilizzate da oltre 24 ore
+log "INFO" "Pulizia delle immagini inutilizzate da oltre 24h..."
+docker image prune -a --filter "until=24h" -f
+
+# Pulizia dei network inutilizzati da oltre 24 ore (se il filtro è supportato)
+log "INFO" "Pulizia dei network inutilizzati da oltre 24h..."
+docker network prune --filter "until=24h" -f
+
+# Pulizia dei volumi inutilizzati (non è possibile applicare il filtro 'until')
+log "INFO" "Pulizia dei volumi inutilizzati (nessun filtro per data applicabile)..."
+docker volume prune -f
 
 log "INFO" "Aggiornamenti completati!"
