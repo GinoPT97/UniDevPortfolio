@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Lo script va eseguito come superutente
 if [[ $EUID -ne 0 ]]; then
     echo "[ERROR] Questo script deve essere eseguito come superutente."
@@ -13,13 +15,14 @@ log() {
     echo "[$level] $(date '+%Y-%m-%d %H:%M:%S') - $message"
 }
 
-# Funzione per eseguire un comando e verificare l'esito senza usare eval
+# Funzione per eseguire un comando e loggare l'esito
 run_cmd() {
-    bash -c "$1"
-    if [[ $? -ne 0 ]]; then
-        log "ERROR" "$2 fallita"
+    local cmd="$1"
+    local desc="$2"
+    if eval "$cmd"; then
+        log "INFO" "$desc completata con successo"
     else
-        log "INFO" "$2 completata con successo"
+        log "ERROR" "$desc fallita"
     fi
 }
 
@@ -41,18 +44,11 @@ else
 fi
 
 # Visualizzazione stato disco e memoria (opzionale)
-df -h | while read line; do log "INFO" "Stato disco: $line"; done
-free -h | while read line; do log "INFO" "Stato memoria: $line"; done
+df -h | while read -r line; do log "INFO" "Stato disco: $line"; done
+free -h | while read -r line; do log "INFO" "Stato memoria: $line"; done
 
 # (Opzionale) Ottimizzazione della swap
 run_cmd "swapoff -a && swapon -a" "Ottimizzazione swap"
-
-# Deframmentazione del disco (opzionale, solo per file system ext4)
-if command -v e4defrag &>/dev/null; then
-    run_cmd "e4defrag /" "Deframmentazione del disco (root)"
-else
-    log "INFO" "e4defrag non disponibile, salto la deframmentazione."
-fi
 
 log "INFO" "Pulizia completata con successo!"
 
