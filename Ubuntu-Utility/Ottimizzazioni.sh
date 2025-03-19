@@ -91,7 +91,12 @@ fi
 # Rimozione delle vecchie versioni del kernel
 log "INFO" "Rimozione delle vecchie versioni del kernel..."
 current_kernel=$(uname -r)
-run_cmd "dpkg -l 'linux-image-*' | awk '/^ii/{ print \$2 }' | grep -v \"$current_kernel\" | xargs -r apt-get remove --purge -y" "Rimozione vecchie versioni del kernel"
+old_kernels=$(dpkg -l 'linux-image-*' | awk '/^ii/{ print $2 }' | grep -v "$current_kernel")
+if [[ -n "$old_kernels" ]]; then
+    run_cmd "echo $old_kernels | xargs -r apt-get remove --purge -y" "Rimozione vecchie versioni del kernel"
+else
+    log "INFO" "Nessuna vecchia versione del kernel da rimuovere."
+fi
 
 # Pulizia della cache di APT non più disponibili
 run_cmd "apt-get autoclean -y" "Pulizia dei pacchetti APT non più disponibili"
