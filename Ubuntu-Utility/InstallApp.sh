@@ -109,3 +109,6 @@ sudo snap install teams-for-linux
 sudo snap install pgadmin4
 
 echo "Installazione completata!"
+
+echo "Abilitazione della visualizzazione della percentuale della batteria..."
+gsettings set org.gnome.desktop.interface show-battery-percentage true

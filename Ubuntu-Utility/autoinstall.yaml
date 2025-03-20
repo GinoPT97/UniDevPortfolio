@@ -120,3 +120,8 @@ user-data:
         dock-position: 'BOTTOM'
         autohide: true
         extend-height: false
+  late-commands:
+    - apt-get update
+    - apt-get install -y gnome-tweaks
+    - gnome-tweaks --preferences-top-bar-show-battery-percentage=true
+    - gsettings set org.gnome.desktop.interface show-battery-percentage true
