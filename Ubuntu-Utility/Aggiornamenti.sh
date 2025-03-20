@@ -32,10 +32,10 @@ clean_apt_packages() {
     sudo apt-get autoremove --purge -y && sudo apt-get clean -y
 }
 
-# Funzione per sbloccare il Wi-Fi
-unblock_wifi() {
-    log "INFO" "Sblocco della sospensione energetica del Wi-Fi..."
-    sudo rfkill unblock wifi
+# Funzione per sbloccare tutte le interfacce di rete
+unblock_network_interfaces() {
+    log "INFO" "Sblocco della sospensione energetica di tutte le interfacce di rete..."
+    sudo rfkill unblock all
 }
 
 # Funzione per installare Snapd
@@ -101,7 +101,7 @@ log "INFO" "Inizio aggiornamenti..."
 reload_systemd_and_dpkg
 update_apt_packages
 clean_apt_packages
-unblock_wifi
+unblock_network_interfaces
 install_snapd
 enable_firewall
 
