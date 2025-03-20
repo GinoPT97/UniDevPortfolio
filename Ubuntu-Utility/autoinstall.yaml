@@ -104,4 +104,19 @@ autoinstall:
     - curtin in-target -- snap install --classic eclipse
     - curtin in-target -- snap install telegram-desktop
     - curtin in-target -- snap install spotify
-    - curtin in-target -- snap install whats
+    - curtin in-target -- snap install whatsdesk
+    - curtin in-target -- snap install teams-for-linux
+    - curtin in-target -- snap install pgadmin4
+    - curtin in-target -- bash -c 'sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD \'postgres\';"'
+user-data:
+  disable_root: true
+  timezone: Europe/Rome
+  locale: it_IT.UTF-8
+  keyboard:
+    layout: it
+  gnome:
+    settings:
+      org.gnome.shell.extensions.dash-to-dock:
+        dock-position: 'BOTTOM'
+        autohide: true
+        extend-height: false
