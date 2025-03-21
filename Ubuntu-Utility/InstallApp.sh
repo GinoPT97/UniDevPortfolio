@@ -7,9 +7,8 @@ sudo apt update && sudo apt upgrade -y
 # Installa curl (se non è già presente)
 sudo apt install -y curl
 
-# Definizione della lista dei pacchetti da installare (inclusi OpenJDK, Node.js e npm)
+# Definizione della lista dei pacchetti da installare (inclusi Node.js e npm)
 packages=(
-  openjdk-17-jdk openjdk-21-jdk openjdk-17-jre openjdk-21-jre
   ca-certificates curl gnupg lsb-release wget apt-transport-https
   zram-config preload bluetooth bluez blueman flatpak git gparted
   clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common
@@ -17,10 +16,9 @@ packages=(
   gdebi dos2unix texlive-latex-base texlive-latex-extra git-lfs cryptsetup
   lvm2 synaptic stacer build-essential libvips-dev jest
   nodejs npm
-  postgresql postgresql-contrib
   tor redis
   linux-tools-common linux-tools-generic
-  gnome-shell-extension-system-monitor gnome-tweaks indicator-multiload
+  gnome-tweaks
 )
 
 echo "Installazione dei pacchetti: ${packages[*]}"
