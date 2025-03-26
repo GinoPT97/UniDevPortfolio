@@ -33,20 +33,6 @@ echo "Avvio e abilitazione dei servizi Tor e Redis..."
 sudo systemctl enable --now tor
 sudo systemctl enable --now redis
 
-echo "Installazione di Docker..."
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io
-sudo systemctl start docker
-sudo systemctl enable docker
-
-echo "Installazione e configurazione di NordVPN..."
-sh <(wget -qO - https://downloads.nordcdn.com/apps/linux/install.sh)
-nordvpn login
-nordvpn connect
-nordvpn set autoconnect on
-
 # Funzione per scaricare, installare e pulire un pacchetto .deb
 install_deb() {
   local url=$1
@@ -101,10 +87,17 @@ sudo snap install --classic code
 sudo snap install --classic android-studio
 sudo snap install --classic eclipse
 sudo snap install telegram-desktop
-sudo snap install spotify
-sudo snap install whatsdesk
 sudo snap install teams-for-linux
 sudo snap install pgadmin4
+
+echo "Installazione di Docker..."
+sudo snap install docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+newgrp docker
+
+echo "Installazione e configurazione di NordVPN..."
+sudo snap install nordvpn
 
 echo "Installazione completata!"
 
