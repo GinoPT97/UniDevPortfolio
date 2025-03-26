@@ -1,14 +1,14 @@
 package termostato;
 
 import java.awt.Font;
-import java.util.Observable;
-import java.util.Observer;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class DigitalView extends JPanel implements Observer {
+public class DigitalView extends JPanel implements PropertyChangeListener {
 
   private JLabel tempLabel;
 
@@ -16,27 +16,18 @@ public class DigitalView extends JPanel implements Observer {
     tempLabel = new JLabel("0°C");
     tempLabel.setFont(new Font("Arial", Font.BOLD, 150));
     this.add(tempLabel);
-    // view si registra come observer presso il model
-    model.addObserver(this);
+    // view si registra come listener presso il model
+    model.addPropertyChangeListener(this);
   }
 
   @Override
-  public void update(Observable model, Object newValue) {
+  public void propertyChange(PropertyChangeEvent evt) {
     if (SwingUtilities.isEventDispatchThread()) {
       // e' l'EDT, posso aggiornare GUI
-      tempLabel.setText((Integer)newValue + "°C");
-    }
-    else {
+      tempLabel.setText(evt.getNewValue() + "°C");
+    } else {
       // non e' EDT, ma devo chiedere ad EDT di aggiornare GUI
-      final int valore = (Integer)newValue;
-      Runnable target = new Runnable() {
-
-        @Override
-        public void run() {
-          tempLabel.setText(valore + "°C");
-        }
-      };
-      SwingUtilities.invokeLater(target);
+      SwingUtilities.invokeLater(() -> tempLabel.setText(evt.getNewValue() + "°C"));
     }
   }
 }

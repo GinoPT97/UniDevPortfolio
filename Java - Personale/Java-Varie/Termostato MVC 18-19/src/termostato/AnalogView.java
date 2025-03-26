@@ -3,60 +3,62 @@ package termostato;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Observable;
-import java.util.Observer;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class AnalogView extends JPanel implements Observer {
+public class AnalogView extends JPanel implements PropertyChangeListener {
 
-  private static final int width = 20;
-  private static final int top = 20;
-  private static final int left = 100;
-  private static final int right = 250;
-  private static final int height = 200;
-  
+  private static final int WIDTH = 20;
+  private static final int TOP = 20;
+  private static final int LEFT = 100;
+  private static final int HEIGHT = 200;
+
   private static final int MAX_TEMP = 100;
   private static final int MIN_TEMP = 0;
-  
+
   private int valoreCorrente = 0;
   private Color colore = Color.GREEN;
-  
-  public AnalogView(TermostatoModel model) {
-    // view si registra come observer presso il model
-    model.addObserver(this);
+  private PropertyChangeSupport support;
+
+  public AnalogView() {
+    support = new PropertyChangeSupport(this);
     setPreferredSize(new Dimension(200, 550));
   }
-  
+
+  @Override
   public void paintComponent(Graphics g) {
     // sempre eseguito da EDT
     super.paintComponent(g);
     g.setColor(Color.black);
-    g.drawRect(left, top, width, height);
+    g.drawRect(LEFT, TOP, WIDTH, HEIGHT);
     g.setColor(colore);
-    g.fillOval(left-width/2, top+height-width/3,width*2, width*2);
+    g.fillOval(LEFT - WIDTH / 2, TOP + HEIGHT - WIDTH / 3, WIDTH * 2, WIDTH * 2);
     g.setColor(Color.black);
-    g.drawOval(left-width/2, top+height-width/3,width*2, width*2);
+    g.drawOval(LEFT - WIDTH / 2, TOP + HEIGHT - WIDTH / 3, WIDTH * 2, WIDTH * 2);
     g.setColor(Color.white);
-    g.fillRect(left+1,top+1, width-1, height-1);
+    g.fillRect(LEFT + 1, TOP + 1, WIDTH - 1, HEIGHT - 1);
     g.setColor(colore);
-    //Occhio
-    long redtop = height*(valoreCorrente-MAX_TEMP)/(MIN_TEMP-MAX_TEMP);
-    g.fillRect(left+1, top + (int)redtop, width-1, height-(int)redtop);
+    // Occhio
+    long redtop = HEIGHT * (valoreCorrente - MAX_TEMP) / (MIN_TEMP - MAX_TEMP);
+    g.fillRect(LEFT + 1, TOP + (int) redtop, WIDTH - 1, HEIGHT - (int) redtop);
   }
-  
+
   @Override
-  public void update(Observable model, Object valore) {
-    valoreCorrente = (Integer)valore;
-    if (valoreCorrente <= 30)
-      colore = Color.GREEN;
-    else if (valoreCorrente <= 70)
-      colore = Color.ORANGE;
-    else
-      colore = Color.RED;
-    repaint();
+  public void propertyChange(PropertyChangeEvent evt) {
+    // Implementa il metodo per gestire i cambiamenti di proprietà
+  }
+
+  @Override
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    support.addPropertyChangeListener(listener);
+  }
+
+  @Override
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    support.removePropertyChangeListener(listener);
   }
 
 }
