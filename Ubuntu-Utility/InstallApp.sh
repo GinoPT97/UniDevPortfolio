@@ -7,7 +7,7 @@ sudo apt update && sudo apt upgrade -y
 # Installa curl (se non è già presente)
 sudo apt install -y curl
 
-# Definizione della lista dei pacchetti da installare (inclusi Node.js e npm)
+# Definizione della lista dei pacchetti da installare
 packages=(
   ca-certificates curl gnupg lsb-release wget apt-transport-https
   zram-config preload bluetooth bluez blueman flatpak git gparted
@@ -15,7 +15,6 @@ packages=(
   vlc cmake aptitude doxygen graphviz net-tools
   gdebi dos2unix texlive-latex-base texlive-latex-extra git-lfs cryptsetup
   lvm2 synaptic stacer build-essential libvips-dev jest
-  nodejs npm
   tor redis
   linux-tools-common linux-tools-generic
   gnome-tweaks
