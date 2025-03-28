@@ -86,15 +86,14 @@ sudo snap install --classic openjdk
 sudo snap install --classic code
 sudo snap install --classic android-studio
 sudo snap install --classic eclipse
+sudo snap install node --classic
 sudo snap install telegram-desktop
 sudo snap install teams-for-linux
 sudo snap install pgadmin4
 
 echo "Installazione di Docker..."
 sudo snap install docker
-sudo systemctl start docker
-sudo usermod -aG docker $USER
-newgrp docker
+sudo snap start docker
 
 echo "Installazione e configurazione di NordVPN..."
 sudo snap install nordvpn
