@@ -23,6 +23,9 @@ packages=(
 echo "Installazione dei pacchetti: ${packages[*]}"
 sudo apt install -y "${packages[@]}"
 
+sudo apt install google-android-emulator-installer
+
+
 git lfs install
 
 echo "Configurazione della password PostgreSQL..."
