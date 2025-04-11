@@ -89,10 +89,19 @@ execute_command() {
     fi
 }
 
+# Funzione per verificare se un comando è disponibile
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
 # Funzione per aggiornare alla nuova versione di Ubuntu
 upgrade_ubuntu() {
     log "INFO" "Aggiornamento alla nuova versione di Ubuntu..."
-    sudo do-release-upgrade
+    if sudo do-release-upgrade; then
+        log "INFO" "Aggiornamento completato con successo."
+    else
+        log "INFO" "Nessuna nuova versione di Ubuntu trovata."
+    fi
 }
 
 # Inizio dello script
@@ -113,6 +122,11 @@ execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
 upgrade_ubuntu
 
 # Rimuove tutti gli oggetti inutilizzati (container, immagini, network) tranne i volumi
-docker system prune --all --filter "until=6h" -f
+if command_exists docker; then
+    log "INFO" "Pulizia delle risorse Docker inutilizzate..."
+    docker system prune --all --filter "until=6h" -f
+else
+    log "INFO" "Docker non è installato. Salto la pulizia delle risorse Docker."
+fi
 
 log "INFO" "Aggiornamenti completati!"
