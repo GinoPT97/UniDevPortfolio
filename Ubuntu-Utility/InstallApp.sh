@@ -92,6 +92,7 @@ sudo snap install node --classic
 sudo snap install telegram-desktop
 sudo snap install teams-for-linux
 sudo snap install pgadmin4
+sudo snap install perplexity-desktop
 
 echo "Installazione di Docker..."
 sudo snap install docker
