@@ -7,6 +7,10 @@ sudo apt update && sudo apt upgrade -y
 # Installa curl (se non è già presente)
 sudo apt install -y curl
 
+# Aggiorna i pacchetti e installa ImageMagick
+sudo apt update
+sudo apt install imagemagick
+
 # Definizione della lista dei pacchetti da installare
 packages=(
   ca-certificates curl gnupg lsb-release wget apt-transport-https
