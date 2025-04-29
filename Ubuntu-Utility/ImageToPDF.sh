@@ -4,12 +4,12 @@
 DIR="$(pwd)"
 
 # Estensioni delle immagini da considerare
-estensioni=("jpg" "jpeg" "png" "tiff" "bmp")
+estensioni=("jpg" "jpeg" "png" "tiff" "bmp" "jfif")
 
 # Loop attraverso ogni estensione
 for est in "${estensioni[@]}"; do
-    # Trova e processa ogni file con l'estensione corrente
-    find "$DIR" -maxdepth 1 -type f -iname "*.$est" | while read -r file; do
+    # Trova e processa ogni file con l'estensione corrente (anche nelle sottocartelle)
+    find "$DIR" -type f -iname "*.$est" | while read -r file; do
         # Estrai il nome del file senza estensione
         nome_file="${file%.*}"
         # Converte l'immagine in PDF
@@ -23,4 +23,3 @@ for est in "${estensioni[@]}"; do
         fi
     done
 done
-

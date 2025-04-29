@@ -119,12 +119,11 @@ log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
 update_apt_packages
 execute_command "apt-get full-upgrade -y" "Aggiornamento completo"
 execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
-upgrade_ubuntu
 
 # Rimuove tutti gli oggetti inutilizzati (container, immagini, network) tranne i volumi
 if command_exists docker; then
     log "INFO" "Pulizia delle risorse Docker inutilizzate..."
-    docker system prune --all --filter "until=6h" -f
+    docker system prune --filter "until=6h" -f
 else
     log "INFO" "Docker non è installato. Salto la pulizia delle risorse Docker."
 fi
