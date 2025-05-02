@@ -123,7 +123,7 @@ execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
 # Rimuove tutti gli oggetti inutilizzati (container, immagini, network) tranne i volumi
 if command_exists docker; then
     log "INFO" "Pulizia delle risorse Docker inutilizzate..."
-    docker system prune --filter "until=6h" -f
+    docker system prune --filter "until=3h" -f
 else
     log "INFO" "Docker non è installato. Salto la pulizia delle risorse Docker."
 fi
