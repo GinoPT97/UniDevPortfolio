@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,16 +18,16 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.BorderFactory;
 
-import Model.Cliente;
+import Model.Dipendente;
 
-public class ModificaClienteFrame extends JFrame {
+public class ModificaDipendenteFrame extends JFrame {
     private JPanel contentPane;
     private String cod;
     private JPanel buttonpanel;
+    private JPanel elempanel;
     private JButton backbutton;
     private JButton clearbutton;
     private JButton addbutton;
-    private JPanel elempanel;
     private JTextField nometf;
     private JTextField cognometf;
     private JTextField codfisctf;
@@ -42,7 +42,7 @@ public class ModificaClienteFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 500);
         setLocationRelativeTo(null);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaDipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello principale
         contentPane = new JPanel();
@@ -52,16 +52,16 @@ public class ModificaClienteFrame extends JFrame {
 
         // Pannello del titolo
         titlepanel = new JPanel();
-        titlepanel.setBackground(new Color(107, 142, 35));
-        titlelabel = new JLabel("Modifica Cliente");
+        titlepanel.setBackground(Color.ORANGE);
+        titlelabel = new JLabel("Modifica Dipendente");
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlelabel.setForeground(Color.WHITE); // Colore del testo bianco per contrasto
+        titlelabel.setForeground(Color.WHITE);
         titlepanel.add(titlelabel);
         contentPane.add(titlepanel, BorderLayout.NORTH);
 
         // Pannello per i bottoni
         buttonpanel = new JPanel();
-        buttonpanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); // Layout centrato con spaziatura
+        buttonpanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
         // Bottone Inserisci
@@ -78,8 +78,8 @@ public class ModificaClienteFrame extends JFrame {
 
         // Pannello per gli elementi di input
         elempanel = new JPanel();
-        elempanel.setBorder(new EmptyBorder(20, 50, 20, 50)); // Padding migliorato
-        elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS)); // Layout verticale per gli input
+        elempanel.setBorder(new EmptyBorder(20, 50, 20, 50));
+        elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
         contentPane.add(elempanel, BorderLayout.CENTER);
 
         // Metodo per creare i pannelli di input
@@ -117,68 +117,64 @@ public class ModificaClienteFrame extends JFrame {
         telefonotf.setText("");
     }
 
-    public void viewct(Cliente ce) {
-        cod = ce.getCodCl();
-        nometf.setText(ce.getNome());
-        cognometf.setText(ce.getCognome());
-        codfisctf.setText(ce.getCodFis());
-        indirizzotf.setText(ce.getInd());
-        emailtf.setText(ce.getEmail());
-        telefonotf.setText(ce.getTel());
+    public void viewdip(Dipendente de) {
+        cod = de.getCodDIP();
+        nometf.setText(de.getNome());
+        cognometf.setText(de.getCognome());
+        codfisctf.setText(de.getCodFis());
+        indirizzotf.setText(de.getInd());
+        emailtf.setText(de.getEmail());
+        telefonotf.setText(de.getTel());
     }
 
     public void azioni(Controller c) {
         backbutton.addActionListener(e -> {
             clean();
-            c.visAndElem(3, 3); // Torna alla vista con indice 3
+            c.visAndElem(2, 3);
         });
 
         addbutton.addActionListener(e -> {
             try {
-                // Aggiorna il cliente con i dati inseriti nei JTextField
-                Cliente clienteAggiornato = new Cliente(
+                // Crea un nuovo oggetto Dipendente utilizzando i valori dai JTextField
+                Dipendente dipendente = new Dipendente(
                     cod,
                     nometf.getText(),
                     cognometf.getText(),
                     codfisctf.getText(),
                     emailtf.getText(),
                     indirizzotf.getText(),
-                    telefonotf.getText(),
-                    null,
-                    null
+                    telefonotf.getText()
                 );
+                // Aggiorna il dipendente nel database
+                c.updip(dipendente);
 
-                // Aggiorna il cliente nel database
-                c.upcliente(clienteAggiornato);
-
-                // Aggiorna la riga corrispondente nel modello
-                for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
-                    if (c.clienteModel.getValueAt(i, 0).equals(clienteAggiornato.getCodCl())) { // Assumendo che il codice cliente sia il primo elemento
-                        c.clienteModel.setValueAt(clienteAggiornato.getNome(), i, 1);
-                        c.clienteModel.setValueAt(clienteAggiornato.getCognome(), i, 2);
-                        c.clienteModel.setValueAt(clienteAggiornato.getCodFis(), i, 3);
-                        c.clienteModel.setValueAt(clienteAggiornato.getEmail(), i, 4);
-                        c.clienteModel.setValueAt(clienteAggiornato.getInd(), i, 5);
-                        c.clienteModel.setValueAt(clienteAggiornato.getTel(), i, 6);
+                // Aggiorna il modello della tabella dei dipendenti
+                for (int i = 0; i < c.dipModel.getRowCount(); i++) {
+                    if (c.dipModel.getValueAt(i, 0).equals(dipendente.getCodDIP())) { // Assumendo che il codice dipendente sia il primo elemento
+                        c.dipModel.setValueAt(dipendente.getNome(), i, 1);
+                        c.dipModel.setValueAt(dipendente.getCognome(), i, 2);
+                        c.dipModel.setValueAt(dipendente.getCodFis(), i, 3);
+                        c.dipModel.setValueAt(dipendente.getEmail(), i, 4);
+                        c.dipModel.setValueAt(dipendente.getInd(), i, 5);
+                        c.dipModel.setValueAt(dipendente.getTel(), i, 6);
                         break; // Esci dal ciclo dopo aver trovato e aggiornato la riga
                     }
                 }
 
-                clean(); // Pulisce i campi dopo l'aggiornamento
-                c.visAndElem(3, 3); // Torna alla vista con indice 3
-                JOptionPane.showMessageDialog(null, "Cliente modificato");
+                clean(); // Pulisce i campi di input
+                c.visAndElem(2, 3); // Torna alla vista con indice 3
+                JOptionPane.showMessageDialog(this, "Dipendente modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException e1) {
-                JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage());
+                JOptionPane.showMessageDialog(this, "Errore!" + "\n" + "Tipo di errore: " + e1, "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         clearbutton.addActionListener(e -> clean());
     }
 
-    public ModificaClienteFrame(String title, Controller c) {
+    public ModificaDipendenteFrame(String title, Controller c) {
         super(title);
         this.elementi();
         this.azioni(c);
     }
 }
-

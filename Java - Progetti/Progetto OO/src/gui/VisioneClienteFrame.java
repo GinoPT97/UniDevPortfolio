@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -8,18 +8,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-public class VisioneOrdineFrame extends JFrame {
+import Model.Cliente; // Aggiungi l'importazione mancante
+
+public class VisioneClienteFrame extends JFrame {
     private JPanel contentPane;
     private JTable table;
-    private JScrollPane scrollPane;
-    private JPanel titlepanel;
     private JButton backbutton;
-    private JLabel titlelabel;
-    private JButton ordinebutton;
-    private JButton searchbutton;
+    private JButton addbutton;
+    private JButton updatebutton;
     private JTextField searchtf;
+    private JButton searchbutton;
 
-    public VisioneOrdineFrame(String title, Controller c) throws SQLException {
+    public VisioneClienteFrame(String title, Controller c) throws SQLException {
         super(title);
         this.elementi(c);
         this.azioni(c);
@@ -27,28 +27,28 @@ public class VisioneOrdineFrame extends JFrame {
 
     public void elementi(Controller c) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 1000, 450);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
+        setBounds(100, 100, 850, 450);
         setLocationRelativeTo(null);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
 
-        titlepanel = new JPanel();
-        titlepanel.setBackground(new Color(0, 139, 139));
+        JPanel titlepanel = new JPanel();
+        titlepanel.setBackground(new Color(0, 128, 0));
         titlepanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.add(titlepanel, BorderLayout.NORTH);
 
-        titlelabel = new JLabel("Visualizzazione Ordini");
-        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlelabel.setForeground(Color.WHITE);
-        titlepanel.add(titlelabel);
+        JLabel titlelab = new JLabel("Amministrazione Clienti");
+        titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlelab.setForeground(Color.WHITE);
+        titlepanel.add(titlelab);
 
-        scrollPane = new JScrollPane();
+        JScrollPane scrollPane = new JScrollPane();
         contentPane.add(scrollPane, BorderLayout.CENTER);
 
-        table = new JTable(c.ordModel);
+        table = new JTable(c.clienteModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(table);
 
@@ -59,11 +59,14 @@ public class VisioneOrdineFrame extends JFrame {
         searchtf = new JTextField(10);
         buttonpanel.add(searchtf);
 
-        searchbutton = creaButton("Cerca", new Color(60, 179, 113));
+        searchbutton = creaButton("Cerca", new Color(107, 142, 35));
         buttonpanel.add(searchbutton);
 
-        ordinebutton = creaButton("Nuovo Ordine", new Color(34, 139, 34));
-        buttonpanel.add(ordinebutton);
+        addbutton = creaButton("Aggiungi", new Color(34, 139, 34));
+        buttonpanel.add(addbutton);
+
+        updatebutton = creaButton("Modifica", new Color(70, 130, 180));
+        buttonpanel.add(updatebutton);
 
         backbutton = creaButton("Indietro", new Color(178, 34, 34));
         buttonpanel.add(backbutton);
@@ -79,11 +82,11 @@ public class VisioneOrdineFrame extends JFrame {
     }
 
     public void azioni(Controller c) throws SQLException {
-        c.allOrdini();
+        c.allCliente();
 
         searchbutton.addActionListener(e -> {
             String query = searchtf.getText().trim().toLowerCase();
-            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.ordModel);
+            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.clienteModel);
             table.setRowSorter(sorter);
             if (query.isEmpty()) {
                 sorter.setRowFilter(null);
@@ -91,13 +94,29 @@ public class VisioneOrdineFrame extends JFrame {
                 try {
                     sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
                 } catch (PatternSyntaxException ex) {
-                    JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(),
-                            "Errore di Filtro", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(),
+                            "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        ordinebutton.addActionListener(e -> c.visAndElem(1, 1));
+        addbutton.addActionListener(e -> c.visAndElem(3, 1));
+
+        updatebutton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                String[] clienteData = new String[7];
+                for (int i = 0; i < clienteData.length; i++) {
+                    clienteData[i] = table.getValueAt(selectedRow, i).toString();
+                }
+
+                c.visAndElem(3, 2);
+                c.upclf.viewct(new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null));
+            } else {
+                JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
         backbutton.addActionListener(e -> c.returnToLastFrame());
     }
 }

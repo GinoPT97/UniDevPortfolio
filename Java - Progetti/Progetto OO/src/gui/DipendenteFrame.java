@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -42,7 +42,7 @@ public class DipendenteFrame extends JFrame {
         titlelab = new JLabel("Dipendenti Point", SwingConstants.CENTER);
         titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlelab.setForeground(Color.WHITE);
-        titlePanel.add(titlelab, BorderLayout.CENTER); 
+        titlePanel.add(titlelab, BorderLayout.CENTER);
 
         // Bottone di logout esteso orizzontalmente
         logoututton = new JButton("Logout");

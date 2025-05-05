@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,7 +40,7 @@ public class LoginFrame extends JFrame {
             // Creazione del pannello sinistro con l'immagine e il titolo
             JLabel titleLabel = new JLabel("Dalla terra al banco!", SwingConstants.LEFT);
             titleLabel.setFont(new Font("Tahoma", Font.BOLD, 25));
-            titleLabel.setForeground(new Color(39, 54, 24)); 
+            titleLabel.setForeground(new Color(39, 54, 24));
             titleLabel.setBorder(null);
             titlePanel.add(titleLabel, BorderLayout.NORTH);
 

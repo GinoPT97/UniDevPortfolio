@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,19 +17,17 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class AdminFrame extends JFrame {
-    private JPanel contentPane;
     private JButton logoutbutton;
     private JButton statistichebutton;
     private JButton dipbutton;
     private JButton visordbutt;
     private JButton prodbutton;
-    private JLabel titlelabel;
     private JButton searchbutton;
 
     public void elementi(JPanel titlePanel) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 400);
-        contentPane = new JPanel();
+        JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(0, 0));
@@ -70,7 +68,7 @@ public class AdminFrame extends JFrame {
         buttonpanel.add(Box.createVerticalGlue());
 
         // Etichetta del titolo
-        titlelabel = new JLabel("Admin Point", SwingConstants.CENTER);
+        JLabel titlelabel = new JLabel("Admin Point", SwingConstants.CENTER);
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlelabel.setForeground(Color.WHITE);
         titlePanel.add(titlelabel, BorderLayout.NORTH);
@@ -79,7 +77,7 @@ public class AdminFrame extends JFrame {
         logoutbutton = new JButton("Logout");
         logoutbutton.setBackground(Color.RED);
         logoutbutton.setForeground(Color.WHITE);
-        titlePanel.add(logoutbutton, BorderLayout.SOUTH); 
+        titlePanel.add(logoutbutton, BorderLayout.SOUTH);
 
         // Aggiungi il pannello dell'immagine
         contentPane.add(titlePanel, BorderLayout.WEST);

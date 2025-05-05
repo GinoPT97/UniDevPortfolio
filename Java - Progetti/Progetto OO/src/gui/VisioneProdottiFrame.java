@@ -1,4 +1,4 @@
-package GUI;
+package gui;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -8,18 +8,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import Model.Cliente; // Aggiungi l'importazione mancante
+import Model.Prodotto;
 
-public class VisioneClienteFrame extends JFrame {
+public class VisioneProdottiFrame extends JFrame {
     private JPanel contentPane;
     private JTable table;
     private JButton backbutton;
     private JButton addbutton;
     private JButton updatebutton;
-    private JTextField searchtf;
     private JButton searchbutton;
+    private JTextField searchtf;
 
-    public VisioneClienteFrame(String title, Controller c) throws SQLException {
+    public VisioneProdottiFrame(String title, Controller c) throws SQLException {
         super(title);
         this.elementi(c);
         this.azioni(c);
@@ -27,28 +27,28 @@ public class VisioneClienteFrame extends JFrame {
 
     public void elementi(Controller c) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 850, 450);
+        setBounds(100, 100, 900, 500);
         setLocationRelativeTo(null);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
 
         JPanel titlepanel = new JPanel();
-        titlepanel.setBackground(new Color(0, 128, 0));
+        titlepanel.setBackground(new Color(128, 0, 0));
         titlepanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.add(titlepanel, BorderLayout.NORTH);
 
-        JLabel titlelab = new JLabel("Amministrazione Clienti");
-        titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlelab.setForeground(Color.WHITE);
-        titlepanel.add(titlelab);
+        JLabel titlelabel = new JLabel("Amministrazione Prodotti");
+        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlelabel.setForeground(Color.WHITE);
+        titlepanel.add(titlelabel);
 
         JScrollPane scrollPane = new JScrollPane();
         contentPane.add(scrollPane, BorderLayout.CENTER);
 
-        table = new JTable(c.clienteModel);
+        table = new JTable(c.prodModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(table);
 
@@ -59,7 +59,7 @@ public class VisioneClienteFrame extends JFrame {
         searchtf = new JTextField(10);
         buttonpanel.add(searchtf);
 
-        searchbutton = creaButton("Cerca", new Color(107, 142, 35));
+        searchbutton = creaButton("Cerca", new Color(46, 139, 87));
         buttonpanel.add(searchbutton);
 
         addbutton = creaButton("Aggiungi", new Color(34, 139, 34));
@@ -82,11 +82,11 @@ public class VisioneClienteFrame extends JFrame {
     }
 
     public void azioni(Controller c) throws SQLException {
-        c.allCliente();
+        c.allProdotti();
 
         searchbutton.addActionListener(e -> {
             String query = searchtf.getText().trim().toLowerCase();
-            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.clienteModel);
+            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel);
             table.setRowSorter(sorter);
             if (query.isEmpty()) {
                 sorter.setRowFilter(null);
@@ -94,29 +94,40 @@ public class VisioneClienteFrame extends JFrame {
                 try {
                     sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
                 } catch (PatternSyntaxException ex) {
-                    JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(),
+                    JOptionPane.showMessageDialog(null, "Errore nella sintassi dell'espressione regolare: " + ex.getMessage(),
                             "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        addbutton.addActionListener(e -> c.visAndElem(3, 1));
+        addbutton.addActionListener(e -> c.visAndElem(4, 1));
 
         updatebutton.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow >= 0) {
-                String[] clienteData = new String[7];
-                for (int i = 0; i < clienteData.length; i++) {
-                    clienteData[i] = table.getValueAt(selectedRow, i).toString();
-                }
+            int i = table.getSelectedRow();
+            if (i >= 0) {
+                try {
+                    String codice = table.getValueAt(i, 0).toString();
+                    String nome = table.getValueAt(i, 1).toString();
+                    String descrizione = table.getValueAt(i, 2).toString();
+                    double prezzo = Double.parseDouble(table.getValueAt(i, 3).toString());
+                    String categoria = table.getValueAt(i, 4).toString();
+                    boolean disponibile = Boolean.parseBoolean(table.getValueAt(i, 7).toString());
+                    String fornitore = table.getValueAt(i, 9).toString();
+                    int quantita = Integer.parseInt(table.getValueAt(i, 10).toString());
 
-                c.visAndElem(3, 2);
-                c.upclf.viewct(new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null));
+                    c.visAndElem(4, 2);
+                    c.modprodf.viewprod(new Prodotto(codice, nome, descrizione, prezzo, categoria, null, null, disponibile, null, fornitore, quantita));
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(),
+                            "Errore", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Scegli una riga da modificare",
+                        "Attenzione", JOptionPane.WARNING_MESSAGE);
             }
         });
 
         backbutton.addActionListener(e -> c.returnToLastFrame());
     }
 }
+
