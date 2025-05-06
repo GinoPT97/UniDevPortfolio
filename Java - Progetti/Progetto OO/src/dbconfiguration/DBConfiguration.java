@@ -62,15 +62,17 @@ public class DBConfiguration {
         if (connectionExists()) {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("dipendente")) {
-                    String sql = "CREATE TABLE IF NOT EXISTS dipendente (\n"
-                            + " coddipendente SERIAL PRIMARY KEY,\n"
-                            + " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
-                            + " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
-                            + " codicefiscale CHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),\n "
-                            + " indirizzo VARCHAR(255) NOT NULL,\n"
-                            + " telefono VARCHAR(20) CHECK(telefono ~* '^[0-9+ ]+$'),\n"
-                            + " email VARCHAR(255) NOT NULL CHECK(email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$')\n "
-                            + " );";
+                    String sql = """
+                            CREATE TABLE IF NOT EXISTS dipendente(
+                                coddipendente SERIAL PRIMARY KEY,
+                                nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),
+                                cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),
+                                codicefiscale VARCHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),
+                                indirizzo VARCHAR(255) NOT NULL,
+                                telefono VARCHAR(20) CHECK(telefono ~* '^[0-9+ ]+$'),
+                                email VARCHAR(255) NOT NULL CHECK(email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$')
+                            );
+                            """;
 
                     result = st.executeUpdate(sql);
                 } else {
@@ -92,12 +94,17 @@ public class DBConfiguration {
         if (connectionExists()) {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("tessera")) {
-                    String sql = "CREATE TABLE IF NOT EXISTS tessera(\n"
-                            + " codtessera SERIAL PRIMARY KEY,\n"
-                            + " numeropunti real NOT NULL DEFAULT 0.00,\n"
-                            + " codcliente INTEGER NOT NULL UNIQUE,\n"
-                            + " CONSTRAINT TesseraFK FOREIGN KEY(CodCliente) \n " + " REFERENCES CLIENTE(codcliente) \n"
-                            + " ON UPDATE CASCADE \n" + " ON DELETE CASCADE \n " + " );";
+                    String sql = """
+                            CREATE TABLE IF NOT EXISTS tessera(
+                                codtessera SERIAL PRIMARY KEY,
+                                numeropunti REAL NOT NULL DEFAULT 0.00 CHECK(numeropunti >= 0),
+                                codcliente INTEGER NOT NULL UNIQUE,
+                                CONSTRAINT TesseraFK FOREIGN KEY(codcliente)
+                                    REFERENCES cliente(codcliente)
+                                    ON UPDATE CASCADE
+                                    ON DELETE CASCADE
+                            );
+                            """;
 
                     result = st.executeUpdate(sql);
                 } else {
@@ -119,18 +126,28 @@ public class DBConfiguration {
         if (connectionExists()) {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("prodotto")) {
-                    String sql = "CREATE TABLE IF NOT EXISTS prodotto(\n"
-                            + " codprodotto SERIAL PRIMARY KEY,\n"
-                            + " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
-                            + " descrizione VARCHAR(500), \n" + " prezzo NUMERIC DEFAULT 0.00, \n "
-                            + " luogoprovenienza VARCHAR(255), \n" + " dataraccolta DATE,\n "
-                            + " datamungitura DATE, \n " + " glutine BOOLEAN, \n " + " datascadenza DATE, \n "
-                            + " categoria TIPOLOGIA,\n" + " scorta INT , CHECK (scorta>=0),\n"
-                            + " CONSTRAINT categoria CHECK (((categoria ='Ortofrutticoli') AND (dataraccolta IS NOT NULL AND datamungitura IS NULL AND datascadenza IS NULL AND glutine IS NULL)) OR"
-                            + " ((categoria ='Latticini') AND (dataraccolta IS NULL AND datamungitura IS NOT NULL AND datascadenza IS NULL AND glutine IS NULL)) OR"
-                            + " ((categoria ='Inscatolati') AND (dataraccolta IS NULL AND datamungitura IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)) OR"
-                            + " ((categoria ='Farinacei') AND (dataraccolta IS NULL AND datamungitura IS NULL AND datascadenza IS NULL AND glutine IS NOT NULL)))"
-                            + " );";
+                    String sql = """
+                            CREATE TABLE IF NOT EXISTS prodotto(
+                                codprodotto SERIAL PRIMARY KEY,
+                                nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),
+                                descrizione VARCHAR(500),
+                                prezzo NUMERIC DEFAULT 0.00 CHECK(prezzo >= 0),
+                                luogoprovenienza VARCHAR(255),
+                                dataraccolta DATE,
+                                datamungitura DATE,
+                                glutine BOOLEAN,
+                                datascadenza DATE,
+                                categoria TIPOLOGIA,
+                                scorta INT CHECK(scorta >= 0),
+                                CONSTRAINT categoria CHECK (
+                                    (categoria = 'Ortofrutticoli' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
+                                    (categoria = 'Latticini' AND dataraccolta IS NULL AND datamungitura IS NOT NULL AND datascadenza IS NULL AND glutine IS NULL) OR
+                                    (categoria = 'Inscatolati' AND dataraccolta IS NULL AND datamungitura IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
+                                    (categoria = 'Farinacei' AND dataraccolta IS NULL AND datamungitura IS NULL AND datascadenza IS NULL AND glutine IS NOT NULL)
+                                )
+                            );
+                            """;
+
                     result = st.executeUpdate(sql);
                 } else {
                     System.out.println("Table Prodotto already exists!");
@@ -151,15 +168,23 @@ public class DBConfiguration {
         if (connectionExists()) {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("ordine")) {
-                    String sql = "CREATE TABLE IF NOT EXISTS ordine(\n" + " codordine SERIAL NOT NULL, \n"
-                            + " prezzototale real NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0), \n"
-                            + " dataacquisto date NOT NULL, \n"
-                            + " codcliente INTEGER NOT NULL, \n"
-                            + " coddipendente INTEGER NOT NULL, \n"
-                            + " CONSTRAINT ordinepk PRIMARY KEY (codordine), \n"
-                            + " CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente) ON UPDATE CASCADE ON DELETE NO ACTION, \n "
-                            + " CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente) ON UPDATE CASCADE ON DELETE NO ACTION\n "
-                            + " );";
+                    String sql = """
+                            CREATE TABLE IF NOT EXISTS ordine(
+                                codordine SERIAL PRIMARY KEY,
+                                prezzototale REAL NOT NULL DEFAULT 0.00 CHECK(prezzototale >= 0),
+                                dataacquisto DATE NOT NULL,
+                                codcliente INTEGER NOT NULL,
+                                coddipendente INTEGER NOT NULL,
+                                CONSTRAINT ordineclientefk FOREIGN KEY(codcliente)
+                                    REFERENCES cliente(codcliente)
+                                    ON UPDATE CASCADE
+                                    ON DELETE NO ACTION,
+                                CONSTRAINT ordinedipendentefk FOREIGN KEY(coddipendente)
+                                    REFERENCES dipendente(coddipendente)
+                                    ON UPDATE CASCADE
+                                    ON DELETE NO ACTION
+                            );
+                            """;
 
                     result = st.executeUpdate(sql);
                 } else {
@@ -180,30 +205,37 @@ public class DBConfiguration {
 
         if (connectionExists()) {
             try (Statement st = connection.createStatement()) {
-                if (!tableExists("ARTICOLIORDINE")) {
-                    String sql = "CREATE TABLE IF NOT EXISTS ARTICOLIORDINE (\n"
-                            + "CodOrdine INTEGER NOT NULL,\n"
-                            + "CodProdotto INTEGER NOT NULL,\n"
-                            + "CodCliente INTEGER NOT NULL,\n"
-                            + "Prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK(Prezzo >= 0.00),\n"
-                            + "NumeroPunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(NumeroPunti >= 0.00),\n"
-                            + "NumeroArticoli INT NOT NULL,\n"
-                            + "Categoria TIPOLOGIA,\n"
-                            + "CONSTRAINT PK_ArticoliOrdine PRIMARY KEY (CodOrdine, CodProdotto),\n"
-                            + "CONSTRAINT ArticoliordineClienteFK FOREIGN KEY(CodCliente) REFERENCES CLIENTE(CodCliente),\n"
-                            + "CONSTRAINT ArticoliordineProdottoFK FOREIGN KEY(CodProdotto) REFERENCES PRODOTTO(CodProdotto),\n"
-                            + "CONSTRAINT ArticoliordineOrdineFK FOREIGN KEY(CodOrdine) REFERENCES ORDINE(CodOrdine)\n"
-                            + ");";
+                if (!tableExists("articoliordine")) {
+                    String sql = """
+                            CREATE TABLE IF NOT EXISTS articoliordine(
+                                codordine INTEGER NOT NULL,
+                                codprodotto INTEGER NOT NULL,
+                                codcliente INTEGER NOT NULL,
+                                prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK(prezzo >= 0),
+                                numeropunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(numeropunti >= 0),
+                                numeroarticoli INT NOT NULL CHECK(numeroarticoli > 0),
+                                categoria TIPOLOGIA,
+                                CONSTRAINT pk_articoliordine PRIMARY KEY(codordine, codprodotto),
+                                CONSTRAINT articoliordineclientefk FOREIGN KEY(codcliente)
+                                    REFERENCES cliente(codcliente),
+                                CONSTRAINT articoliordineprodottofk FOREIGN KEY(codprodotto)
+                                    REFERENCES prodotto(codprodotto),
+                                CONSTRAINT articoliordineordinefk FOREIGN KEY(codordine)
+                                    REFERENCES ordine(codordine)
+                            );
+                            """;
+
                     result = st.executeUpdate(sql);
                 } else {
-                    System.out.println("Table 'ARTICOLIORDINE' already exists!");
+                    System.out.println("Table ArticoliOrdine already exists!");
                 }
             } catch (SQLException ex) {
-                System.out.println("SQL Exception found in creation table 'ARTICOLIORDINE': " + ex);
+                System.out.println("SQL Exception in creation table ArticoliOrdine : " + ex);
             }
         } else {
-            throw new ConnectionException("A connection must exists!");
+            throw new ConnectionException("A connection must exist!");
         }
+
         return result;
     }
 
