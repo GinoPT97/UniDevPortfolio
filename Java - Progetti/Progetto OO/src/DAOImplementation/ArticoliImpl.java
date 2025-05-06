@@ -16,7 +16,6 @@ import Model.Cliente;
 public class ArticoliImpl implements ArticoliJDBC {
 
     private final Connection connection;
-    private static final Logger LOGGER = Logger.getLogger(ArticoliImpl.class.getName()); // Logger
 
     // Costruttore
     public ArticoliImpl(Connection connection) throws SQLException {
@@ -25,9 +24,6 @@ public class ArticoliImpl implements ArticoliJDBC {
 
     @Override
     public boolean newordine(Articoli articoli) throws SQLException {
-        LOGGER.info("Inizio inserimento articoli ordine...");
-        LOGGER.info("Articoli: " + articoli);
-
         String query = "INSERT INTO articoliordine (CodOrdine, CodProdotto, Prezzo, NumeroPunti, NumeroArticoli, Categoria, CodCliente) VALUES (CAST(? AS INTEGER), CAST(? AS INTEGER), ?, ?, ?, CAST(? AS TIPOLOGIA), ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, Integer.parseInt(articoli.getCodOrdine())); // Convert codOrdine to integer
@@ -39,14 +35,10 @@ public class ArticoliImpl implements ArticoliJDBC {
             stmt.setInt(7, articoli.getCodCliente()); // Add codCliente
 
             int rowsInserted = stmt.executeUpdate();
-            LOGGER.info("Righe inserite: " + rowsInserted);
             return rowsInserted > 0;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Errore durante l'inserimento degli articoli ordine: " + e.getMessage(), e);
             throw e;
         } catch (NumberFormatException e) {
-            LOGGER.log(Level.SEVERE, "Errore di conversione: codOrdine o codProdotto non è un intero valido. Valori: " +
-                    articoli.getCodOrdine() + ", " + articoli.getCodProdotto(), e);
             throw new SQLException("Errore di conversione: codOrdine o codProdotto non è un intero valido.", e);
         }
     }

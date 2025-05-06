@@ -55,18 +55,13 @@ public class ProdottoImpl implements ProdottoJDBC {
 
     @Override
     public boolean updateScorte(int quantita, String codiceProdotto) throws SQLException {
-        System.out.println("Inizio aggiornamento scorte...");
-        System.out.println("Quantità: " + quantita + ", Codice Prodotto: " + codiceProdotto);
-
         String query = "UPDATE prodotto SET scorta = scorta - ? WHERE codprodotto = CAST(? AS INTEGER)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, quantita);
             stmt.setString(2, codiceProdotto); // Ensure codiceProdotto is cast to INTEGER in the query
             int rowsUpdated = stmt.executeUpdate();
-            System.out.println("Righe aggiornate: " + rowsUpdated);
             return rowsUpdated > 0;
         } catch (SQLException e) {
-            System.err.println("Errore durante l'aggiornamento delle scorte: " + e.getMessage());
             throw e;
         }
     }

@@ -232,7 +232,6 @@ public class Controller {
             tsjdbc = new Tesseraimpl(connection);
             artjdbc = new ArticoliImpl(connection);
         } catch (SQLException | ConnectionException e) {
-            System.out.println("SQLException: " + e.getMessage());
             e.printStackTrace();
         }
     }

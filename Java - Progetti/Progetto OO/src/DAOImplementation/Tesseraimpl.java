@@ -75,21 +75,15 @@ public class Tesseraimpl implements TesseraJDBC {
 
     @Override
     public boolean updatepunti(String codCliente, double punti) throws SQLException {
-        LOGGER.info("Inizio aggiornamento punti cliente...");
-        LOGGER.info("CodCliente: " + codCliente + ", Punti: " + punti);
-
         String query = "UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = CAST(? AS INTEGER)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setDouble(1, punti);
             stmt.setInt(2, Integer.parseInt(codCliente)); // Ensure codCliente is cast to INTEGER
             int rowsUpdated = stmt.executeUpdate();
-            LOGGER.info("Righe aggiornate: " + rowsUpdated);
             return rowsUpdated > 0;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Errore durante l'aggiornamento dei punti cliente: " + e.getMessage(), e);
             throw e;
         } catch (NumberFormatException e) {
-            LOGGER.log(Level.SEVERE, "Errore di conversione: codCliente non è un intero valido. Valore: " + codCliente, e);
             throw new SQLException("Errore di conversione: codCliente non è un intero valido.", e);
         }
     }
