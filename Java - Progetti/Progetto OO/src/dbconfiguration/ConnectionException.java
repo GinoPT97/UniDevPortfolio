@@ -1,4 +1,4 @@
-package DBConfiguration;
+package dbconfiguration;
 
 public class ConnectionException extends Exception {
 

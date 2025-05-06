@@ -1,7 +1,7 @@
-package DAOInterface;
+package daointerface;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import Model.Prodotto;
 
@@ -12,7 +12,7 @@ public interface ProdottoJDBC {
 
 	public boolean updateScorte(int x, String codprod) throws SQLException;
 
-	public ArrayList<Prodotto> getallprodotti() throws SQLException;
+	public List<Prodotto> getallprodotti() throws SQLException;
 
-	public ArrayList<Prodotto> getbycategoria(String categoria) throws SQLException;
+	public List<Prodotto> getbycategoria(String categoria) throws SQLException;
 }

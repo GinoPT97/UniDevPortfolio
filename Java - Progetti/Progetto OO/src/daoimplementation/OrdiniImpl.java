@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
-import DAOInterface.OrdiniJDBC;
 import Model.Ordine;
+import daointerface.OrdiniJDBC;
 
 public class OrdiniImpl implements OrdiniJDBC {
     private final Connection connection;

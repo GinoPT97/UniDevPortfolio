@@ -6,9 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import DAOInterface.TesseraJDBC;
 import Model.Cliente;
 import Model.Tessera;
+import daointerface.TesseraJDBC;
 
 public class Tesseraimpl implements TesseraJDBC {
 

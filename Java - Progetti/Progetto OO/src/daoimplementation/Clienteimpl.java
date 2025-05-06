@@ -7,13 +7,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import DAOInterface.ClienteJDBC;
 import Model.Cliente;
-import Model.Tessera;
+import daointerface.ClienteJDBC;
 
 public class Clienteimpl implements ClienteJDBC {
-    private PreparedStatement setNewCt, cercaCl, updateCl;
-    private Statement getAllCt, idCl;
+    private static final String CODCLIENTE = "codcliente"; // Define constant for "codcliente"
+    private PreparedStatement setNewCt;
+    private PreparedStatement cercaCl;
+    private PreparedStatement updateCl;
+    private Statement getAllCt;
+    private Statement idCl;
 
     // Costruttore
     public Clienteimpl(Connection connection) throws SQLException {
@@ -28,7 +31,6 @@ public class Clienteimpl implements ClienteJDBC {
 
     @Override
     public boolean setNewCt(Cliente cliente) throws SQLException {
-        // Evita la duplicazione di codice, popola la query con i dati del cliente
         setPreparedStatement(setNewCt, cliente);
         return setNewCt.executeUpdate() > 0;
     }
@@ -36,18 +38,17 @@ public class Clienteimpl implements ClienteJDBC {
     @Override
     public ArrayList<Cliente> getAllCt() throws SQLException {
         ArrayList<Cliente> clienti = new ArrayList<>();
-        try (ResultSet rs = getAllCt.executeQuery(
-                "SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC")) {
+        try (ResultSet rs = getAllCt.executeQuery("SELECT codcliente, nome, cognome, codicefiscale, email, indirizzo, telefono FROM cliente ORDER BY cognome DESC")) {
             while (rs.next()) {
                 clienti.add(new Cliente(
-                        rs.getString("codcliente"),
+                        rs.getString(CODCLIENTE),
                         rs.getString("nome"),
                         rs.getString("cognome"),
                         rs.getString("codicefiscale"),
                         rs.getString("email"),
                         rs.getString("indirizzo"),
                         rs.getString("telefono"),
-                        new Tessera(rs.getString("codtessera"), rs.getInt("numeropunti"), null),
+                        null,
                         null));
             }
         }
@@ -61,11 +62,10 @@ public class Clienteimpl implements ClienteJDBC {
         cercaCl.setString(3, codicefiscale);
         try (ResultSet rs = cercaCl.executeQuery()) {
             if (rs.next()) {
-                return rs.getString("codcliente");
-            } else {
-                return null;
+                return rs.getString(CODCLIENTE); 
             }
         }
+        return null;
     }
 
     @Override
@@ -77,19 +77,24 @@ public class Clienteimpl implements ClienteJDBC {
 
     @Override
     public String getIdCt(String codicefiscale) throws SQLException {
-        try (ResultSet rs = idCl.executeQuery("SELECT codcliente FROM cliente WHERE codicefiscale = '" + codicefiscale + "'")) {
-            return rs.next() ? rs.getString("codcliente") : null;
+        try (ResultSet rs = idCl.executeQuery("SELECT " + CODCLIENTE + " FROM cliente WHERE codicefiscale = '" + codicefiscale + "'")) {
+            if (rs.next()) {
+                return rs.getString(CODCLIENTE); // Use constant
+            }
         }
+        return null;
     }
 
     @Override
     public Cliente getCtByid(String idCt) throws SQLException {
-        try (ResultSet rs = idCl.executeQuery("SELECT nome, cognome FROM cliente WHERE codcliente = '" + idCt + "'")) {
-            return rs.next() ? new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null, null) : null;
+        try (ResultSet rs = idCl.executeQuery("SELECT nome, cognome FROM cliente WHERE " + CODCLIENTE + " = '" + idCt + "'")) {
+            if (rs.next()) {
+                return new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null, null);
+            }
         }
+        return null;
     }
 
-    // Metodo di supporto per evitare codice ripetitivo nella preparazione delle query
     private void setPreparedStatement(PreparedStatement ps, Cliente cliente) throws SQLException {
         ps.setString(1, cliente.getNome());
         ps.setString(2, cliente.getCognome());

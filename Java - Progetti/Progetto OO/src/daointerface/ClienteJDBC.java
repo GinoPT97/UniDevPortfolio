@@ -1,7 +1,7 @@
-package DAOInterface;
+package daointerface;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import Model.Cliente;
 
@@ -10,7 +10,7 @@ public interface ClienteJDBC {
 
 	public boolean updateCliente(Cliente cliente) throws SQLException;
 
-	public ArrayList<Cliente> getAllCt() throws SQLException;
+	public List<Cliente> getAllCt() throws SQLException;
 
 	public String getIdCt(String codfisc) throws SQLException;
 

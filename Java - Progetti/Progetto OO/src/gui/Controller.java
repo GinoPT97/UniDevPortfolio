@@ -13,15 +13,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
-import DAOInterface.ArticoliJDBC;
-import DAOInterface.ClienteJDBC;
-import DAOInterface.DipendenteJDBC;
-import DAOInterface.OrdiniJDBC;
-import DAOInterface.ProdottoJDBC;
-import DAOInterface.TesseraJDBC;
-import DBConfiguration.ConnectionException;
-import DBConfiguration.DBConfiguration;
-import DBConfiguration.DBConnection;
 import Model.Articoli;
 import Model.Cliente;
 import Model.Dipendente;
@@ -33,6 +24,15 @@ import daoimplementation.DipendenteImpl;
 import daoimplementation.OrdiniImpl;
 import daoimplementation.ProdottoImpl;
 import daoimplementation.Tesseraimpl;
+import daointerface.ArticoliJDBC;
+import daointerface.ClienteJDBC;
+import daointerface.DipendenteJDBC;
+import daointerface.OrdiniJDBC;
+import daointerface.ProdottoJDBC;
+import daointerface.TesseraJDBC;
+import dbconfiguration.ConnectionException;
+import dbconfiguration.DBConfiguration;
+import dbconfiguration.DBConnection;
 import Model.ImagePanel;
 import java.awt.Image;
 
@@ -329,7 +329,7 @@ public class Controller {
 
     // Popola il modello della tabella con i dati dei clienti
     public void ClientSearch(DefaultTableModel model) throws SQLException {
-        List<Cliente> clienti = artjdbc.SearchClient();
+        List<Cliente> clienti = artjdbc.searchClient();
         populateTable(clienti, model, c -> new Object[]{
                 c.getNome(),
                 c.getCognome(),

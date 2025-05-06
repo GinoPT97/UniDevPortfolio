@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import DAOInterface.ProdottoJDBC;
 import Model.Prodotto;
+import daointerface.ProdottoJDBC;
 
 public class ProdottoImpl implements ProdottoJDBC {
     private Connection connection;

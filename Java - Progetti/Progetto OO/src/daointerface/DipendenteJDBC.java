@@ -1,8 +1,7 @@
-package DAOInterface;
+package daointerface;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import Model.Dipendente;
@@ -12,9 +11,9 @@ public interface DipendenteJDBC {
 
 	public boolean updatedipendente(Dipendente dipendente) throws SQLException;
 
-	public boolean verifyID(String ID) throws SQLException;
+	public boolean verifyID(String id) throws SQLException;
 
-	public ArrayList<Dipendente> getAllDip() throws SQLException;
+	public List<Dipendente> getAllDip() throws SQLException;
 
 	public Dipendente getOneDip(String id) throws SQLException;
 

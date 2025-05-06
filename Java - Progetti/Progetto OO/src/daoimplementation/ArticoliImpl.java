@@ -7,15 +7,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import DAOInterface.ArticoliJDBC;
 import Model.Articoli;
 import Model.Cliente;
+import daointerface.ArticoliJDBC;
 
 public class ArticoliImpl implements ArticoliJDBC {
 
     private final Connection connection;
 
-    // Costruttore
     public ArticoliImpl(Connection connection) {
         this.connection = connection;
     }
@@ -24,13 +23,13 @@ public class ArticoliImpl implements ArticoliJDBC {
     public boolean newordine(Articoli articoli) throws SQLException {
         String query = "INSERT INTO articoliordine (CodOrdine, CodProdotto, Prezzo, NumeroPunti, NumeroArticoli, Categoria, CodCliente) VALUES (CAST(? AS INTEGER), CAST(? AS INTEGER), ?, ?, ?, CAST(? AS TIPOLOGIA), ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, Integer.parseInt(articoli.getCodOrdine())); // Convert codOrdine to integer
-            stmt.setInt(2, Integer.parseInt(articoli.getCodProdotto())); // Convert codProdotto to integer
+            stmt.setInt(1, Integer.parseInt(articoli.getCodOrdine()));
+            stmt.setInt(2, Integer.parseInt(articoli.getCodProdotto()));
             stmt.setDouble(3, articoli.getPrezzo());
             stmt.setDouble(4, articoli.getNumPunti());
             stmt.setInt(5, articoli.getNumeroArticoli());
-            stmt.setString(6, articoli.getCategoria()); // Ensure categoria matches the TIPOLOGIA enum values
-            stmt.setInt(7, articoli.getCodCliente()); // Add codCliente
+            stmt.setString(6, articoli.getCategoria());
+            stmt.setInt(7, articoli.getCodCliente());
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
@@ -41,8 +40,7 @@ public class ArticoliImpl implements ArticoliJDBC {
         }
     }
 
-    @Override
-    public ArrayList<Cliente> SearchClient() throws SQLException {
+    public ArrayList<Cliente> searchClient() throws SQLException {
         ArrayList<Cliente> clienti = new ArrayList<>();
         String query = """
                 SELECT C.codcliente, C.nome, C.cognome, AO.categoria, SUM(AO.numeropunti) AS total_punti
@@ -57,11 +55,10 @@ public class ArticoliImpl implements ArticoliJDBC {
             while (rs.next()) {
                 clienti.add(new Cliente(
                         null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null,
-                        new Articoli(null, null, 0.0, rs.getDouble("total_punti"), 0, rs.getString("categoria"), rs.getInt("codcliente")) // Fix constructor
+                        new Articoli(null, null, 0.0, rs.getDouble("total_punti"), 0, rs.getString("categoria"), rs.getInt("codcliente"))
                 ));
             }
         }
         return clienti;
     }
 }
-

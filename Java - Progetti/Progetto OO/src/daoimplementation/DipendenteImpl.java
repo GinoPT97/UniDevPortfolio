@@ -9,8 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import DAOInterface.DipendenteJDBC;
 import Model.Dipendente;
+import daointerface.DipendenteJDBC;
 
 public class DipendenteImpl implements DipendenteJDBC {
     private PreparedStatement setNewDip, updateDip, verifyId, getOneDip, getDipVendite, getDipIntroiti;
