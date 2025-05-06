@@ -6,8 +6,8 @@ public class Ordine {
 	private String codordine;
 	private Date datacquisto;
 	private double prezzotot;
-	private int idct; // Modificato da String a int
-	private int iddip; // Modificato da String a int
+	private int idct;
+	private int iddip;
 
 	public Ordine(String codordine, Date datacquisto, double prezzotot, int idct, int iddip) {
 		this.codordine = codordine;

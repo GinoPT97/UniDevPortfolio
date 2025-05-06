@@ -7,7 +7,7 @@ public class Articoli {
 	private double numPunti;
 	private int numeroArticoli;
 	private String categoria;
-	private int codCliente; // New field
+	private int codCliente; 
 
 	public Articoli(String codOrdine, String codProdotto, double prezzo, double numPunti, int numeroArticoli, String categoria, int codCliente) {
 		this.codOrdine = codOrdine;
@@ -16,7 +16,7 @@ public class Articoli {
 		this.numPunti = numPunti;
 		this.numeroArticoli = numeroArticoli;
 		this.categoria = categoria;
-		this.codCliente = codCliente; // Initialize new field
+		this.codCliente = codCliente;
 	}
 
 	public String getCodOrdine() {
