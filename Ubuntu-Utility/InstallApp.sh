@@ -28,7 +28,8 @@ echo "Installazione dei pacchetti: ${packages[*]}"
 sudo apt install -y "${packages[@]}"
 
 sudo apt install google-android-emulator-installer
-
+sudo apt update
+sudo apt install hplip hplip-gui
 
 git lfs install
 
