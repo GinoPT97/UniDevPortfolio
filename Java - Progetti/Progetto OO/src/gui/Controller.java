@@ -212,7 +212,7 @@ public class Controller {
 
     public void connect() throws SQLException {
         try {
-            dbconn = DBConnection.getInstance(true);
+            dbconn = DBConnection.getInstance();
             connection = dbconn.getConnection();
             config = new DBConfiguration(connection);
             // Metodi per la definizione del DB:

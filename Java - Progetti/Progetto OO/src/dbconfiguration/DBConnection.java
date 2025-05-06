@@ -12,7 +12,7 @@ public class DBConnection {
     private final String LOCAL_USERNAME = "postgres";
     private final String LOCAL_PASSWORD = "postgres";
 
-    private DBConnection(boolean useSupabase) throws SQLException {
+    private DBConnection() throws SQLException {
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(LOCAL_URL, LOCAL_USERNAME, LOCAL_PASSWORD);
@@ -25,12 +25,10 @@ public class DBConnection {
         return connection;
     }
 
-    public static DBConnection getInstance(boolean useSupabase) throws SQLException {
+    public static DBConnection getInstance() throws SQLException {
         if (instance == null || instance.getConnection().isClosed()) {
-            instance = new DBConnection(useSupabase);
+            instance = new DBConnection();
         }
         return instance;
     }
 }
-
-
