@@ -1,4 +1,4 @@
-package DAOImplementation;
+package daoimplementation;
 
 import java.sql.Connection;
 import java.sql.Date;

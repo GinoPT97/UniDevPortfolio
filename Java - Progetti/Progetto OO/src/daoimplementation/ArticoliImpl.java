@@ -1,4 +1,4 @@
-package DAOImplementation;
+package daoimplementation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import DAOInterface.ArticoliJDBC;
 import Model.Articoli;
@@ -18,7 +16,7 @@ public class ArticoliImpl implements ArticoliJDBC {
     private final Connection connection;
 
     // Costruttore
-    public ArticoliImpl(Connection connection) throws SQLException {
+    public ArticoliImpl(Connection connection) {
         this.connection = connection;
     }
 

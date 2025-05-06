@@ -1,12 +1,10 @@
-package DAOImplementation;
+package daoimplementation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import DAOInterface.TesseraJDBC;
 import Model.Cliente;
@@ -14,7 +12,6 @@ import Model.Tessera;
 
 public class Tesseraimpl implements TesseraJDBC {
 
-    private static final Logger LOGGER = Logger.getLogger(Tesseraimpl.class.getName());
     private PreparedStatement newtesseraStmt;
     private PreparedStatement getpuntitStmt;
     private PreparedStatement alltesseraStmt;

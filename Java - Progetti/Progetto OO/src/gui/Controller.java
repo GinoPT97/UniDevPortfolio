@@ -13,12 +13,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
-import DAOImplementation.ArticoliImpl;
-import DAOImplementation.Clienteimpl;
-import DAOImplementation.DipendenteImpl;
-import DAOImplementation.OrdiniImpl;
-import DAOImplementation.ProdottoImpl;
-import DAOImplementation.Tesseraimpl;
 import DAOInterface.ArticoliJDBC;
 import DAOInterface.ClienteJDBC;
 import DAOInterface.DipendenteJDBC;
@@ -33,6 +27,12 @@ import Model.Cliente;
 import Model.Dipendente;
 import Model.Ordine;
 import Model.Prodotto;
+import daoimplementation.ArticoliImpl;
+import daoimplementation.Clienteimpl;
+import daoimplementation.DipendenteImpl;
+import daoimplementation.OrdiniImpl;
+import daoimplementation.ProdottoImpl;
+import daoimplementation.Tesseraimpl;
 import Model.ImagePanel;
 import java.awt.Image;
 
