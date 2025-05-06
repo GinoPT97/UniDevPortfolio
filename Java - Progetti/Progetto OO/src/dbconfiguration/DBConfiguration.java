@@ -30,15 +30,17 @@ public class DBConfiguration {
         if (connectionExists()) {
             try (Statement st = connection.createStatement()) {
                 if (!tableExists("cliente")) {
-                    String sql = "CREATE TABLE IF NOT EXISTS cliente(\n"
-                            + " codcliente SERIAL PRIMARY KEY,\n"
-                            + " nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),\n"
-                            + " cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),\n"
-                            + " codicefiscale CHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),\n "
-                            + " indirizzo VARCHAR(255) NOT NULL,\n"
-                            + " telefono VARCHAR(20) CHECK(telefono ~* '^[0-9+ ]+$'),\n"
-                            + " email VARCHAR(255) NOT NULL CHECK(email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$')\n "
-                            + " );";
+                    String sql = """
+                            CREATE TABLE IF NOT EXISTS cliente(
+                                codcliente SERIAL PRIMARY KEY,
+                                nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),
+                                cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),
+                                codicefiscale VARCHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),
+                                indirizzo VARCHAR(255) NOT NULL,
+                                telefono VARCHAR(20) CHECK(telefono ~* '^[0-9+ ]+$'),
+                                email VARCHAR(255) NOT NULL CHECK(email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$')
+                            );
+                            """;
 
                     result = st.executeUpdate(sql);
                 } else {
@@ -285,7 +287,7 @@ public class DBConfiguration {
                     + "('22223','andrea','verdi','HHHHHH22H22H222H','via milano','1234567890','andrea@arte.it'),"
                     + "('33334','giuseppe','bianchi','KKKKKK88K88K888K','via torino','1234567890','giuseppe@arte.it'),"
                     + "('44445','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it'),"
-                    + "('00000','admin','administrator','ADMIN000ADMIN000A','Admin Address','0000000000','admin@company.com') "
+                    + "('00000','admin','administrator','ADMINA00A00A000A','Admin Address','0000000000','admin@company.com') "
                     + "ON CONFLICT (coddipendente) DO NOTHING;";
             result += st.executeUpdate(sqlDipendente);
 
