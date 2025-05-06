@@ -11,7 +11,6 @@ import javax.swing.table.TableRowSorter;
 import Model.Cliente; // Aggiungi l'importazione mancante
 
 public class VisioneClienteFrame extends JFrame {
-    private JPanel contentPane;
     private JTable table;
     private JButton backbutton;
     private JButton addbutton;
@@ -31,7 +30,7 @@ public class VisioneClienteFrame extends JFrame {
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-        contentPane = new JPanel(new BorderLayout());
+        JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
 

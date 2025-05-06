@@ -18,20 +18,17 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 public class DipendenteFrame extends JFrame {
-    private JPanel contentPane;
     private JButton logoututton;
     private JButton clientebutton;
     private JButton ordineutton;
-    private JLabel titlelab;
     private JButton searchbutton;
-    private JPanel buttonpanel;
     private JButton prodButton;
 
     public void elementi(JPanel titlePanel) {
         // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 450);
-        contentPane = new JPanel();
+        JPanel contentPane = new JPanel(); 
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(0, 0));
@@ -39,7 +36,7 @@ public class DipendenteFrame extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello del titolo con sfondo arancione
-        titlelab = new JLabel("Dipendenti Point", SwingConstants.CENTER);
+        JLabel titlelab = new JLabel("Dipendenti Point", SwingConstants.CENTER); // Declared locally
         titlelab.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlelab.setForeground(Color.WHITE);
         titlePanel.add(titlelab, BorderLayout.CENTER);
@@ -51,7 +48,7 @@ public class DipendenteFrame extends JFrame {
         titlePanel.add(logoututton, BorderLayout.SOUTH);
 
         // Pannello per i bottoni centrati
-        buttonpanel = new JPanel();
+        JPanel buttonpanel = new JPanel(); // Declared locally
         contentPane.add(buttonpanel, BorderLayout.CENTER);
         buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS));
 

@@ -11,7 +11,6 @@ import javax.swing.table.TableRowSorter;
 import Model.Dipendente;
 
 public class VisioneDipendentiFrame extends JFrame {
-    private JPanel contentPane;
     private JTable table;
     private JButton backbutton;
     private JButton addbutton;
@@ -31,7 +30,7 @@ public class VisioneDipendentiFrame extends JFrame {
         setBounds(100, 100, 850, 500);
         setLocationRelativeTo(null);
 
-        contentPane = new JPanel(new BorderLayout());
+        JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
 

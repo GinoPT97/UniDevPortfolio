@@ -9,12 +9,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 public class VisioneOrdineFrame extends JFrame {
-    private JPanel contentPane;
     private JTable table;
-    private JScrollPane scrollPane;
-    private JPanel titlepanel;
     private JButton backbutton;
-    private JLabel titlelabel;
     private JButton ordinebutton;
     private JButton searchbutton;
     private JTextField searchtf;
@@ -31,21 +27,21 @@ public class VisioneOrdineFrame extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
         setLocationRelativeTo(null);
 
-        contentPane = new JPanel(new BorderLayout());
+        JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
 
-        titlepanel = new JPanel();
+        JPanel titlepanel = new JPanel();
         titlepanel.setBackground(new Color(0, 139, 139));
         titlepanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.add(titlepanel, BorderLayout.NORTH);
 
-        titlelabel = new JLabel("Visualizzazione Ordini");
+        JLabel titlelabel = new JLabel("Visualizzazione Ordini");
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlelabel.setForeground(Color.WHITE);
         titlepanel.add(titlelabel);
 
-        scrollPane = new JScrollPane();
+        JScrollPane scrollPane = new JScrollPane();
         contentPane.add(scrollPane, BorderLayout.CENTER);
 
         table = new JTable(c.ordModel);

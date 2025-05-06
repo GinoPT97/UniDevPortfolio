@@ -21,14 +21,16 @@ import javax.swing.SwingConstants;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 
 public class LoginFrame extends JFrame {
     private JPanel contentPane;
-    private JButton logbutt, clearbutt;
+    private JButton logbutt;
+    private JButton clearbutt;
     private JTextField idtf;
 
     private void elementi(JPanel titlePanel) {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
         setBounds(100, 100, 700, 450);
         setLocationRelativeTo(null);

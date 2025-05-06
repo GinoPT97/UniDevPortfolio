@@ -11,7 +11,6 @@ import javax.swing.table.TableRowSorter;
 import Model.Prodotto;
 
 public class VisioneProdottiFrame extends JFrame {
-    private JPanel contentPane;
     private JTable table;
     private JButton backbutton;
     private JButton addbutton;
@@ -31,7 +30,7 @@ public class VisioneProdottiFrame extends JFrame {
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-        contentPane = new JPanel(new BorderLayout());
+        JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
 
