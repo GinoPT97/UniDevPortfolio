@@ -5,8 +5,10 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 public class DBConfiguration {
+    private static final Logger logger = Logger.getLogger(DBConfiguration.class.getName());
     private Connection connection = null;
 
     public DBConfiguration(Connection connection) {
@@ -14,12 +16,12 @@ public class DBConfiguration {
     }
 
     private boolean connectionExists() {
-        return !(connection == null);
+        return connection != null;
     }
 
-    private boolean tableExists(String table_name) throws SQLException {
+    private boolean tableExists(String tableName) throws SQLException {
         DatabaseMetaData metadata = connection.getMetaData();
-        try (ResultSet tables = metadata.getTables(null, null, table_name, null)) {
+        try (ResultSet tables = metadata.getTables(null, null, tableName, null)) {
             return tables.next();
         }
     }
@@ -28,7 +30,7 @@ public class DBConfiguration {
         int result = -1;
 
         if (connectionExists()) {
-            try (Statement st = connection.createStatement()) {
+            try (Statement statement = connection.createStatement()) {
                 if (!tableExists("cliente")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS cliente(
@@ -42,12 +44,12 @@ public class DBConfiguration {
                             );
                             """;
 
-                    result = st.executeUpdate(sql);
+                    result = statement.executeUpdate(sql);
                 } else {
-                    System.out.println("Table Cliente already exists!");
+                    logger.info("Table Cliente already exists!");
                 }
             } catch (SQLException ex) {
-                System.out.println("SQL Exception in creation table Cliente : " + ex);
+                logger.severe("SQL Exception in creation table Cliente: " + ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -60,7 +62,7 @@ public class DBConfiguration {
         int result = -1;
 
         if (connectionExists()) {
-            try (Statement st = connection.createStatement()) {
+            try (Statement statement = connection.createStatement()) {
                 if (!tableExists("dipendente")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS dipendente(
@@ -74,12 +76,12 @@ public class DBConfiguration {
                             );
                             """;
 
-                    result = st.executeUpdate(sql);
+                    result = statement.executeUpdate(sql);
                 } else {
-                    System.out.println("Table Dipendente already exists!");
+                    logger.info("Table Dipendente already exists!");
                 }
             } catch (SQLException ex) {
-                System.out.println("SQL Exception in creation table Dipendente : " + ex);
+                logger.severe("SQL Exception in creation table Dipendente: " + ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -92,7 +94,7 @@ public class DBConfiguration {
         int result = -1;
 
         if (connectionExists()) {
-            try (Statement st = connection.createStatement()) {
+            try (Statement statement = connection.createStatement()) {
                 if (!tableExists("tessera")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS tessera(
@@ -106,12 +108,12 @@ public class DBConfiguration {
                             );
                             """;
 
-                    result = st.executeUpdate(sql);
+                    result = statement.executeUpdate(sql);
                 } else {
-                    System.out.println("Table Tessera already exists!");
+                    logger.info("Table Tessera already exists!");
                 }
             } catch (SQLException ex) {
-                System.out.println("SQL Exception in creation table Tessera : " + ex);
+                logger.severe("SQL Exception in creation table Tessera: " + ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -124,7 +126,7 @@ public class DBConfiguration {
         int result = -1;
 
         if (connectionExists()) {
-            try (Statement st = connection.createStatement()) {
+            try (Statement statement = connection.createStatement()) {
                 if (!tableExists("prodotto")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS prodotto(
@@ -148,12 +150,12 @@ public class DBConfiguration {
                             );
                             """;
 
-                    result = st.executeUpdate(sql);
+                    result = statement.executeUpdate(sql);
                 } else {
-                    System.out.println("Table Prodotto already exists!");
+                    logger.info("Table Prodotto already exists!");
                 }
             } catch (SQLException ex) {
-                System.out.println("SQL Exception in creation table Prodotto : " + ex);
+                logger.severe("SQL Exception in creation table Prodotto: " + ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -166,7 +168,7 @@ public class DBConfiguration {
         int result = -1;
 
         if (connectionExists()) {
-            try (Statement st = connection.createStatement()) {
+            try (Statement statement = connection.createStatement()) {
                 if (!tableExists("ordine")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS ordine(
@@ -186,12 +188,12 @@ public class DBConfiguration {
                             );
                             """;
 
-                    result = st.executeUpdate(sql);
+                    result = statement.executeUpdate(sql);
                 } else {
-                    System.out.println("Table Ordine already exists!");
+                    logger.info("Table Ordine already exists!");
                 }
             } catch (SQLException ex) {
-                System.out.println("SQL Exception in creation table Ordine : " + ex);
+                logger.severe("SQL Exception in creation table Ordine: " + ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -204,7 +206,7 @@ public class DBConfiguration {
         int result = -1;
 
         if (connectionExists()) {
-            try (Statement st = connection.createStatement()) {
+            try (Statement statement = connection.createStatement()) {
                 if (!tableExists("articoliordine")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS articoliordine(
@@ -225,12 +227,12 @@ public class DBConfiguration {
                             );
                             """;
 
-                    result = st.executeUpdate(sql);
+                    result = statement.executeUpdate(sql);
                 } else {
-                    System.out.println("Table ArticoliOrdine already exists!");
+                    logger.info("Table ArticoliOrdine already exists!");
                 }
             } catch (SQLException ex) {
-                System.out.println("SQL Exception in creation table ArticoliOrdine : " + ex);
+                logger.severe("SQL Exception in creation table ArticoliOrdine: " + ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -243,11 +245,11 @@ public class DBConfiguration {
         int result = -1;
 
         if (connectionExists()) {
-            try (Statement st = connection.createStatement()) {
+            try (Statement statement = connection.createStatement()) {
                 String sql = "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'tipologia') THEN CREATE TYPE TIPOLOGIA AS ENUM('Ortofrutticoli','Latticini','Inscatolati','Farinacei'); END IF; END $$;";
-                result = st.executeUpdate(sql);
+                result = statement.executeUpdate(sql);
             } catch (SQLException ex) {
-                System.out.println("SQL Exception in creation type tipologia: " + ex);
+                logger.severe("SQL Exception in creation type tipologia: " + ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -256,34 +258,34 @@ public class DBConfiguration {
         return result;
     }
 
-    public int FromatTables() throws ConnectionException {
+    public int formatTables() throws ConnectionException {
         int result = 0;
 
         if (!connectionExists()) {
             throw new ConnectionException("A connection must exist!");
         }
 
-        try (Statement st = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             String sqlDeleteArticoliordine = "DELETE FROM Articoliordine;";
-            result += st.executeUpdate(sqlDeleteArticoliordine);
+            result += statement.executeUpdate(sqlDeleteArticoliordine);
 
             String sqlDeleteOrdine = "DELETE FROM Ordine;";
-            result += st.executeUpdate(sqlDeleteOrdine);
+            result += statement.executeUpdate(sqlDeleteOrdine);
 
             String sqlDeleteProdotto = "DELETE FROM Prodotto;";
-            result += st.executeUpdate(sqlDeleteProdotto);
+            result += statement.executeUpdate(sqlDeleteProdotto);
 
             String sqlDeleteTessera = "DELETE FROM Tessera;";
-            result += st.executeUpdate(sqlDeleteTessera);
+            result += statement.executeUpdate(sqlDeleteTessera);
 
             String sqlDeleteDipendente = "DELETE FROM Dipendente;";
-            result += st.executeUpdate(sqlDeleteDipendente);
+            result += statement.executeUpdate(sqlDeleteDipendente);
 
             String sqlDeleteCliente = "DELETE FROM Cliente;";
-            result += st.executeUpdate(sqlDeleteCliente);
+            result += statement.executeUpdate(sqlDeleteCliente);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Error while formatting tables: " + e);
         }
 
         return result;
@@ -296,7 +298,7 @@ public class DBConfiguration {
             throw new ConnectionException("A connection must exist!");
         }
 
-        try (Statement st = connection.createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             // Inserimento dati nella tabella cliente
             String sqlCliente = "INSERT INTO cliente (codcliente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
                     + "('11111','aldo','marzante','BBBBBB11B11B111B', 'Via Don Matteo','1234567890','aldo@arte.it'),"
@@ -308,7 +310,7 @@ public class DBConfiguration {
                     + "('77777','simone','bianchi','UUUUUU77U77U777U','Via Don Giuseppe','1234567890','simone@arte.it'),"
                     + "('88888','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it') "
                     + "ON CONFLICT (codcliente) DO NOTHING;";
-            result += st.executeUpdate(sqlCliente);
+            result += statement.executeUpdate(sqlCliente);
 
             // Inserimento dati nella tabella dipendente
             String sqlDipendente = "INSERT INTO dipendente (coddipendente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
@@ -321,7 +323,7 @@ public class DBConfiguration {
                     + "('44445','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it'),"
                     + "('00000','admin','administrator','ADMINA00A00A000A','Admin Address','0000000000','admin@company.com') "
                     + "ON CONFLICT (coddipendente) DO NOTHING;";
-            result += st.executeUpdate(sqlDipendente);
+            result += statement.executeUpdate(sqlDipendente);
 
             // Inserimento dati nella tabella tessera
             String sqlTessera = "INSERT INTO tessera (codtessera, numeropunti, codcliente) VALUES "
@@ -334,7 +336,7 @@ public class DBConfiguration {
                     + "('55552','10','66666'),"
                     + "('33331','150','88888') "
                     + "ON CONFLICT (codtessera) DO NOTHING;";
-            result += st.executeUpdate(sqlTessera);
+            result += statement.executeUpdate(sqlTessera);
 
             // Inserimento dati nella tabella prodotto
             String sqlProdotto = "INSERT INTO prodotto (codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES "
@@ -347,7 +349,7 @@ public class DBConfiguration {
                     + "('77778', 'Tonno in scatola', 'Tonno al naturale in scatola', 3.50, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Inscatolati', 100),"
                     + "('88888', 'Farina', 'Farina di grano tenero tipo \"00\"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200) "
                     + "ON CONFLICT (codprodotto) DO NOTHING;";
-            result += st.executeUpdate(sqlProdotto);
+            result += statement.executeUpdate(sqlProdotto);
 
             // Inserimento dati nella tabella ordine
             String sqlOrdine = "INSERT INTO ordine (codordine, prezzototale, dataacquisto, codcliente, coddipendente) VALUES "
@@ -367,7 +369,7 @@ public class DBConfiguration {
                     + "('19193','65','2024-04-18','66666','33334'),"
                     + "('20204','55','2024-02-28','88888','79799') "
                     + "ON CONFLICT (codordine) DO NOTHING;";
-            result += st.executeUpdate(sqlOrdine);
+            result += statement.executeUpdate(sqlOrdine);
 
             // Inserimento dati nella tabella articoliordine
             String sqlArticoliOrdine = "INSERT INTO articoliordine (CodOrdine, CodProdotto, CodCliente, prezzo, numeropunti, numeroarticoli, categoria) VALUES "
@@ -387,10 +389,10 @@ public class DBConfiguration {
                     + "('19193','77778','66666', '3.50', '2', '30', 'Inscatolati'),"
                     + "('20204','33334','88888', '2.00', '5', '12', 'Inscatolati') "
                     + "ON CONFLICT DO NOTHING;";
-            result += st.executeUpdate(sqlArticoliOrdine);
+            result += statement.executeUpdate(sqlArticoliOrdine);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.severe("Error while populating database: " + e);
         }
 
         return result;
