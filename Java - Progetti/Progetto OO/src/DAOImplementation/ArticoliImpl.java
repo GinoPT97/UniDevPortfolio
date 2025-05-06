@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import DAOInterface.ArticoliJDBC;
 import Model.Articoli;
@@ -13,22 +15,40 @@ import Model.Cliente;
 
 public class ArticoliImpl implements ArticoliJDBC {
 
-    private final PreparedStatement newArticoli;
     private final Connection connection;
+    private static final Logger LOGGER = Logger.getLogger(ArticoliImpl.class.getName()); // Logger
 
     // Costruttore
     public ArticoliImpl(Connection connection) throws SQLException {
         this.connection = connection;
-        this.newArticoli = connection.prepareStatement(
-                "INSERT INTO articoliordine (codOrdine, codProdotto, prezzo, numPunti, numeroArticoli, categoria) VALUES (?, ?, ?, ?, ?, ?)");
     }
 
     @Override
     public boolean newordine(Articoli articoli) throws SQLException {
-        boolean result;
-        setArticoliPreparedStatement(newArticoli, articoli);
-        result = newArticoli.executeUpdate() > 0;
-        return result;
+        LOGGER.info("Inizio inserimento articoli ordine...");
+        LOGGER.info("Articoli: " + articoli);
+
+        String query = "INSERT INTO articoliordine (CodOrdine, CodProdotto, Prezzo, NumeroPunti, NumeroArticoli, Categoria, CodCliente) VALUES (CAST(? AS INTEGER), CAST(? AS INTEGER), ?, ?, ?, CAST(? AS TIPOLOGIA), ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, Integer.parseInt(articoli.getCodOrdine())); // Convert codOrdine to integer
+            stmt.setInt(2, Integer.parseInt(articoli.getCodProdotto())); // Convert codProdotto to integer
+            stmt.setDouble(3, articoli.getPrezzo());
+            stmt.setDouble(4, articoli.getNumPunti());
+            stmt.setInt(5, articoli.getNumeroArticoli());
+            stmt.setString(6, articoli.getCategoria()); // Ensure categoria matches the TIPOLOGIA enum values
+            stmt.setInt(7, articoli.getCodCliente()); // Add codCliente
+
+            int rowsInserted = stmt.executeUpdate();
+            LOGGER.info("Righe inserite: " + rowsInserted);
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore durante l'inserimento degli articoli ordine: " + e.getMessage(), e);
+            throw e;
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.SEVERE, "Errore di conversione: codOrdine o codProdotto non è un intero valido. Valori: " +
+                    articoli.getCodOrdine() + ", " + articoli.getCodProdotto(), e);
+            throw new SQLException("Errore di conversione: codOrdine o codProdotto non è un intero valido.", e);
+        }
     }
 
     @Override
@@ -47,21 +67,11 @@ public class ArticoliImpl implements ArticoliJDBC {
             while (rs.next()) {
                 clienti.add(new Cliente(
                         null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null,
-                        new Articoli(null, null, 0.0, rs.getDouble("total_punti"), 0, rs.getString("categoria"))
+                        new Articoli(null, null, 0.0, rs.getDouble("total_punti"), 0, rs.getString("categoria"), rs.getInt("codcliente")) // Fix constructor
                 ));
             }
         }
         return clienti;
-    }
-
-    // Metodo di supporto per riempire il PreparedStatement
-    private void setArticoliPreparedStatement(PreparedStatement ps, Articoli articoli) throws SQLException {
-        ps.setString(1, articoli.getCodOrdine());
-        ps.setString(2, articoli.getCodProdotto());
-        ps.setDouble(3, articoli.getPrezzo());
-        ps.setDouble(4, articoli.getNumPunti());
-        ps.setInt(5, articoli.getNumeroArticoli());
-        ps.setString(6, articoli.getCategoria());
     }
 }
 

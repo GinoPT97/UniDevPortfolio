@@ -267,8 +267,13 @@ public class CarrelloFrame extends JFrame {
 
     private void creaOrdine(Controller c) {
         try {
+            System.out.println("Inizio creazione ordine...");
             java.sql.Date sd = java.sql.Date.valueOf(dataod.toString()); // Assicurati che la data sia correttamente formattata
+            System.out.println("Data ordine: " + sd);
+
             String clienteSelezionato = (String) clienteComboBox.getSelectedItem();
+            System.out.println("Cliente selezionato: " + clienteSelezionato);
+
             Integer idCliente = null;
 
             for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
@@ -279,12 +284,15 @@ public class CarrelloFrame extends JFrame {
 
                 if (clienteSelezionato.equals(nomeCognome)) {
                     idCliente = Integer.parseInt(idClienteTemp);
+                    System.out.println("ID cliente trovato: " + idCliente);
                     break;
                 }
             }
 
             if (idCliente != null) {
                 int idDipendente = Integer.parseInt(c.iddip);
+                System.out.println("ID dipendente: " + idDipendente);
+
                 if (!c.verifyid(String.valueOf(idDipendente))) {
                     JOptionPane.showMessageDialog(null, "Dipendente non valido!");
                     System.err.println("Dipendente non valido!");
@@ -292,22 +300,38 @@ public class CarrelloFrame extends JFrame {
                 }
 
                 double totaleOrdine = totale();
+                System.out.println("Totale ordine: " + totaleOrdine);
 
                 c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente, idDipendente));
+                System.out.println("Ordine inserito nel database.");
 
                 for (int j = 0; j < ordModel.getRowCount(); j++) {
                     int quantita = Integer.parseInt(ordModel.getValueAt(j, 4).toString());
                     String codiceProdotto = ordModel.getValueAt(j, 0).toString();
                     double prezzoUnitario = Double.parseDouble(ordModel.getValueAt(j, 2).toString());
+                    String categoria = c.prodModel.getValueAt(j, 9).toString(); // Fetch category from prodModel to ensure correctness
 
+                    System.out.println("Aggiornamento scorte per prodotto: " + codiceProdotto + ", quantità: " + quantita);
                     c.upscorte(quantita, codiceProdotto);
-                    Articoli articoli = new Articoli(c.CurrOrd(), codiceProdotto, prezzoUnitario, prezzoUnitario * quantita, quantita, ordModel.getValueAt(j, 3).toString());
+
+                    Articoli articoli = new Articoli(
+                        c.CurrOrd(),
+                        codiceProdotto,
+                        prezzoUnitario,
+                        prezzoUnitario * quantita,
+                        quantita,
+                        categoria,
+                        idCliente // Pass codCliente value
+                    );
+                    System.out.println("Inserimento articoli ordine: " + articoli);
                     c.newarticoli(articoli);
                 }
 
-                c.uppunti(String.valueOf(idCliente), totaleOrdine); // Assicurati che l'ID cliente sia passato come stringa
+                System.out.println("Aggiornamento punti cliente: " + idCliente + ", totale ordine: " + totaleOrdine);
+                c.uppunti(String.valueOf(idCliente), totaleOrdine);
+
                 JOptionPane.showMessageDialog(null, "Ordine aggiunto");
-                System.out.println("Ordine aggiunto");
+                System.out.println("Ordine aggiunto con successo.");
                 clean();
             } else {
                 JOptionPane.showMessageDialog(null, "Cliente non trovato!");
@@ -315,7 +339,8 @@ public class CarrelloFrame extends JFrame {
             }
         } catch (SQLException e1) {
             JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-            System.err.println("Errore!\nTipo di errore: " + e1.getMessage());
+            System.err.println("Errore SQL: " + e1.getMessage());
+            e1.printStackTrace();
         } catch (IllegalArgumentException e2) {
             JOptionPane.showMessageDialog(null, "Data non valida!", "Errore", JOptionPane.ERROR_MESSAGE);
             System.err.println("Data non valida!");

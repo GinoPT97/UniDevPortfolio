@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import DAOInterface.TesseraJDBC;
 import Model.Cliente;
@@ -12,17 +14,19 @@ import Model.Tessera;
 
 public class Tesseraimpl implements TesseraJDBC {
 
+    private static final Logger LOGGER = Logger.getLogger(Tesseraimpl.class.getName());
     private PreparedStatement newtesseraStmt;
     private PreparedStatement getpuntitStmt;
     private PreparedStatement alltesseraStmt;
-    private PreparedStatement uppuntiStmt;
+
+    private Connection connection;
 
     public Tesseraimpl(Connection connection) throws SQLException {
+        this.connection = connection;
         // Preparazione delle query
         newtesseraStmt = connection.prepareStatement("INSERT INTO tessera (numeropunti, codcliente) VALUES (?, ?)");
         getpuntitStmt = connection.prepareStatement("SELECT numeropunti FROM tessera WHERE codtessera = ?");
         alltesseraStmt = connection.prepareStatement("SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC");
-        uppuntiStmt = connection.prepareStatement("UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = ?");
     }
 
     @Override
@@ -70,11 +74,24 @@ public class Tesseraimpl implements TesseraJDBC {
     }
 
     @Override
-    public boolean updatepunti(String codcl, double x) throws SQLException {
-        double punti = (x * 10) / 100; // Calcolo dei punti in base al 10% dell'importo x
-        uppuntiStmt.setFloat(1, (float) punti); // Imposto i punti da aggiungere
-        uppuntiStmt.setString(2, codcl); // Imposto il codice cliente
-        return uppuntiStmt.executeUpdate() > 0; // Restituisce true se l'aggiornamento è andato a buon fine
+    public boolean updatepunti(String codCliente, double punti) throws SQLException {
+        LOGGER.info("Inizio aggiornamento punti cliente...");
+        LOGGER.info("CodCliente: " + codCliente + ", Punti: " + punti);
+
+        String query = "UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = CAST(? AS INTEGER)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setDouble(1, punti);
+            stmt.setInt(2, Integer.parseInt(codCliente)); // Ensure codCliente is cast to INTEGER
+            int rowsUpdated = stmt.executeUpdate();
+            LOGGER.info("Righe aggiornate: " + rowsUpdated);
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Errore durante l'aggiornamento dei punti cliente: " + e.getMessage(), e);
+            throw e;
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.SEVERE, "Errore di conversione: codCliente non è un intero valido. Valore: " + codCliente, e);
+            throw new SQLException("Errore di conversione: codCliente non è un intero valido.", e);
+        }
     }
 }
 

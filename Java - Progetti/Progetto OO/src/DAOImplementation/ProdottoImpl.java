@@ -14,7 +14,6 @@ public class ProdottoImpl implements ProdottoJDBC {
     private PreparedStatement setNewProdottoStmt;
     private PreparedStatement getAllProdottiStmt;
     private PreparedStatement updateProdottoStmt;
-    private PreparedStatement updateScorteStmt;
 
     public ProdottoImpl(Connection connection) {
         this.connection = connection;
@@ -29,7 +28,6 @@ public class ProdottoImpl implements ProdottoJDBC {
         this.updateProdottoStmt = connection.prepareStatement(
             "UPDATE prodotto SET nome=?, descrizione=?, prezzo=?, luogoprovenienza=?, dataraccolta=?, datamungitura=?, glutine=CAST(? AS BOOLEAN), datascadenza=?, categoria=CAST(? AS TIPOLOGIA), scorta=? WHERE codprodotto = ?"
         );
-        this.updateScorteStmt = connection.prepareStatement("UPDATE prodotto SET scorta = scorta - ? WHERE codprodotto = ?");
     }
 
     @Override
@@ -56,14 +54,21 @@ public class ProdottoImpl implements ProdottoJDBC {
     }
 
     @Override
-    public boolean updateScorte(int x, String codprod) throws SQLException {
-        initStatements(); // Inizializza le query preparate
-        updateScorteStmt.setInt(1, x);
-        updateScorteStmt.setString(2, codprod);
+    public boolean updateScorte(int quantita, String codiceProdotto) throws SQLException {
+        System.out.println("Inizio aggiornamento scorte...");
+        System.out.println("Quantità: " + quantita + ", Codice Prodotto: " + codiceProdotto);
 
-        boolean result = updateScorteStmt.executeUpdate() > 0;
-        closeStatements();
-        return result;
+        String query = "UPDATE prodotto SET scorta = scorta - ? WHERE codprodotto = CAST(? AS INTEGER)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, quantita);
+            stmt.setString(2, codiceProdotto); // Ensure codiceProdotto is cast to INTEGER in the query
+            int rowsUpdated = stmt.executeUpdate();
+            System.out.println("Righe aggiornate: " + rowsUpdated);
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            System.err.println("Errore durante l'aggiornamento delle scorte: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
@@ -155,9 +160,6 @@ public class ProdottoImpl implements ProdottoJDBC {
         }
         if (updateProdottoStmt != null) {
             updateProdottoStmt.close();
-        }
-        if (updateScorteStmt != null) {
-            updateScorteStmt.close();
         }
     }
 }

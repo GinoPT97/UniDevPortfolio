@@ -7,14 +7,16 @@ public class Articoli {
 	private double numPunti;
 	private int numeroArticoli;
 	private String categoria;
+	private int codCliente; // New field
 
-	public Articoli(String codOrdine, String codProdotto, double prezzo, double numPunti, int numeroArticoli, String categoria) {
+	public Articoli(String codOrdine, String codProdotto, double prezzo, double numPunti, int numeroArticoli, String categoria, int codCliente) {
 		this.codOrdine = codOrdine;
 		this.codProdotto = codProdotto;
 		this.prezzo = prezzo;
 		this.numPunti = numPunti;
 		this.numeroArticoli = numeroArticoli;
 		this.categoria = categoria;
+		this.codCliente = codCliente; // Initialize new field
 	}
 
 	public String getCodOrdine() {
@@ -65,8 +67,16 @@ public class Articoli {
 		this.categoria = categoria;
 	}
 
+	public int getCodCliente() {
+		return codCliente;
+	}
+
+	public void setCodCliente(int codCliente) {
+		this.codCliente = codCliente;
+	}
+
 	@Override
 	public String toString() {
-		return codOrdine + " " + codProdotto + " " + prezzo + " " + numPunti + " " + numeroArticoli + " " + categoria;
+		return codOrdine + " " + codProdotto + " " + prezzo + " " + numPunti + " " + numeroArticoli + " " + categoria + " " + codCliente;
 	}
 }
