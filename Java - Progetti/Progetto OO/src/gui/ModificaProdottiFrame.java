@@ -6,7 +6,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ItemEvent;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,7 +32,6 @@ import javax.swing.BorderFactory;
 import Model.Prodotto;
 
 public class ModificaProdottiFrame extends JFrame {
-    private JPanel contentPane;
     private String cod;
     private JTextField nometf;
     private JTextField provtf;
@@ -53,7 +51,7 @@ public class ModificaProdottiFrame extends JFrame {
         // Impostazioni base della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 650, 500); // Aumenta l'altezza della finestra
-        contentPane = new JPanel();
+        JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(0, 0));
@@ -85,6 +83,16 @@ public class ModificaProdottiFrame extends JFrame {
         categoriapanel.add(selbutton);
         elempanel.add(categoriapanel);
 
+        // Aggiungi l'azione per il bottone "Seleziona"
+        selbutton.addActionListener(event -> {
+            // Abilita o disabilita i campi in base alla categoria selezionata
+            int type = categoriacb.getSelectedIndex();
+            racctf.setEditable(type == 0);
+            mungtf.setEditable(type == 2);
+            scadtf.setEditable(type == 1);
+            glutcb.setEnabled(type == 3);
+        });
+
         // Pannello dei bottoni
         JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         updatebutton = creaButton("Inserisci", new Color(34, 139, 34));
@@ -106,7 +114,15 @@ public class ModificaProdottiFrame extends JFrame {
     }
 
     private JPanel createInputPanel(String labelText, JComponent inputComponent) {
-        return createInputPanel(labelText, inputComponent, true);
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel label = new JLabel(labelText);
+        panel.add(label);
+        boolean isTextField = inputComponent instanceof JTextField;
+        if (isTextField) {
+            ((JTextField) inputComponent).setEditable(true);
+        }
+        panel.add(inputComponent);
+        return panel;
     }
 
     private JPanel createInputPanel(String labelText, JComponent inputComponent, boolean editable) {
@@ -265,7 +281,7 @@ public class ModificaProdottiFrame extends JFrame {
         });
     }
 
-    public ModificaProdottiFrame(String title, Controller c) throws SQLException {
+    public ModificaProdottiFrame(String title, Controller c) {
         super(title);
         this.elementi();
         this.azioni(c);
