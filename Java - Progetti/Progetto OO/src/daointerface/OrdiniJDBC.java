@@ -3,7 +3,7 @@ package daointerface;
 import java.sql.SQLException;
 import java.util.List;
 
-import Model.Ordine;
+import model.Ordine;
 
 public interface OrdiniJDBC {
 	public boolean newordine(Ordine ordine) throws SQLException;

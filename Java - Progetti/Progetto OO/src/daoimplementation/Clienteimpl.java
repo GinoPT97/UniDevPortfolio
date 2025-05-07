@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import Model.Cliente;
 import daointerface.ClienteJDBC;
+import model.Cliente;
 
 public class Clienteimpl implements ClienteJDBC {
     private static final String CODCLIENTE = "codcliente"; // Define constant for "codcliente"
@@ -62,7 +62,7 @@ public class Clienteimpl implements ClienteJDBC {
         cercaCl.setString(3, codicefiscale);
         try (ResultSet rs = cercaCl.executeQuery()) {
             if (rs.next()) {
-                return rs.getString(CODCLIENTE); 
+                return rs.getString(CODCLIENTE);
             }
         }
         return null;

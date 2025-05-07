@@ -8,7 +8,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import Model.Cliente; // Aggiungi l'importazione mancante
+import model.Cliente;
 
 public class VisioneClienteFrame extends JFrame {
     private JTable table;

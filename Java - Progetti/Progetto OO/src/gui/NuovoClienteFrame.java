@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
-import Model.Cliente;
+import model.Cliente;
 
 public class NuovoClienteFrame extends JFrame {
     private JPanel contentPane;

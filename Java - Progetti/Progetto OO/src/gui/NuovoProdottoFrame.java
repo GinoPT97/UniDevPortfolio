@@ -24,10 +24,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+
+import model.Prodotto;
+
 import javax.swing.JComponent;
 import javax.swing.BorderFactory;
-
-import Model.Prodotto;
 
 public class NuovoProdottoFrame extends JFrame {
     private JPanel contentPane;

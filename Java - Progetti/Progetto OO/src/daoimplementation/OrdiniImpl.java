@@ -10,8 +10,8 @@ import java.util.Date;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-import Model.Ordine;
 import daointerface.OrdiniJDBC;
+import model.Ordine;
 
 public class OrdiniImpl implements OrdiniJDBC {
     private final Connection connection;

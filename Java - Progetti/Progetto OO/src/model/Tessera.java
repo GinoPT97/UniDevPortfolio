@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 public class Tessera {
 	private String codtessera;

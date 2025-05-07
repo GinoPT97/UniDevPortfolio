@@ -16,9 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.BorderFactory;
 
-import Model.Cliente;
+import model.Cliente;
+
+import javax.swing.BorderFactory;
 
 public class ModificaClienteFrame extends JFrame {
     private JPanel contentPane;

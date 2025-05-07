@@ -8,7 +8,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import Model.Prodotto;
+import model.Prodotto;
 
 public class VisioneProdottiFrame extends JFrame {
     private JTable table;

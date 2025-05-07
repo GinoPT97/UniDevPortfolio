@@ -5,8 +5,9 @@ import java.time.LocalDate;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import Model.Articoli;
-import Model.Ordine;
+
+import model.Articoli;
+import model.Ordine;
 
 public class CarrelloFrame extends JFrame {
     private static final String FONT_TAHOMA = "Tahoma";
@@ -24,7 +25,7 @@ public class CarrelloFrame extends JFrame {
     private JButton insertbutton;
     private JComboBox<String> categoriacb;
     private JComboBox<String> clienteComboBox;
-    private JTable prodottotable; 
+    private JTable prodottotable;
     private JTable ordinetable;
 
     public void elementi() {

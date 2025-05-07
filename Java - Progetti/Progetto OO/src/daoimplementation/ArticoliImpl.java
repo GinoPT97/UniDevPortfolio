@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import Model.Articoli;
-import Model.Cliente;
 import daointerface.ArticoliJDBC;
+import model.Articoli;
+import model.Cliente;
 
 public class ArticoliImpl implements ArticoliJDBC {
 

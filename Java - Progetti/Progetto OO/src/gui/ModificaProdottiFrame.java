@@ -26,10 +26,11 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
+
+import model.Prodotto;
+
 import javax.swing.JComponent;
 import javax.swing.BorderFactory;
-
-import Model.Prodotto;
 
 public class ModificaProdottiFrame extends JFrame {
     private String cod;

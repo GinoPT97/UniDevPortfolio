@@ -3,7 +3,7 @@ package daointerface;
 import java.sql.SQLException;
 import java.util.List;
 
-import Model.Tessera;
+import model.Tessera;
 
 public interface TesseraJDBC {
 	public boolean newtessera(String cliente) throws SQLException;

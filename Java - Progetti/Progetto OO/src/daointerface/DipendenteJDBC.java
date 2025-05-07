@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 
-import Model.Dipendente;
+import model.Dipendente;
 
 public interface DipendenteJDBC {
 	public boolean setNewDip(Dipendente dipendente) throws SQLException;

@@ -13,11 +13,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
-import Model.Articoli;
-import Model.Cliente;
-import Model.Dipendente;
-import Model.Ordine;
-import Model.Prodotto;
 import daoimplementation.ArticoliImpl;
 import daoimplementation.Clienteimpl;
 import daoimplementation.DipendenteImpl;
@@ -33,7 +28,13 @@ import daointerface.TesseraJDBC;
 import dbconfiguration.ConnectionException;
 import dbconfiguration.DBConfiguration;
 import dbconfiguration.DBConnection;
-import Model.ImagePanel;
+import model.Articoli;
+import model.Cliente;
+import model.Dipendente;
+import model.ImagePanel;
+import model.Ordine;
+import model.Prodotto;
+
 import java.awt.Image;
 
 public class Controller {
