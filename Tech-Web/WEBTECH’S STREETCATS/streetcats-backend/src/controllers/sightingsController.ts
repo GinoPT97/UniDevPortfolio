@@ -37,3 +37,31 @@ export const createSighting = async (req: Request, res: Response): Promise<void>
     res.status(500).json({ message: error instanceof Error ? error.message : 'Unknown error' });
   }
 };
+
+export const updateSighting = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const updatedSighting = await Sighting.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updatedSighting) {
+      res.status(404).json({ message: 'Avvistamento non trovato' });
+      return;
+    }
+    res.json(updatedSighting);
+  } catch (error) {
+    res.status(500).json({ message: 'Errore durante l\'aggiornamento dell\'avvistamento', error });
+  }
+};
+
+export const deleteSighting = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const deletedSighting = await Sighting.findByIdAndDelete(id);
+    if (!deletedSighting) {
+      res.status(404).json({ message: 'Avvistamento non trovato' });
+      return;
+    }
+    res.json({ message: 'Avvistamento eliminato con successo' });
+  } catch (error) {
+    res.status(500).json({ message: 'Errore durante l\'eliminazione dell\'avvistamento', error });
+  }
+};
