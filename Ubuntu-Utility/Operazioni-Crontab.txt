@@ -3,7 +3,7 @@ Per eseguire i tuoi script Aggiornamenti.sh e Ottimizzazioni.sh ogni ora senza r
 ✅ 1. Modifica del file sudoers per eseguire comandi senza password
 Apri il file sudoers in modalità sicura:
 
--sudo visudo
+sudo visudo
 
 Aggiungi la seguente riga alla fine del file:
 
@@ -18,12 +18,12 @@ Se stai usando nano, premi Ctrl + X, poi Y per confermare e Invio per salvare.
 ✅ 2. Modifica della crontab per eseguire gli script ogni ora
 Apri la crontab dell'utente kenobi:
 
--crontab -e
+sudo crontab -e
 
 Aggiungi le seguenti righe alla fine del file:
 
--0 * * * * /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh >> /home/kenobi/Documenti/Aggiornamenti.log 2>&1
+0 * * * * /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Aggiornamenti.sh >> /home/kenobi/Documenti/Aggiornamenti.log 2>&1
 
--0 * * * * /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Ottimizzazioni.sh >> /home/kenobi/Documenti/Ottimizzazioni.log 2>&1
+0 * * * * /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Ottimizzazioni.sh >> /home/kenobi/Documenti/Ottimizzazioni.log 2>&1
 
 Queste righe configurano l'esecuzione degli script ogni ora, redirigendo l'output e gli errori nei rispettivi file di log.
