@@ -13,7 +13,12 @@ import Model.Dipendente;
 import daointerface.DipendenteJDBC;
 
 public class DipendenteImpl implements DipendenteJDBC {
-    private PreparedStatement setNewDip, updateDip, verifyId, getOneDip, getDipVendite, getDipIntroiti;
+    private PreparedStatement setNewDip;
+    private PreparedStatement updateDip;
+    private PreparedStatement verifyId;
+    private PreparedStatement getOneDip;
+    private PreparedStatement getDipVendite;
+    private PreparedStatement getDipIntroiti;
     private Statement getAllDip;
     private List<String> ordven = new ArrayList<>();
     private List<String> ordint = new ArrayList<>();
@@ -25,7 +30,7 @@ public class DipendenteImpl implements DipendenteJDBC {
         updateDip = connection.prepareStatement(
                 "UPDATE dipendente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE coddipendente = ?");
         verifyId = connection.prepareStatement("SELECT coddipendente FROM dipendente WHERE coddipendente = ?");
-        getOneDip = connection.prepareStatement("SELECT * FROM dipendente WHERE coddipendente = ?");
+        getOneDip = connection.prepareStatement("SELECT coddipendente, nome, cognome, codicefiscale, email, indirizzo, telefono FROM dipendente WHERE coddipendente = ?");
         getDipVendite = connection.prepareStatement(
                 "SELECT DISTINCT D.nome, D.cognome, COUNT(O) AS Tordini "
                 + "FROM dipendente AS D, ordine AS O "
@@ -59,7 +64,7 @@ public class DipendenteImpl implements DipendenteJDBC {
     @Override
     public ArrayList<Dipendente> getAllDip() throws SQLException {
         ArrayList<Dipendente> dipendenti = new ArrayList<>();
-        try (ResultSet rs = getAllDip.executeQuery("SELECT * FROM dipendente ORDER BY cognome DESC")) {
+        try (ResultSet rs = getAllDip.executeQuery("SELECT coddipendente, nome, cognome, codicefiscale, email, indirizzo, telefono FROM dipendente ORDER BY cognome DESC")) {
             while (rs.next()) {
                 dipendenti.add(new Dipendente(
                         rs.getString("coddipendente"),

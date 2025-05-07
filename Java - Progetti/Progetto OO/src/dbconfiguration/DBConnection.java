@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@SuppressWarnings("java:S6548")
 public final class DBConnection {
     private static final Logger LOGGER = Logger.getLogger(DBConnection.class.getName());
     private static final String DB_URL;

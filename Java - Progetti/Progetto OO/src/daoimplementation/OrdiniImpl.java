@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 import Model.Ordine;
 import daointerface.OrdiniJDBC;
@@ -20,13 +22,13 @@ public class OrdiniImpl implements OrdiniJDBC {
         this.connection = connection;
         // Preparazione delle query
         newOrdineStmt = connection.prepareStatement("INSERT INTO ordine (prezzototale, dataacquisto, codcliente, coddipendente) VALUES (?, ?, ?, ?)");
-        getAllOrdiniStmt = connection.prepareStatement("SELECT * FROM ordine ORDER BY dataacquisto DESC");
+        getAllOrdiniStmt = connection.prepareStatement("SELECT codordine, dataacquisto, prezzototale, codcliente, coddipendente FROM ordine ORDER BY dataacquisto DESC");
     }
 
     @Override
     public boolean newordine(Ordine ordine) throws SQLException {
         newOrdineStmt.setDouble(1, ordine.getPrezzoTotale());
-        newOrdineStmt.setDate(2, (java.sql.Date) ordine.getDataAcquisto());
+        newOrdineStmt.setDate(2, ordine.getDataAcquisto());
         newOrdineStmt.setInt(3, ordine.getIdCliente());
         newOrdineStmt.setInt(4, ordine.getIdDipendente());
 
@@ -60,7 +62,7 @@ public class OrdiniImpl implements OrdiniJDBC {
                 return (oldDate != null) ? oldDate.toString() : null;
             }
         } catch (SQLException e) {
-            System.err.println("Errore durante l'esecuzione della query: " + e.getMessage());
+            Logger.getLogger(OrdiniImpl.class.getName()).log(Level.SEVERE, "Errore durante l'esecuzione della query", e);
         }
         return null;
     }
