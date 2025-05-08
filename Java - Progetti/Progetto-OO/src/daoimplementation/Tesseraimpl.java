@@ -23,7 +23,7 @@ public class Tesseraimpl implements TesseraJDBC {
         // Preparazione delle query
         newtesseraStmt = connection.prepareStatement("INSERT INTO tessera (numeropunti, codcliente) VALUES (?, ?)");
         getpuntitStmt = connection.prepareStatement("SELECT numeropunti FROM tessera WHERE codtessera = ?");
-        alltesseraStmt = connection.prepareStatement("SELECT * FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC");
+        alltesseraStmt = connection.prepareStatement("SELECT codtessera, numeropunti, codcliente FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC");
     }
 
     @Override

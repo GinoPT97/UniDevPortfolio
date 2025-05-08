@@ -25,7 +25,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 public class RicercaFrame extends JFrame {
-	private JPanel contentPane;
 	private JTable searchtable;
 	private JComboBox<String> categoriacb;
 	private DefaultTableModel searchmodel = new DefaultTableModel();
@@ -44,7 +43,7 @@ public class RicercaFrame extends JFrame {
 	    setLocationRelativeTo(null);
 
 	    // Inizializza e configura il pannello principale
-	    contentPane = new JPanel();
+		JPanel contentPane = new JPanel();
 	    contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 	    setContentPane(contentPane);
 	    contentPane.setLayout(new BorderLayout(0, 0));
