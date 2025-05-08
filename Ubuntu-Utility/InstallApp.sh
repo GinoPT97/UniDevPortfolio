@@ -105,6 +105,13 @@ sudo snap start docker
 
 echo "Installazione e configurazione di NordVPN..."
 sudo snap install nordvpn
+sudo snap connect nordvpn:hardware-observe
+sudo snap connect nordvpn:network-control
+sudo snap connect nordvpn:network-observe
+sudo snap connect nordvpn:firewall-control
+sudo snap connect nordvpn:login-session-observe
+sudo snap connect nordvpn:system-observe
+sudo snap install j-nordvpn-manager
 
 echo "Installazione completata!"
 
