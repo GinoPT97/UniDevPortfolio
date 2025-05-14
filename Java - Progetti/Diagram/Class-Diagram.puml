@@ -1,0 +1,336 @@
+@startuml
+
+' ===== MODEL =====
+package model {
+    class Cliente {
+        -codcliente: String
+        -nome: String
+        -cognome: String
+        -codicefiscale: String
+        -email: String
+        -indirizzo: String
+        -telefono: String
+        -tessera: Tessera
+        -articoliordini: Articoli
+        +Cliente(String, String, String, String, String, String, String, Tessera, Articoli)
+        +getCodCl(): String
+        +setCodCL(String): void
+        +getNome(): String
+        +setNome(String): void
+        +getCognome(): String
+        +setcognome(String): void
+        +getCodFis(): String
+        +setCodFis(String): void
+        +getEmail(): String
+        +setEmail(String): void
+        +getInd(): String
+        +setInd(String): void
+        +getTel(): String
+        +setTel(String): void
+        +getTessera(): Tessera
+        +setTessera(Tessera): void
+        +getArticoliOrdini(): Articoli
+        +setArticoliOrdini(Articoli): void
+        +toString(): String
+    }
+
+    class Dipendente {
+        -coddipendente: String
+        -nome: String
+        -cognome: String
+        -codicefiscale: String
+        -email: String
+        -indirizzo: String
+        -telefono: String
+        +Dipendente(String, String, String, String, String, String, String)
+        +getCodDIP(): String
+        +setCodDIP(String): void
+        +getNome(): String
+        +setNome(String): void
+        +getCognome(): String
+        +setCognome(String): void
+        +getCodFis(): String
+        +setCodFis(String): void
+        +getEmail(): String
+        +setEmail(String): void
+        +getInd(): String
+        +setInd(String): void
+        +getTel(): String
+        +setTel(String): void
+        +toString(): String
+    }
+
+    class Prodotto {
+        -codprodotto: String
+        -nome: String
+        -descrizione: String
+        -luogoprov: String
+        -prezzo: double
+        -datamungitura: Date
+        -datascadenza: Date
+        -dataraccolta: Date
+        -glutine: boolean
+        -categoria: String
+        -scorta: int
+        +Prodotto(String, String, String, double, String, Date, Date, boolean, Date, String, int)
+        +getCodProd(): String
+        +setCodProd(String): void
+        +getNome(): String
+        +setNome(String): void
+        +getDescrizione(): String
+        +setDescrizione(String): void
+        +getLuogoProv(): String
+        +setLuogoProv(String): void
+        +getDatamungitura(): Date
+        +setDatamungitura(Date): void
+        +getDatascadenza(): Date
+        +setDatascadenza(Date): void
+        +getDataraccolta(): Date
+        +setDataraccolta(Date): void
+        +getPrezzo(): double
+        +setPrezzo(double): void
+        +isGlutine(): boolean
+        +setGlutine(boolean): void
+        +getCategoria(): String
+        +setCategoria(String): void
+        +getScorta(): int
+        +setScorta(int): void
+        +toString(): String
+    }
+
+    class Ordine {
+        -codordine: String
+        -datacquisto: Date
+        -prezzotot: double
+        -idct: int
+        -iddip: int
+        +Ordine(String, Date, double, int, int)
+        +getCodOrd(): String
+        +setCodOrd(String): void
+        +getDataAcquisto(): Date
+        +setDataAcquisto(Date): void
+        +getPrezzoTotale(): double
+        +setPrezzoTotale(double): void
+        +getIdCliente(): int
+        +setIdCliente(int): void
+        +getIdDipendente(): int
+        +setIdDipendente(int): void
+        +toString(): String
+    }
+
+    class Tessera {
+        -codtessera: String
+        -npunti: int
+        -proprietario: Cliente
+        +Tessera(String, int, Cliente)
+        +getCodTessera(): String
+        +setCodTessera(String): void
+        +getNPunti(): int
+        +setNPunti(int): void
+        +getProprietario(): Cliente
+        +setProprietario(Cliente): void
+        +toString(): String
+    }
+
+    class Articoli {
+        -codOrdine: String
+        -codProdotto: String
+        -prezzo: double
+        -numPunti: double
+        -numeroArticoli: int
+        -categoria: String
+        -codCliente: int
+        +Articoli(String, String, double, double, int, String, int)
+        +getCodOrdine(): String
+        +setCodOrdine(String): void
+        +getCodProdotto(): String
+        +setCodProdotto(String): void
+        +getPrezzo(): double
+        +setPrezzo(double): void
+        +getNumPunti(): double
+        +setNumPunti(double): void
+        +getNumeroArticoli(): int
+        +setNumeroArticoli(int): void
+        +getCategoria(): String
+        +setCategoria(String): void
+        +getCodCliente(): int
+        +setCodCliente(int): void
+        +toString(): String
+    }
+}
+
+' ===== GUI =====
+package gui {
+    class Controller {
+        -logf: LoginFrame
+        -nprodf: NuovoProdottoFrame
+        -adminf: AdminFrame
+        -dipf: DipendenteFrame
+        -vdipf: VisioneDipendentiFrame
+        -vprodf: VisioneProdottiFrame
+        -modprodf: ModificaProdottiFrame
+        -statdipf: StatisticheDipendentiFrame
+        -carrf: CarrelloFrame
+        -visctf: VisioneClienteFrame
+        -ndipf: NuovoDipendenteFrame
+        -updipf: ModificaDipendenteFrame
+        -nclf: NuovoClienteFrame
+        -upclf: ModificaClienteFrame
+        -visordf: VisioneOrdineFrame
+        -searchf: RicercaFrame
+        -dbconn: DBConnection
+        -config: DBConfiguration
+        -connection: Connection
+        -cljdbc: ClienteJDBC
+        -dpjdbc: DipendenteJDBC
+        -prdjdbc: ProdottoJDBC
+        -ordjdbc: OrdiniJDBC
+        -tsjdbc: TesseraJDBC
+        -artjdbc: ArticoliJDBC
+        -clienteModel: DefaultTableModel
+        -dipModel: DefaultTableModel
+        -prodModel: DefaultTableModel
+        -ordModel: DefaultTableModel
+        -iddip: String
+        -lastFrame: Frame
+        +Controller()
+        +createImagePanel(String): JPanel
+        +returnToLastFrame(): void
+        +logout(int): void
+        +logtoutente(int): void
+        +adminAndElem(int): void
+        +dipAndElem(int): void
+        +visAndElem(int, int): void
+        +connect(): void
+        +verifyid(String): boolean
+        +newdip(Dipendente): boolean
+        +newclt(Cliente): boolean
+        +newprod(Prodotto): boolean
+        +punti(String): String
+        +introitidip(Date, Date): List~String~
+        +venditedip(Date, Date): List~String~
+        +nuovatessera(String, String, String): boolean
+        +upprod(Prodotto): boolean
+        +updip(Dipendente): boolean
+        +upcliente(Cliente): boolean
+        +getct(String): String
+        +upscorte(int, String): boolean
+        +uppunti(String, double): boolean
+        +nuovoordine(Ordine): boolean
+        +newarticoli(Articoli): boolean
+        +OldDate(): String
+        +CurrOrd(): String
+        +ClientSearch(DefaultTableModel): void
+        +categoriaprodotti(String, DefaultTableModel): void
+        +allCliente(): void
+        +allDipendenti(): void
+        +allOrdini(): void
+        +allProdotti(): void
+    }
+    ' ...altri frame GUI: solo costruttori e metodi principali...
+}
+
+' ===== DAO INTERFACE =====
+package daointerface {
+    interface ClienteJDBC {
+        +setNewCt(Cliente): boolean
+        +getAllCt(): List~Cliente~
+        +getCtByNCCF(String, String, String): Cliente
+        +getCtByid(String): Cliente
+        +updateCliente(Cliente): boolean
+        +getIdCt(String): String
+    }
+    interface DipendenteJDBC {
+        +setNewDip(Dipendente): boolean
+        +getAllDip(): List~Dipendente~
+        +getOneDip(String): Dipendente
+        +updatedipendente(Dipendente): boolean
+        +verifyID(String): boolean
+        +getDipIntroiti(Date, Date): List~String~
+        +getDipVendite(Date, Date): List~String~
+    }
+    interface ProdottoJDBC {
+        +setNewProdotto(Prodotto): boolean
+        +getallprodotti(): List~Prodotto~
+        +getbycategoria(String): List~Prodotto~
+        +updateProdotto(Prodotto): boolean
+        +updateScorte(int, String): boolean
+    }
+    interface OrdiniJDBC {
+        +newordine(Ordine): boolean
+        +getallordini(): List~Ordine~
+        +getOldDate(): String
+        +getCurrentCod(): String
+    }
+    interface TesseraJDBC {
+        +newtessera(String): boolean
+        +alltessera(): List~Tessera~
+        +getpuntit(String): String
+        +updatepunti(String, double): boolean
+    }
+    interface ArticoliJDBC {
+        +newordine(Articoli): boolean
+        +searchClient(): List~Cliente~
+    }
+}
+
+' ===== DAO IMPLEMENTATION =====
+package daoimplementation {
+    class Clienteimpl
+    class DipendenteImpl
+    class ProdottoImpl
+    class OrdiniImpl
+    class Tesseraimpl
+    class ArticoliImpl
+}
+
+' ===== DB CONFIGURATION =====
+package dbconfiguration {
+    class DBConfiguration {
+        -connection: Connection
+        +DBConfiguration(Connection)
+        +createTableCliente(): int
+        +createTableDipendente(): int
+        +createTableTessera(): int
+        +createTableProdotto(): int
+        +createTableOrdine(): int
+        +createTableArticoliOrdine(): int
+        +createTipologie(): int
+        +formatTables(): int
+        +populateDatabase(): int
+    }
+    class DBConnection
+    class ConnectionException
+}
+
+' ===== RELAZIONI PRINCIPALI =====
+model.Cliente "1" o-- "1" model.Tessera : possiede >
+model.Tessera "1" -- "1" model.Cliente : proprietario >
+model.Cliente "1" o-- "0..*" model.Articoli : articoliordini
+model.Ordine "1" o-- "1" model.Cliente : idct
+model.Ordine "1" o-- "1" model.Dipendente : iddip
+model.Articoli "1" o-- "1" model.Prodotto
+model.Articoli "1" o-- "1" model.Ordine
+
+gui.Controller ..> model.Cliente
+gui.Controller ..> model.Dipendente
+gui.Controller ..> model.Prodotto
+gui.Controller ..> model.Ordine
+gui.Controller ..> model.Tessera
+gui.Controller ..> model.Articoli
+
+gui.Controller ..> daointerface.ClienteJDBC
+gui.Controller ..> daointerface.DipendenteJDBC
+gui.Controller ..> daointerface.ProdottoJDBC
+gui.Controller ..> daointerface.OrdiniJDBC
+gui.Controller ..> daointerface.TesseraJDBC
+gui.Controller ..> daointerface.ArticoliJDBC
+
+daoimplementation.Clienteimpl ..|> daointerface.ClienteJDBC
+daoimplementation.DipendenteImpl ..|> daointerface.DipendenteJDBC
+daoimplementation.ProdottoImpl ..|> daointerface.ProdottoJDBC
+daoimplementation.OrdiniImpl ..|> daointerface.OrdiniJDBC
+daoimplementation.Tesseraimpl ..|> daointerface.TesseraJDBC
+daoimplementation.ArticoliImpl ..|> daointerface.ArticoliJDBC
+
+@enduml
