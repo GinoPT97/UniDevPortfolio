@@ -15,11 +15,10 @@ sudo apt install imagemagick
 packages=(
   ca-certificates curl gnupg lsb-release wget apt-transport-https
   zram-config preload bluetooth bluez blueman flatpak git gparted
-  clamav clamtk postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common
+  clamav clamtk postgresql git
   vlc cmake aptitude doxygen graphviz net-tools
   gdebi dos2unix texlive-latex-base texlive-latex-extra git-lfs cryptsetup
   lvm2 synaptic stacer build-essential libvips-dev jest
-  tor redis
   linux-tools-common linux-tools-generic
   gnome-tweaks
 )
@@ -27,8 +26,9 @@ packages=(
 echo "Installazione dei pacchetti: ${packages[*]}"
 sudo apt install -y "${packages[@]}"
 
-sudo apt install google-android-emulator-installer
 sudo apt update
+sudo apt install redis
+sudo apt install tor
 sudo apt install hplip hplip-gui
 
 git lfs install
@@ -37,8 +37,10 @@ echo "Configurazione della password PostgreSQL..."
 sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
 
 echo "Avvio e abilitazione dei servizi Tor e Redis..."
-sudo systemctl enable --now tor
-sudo systemctl enable --now redis
+sudo systemctl start tor
+sudo systemctl enable tor
+sudo systemctl start redis-server
+sudo systemctl enable redis-server
 
 # Funzione per scaricare, installare e pulire un pacchetto .deb
 install_deb() {
