@@ -69,8 +69,6 @@ code --install-extension github.copilot --force
 code --install-extension github.copilot-chat --force
 code --install-extension github.remotehub --force
 code --install-extension github.vscode-pull-request-github --force
-code --install-extension ms-azuretools.azure-dev --force
-code --install-extension ms-azuretools.vscode-azureappservice --force
 code --install-extension ms-azuretools.vscode-docker --force
 code --install-extension christian-kohler.npm-intellisense --force
 code --install-extension dbaeumer.vscode-eslint --force
@@ -80,11 +78,10 @@ code --install-extension ms-vscode.cpptools --force
 code --install-extension eamodio.gitlens --force
 code --install-extension ritwickdey.LiveServer --force
 code --install-extension amazonwebservices.aws-toolkit-vscode --force
-code --install-extension ms-azuretools.vscode-azurestaticwebapps --force
 code --install-extension netlify.netlify-vscode --force
 code --install-extension dsznajder.es7-react-js-snippets --force
 code --install-extension steoates.autoimport --force
-code --install-extension coenraads.bracket-pair-colorizer-2 --force
+code --install-extension jebbs.plantuml --force
 
 echo '{"locale":"it"}' > ~/.config/Code/User/locale.json
 code --locale=it
@@ -104,6 +101,8 @@ sudo snap install perplexity-desktop
 echo "Installazione di Docker..."
 sudo snap install docker
 sudo snap start docker
+sudo groupadd docker
+sudo usermod -aG docker "$USER"
 
 echo "Installazione e configurazione di NordVPN..."
 sudo snap install nordvpn
