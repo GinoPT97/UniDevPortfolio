@@ -31,6 +31,8 @@ sudo apt install redis
 sudo apt install tor
 sudo apt install hplip hplip-gui
 
+# Installa git-lfs e inizializza
+sudo apt install -y git-lfs
 git lfs install
 
 echo "Configurazione della password PostgreSQL..."
