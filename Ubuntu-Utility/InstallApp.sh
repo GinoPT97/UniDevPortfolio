@@ -26,6 +26,8 @@ packages=(
 echo "Installazione dei pacchetti: ${packages[*]}"
 sudo apt install -y "${packages[@]}"
 
+sudo apt install default-jdk
+
 sudo apt update
 sudo apt install redis
 sudo apt install tor
