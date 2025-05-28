@@ -96,6 +96,7 @@ sudo snap install --classic openjdk
 sudo snap install --classic code
 sudo snap install --classic android-studio
 sudo snap install --classic eclipse
+sudo snap install intellij-idea-community --classic
 sudo snap install node --classic
 sudo snap install telegram-desktop
 sudo snap install teams-for-linux
