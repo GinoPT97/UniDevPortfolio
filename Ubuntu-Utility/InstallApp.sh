@@ -120,6 +120,12 @@ sudo snap connect nordvpn:login-session-observe
 sudo snap connect nordvpn:system-observe
 sudo snap install j-nordvpn-manager
 
+wget https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.3.1.31116.tar.gz -O jetbrains-toolbox.tar.gz
+tar -xzf jetbrains-toolbox.tar.gz
+cd jetbrains-toolbox-*/
+sudo apt install libfuse2           
+./jetbrains-toolbox &
+
 echo "Installazione completata!"
 
 echo "Abilitazione della visualizzazione della percentuale della batteria..."

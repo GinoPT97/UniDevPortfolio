@@ -1,4 +1,4 @@
-package gui;
+ackage gui;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
