@@ -96,7 +96,7 @@ sudo snap install --classic openjdk
 sudo snap install --classic code
 sudo snap install --classic android-studio
 sudo snap install --classic eclipse
-sudo snap install intellij-idea-community --classic
+sudo snap install intellij-idea-ultimate --classic
 sudo snap install node --classic
 sudo snap install telegram-desktop
 sudo snap install teams-for-linux
@@ -119,12 +119,6 @@ sudo snap connect nordvpn:firewall-control
 sudo snap connect nordvpn:login-session-observe
 sudo snap connect nordvpn:system-observe
 sudo snap install j-nordvpn-manager
-
-wget https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.3.1.31116.tar.gz -O jetbrains-toolbox.tar.gz
-tar -xzf jetbrains-toolbox.tar.gz
-cd jetbrains-toolbox-*/
-sudo apt install libfuse2           
-./jetbrains-toolbox &
 
 echo "Installazione completata!"
 
