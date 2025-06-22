@@ -14,7 +14,7 @@ sudo apt install imagemagick
 # Definizione della lista dei pacchetti da installare
 packages=(
   ca-certificates curl gnupg lsb-release wget apt-transport-https
-  zram-config preload bluetooth bluez blueman flatpak git gparted
+  zram-config preload flatpak git gparted
   clamav clamtk postgresql git
   vlc cmake aptitude doxygen graphviz net-tools
   gdebi dos2unix texlive-latex-base texlive-latex-extra git-lfs cryptsetup
