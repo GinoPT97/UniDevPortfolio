@@ -113,6 +113,7 @@ clean_apt_packages
 unblock_network_interfaces
 install_snapd
 enable_firewall
+sudo apt modernize-sources -y
 
 # Aggiungi comandi per aggiornare il sistema Ubuntu 24.10
 log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
