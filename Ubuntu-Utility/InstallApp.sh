@@ -68,28 +68,6 @@ install_deb "https://dl.google.com/linux/direct/google-chrome-stable_current_amd
 echo "Installazione di GitHub Desktop..."
 install_deb "https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb"
 
-echo "Installazione estensioni per VS Code..."
-code --install-extension github.copilot --force
-code --install-extension github.copilot-chat --force
-code --install-extension github.remotehub --force
-code --install-extension github.vscode-pull-request-github --force
-code --install-extension ms-azuretools.vscode-docker --force
-code --install-extension christian-kohler.npm-intellisense --force
-code --install-extension dbaeumer.vscode-eslint --force
-code --install-extension esbenp.prettier-vscode --force
-code --install-extension ms-python.python --force
-code --install-extension ms-vscode.cpptools --force
-code --install-extension eamodio.gitlens --force
-code --install-extension ritwickdey.LiveServer --force
-code --install-extension amazonwebservices.aws-toolkit-vscode --force
-code --install-extension netlify.netlify-vscode --force
-code --install-extension dsznajder.es7-react-js-snippets --force
-code --install-extension steoates.autoimport --force
-code --install-extension jebbs.plantuml --force
-
-echo '{"locale":"it"}' > ~/.config/Code/User/locale.json
-code --locale=it
-
 echo "Installazione applicazioni Snap..."
 sudo snap install --classic dbeaver-ce
 sudo snap install --classic openjdk
@@ -109,16 +87,6 @@ sudo snap install docker
 sudo snap start docker
 sudo groupadd docker
 sudo usermod -aG docker "$USER"
-
-echo "Installazione e configurazione di NordVPN..."
-sudo snap install nordvpn
-sudo snap connect nordvpn:hardware-observe
-sudo snap connect nordvpn:network-control
-sudo snap connect nordvpn:network-observe
-sudo snap connect nordvpn:firewall-control
-sudo snap connect nordvpn:login-session-observe
-sudo snap connect nordvpn:system-observe
-sudo snap install j-nordvpn-manager
 
 echo "Installazione completata!"
 
