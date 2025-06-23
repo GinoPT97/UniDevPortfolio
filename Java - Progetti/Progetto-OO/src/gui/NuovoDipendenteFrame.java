@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
+import controller.Controller;
 import model.Dipendente;
 
 import javax.swing.BorderFactory;

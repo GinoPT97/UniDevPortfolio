@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import controller.Controller;
 import model.Dipendente;
 
 public class VisioneDipendentiFrame extends JFrame {

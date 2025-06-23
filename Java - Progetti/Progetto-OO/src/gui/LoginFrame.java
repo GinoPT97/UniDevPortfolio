@@ -20,6 +20,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
+
+import controller.Controller;
+
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 

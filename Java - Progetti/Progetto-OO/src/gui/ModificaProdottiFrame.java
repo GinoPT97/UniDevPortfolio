@@ -27,6 +27,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
 
+import controller.Controller;
 import model.Prodotto;
 
 import javax.swing.JComponent;

@@ -1,4 +1,4 @@
-package gui;
+package controller;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -29,6 +29,22 @@ import daointerface.TesseraJDBC;
 import dbconfiguration.ConnectionException;
 import dbconfiguration.DBConfiguration;
 import dbconfiguration.DBConnection;
+import gui.AdminFrame;
+import gui.CarrelloFrame;
+import gui.DipendenteFrame;
+import gui.LoginFrame;
+import gui.ModificaClienteFrame;
+import gui.ModificaDipendenteFrame;
+import gui.ModificaProdottiFrame;
+import gui.NuovoClienteFrame;
+import gui.NuovoDipendenteFrame;
+import gui.NuovoProdottoFrame;
+import gui.RicercaFrame;
+import gui.StatisticheDipendentiFrame;
+import gui.VisioneClienteFrame;
+import gui.VisioneDipendentiFrame;
+import gui.VisioneOrdineFrame;
+import gui.VisioneProdottiFrame;
 import model.Articoli;
 import model.Cliente;
 import model.Dipendente;

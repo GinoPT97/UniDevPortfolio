@@ -17,6 +17,8 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
+import controller.Controller;
+
 public class DipendenteFrame extends JFrame {
     private JButton logoututton;
     private JButton clientebutton;

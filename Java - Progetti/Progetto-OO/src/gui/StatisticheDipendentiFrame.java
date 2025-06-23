@@ -21,6 +21,8 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
+import controller.Controller;
+
 public class StatisticheDipendentiFrame extends JFrame {
     // Definizione dei componenti principali dell'interfaccia
     private JPanel contentPane;
