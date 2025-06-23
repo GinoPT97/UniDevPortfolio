@@ -78,7 +78,7 @@ public class ModificaProdottiFrame extends JFrame {
 
         // Pannello per categorie
         JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        categoriacb = new JComboBox<>(new String[] { "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei" });
+        categoriacb = new JComboBox<>(new String[]{"Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
         categoriapanel.add(categoriacb);
         JButton selbutton = creaButton("Seleziona", new Color(46, 139, 87));
         categoriapanel.add(selbutton);
@@ -205,9 +205,9 @@ public class ModificaProdottiFrame extends JFrame {
 
                 // Mappa campi legati alla categoria
                 Map<String, JTextField> categoryFields = Map.of(
-                    "Ortofrutticoli", racctf,
-                    "Latticini", mungtf,
-                    "Inscatolati", scadtf
+                        "Ortofrutticoli", racctf,
+                        "Latticini", mungtf,
+                        "Inscatolati", scadtf
                 );
 
                 // Disabilita tutti i campi relativi alle categorie
@@ -234,35 +234,35 @@ public class ModificaProdottiFrame extends JFrame {
 
                 // Crea il prodotto
                 Prodotto prodotto = new Prodotto(
-                    cod,
-                    nometf.getText(),
-                    descta.getText(),
-                    Double.parseDouble(prezzotf.getText()),
-                    provtf.getText(),
-                    "Ortofrutticoli".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(racctf.getText()) : null,
-                    "Latticini".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(mungtf.getText()) : null,
-                    glutcb.isSelected(),
-                    "Inscatolati".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(scadtf.getText()) : null,
-                    categoriacb.getSelectedItem().toString(),
-                    Integer.parseInt(scortatf.getText())
+                        cod,
+                        nometf.getText(),
+                        descta.getText(),
+                        Double.parseDouble(prezzotf.getText()),
+                        provtf.getText(),
+                        "Ortofrutticoli".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(racctf.getText()) : null,
+                        "Latticini".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(mungtf.getText()) : null,
+                        glutcb.isSelected(),
+                        "Inscatolati".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(scadtf.getText()) : null,
+                        categoriacb.getSelectedItem().toString(),
+                        Integer.parseInt(scortatf.getText())
                 );
 
                 // Cerca la riga corrispondente nel modello
                 int rowIndex = IntStream.range(0, c.prodModel.getRowCount())
-                                        .filter(i -> c.prodModel.getValueAt(i, 0).equals(cod))
-                                        .findFirst().orElse(-1);
+                        .filter(i -> c.prodModel.getValueAt(i, 0).equals(cod))
+                        .findFirst().orElse(-1);
 
                 if (rowIndex != -1) {
                     Object[] updatedValues = {
-                        prodotto.getNome(),
-                        prodotto.getDescrizione(),
-                        prodotto.getPrezzo(),
-                        prodotto.getLuogoProv(),
-                        prodotto.getCategoria(),
-                        prodotto.getScorta(),
-                        prodotto.getDataraccolta() != null ? dateFormat.format(prodotto.getDataraccolta()) : null,
-                        prodotto.getDatamungitura() != null ? dateFormat.format(prodotto.getDatamungitura()) : null,
-                        prodotto.getDatascadenza() != null ? dateFormat.format(prodotto.getDatascadenza()) : null
+                            prodotto.getNome(),
+                            prodotto.getDescrizione(),
+                            prodotto.getPrezzo(),
+                            prodotto.getLuogoProv(),
+                            prodotto.getCategoria(),
+                            prodotto.getScorta(),
+                            prodotto.getDataraccolta() != null ? dateFormat.format(prodotto.getDataraccolta()) : null,
+                            prodotto.getDatamungitura() != null ? dateFormat.format(prodotto.getDatamungitura()) : null,
+                            prodotto.getDatascadenza() != null ? dateFormat.format(prodotto.getDatascadenza()) : null
                     };
 
                     for (int col = 1; col < updatedValues.length; col++) {

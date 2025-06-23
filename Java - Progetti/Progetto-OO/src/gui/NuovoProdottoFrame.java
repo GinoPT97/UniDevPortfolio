@@ -80,7 +80,7 @@ public class NuovoProdottoFrame extends JFrame {
 
         // Categoria e pulsante di selezione
         JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        categoriacb = new JComboBox<>(new String[] { "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei" });
+        categoriacb = new JComboBox<>(new String[]{"Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
         categoriapanel.add(categoriacb);
         selbutton = creaButton("Selezione", new Color(46, 139, 87));
         categoriapanel.add(selbutton);
@@ -157,8 +157,8 @@ public class NuovoProdottoFrame extends JFrame {
             try {
                 // Verifica che tutti i campi obbligatori siano compilati
                 if (nometf.getText().isEmpty() || descta.getText().isEmpty() ||
-                    prezzotf.getText().isEmpty() || provtf.getText().isEmpty() ||
-                    scortatf.getText().isEmpty()) {
+                        prezzotf.getText().isEmpty() || provtf.getText().isEmpty() ||
+                        scortatf.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
                     return;
                 }
@@ -166,13 +166,13 @@ public class NuovoProdottoFrame extends JFrame {
                 // Prepara i dati da salvare in base alla categoria selezionata
                 String categoria = categoriacb.getSelectedItem().toString();
                 Prodotto prodotto = new Prodotto(
-                    "", nometf.getText(), descta.getText(),
-                    Double.parseDouble(prezzotf.getText()), provtf.getText(),
-                    categoria.equals("Ortofrutticoli") ? data.parse(racctf.getText()) : null,
-                    categoria.equals("Latticini") ? data.parse(mungtf.getText()) : null,
-                    glutcb.isSelected(),
-                    categoria.equals("Inscatolati") ? data.parse(scadtf.getText()) : null,
-                    categoria, Integer.parseInt(scortatf.getText())
+                        "", nometf.getText(), descta.getText(),
+                        Double.parseDouble(prezzotf.getText()), provtf.getText(),
+                        categoria.equals("Ortofrutticoli") ? data.parse(racctf.getText()) : null,
+                        categoria.equals("Latticini") ? data.parse(mungtf.getText()) : null,
+                        glutcb.isSelected(),
+                        categoria.equals("Inscatolati") ? data.parse(scadtf.getText()) : null,
+                        categoria, Integer.parseInt(scortatf.getText())
                 );
 
                 // Salva il prodotto nel database
@@ -180,12 +180,12 @@ public class NuovoProdottoFrame extends JFrame {
 
                 // Aggiungi il prodotto anche al modello della tabella
                 c.prodModel.addRow(new Object[]{
-                    prodotto.getNome(),
-                    prodotto.getDescrizione(),
-                    prodotto.getPrezzo(),
-                    prodotto.getLuogoProv(),
-                    prodotto.getCategoria(),
-                    prodotto.getScorta()
+                        prodotto.getNome(),
+                        prodotto.getDescrizione(),
+                        prodotto.getPrezzo(),
+                        prodotto.getLuogoProv(),
+                        prodotto.getCategoria(),
+                        prodotto.getScorta()
                 });
 
                 // Pulisci i campi e mostra un messaggio di successo

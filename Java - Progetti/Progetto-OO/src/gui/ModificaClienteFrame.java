@@ -138,15 +138,15 @@ public class ModificaClienteFrame extends JFrame {
             try {
                 // Aggiorna il cliente con i dati inseriti nei JTextField
                 Cliente clienteAggiornato = new Cliente(
-                    cod,
-                    nometf.getText(),
-                    cognometf.getText(),
-                    codfisctf.getText(),
-                    emailtf.getText(),
-                    indirizzotf.getText(),
-                    telefonotf.getText(),
-                    null,
-                    null
+                        cod,
+                        nometf.getText(),
+                        cognometf.getText(),
+                        codfisctf.getText(),
+                        emailtf.getText(),
+                        indirizzotf.getText(),
+                        telefonotf.getText(),
+                        null,
+                        null
                 );
 
                 // Aggiorna il cliente nel database

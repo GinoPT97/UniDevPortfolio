@@ -51,19 +51,19 @@ public class Tesseraimpl implements TesseraJDBC {
             while (rs.next()) {
                 // Creo e aggiungo una nuova Tessera all'elenco
                 tessere.add(new Tessera(
-                    rs.getString("codtessera"),
-                    rs.getInt("numeropunti"),
-                    new Cliente(
-                        null,
-                        rs.getString("nome"),
-                        rs.getString("cognome"),
-                        rs.getString("codicefiscale"),
-                        rs.getString("email"),
-                        rs.getString("indirizzo"),
-                        rs.getString("telefono"),
-                        null,
-                        null
-                    )
+                        rs.getString("codtessera"),
+                        rs.getInt("numeropunti"),
+                        new Cliente(
+                                null,
+                                rs.getString("nome"),
+                                rs.getString("cognome"),
+                                rs.getString("codicefiscale"),
+                                rs.getString("email"),
+                                rs.getString("indirizzo"),
+                                rs.getString("telefono"),
+                                null,
+                                null
+                        )
                 ));
             }
         }

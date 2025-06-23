@@ -28,7 +28,7 @@ public class DipendenteFrame extends JFrame {
         // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 450);
-        JPanel contentPane = new JPanel(); 
+        JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(0, 0));

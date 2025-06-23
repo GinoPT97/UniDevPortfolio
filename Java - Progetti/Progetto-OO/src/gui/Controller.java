@@ -353,28 +353,28 @@ public class Controller {
     public void allCliente() throws SQLException {
         List<Cliente> clienti = cljdbc.getAllCt();
         populateTable(clienti, clienteModel, c -> new Object[]{
-            checkNull(c.getCodCl()),
-            checkNull(c.getNome()),
-            checkNull(c.getCognome()),
-            checkNull(c.getCodFis()),
-            checkNull(c.getEmail()),
-            checkNull(c.getInd()),
-            checkNull(c.getTel()),
-            checkNull(c.getTessera() != null ? c.getTessera().getCodTessera() : null),
-            checkNull(c.getTessera() != null ? c.getTessera().getNPunti() : null)
+                checkNull(c.getCodCl()),
+                checkNull(c.getNome()),
+                checkNull(c.getCognome()),
+                checkNull(c.getCodFis()),
+                checkNull(c.getEmail()),
+                checkNull(c.getInd()),
+                checkNull(c.getTel()),
+                checkNull(c.getTessera() != null ? c.getTessera().getCodTessera() : null),
+                checkNull(c.getTessera() != null ? c.getTessera().getNPunti() : null)
         });
     }
 
     public void allDipendenti() throws SQLException {
         List<Dipendente> dipendenti = dpjdbc.getAllDip();
         populateTable(dipendenti, dipModel, d -> new Object[]{
-            checkNull(d.getCodDIP()),
-            checkNull(d.getNome()),
-            checkNull(d.getCognome()),
-            checkNull(d.getCodFis()),
-            checkNull(d.getEmail()),
-            checkNull(d.getInd()),
-            checkNull(d.getTel())
+                checkNull(d.getCodDIP()),
+                checkNull(d.getNome()),
+                checkNull(d.getCognome()),
+                checkNull(d.getCodFis()),
+                checkNull(d.getEmail()),
+                checkNull(d.getInd()),
+                checkNull(d.getTel())
         });
     }
 
@@ -394,11 +394,11 @@ public class Controller {
             }
 
             return new Object[]{
-                checkNull(o.getCodOrd()),
-                checkNull(o.getDataAcquisto()),
-                checkNull(o.getPrezzoTotale()),
-                clienteNome,
-                dipendenteNome
+                    checkNull(o.getCodOrd()),
+                    checkNull(o.getDataAcquisto()),
+                    checkNull(o.getPrezzoTotale()),
+                    clienteNome,
+                    dipendenteNome
             };
         });
     }
@@ -409,17 +409,17 @@ public class Controller {
             String glutenStatus = p.isGlutine() ? "Si" : "No";
 
             return new Object[]{
-                checkNull(p.getCodProd()),
-                checkNull(p.getNome()),
-                checkNull(p.getDescrizione()),
-                checkNull(p.getPrezzo()),
-                checkNull(p.getLuogoProv()),
-                checkNull(p.getDataraccolta()),
-                checkNull(p.getDatamungitura()),
-                glutenStatus,
-                checkNull(p.getDatascadenza()),
-                checkNull(p.getCategoria()),
-                checkNull(p.getScorta())
+                    checkNull(p.getCodProd()),
+                    checkNull(p.getNome()),
+                    checkNull(p.getDescrizione()),
+                    checkNull(p.getPrezzo()),
+                    checkNull(p.getLuogoProv()),
+                    checkNull(p.getDataraccolta()),
+                    checkNull(p.getDatamungitura()),
+                    glutenStatus,
+                    checkNull(p.getDatascadenza()),
+                    checkNull(p.getCategoria()),
+                    checkNull(p.getScorta())
             };
         });
     }

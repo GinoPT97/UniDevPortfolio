@@ -39,12 +39,12 @@ public class LoginFrame extends JFrame {
         contentPane = new JPanel(new BorderLayout());
         setContentPane(contentPane);
 
-            // Creazione del pannello sinistro con l'immagine e il titolo
-            JLabel titleLabel = new JLabel("Dalla terra al banco!", SwingConstants.LEFT);
-            titleLabel.setFont(new Font("Tahoma", Font.BOLD, 25));
-            titleLabel.setForeground(new Color(39, 54, 24));
-            titleLabel.setBorder(null);
-            titlePanel.add(titleLabel, BorderLayout.NORTH);
+        // Creazione del pannello sinistro con l'immagine e il titolo
+        JLabel titleLabel = new JLabel("Dalla terra al banco!", SwingConstants.LEFT);
+        titleLabel.setFont(new Font("Tahoma", Font.BOLD, 25));
+        titleLabel.setForeground(new Color(39, 54, 24));
+        titleLabel.setBorder(null);
+        titlePanel.add(titleLabel, BorderLayout.NORTH);
 
         // Creazione del pannello destro con i controlli di login
         JPanel infoPanel = new JPanel();

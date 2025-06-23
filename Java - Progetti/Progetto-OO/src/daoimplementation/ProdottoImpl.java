@@ -23,10 +23,10 @@ public class ProdottoImpl implements ProdottoJDBC {
     private void initStatements() throws SQLException {
         this.getAllProdottiStmt = connection.prepareStatement("SELECT * FROM prodotto ORDER BY nome DESC");
         this.setNewProdottoStmt = connection.prepareStatement(
-            "INSERT INTO prodotto (nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES (?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, CAST(? AS TIPOLOGIA), ?)"
+                "INSERT INTO prodotto (nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES (?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, CAST(? AS TIPOLOGIA), ?)"
         );
         this.updateProdottoStmt = connection.prepareStatement(
-            "UPDATE prodotto SET nome=?, descrizione=?, prezzo=?, luogoprovenienza=?, dataraccolta=?, datamungitura=?, glutine=CAST(? AS BOOLEAN), datascadenza=?, categoria=CAST(? AS TIPOLOGIA), scorta=? WHERE codprodotto = ?"
+                "UPDATE prodotto SET nome=?, descrizione=?, prezzo=?, luogoprovenienza=?, dataraccolta=?, datamungitura=?, glutine=CAST(? AS BOOLEAN), datascadenza=?, categoria=CAST(? AS TIPOLOGIA), scorta=? WHERE codprodotto = ?"
         );
     }
 
@@ -131,17 +131,17 @@ public class ProdottoImpl implements ProdottoJDBC {
 
     private Prodotto createProdottoFromResultSet(ResultSet rs) throws SQLException {
         return new Prodotto(
-            rs.getString("codprodotto"),
-            rs.getString("nome"),
-            rs.getString("descrizione"),
-            rs.getDouble("prezzo"),
-            rs.getString("luogoprovenienza"),
-            rs.getDate("dataraccolta"),
-            rs.getDate("datamungitura"),
-            rs.getBoolean("glutine"),
-            rs.getDate("datascadenza"),
-            rs.getString("categoria"),
-            rs.getInt("scorta")
+                rs.getString("codprodotto"),
+                rs.getString("nome"),
+                rs.getString("descrizione"),
+                rs.getDouble("prezzo"),
+                rs.getString("luogoprovenienza"),
+                rs.getDate("dataraccolta"),
+                rs.getDate("datamungitura"),
+                rs.getBoolean("glutine"),
+                rs.getDate("datascadenza"),
+                rs.getString("categoria"),
+                rs.getInt("scorta")
         );
     }
 

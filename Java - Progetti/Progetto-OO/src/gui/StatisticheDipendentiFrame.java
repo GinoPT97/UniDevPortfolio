@@ -24,7 +24,7 @@ import javax.swing.border.EmptyBorder;
 public class StatisticheDipendentiFrame extends JFrame {
     // Definizione dei componenti principali dell'interfaccia
     private JPanel contentPane;
-    private String[] datacb = { "3 mesi", "6 mesi", "9 mesi", "12 mesi", "Tutti" };
+    private String[] datacb = {"3 mesi", "6 mesi", "9 mesi", "12 mesi", "Tutti"};
     private LocalDate dataod = LocalDate.now();
     private JPanel searchPanel, introitiPanel, venditePanel, buttonPanel, titlePanel;
     private JButton selectButton, backButton, clearButton, searchButton;
@@ -69,30 +69,30 @@ public class StatisticheDipendentiFrame extends JFrame {
         searchLayout.setAutoCreateContainerGaps(true);
 
         searchLayout.setHorizontalGroup(
-            searchLayout.createSequentialGroup()
-                .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(periodoLab)
-                    .addComponent(startLab)
-                    .addComponent(finalLab)
-                    .addComponent(periodoCB))
-                .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(startTF)
-                    .addComponent(finalTF)
-                    .addComponent(selectButton))
+                searchLayout.createSequentialGroup()
+                        .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(periodoLab)
+                                .addComponent(startLab)
+                                .addComponent(finalLab)
+                                .addComponent(periodoCB))
+                        .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(startTF)
+                                .addComponent(finalTF)
+                                .addComponent(selectButton))
         );
 
         searchLayout.setVerticalGroup(
-            searchLayout.createSequentialGroup()
-                .addComponent(periodoLab)
-                .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(startLab)
-                    .addComponent(startTF))
-                .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(finalLab)
-                    .addComponent(finalTF))
-                .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(periodoCB)
-                    .addComponent(selectButton))
+                searchLayout.createSequentialGroup()
+                        .addComponent(periodoLab)
+                        .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(startLab)
+                                .addComponent(startTF))
+                        .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(finalLab)
+                                .addComponent(finalTF))
+                        .addGroup(searchLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(periodoCB)
+                                .addComponent(selectButton))
         );
 
         contentPane.add(searchPanel, BorderLayout.WEST);
@@ -117,28 +117,28 @@ public class StatisticheDipendentiFrame extends JFrame {
         introitiLayout.setAutoCreateContainerGaps(true);
 
         introitiLayout.setHorizontalGroup(
-            introitiLayout.createSequentialGroup()
-                .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(nomeLab)
-                    .addComponent(cognomeLab)
-                    .addComponent(introitiValLab))
-                .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(nomeIntroitiTF)
-                    .addComponent(cognomeIntroitiTF)
-                    .addComponent(introitiTF))
+                introitiLayout.createSequentialGroup()
+                        .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(nomeLab)
+                                .addComponent(cognomeLab)
+                                .addComponent(introitiValLab))
+                        .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(nomeIntroitiTF)
+                                .addComponent(cognomeIntroitiTF)
+                                .addComponent(introitiTF))
         );
 
         introitiLayout.setVerticalGroup(
-            introitiLayout.createSequentialGroup()
-                .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(nomeLab)
-                    .addComponent(nomeIntroitiTF))
-                .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(cognomeLab)
-                    .addComponent(cognomeIntroitiTF))
-                .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(introitiValLab)
-                    .addComponent(introitiTF))
+                introitiLayout.createSequentialGroup()
+                        .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(nomeLab)
+                                .addComponent(nomeIntroitiTF))
+                        .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(cognomeLab)
+                                .addComponent(cognomeIntroitiTF))
+                        .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(introitiValLab)
+                                .addComponent(introitiTF))
         );
 
         contentPane.add(introitiPanel, BorderLayout.CENTER);
@@ -163,28 +163,28 @@ public class StatisticheDipendentiFrame extends JFrame {
         venditeLayout.setAutoCreateContainerGaps(true);
 
         venditeLayout.setHorizontalGroup(
-            venditeLayout.createSequentialGroup()
-                .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(nomeVenditeLab)
-                    .addComponent(cognomeVenditeLab)
-                    .addComponent(venditeValLab))
-                .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(nomeVenditeTF)
-                    .addComponent(cognomeVenditeTF)
-                    .addComponent(venditeTF))
+                venditeLayout.createSequentialGroup()
+                        .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(nomeVenditeLab)
+                                .addComponent(cognomeVenditeLab)
+                                .addComponent(venditeValLab))
+                        .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(nomeVenditeTF)
+                                .addComponent(cognomeVenditeTF)
+                                .addComponent(venditeTF))
         );
 
         venditeLayout.setVerticalGroup(
-            venditeLayout.createSequentialGroup()
-                .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(nomeVenditeLab)
-                    .addComponent(nomeVenditeTF))
-                .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(cognomeVenditeLab)
-                    .addComponent(cognomeVenditeTF))
-                .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(venditeValLab)
-                    .addComponent(venditeTF))
+                venditeLayout.createSequentialGroup()
+                        .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(nomeVenditeLab)
+                                .addComponent(nomeVenditeTF))
+                        .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(cognomeVenditeLab)
+                                .addComponent(cognomeVenditeTF))
+                        .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(venditeValLab)
+                                .addComponent(venditeTF))
         );
 
         contentPane.add(venditePanel, BorderLayout.EAST);

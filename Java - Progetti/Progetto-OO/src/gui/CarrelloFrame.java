@@ -13,8 +13,8 @@ public class CarrelloFrame extends JFrame {
     private static final String FONT_TAHOMA = "Tahoma";
     private static final String ERROR_TITLE = "Errore";
     private DefaultTableModel ordModel = new DefaultTableModel();
-    private transient Object[] prodcolonne = { "Id", "Nome", "Prezzo", "Categoria", "Scorta" };
-    private transient Object[] ordinecolonne = { "Id", "Nome", "Prezzo", "Categoria", "Quantita" };
+    private transient Object[] prodcolonne = {"Id", "Nome", "Prezzo", "Categoria", "Scorta"};
+    private transient Object[] ordinecolonne = {"Id", "Nome", "Prezzo", "Categoria", "Quantita"};
     private LocalDate dataod = LocalDate.now();
     private JTextField quantitatf;
     private JLabel totalelab;
@@ -220,11 +220,11 @@ public class CarrelloFrame extends JFrame {
             String categoriaProdotto = c.prodModel.getValueAt(i, 9).toString();
             if (categoriaSelezionata.equalsIgnoreCase("Tutti") || categoriaProdotto.equalsIgnoreCase(categoriaSelezionata)) {
                 filteredModel.addRow(new Object[]{
-                    c.prodModel.getValueAt(i, 0),
-                    c.prodModel.getValueAt(i, 1),
-                    c.prodModel.getValueAt(i, 2),
-                    categoriaProdotto,
-                    c.prodModel.getValueAt(i, 10)
+                        c.prodModel.getValueAt(i, 0),
+                        c.prodModel.getValueAt(i, 1),
+                        c.prodModel.getValueAt(i, 2),
+                        categoriaProdotto,
+                        c.prodModel.getValueAt(i, 10)
                 });
             }
         }
@@ -267,12 +267,12 @@ public class CarrelloFrame extends JFrame {
 
             double totaleProdotto = prezzoUnitario * quantita;
             Object[] p = {
-                c.prodModel.getValueAt(selectedRow, 0),
-                c.prodModel.getValueAt(selectedRow, 1),
-                prezzoUnitario,
-                c.prodModel.getValueAt(selectedRow, 3),
-                quantita,
-                totaleProdotto
+                    c.prodModel.getValueAt(selectedRow, 0),
+                    c.prodModel.getValueAt(selectedRow, 1),
+                    prezzoUnitario,
+                    c.prodModel.getValueAt(selectedRow, 3),
+                    quantita,
+                    totaleProdotto
             };
 
             ordModel.addRow(p);
@@ -321,13 +321,13 @@ public class CarrelloFrame extends JFrame {
                     c.upscorte(quantita, codiceProdotto);
 
                     Articoli articoli = new Articoli(
-                        c.CurrOrd(),
-                        codiceProdotto,
-                        prezzoUnitario,
-                        prezzoUnitario * quantita,
-                        quantita,
-                        categoria,
-                        idCliente
+                            c.CurrOrd(),
+                            codiceProdotto,
+                            prezzoUnitario,
+                            prezzoUnitario * quantita,
+                            quantita,
+                            categoria,
+                            idCliente
                     );
                     c.newarticoli(articoli);
                 }

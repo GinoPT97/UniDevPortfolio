@@ -138,13 +138,13 @@ public class ModificaDipendenteFrame extends JFrame {
             try {
                 // Crea un nuovo oggetto Dipendente utilizzando i valori dai JTextField
                 Dipendente dipendente = new Dipendente(
-                    cod,
-                    nometf.getText(),
-                    cognometf.getText(),
-                    codfisctf.getText(),
-                    emailtf.getText(),
-                    indirizzotf.getText(),
-                    telefonotf.getText()
+                        cod,
+                        nometf.getText(),
+                        cognometf.getText(),
+                        codfisctf.getText(),
+                        emailtf.getText(),
+                        indirizzotf.getText(),
+                        telefonotf.getText()
                 );
                 // Aggiorna il dipendente nel database
                 c.updip(dipendente);

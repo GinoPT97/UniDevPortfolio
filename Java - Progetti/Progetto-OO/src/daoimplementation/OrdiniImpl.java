@@ -41,11 +41,11 @@ public class OrdiniImpl implements OrdiniJDBC {
         try (ResultSet rs = getAllOrdiniStmt.executeQuery()) {
             while (rs.next()) {
                 ordiniList.add(new Ordine(
-                    rs.getString("codordine"),
-                    rs.getDate("dataacquisto"),
-                    rs.getDouble("prezzototale"),
-                    rs.getInt("codcliente"),
-                    rs.getInt("coddipendente")
+                        rs.getString("codordine"),
+                        rs.getDate("dataacquisto"),
+                        rs.getDouble("prezzototale"),
+                        rs.getInt("codcliente"),
+                        rs.getInt("coddipendente")
                 ));
             }
         }

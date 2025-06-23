@@ -33,18 +33,18 @@ public class DipendenteImpl implements DipendenteJDBC {
         getOneDip = connection.prepareStatement("SELECT coddipendente, nome, cognome, codicefiscale, email, indirizzo, telefono FROM dipendente WHERE coddipendente = ?");
         getDipVendite = connection.prepareStatement(
                 "SELECT DISTINCT D.nome, D.cognome, COUNT(O) AS Tordini "
-                + "FROM dipendente AS D, ordine AS O "
-                + "WHERE O.coddipendente = D.coddipendente AND O.dataacquisto BETWEEN ? AND ? "
-                + "GROUP BY D.nome, D.cognome "
-                + "ORDER BY Tordini DESC "
-                + "LIMIT 1");
+                        + "FROM dipendente AS D, ordine AS O "
+                        + "WHERE O.coddipendente = D.coddipendente AND O.dataacquisto BETWEEN ? AND ? "
+                        + "GROUP BY D.nome, D.cognome "
+                        + "ORDER BY Tordini DESC "
+                        + "LIMIT 1");
         getDipIntroiti = connection.prepareStatement(
                 "SELECT DISTINCT D.nome, D.cognome, SUM(O.prezzototale) AS Sordine "
-                + "FROM dipendente AS D, ordine AS O "
-                + "WHERE O.coddipendente = D.coddipendente AND O.dataacquisto BETWEEN ? AND ? "
-                + "GROUP BY D.nome, D.cognome "
-                + "ORDER BY Sordine DESC "
-                + "LIMIT 1");
+                        + "FROM dipendente AS D, ordine AS O "
+                        + "WHERE O.coddipendente = D.coddipendente AND O.dataacquisto BETWEEN ? AND ? "
+                        + "GROUP BY D.nome, D.cognome "
+                        + "ORDER BY Sordine DESC "
+                        + "LIMIT 1");
     }
 
     @Override

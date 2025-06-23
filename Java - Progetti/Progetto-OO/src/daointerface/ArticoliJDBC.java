@@ -7,7 +7,7 @@ import model.Articoli;
 import model.Cliente;
 
 public interface ArticoliJDBC {
-	public boolean newordine(Articoli articoli) throws SQLException;
+    public boolean newordine(Articoli articoli) throws SQLException;
 
-	public List<Cliente> searchClient() throws SQLException;
+    public List<Cliente> searchClient() throws SQLException;
 }

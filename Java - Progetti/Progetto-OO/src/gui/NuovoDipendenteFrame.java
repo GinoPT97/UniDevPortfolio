@@ -115,24 +115,24 @@ public class NuovoDipendenteFrame extends JFrame {
             try {
                 // Crea un nuovo oggetto Dipendente utilizzando i valori dei campi di testo
                 Dipendente newDipendente = new Dipendente(
-                    "",
-                    nometf.getText(),
-                    cognometf.getText(),
-                    codfisctf.getText(),
-                    emailtf.getText(),
-                    indirizzotf.getText(),
-                    telefonotf.getText()
+                        "",
+                        nometf.getText(),
+                        cognometf.getText(),
+                        codfisctf.getText(),
+                        emailtf.getText(),
+                        indirizzotf.getText(),
+                        telefonotf.getText()
                 );
                 c.newdip(newDipendente); // Aggiungi il dipendente al database
 
                 // Aggiunta del dipendente al modello
                 c.dipModel.addRow(new Object[]{
-                    newDipendente.getNome(),
-                    newDipendente.getCognome(),
-                    newDipendente.getCodFis(),
-                    newDipendente.getEmail(),
-                    newDipendente.getInd(),
-                    newDipendente.getTel()
+                        newDipendente.getNome(),
+                        newDipendente.getCognome(),
+                        newDipendente.getCodFis(),
+                        newDipendente.getEmail(),
+                        newDipendente.getInd(),
+                        newDipendente.getTel()
                 });
 
                 // Pulisce i campi di input

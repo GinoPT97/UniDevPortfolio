@@ -121,15 +121,15 @@ public class NuovoClienteFrame extends JFrame {
             try {
                 // Creazione del nuovo cliente con i dati dai JTextField
                 Cliente newCliente = new Cliente(
-                    "",
-                    nometf.getText(),
-                    cognometf.getText(),
-                    codfisctf.getText(),
-                    emailtf.getText(),
-                    indirizzotf.getText(),
-                    telefonotf.getText(),
-                    null,
-                    null
+                        "",
+                        nometf.getText(),
+                        cognometf.getText(),
+                        codfisctf.getText(),
+                        emailtf.getText(),
+                        indirizzotf.getText(),
+                        telefonotf.getText(),
+                        null,
+                        null
                 );
 
                 // Aggiunta del nuovo cliente nel controller
@@ -140,13 +140,13 @@ public class NuovoClienteFrame extends JFrame {
 
                 // Aggiunta del cliente al modello
                 c.clienteModel.addRow(new Object[]{
-                    newCliente.getCodCl(), // Assumendo che tu abbia il codice cliente
-                    newCliente.getNome(),
-                    newCliente.getCognome(),
-                    newCliente.getCodFis(),
-                    newCliente.getEmail(),
-                    newCliente.getInd(),
-                    newCliente.getTel()
+                        newCliente.getCodCl(), // Assumendo che tu abbia il codice cliente
+                        newCliente.getNome(),
+                        newCliente.getCognome(),
+                        newCliente.getCodFis(),
+                        newCliente.getEmail(),
+                        newCliente.getInd(),
+                        newCliente.getTel()
                 });
 
                 clean(); // Pulisce i campi dopo l'aggiunta
