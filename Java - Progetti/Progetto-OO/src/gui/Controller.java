@@ -1,7 +1,8 @@
-ackage gui;
+package gui;
 
 import java.awt.EventQueue;
 import java.awt.Frame;
+import java.awt.Image;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
@@ -34,8 +35,6 @@ import model.Dipendente;
 import model.ImagePanel;
 import model.Ordine;
 import model.Prodotto;
-
-import java.awt.Image;
 
 public class Controller {
     // Dichiarazione dei frame
