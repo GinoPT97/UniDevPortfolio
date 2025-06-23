@@ -169,39 +169,56 @@ public class Controller {
 
     public void visAndElem(int context, int x) {
         switch (context) {
-            case 1: // Carrello
-                switch (x) {
-                    case 1 -> setVisibleFrame(carrf, visordf); // Mostra il frame carrello
-                    case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
-                }
-                break;
+            case 1 -> handleCarrelloContext(x);
+            case 2 -> handleDipendenteContext(x);
+            case 3 -> handleClienteContext(x);
+            case 4 -> handleProdottoContext(x);
+            default -> {
+                // Default case for context
+            }
+        }
+    }
 
-            case 2: // Dipendente
-                switch (x) {
-                    case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
-                    case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
-                    case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
-                }
-                break;
+    private void handleCarrelloContext(int x) {
+        switch (x) {
+            case 1 -> setVisibleFrame(carrf, visordf); // Mostra il frame carrello
+            case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
+            default -> {
+                // Default case for Carrello
+            }
+        }
+    }
 
-            case 3: // Cliente
-                switch (x) {
-                    case 1 -> setVisibleFrame(nclf, visctf); // Nuovo cliente
-                    case 2 -> setVisibleFrame(upclf, visctf); // Modifica cliente
-                    case 3 -> setVisibleFrame(visctf, nclf, upclf); // Vista clienti
-                }
-                break;
+    private void handleDipendenteContext(int x) {
+        switch (x) {
+            case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
+            case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
+            case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
+            default -> {
+                // Default case for Dipendente
+            }
+        }
+    }
 
-            case 4: // Prodotto
-                switch (x) {
-                    case 1 -> setVisibleFrame(nprodf, vprodf); // Nuovo prodotto
-                    case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
-                    case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
-                }
-                break;
+    private void handleClienteContext(int x) {
+        switch (x) {
+            case 1 -> setVisibleFrame(nclf, visctf); // Nuovo cliente
+            case 2 -> setVisibleFrame(upclf, visctf); // Modifica cliente
+            case 3 -> setVisibleFrame(visctf, nclf, upclf); // Vista clienti
+            default -> {
+                // Default case for Cliente
+            }
+        }
+    }
 
-            default:
-                break;
+    private void handleProdottoContext(int x) {
+        switch (x) {
+            case 1 -> setVisibleFrame(nprodf, vprodf); // Nuovo prodotto
+            case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
+            case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
+            default -> {
+                // Default case for Prodotto
+            }
         }
     }
 
