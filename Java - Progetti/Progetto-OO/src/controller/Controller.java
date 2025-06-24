@@ -8,7 +8,9 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -412,26 +414,23 @@ public class Controller {
     }
 
     public void allOrdini() throws SQLException {
+        // Ottimizzazione: cache locale di clienti e dipendenti per evitare query ripetute
+        List<Cliente> clienti = cljdbc.getAllCt();
+        List<Dipendente> dipendenti = dpjdbc.getAllDip();
+        Map<String, Cliente> clientiMap = clienti.stream().collect(Collectors.toMap(c -> String.valueOf(c.getCodCl()), c -> c));
+        Map<String, Dipendente> dipMap = dipendenti.stream().collect(Collectors.toMap(d -> String.valueOf(d.getCodDIP()), d -> d));
         List<Ordine> ordini = ordjdbc.getallordini();
         populateTable(ordini, ordModel, o -> {
-            String clienteNome = "N/A";
-            String dipendenteNome = "N/A";
-
-            try {
-                Dipendente d = dpjdbc.getOneDip(String.valueOf(o.getIdDipendente()));
-                Cliente ct = cljdbc.getCtByid(String.valueOf(o.getIdCliente()));
-                dipendenteNome = checkNull(d != null ? d.getCognome() + " " + d.getNome() : null);
-                clienteNome = checkNull(ct != null ? ct.getCognome() + " " + ct.getNome() : null);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
+            Cliente ct = clientiMap.get(String.valueOf(o.getIdCliente()));
+            Dipendente d = dipMap.get(String.valueOf(o.getIdDipendente()));
+            String clienteNome = checkNull(ct != null ? ct.getCognome() + " " + ct.getNome() : null);
+            String dipendenteNome = checkNull(d != null ? d.getCognome() + " " + d.getNome() : null);
             return new Object[]{
-                    checkNull(o.getCodOrd()),
-                    checkNull(o.getDataAcquisto()),
-                    checkNull(o.getPrezzoTotale()),
-                    clienteNome,
-                    dipendenteNome
+                checkNull(o.getCodOrd()),
+                checkNull(o.getDataAcquisto()),
+                checkNull(o.getPrezzoTotale()),
+                clienteNome,
+                dipendenteNome
             };
         });
     }
