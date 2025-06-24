@@ -32,6 +32,13 @@ public class NuovoClienteFrame extends JFrame {
     private JButton clearbutton;
     private JButton backbutton;
 
+    public NuovoClienteFrame(String title, Controller c) {
+        super(title);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
+        this.elementi();
+        this.azioni(c);
+    }
+
     public void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 500);
@@ -160,12 +167,5 @@ public class NuovoClienteFrame extends JFrame {
 
         // Azione per il bottone "Pulisci"
         clearbutton.addActionListener(e -> clean());
-    }
-
-    public NuovoClienteFrame(String title, Controller c) {
-        super(title);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
-        this.elementi();
-        this.azioni(c);
     }
 }

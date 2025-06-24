@@ -26,6 +26,13 @@ public class AdminFrame extends JFrame {
     private JButton prodbutton;
     private JButton searchbutton;
 
+    public AdminFrame(String title, Controller c) {
+        super(title);
+        JPanel titlePanel = c.createImagePanel("/Immagini/ImmAdmin.png");
+        this.elementi(titlePanel);
+        this.azioni(c);
+    }
+
     public void elementi(JPanel titlePanel) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 400);
@@ -103,13 +110,6 @@ public class AdminFrame extends JFrame {
 
         // Listener per il bottone ricerca che richiama il metodo searchAndElem con parametro 1
         searchbutton.addActionListener(e -> c.adminAndElem(6));
-    }
-
-    public AdminFrame(String title, Controller c) {
-        super(title);
-        JPanel titlePanel = c.createImagePanel("/Immagini/ImmAdmin.png");
-        this.elementi(titlePanel);
-        this.azioni(c);
     }
 }
 

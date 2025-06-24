@@ -35,6 +35,12 @@ public class RicercaFrame extends JFrame {
     private JButton searchbutton;
     private JComboBox<String> punticb;
 
+    public RicercaFrame(String title, Controller c) throws SQLException {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
+
     public void elementi() {
         // Imposta l'icona del frame
         setIconImage(Toolkit.getDefaultToolkit().getImage(RicercaFrame.class.getResource("/Immagini/ImmIcon.png")));
@@ -143,12 +149,6 @@ public class RicercaFrame extends JFrame {
 
         // Gestione del click sul pulsante "Indietro"
         backbutton.addActionListener(e -> c.returnToLastFrame());
-    }
-
-    public RicercaFrame(String title, Controller c) throws SQLException {
-        super(title);
-        this.elementi();
-        this.azioni(c);
     }
 }
 

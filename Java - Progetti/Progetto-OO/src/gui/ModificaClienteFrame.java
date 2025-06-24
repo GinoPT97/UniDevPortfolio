@@ -39,6 +39,12 @@ public class ModificaClienteFrame extends JFrame {
     private JPanel titlepanel;
     private JLabel titlelabel;
 
+    public ModificaClienteFrame(String title, Controller c) {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
+
     public void elementi() {
         // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -175,12 +181,6 @@ public class ModificaClienteFrame extends JFrame {
         });
 
         clearbutton.addActionListener(e -> clean());
-    }
-
-    public ModificaClienteFrame(String title, Controller c) {
-        super(title);
-        this.elementi();
-        this.azioni(c);
     }
 }
 

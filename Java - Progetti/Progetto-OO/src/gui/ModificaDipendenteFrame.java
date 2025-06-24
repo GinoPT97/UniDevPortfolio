@@ -39,6 +39,12 @@ public class ModificaDipendenteFrame extends JFrame {
     private JPanel titlepanel;
     private JLabel titlelabel;
 
+    public ModificaDipendenteFrame(String title, Controller c) {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
+
     public void elementi() {
         // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -172,11 +178,5 @@ public class ModificaDipendenteFrame extends JFrame {
         });
 
         clearbutton.addActionListener(e -> clean());
-    }
-
-    public ModificaDipendenteFrame(String title, Controller c) {
-        super(title);
-        this.elementi();
-        this.azioni(c);
     }
 }

@@ -53,6 +53,14 @@ import model.Ordine;
 import model.Prodotto;
 
 public class Controller {
+    public ModificaProdottiFrame modprodf;
+    public ModificaDipendenteFrame updipf;
+    public ModificaClienteFrame upclf;
+    public DefaultTableModel clienteModel = new DefaultTableModel(new Object[]{"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"}, 0);
+    public DefaultTableModel dipModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
+    public DefaultTableModel prodModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"}, 0);
+    public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
+    public String iddip;
     // Dichiarazione dei frame
     private LoginFrame logf;
     private NuovoProdottoFrame nprodf;
@@ -60,14 +68,11 @@ public class Controller {
     private DipendenteFrame dipf;
     private VisioneDipendentiFrame vdipf;
     private VisioneProdottiFrame vprodf;
-    public ModificaProdottiFrame modprodf;
     private StatisticheDipendentiFrame statdipf;
     private CarrelloFrame carrf;
     private VisioneClienteFrame visctf;
     private NuovoDipendenteFrame ndipf;
-    public ModificaDipendenteFrame updipf;
     private NuovoClienteFrame nclf;
-    public ModificaClienteFrame upclf;
     private VisioneOrdineFrame visordf;
     private RicercaFrame searchf;
     private DBConnection dbconn;
@@ -79,11 +84,6 @@ public class Controller {
     private OrdiniJDBC ordjdbc = null;
     private TesseraJDBC tsjdbc = null;
     private ArticoliJDBC artjdbc = null;
-    public DefaultTableModel clienteModel = new DefaultTableModel(new Object[]{"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"}, 0);
-    public DefaultTableModel dipModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
-    public DefaultTableModel prodModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"}, 0);
-    public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
-    public String iddip;
     private Frame lastFrame; // Variabile per tenere traccia dell'ultimo frame
 
     public Controller() throws SQLException, IOException {
@@ -105,6 +105,16 @@ public class Controller {
         visordf = new VisioneOrdineFrame("Green Market Point - Visione Ordini", this);
         searchf = new RicercaFrame("Green Market Point - Ricerca Clienti", this);
         logf.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                new Controller();
+            } catch (SQLException | IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     // Crea un pannello con un'immagine
@@ -220,16 +230,6 @@ public class Controller {
                 // Default case for Prodotto
             }
         }
-    }
-
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                new Controller();
-            } catch (SQLException | IOException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
     // Metodo generico per popolare il modello della tabella

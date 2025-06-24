@@ -32,6 +32,16 @@ public class LoginFrame extends JFrame {
     private JButton clearbutt;
     private JTextField idtf;
 
+    public LoginFrame(String title, Controller c) throws SQLException {
+        super(title);
+        c.connect();
+        JPanel titlePanel = c.createImagePanel("/Immagini/ImmLog.jpg");
+        SwingUtilities.invokeLater(() -> {
+            elementi(titlePanel);
+            azioni(c);
+        });
+    }
+
     private void elementi(JPanel titlePanel) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
@@ -123,15 +133,5 @@ public class LoginFrame extends JFrame {
 
     private void showMessage(String message) {
         JOptionPane.showMessageDialog(contentPane, message);
-    }
-
-    public LoginFrame(String title, Controller c) throws SQLException {
-        super(title);
-        c.connect();
-        JPanel titlePanel = c.createImagePanel("/Immagini/ImmLog.jpg");
-        SwingUtilities.invokeLater(() -> {
-            elementi(titlePanel);
-            azioni(c);
-        });
     }
 }

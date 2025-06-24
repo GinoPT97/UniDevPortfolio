@@ -49,6 +49,12 @@ public class NuovoProdottoFrame extends JFrame {
     private JCheckBox glutcb;
     private JComboBox<String> categoriacb;
 
+    public NuovoProdottoFrame(String title, Controller c) {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
+
     public void elementi() {
         // Configurazione della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -215,11 +221,5 @@ public class NuovoProdottoFrame extends JFrame {
                 }
             }
         });
-    }
-
-    public NuovoProdottoFrame(String title, Controller c) {
-        super(title);
-        this.elementi();
-        this.azioni(c);
     }
 }

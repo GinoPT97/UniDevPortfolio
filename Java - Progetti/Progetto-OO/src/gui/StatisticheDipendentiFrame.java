@@ -34,6 +34,12 @@ public class StatisticheDipendentiFrame extends JFrame {
     private JLabel periodoLab, cognomeVenditeLab, titleLabel, startLab, finalLab, nomeLab, cognomeLab, introitiValLab, nomeVenditeLab, venditeValLab;
     private JTextField startTF, finalTF, nomeIntroitiTF, cognomeIntroitiTF, introitiTF, nomeVenditeTF, cognomeVenditeTF, venditeTF;
 
+    public StatisticheDipendentiFrame(String title, Controller c) throws SQLException {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
+
     private void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 870, 450);
@@ -274,11 +280,5 @@ public class StatisticheDipendentiFrame extends JFrame {
         cognomeVenditeTF.setText("");
         introitiTF.setText("");
         venditeTF.setText("");
-    }
-
-    public StatisticheDipendentiFrame(String title, Controller c) throws SQLException {
-        super(title);
-        this.elementi();
-        this.azioni(c);
     }
 }

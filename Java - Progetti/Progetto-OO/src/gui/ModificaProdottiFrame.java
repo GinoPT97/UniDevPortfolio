@@ -49,6 +49,12 @@ public class ModificaProdottiFrame extends JFrame {
     private JButton updatebutton;
     private JButton clearbutton;
 
+    public ModificaProdottiFrame(String title, Controller c) {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
+
     public void elementi() {
         // Impostazioni base della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -281,11 +287,5 @@ public class ModificaProdottiFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });
-    }
-
-    public ModificaProdottiFrame(String title, Controller c) {
-        super(title);
-        this.elementi();
-        this.azioni(c);
     }
 }

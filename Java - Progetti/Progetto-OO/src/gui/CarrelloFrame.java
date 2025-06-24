@@ -29,6 +29,12 @@ public class CarrelloFrame extends JFrame {
     private JTable prodottotable;
     private JTable ordinetable;
 
+    public CarrelloFrame(String title, Controller c) {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
+
     public void elementi() {
         setBackground(Color.WHITE);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -166,12 +172,6 @@ public class CarrelloFrame extends JFrame {
         });
         ordinebutton.addActionListener(e -> creaOrdine(c));
         backbutton.addActionListener(e -> c.visAndElem(1, 2));
-    }
-
-    public CarrelloFrame(String title, Controller c) {
-        super(title);
-        this.elementi();
-        this.azioni(c);
     }
 
     public void clean() {

@@ -26,6 +26,13 @@ public class DipendenteFrame extends JFrame {
     private JButton searchbutton;
     private JButton prodButton;
 
+    public DipendenteFrame(String title, Controller c) {
+        super(title);
+        JPanel titlePanel = c.createImagePanel("/Immagini/ImmDipendenti.jpg");
+        this.elementi(titlePanel);
+        this.azioni(c);
+    }
+
     public void elementi(JPanel titlePanel) {
         // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -100,13 +107,6 @@ public class DipendenteFrame extends JFrame {
 
         // Listener per il pulsante prodotti, chiama il metodo dipAndElem del Controller con parametro 2
         prodButton.addActionListener(e -> c.dipAndElem(2));
-    }
-
-    public DipendenteFrame(String title, Controller c) {
-        super(title);
-        JPanel titlePanel = c.createImagePanel("/Immagini/ImmDipendenti.jpg");
-        this.elementi(titlePanel);
-        this.azioni(c);
     }
 }
 

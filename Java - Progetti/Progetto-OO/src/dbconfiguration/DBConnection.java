@@ -12,17 +12,13 @@ public final class DBConnection {
     private static final String DB_USERNAME;
     private static final String DB_PASSWORD;
 
-    private static class Holder {
-        private static final DBConnection INSTANCE = new DBConnection();
-    }
-
-    private final Connection connection;
-
     static {
         DB_URL = "jdbc:postgresql://localhost:5432/";
         DB_USERNAME = "postgres";
         DB_PASSWORD = "postgres";
     }
+
+    private final Connection connection;
 
     private DBConnection() {
         try {
@@ -49,5 +45,9 @@ public final class DBConnection {
                 LOGGER.log(Level.WARNING, "Error closing database connection", e);
             }
         }
+    }
+
+    private static class Holder {
+        private static final DBConnection INSTANCE = new DBConnection();
     }
 }

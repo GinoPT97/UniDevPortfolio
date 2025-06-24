@@ -34,6 +34,12 @@ public class NuovoDipendenteFrame extends JFrame {
     private JButton clearbutton;
     private JButton backbutton;
 
+    public NuovoDipendenteFrame(String title, Controller c) {
+        super(title);
+        this.elementi();
+        this.azioni(c);
+    }
+
     public void elementi() {
         // Imposta le proprietà di base della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -154,11 +160,5 @@ public class NuovoDipendenteFrame extends JFrame {
             clean(); // Pulisce i campi di input
             c.visAndElem(2, 3); // Passa alla schermata dipendenti
         });
-    }
-
-    public NuovoDipendenteFrame(String title, Controller c) {
-        super(title);
-        this.elementi();
-        this.azioni(c);
     }
 }
