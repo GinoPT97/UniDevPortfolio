@@ -250,7 +250,7 @@ public class Controller {
             config.createTableProdotto();
             config.createTableTessera();
             config.createTableArticoliOrdine();
-            //config.FromatTables();
+            //config.formatTables();
             config.populateDatabase();
             cljdbc = new Clienteimpl(connection);
             dpjdbc = new DipendenteImpl(connection);
