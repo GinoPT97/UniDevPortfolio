@@ -1,15 +1,11 @@
 package daoimplementation;
 
 import daointerface.DipendenteJDBC;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import model.Dipendente;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import model.Dipendente;
 
 public class DipendenteImpl implements DipendenteJDBC {
     private static final String COGNOME = "cognome";

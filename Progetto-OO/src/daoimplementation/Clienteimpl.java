@@ -1,14 +1,10 @@
 package daoimplementation;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-
 import daointerface.ClienteJDBC;
 import model.Cliente;
+
+import java.sql.*;
+import java.util.ArrayList;
 
 public class Clienteimpl implements ClienteJDBC {
     private static final String CODCLIENTE = "codcliente"; 

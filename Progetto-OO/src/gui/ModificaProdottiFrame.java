@@ -1,11 +1,11 @@
 package gui;
 
 import controller.Controller;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -13,21 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.JTextComponent;
 
 public class ModificaProdottiFrame extends JFrame {
     private String cod;

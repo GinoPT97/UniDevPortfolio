@@ -1,30 +1,15 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import controller.Controller;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import controller.Controller;
+import java.awt.*;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RicercaFrame extends JFrame {
     private JTable searchtable;

@@ -1,30 +1,13 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Toolkit;
+import controller.Controller;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
-
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.JSplitPane;
-import javax.swing.border.EmptyBorder;
-
-import controller.Controller;
-
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 
 public class LoginFrame extends JFrame {
     private JPanel contentPane;

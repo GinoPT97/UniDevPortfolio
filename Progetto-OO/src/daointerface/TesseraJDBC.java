@@ -1,9 +1,9 @@
 package daointerface;
 
+import model.Tessera;
+
 import java.sql.SQLException;
 import java.util.List;
-
-import model.Tessera;
 
 public interface TesseraJDBC {
     public boolean newtessera(String cliente) throws SQLException;

@@ -1,21 +1,11 @@
 package gui;
 
 import controller.Controller;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
-import java.sql.SQLException;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
+
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.sql.SQLException;
 
 public class NuovoClienteFrame extends JFrame {
     private JPanel contentPane;

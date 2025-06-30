@@ -1,14 +1,14 @@
 package gui;
 
-import java.awt.*;
-import java.sql.SQLException;
-import java.util.regex.PatternSyntaxException;
+import controller.Controller;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import controller.Controller;
+import java.awt.*;
+import java.sql.SQLException;
+import java.util.regex.PatternSyntaxException;
 
 public class VisioneOrdineFrame extends JFrame {
     private JTable table;

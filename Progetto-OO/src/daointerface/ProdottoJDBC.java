@@ -1,9 +1,9 @@
 package daointerface;
 
+import model.Prodotto;
+
 import java.sql.SQLException;
 import java.util.List;
-
-import model.Prodotto;
 
 public interface ProdottoJDBC {
     public boolean setNewProdotto(Prodotto prodotto) throws SQLException;

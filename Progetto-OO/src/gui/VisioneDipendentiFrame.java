@@ -1,13 +1,14 @@
 package gui;
 
 import controller.Controller;
-import java.awt.*;
-import java.sql.SQLException;
-import java.util.regex.PatternSyntaxException;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import java.awt.*;
+import java.sql.SQLException;
+import java.util.regex.PatternSyntaxException;
 
 public class VisioneDipendentiFrame extends JFrame {
     private JTable table;

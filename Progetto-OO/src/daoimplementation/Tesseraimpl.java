@@ -1,13 +1,14 @@
 package daoimplementation;
 
 import daointerface.TesseraJDBC;
+import model.Cliente;
+import model.Tessera;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import model.Cliente;
-import model.Tessera;
 
 public class Tesseraimpl implements TesseraJDBC {
 

@@ -1,12 +1,13 @@
 package daoimplementation;
 
 import daointerface.ProdottoJDBC;
+import model.Prodotto;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import model.Prodotto;
 
 public class ProdottoImpl implements ProdottoJDBC {
     private final Connection connection;

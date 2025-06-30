@@ -1,9 +1,9 @@
 package daointerface;
 
+import model.Cliente;
+
 import java.sql.SQLException;
 import java.util.List;
-
-import model.Cliente;
 
 public interface ClienteJDBC {
     public boolean setNewCt(Cliente cliente) throws SQLException;

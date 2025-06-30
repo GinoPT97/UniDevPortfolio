@@ -1,13 +1,13 @@
 package model;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.*;
 
 public class ImagePanel extends JPanel {
     private transient Image image;
