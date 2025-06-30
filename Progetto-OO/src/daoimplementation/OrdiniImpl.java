@@ -1,5 +1,6 @@
 package daoimplementation;
 
+import daointerface.OrdiniJDBC;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,16 +8,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Logger;
 import java.util.logging.Level;
-
-import daointerface.OrdiniJDBC;
+import java.util.logging.Logger;
 import model.Ordine;
 
 public class OrdiniImpl implements OrdiniJDBC {
     private final Connection connection;
-    private PreparedStatement newOrdineStmt;
-    private PreparedStatement getAllOrdiniStmt;
+    private final PreparedStatement newOrdineStmt;
+    private final PreparedStatement getAllOrdiniStmt;
 
     public OrdiniImpl(Connection connection) throws SQLException {
         this.connection = connection;

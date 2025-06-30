@@ -1,5 +1,6 @@
 package daoimplementation;
 
+import daointerface.DipendenteJDBC;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -8,20 +9,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import daointerface.DipendenteJDBC;
 import model.Dipendente;
 
 public class DipendenteImpl implements DipendenteJDBC {
-    private PreparedStatement setNewDip;
-    private PreparedStatement updateDip;
-    private PreparedStatement verifyId;
-    private PreparedStatement getOneDip;
-    private PreparedStatement getDipVendite;
-    private PreparedStatement getDipIntroiti;
-    private Statement getAllDip;
-    private List<String> ordven = new ArrayList<>();
-    private List<String> ordint = new ArrayList<>();
+    private static final String COGNOME = "cognome";
+    private final PreparedStatement setNewDip;
+    private final PreparedStatement updateDip;
+    private final PreparedStatement verifyId;
+    private final PreparedStatement getOneDip;
+    private final PreparedStatement getDipVendite;
+    private final PreparedStatement getDipIntroiti;
+    private final Statement getAllDip;
+    private final List<String> ordven = new ArrayList<>();
+    private final List<String> ordint = new ArrayList<>();
 
     public DipendenteImpl(Connection connection) throws SQLException {
         getAllDip = connection.createStatement();
@@ -64,12 +64,12 @@ public class DipendenteImpl implements DipendenteJDBC {
     @Override
     public ArrayList<Dipendente> getAllDip() throws SQLException {
         ArrayList<Dipendente> dipendenti = new ArrayList<>();
-        try (ResultSet rs = getAllDip.executeQuery("SELECT coddipendente, nome, cognome, codicefiscale, email, indirizzo, telefono FROM dipendente ORDER BY cognome DESC")) {
+        try (ResultSet rs = getAllDip.executeQuery("SELECT coddipendente, nome, cognome, codicefiscale, email, indirizzo, telefono FROM dipendente ORDER BY " + COGNOME + " DESC")) {
             while (rs.next()) {
                 dipendenti.add(new Dipendente(
                         rs.getString("coddipendente"),
                         rs.getString("nome"),
-                        rs.getString("cognome"),
+                        rs.getString(COGNOME),
                         rs.getString("codicefiscale"),
                         rs.getString("email"),
                         rs.getString("indirizzo"),
@@ -87,7 +87,7 @@ public class DipendenteImpl implements DipendenteJDBC {
         try (ResultSet rs = getDipVendite.executeQuery()) {
             if (rs.next()) {
                 ordven.add(rs.getString("nome"));
-                ordven.add(rs.getString("cognome"));
+                ordven.add(rs.getString(COGNOME));
                 ordven.add(rs.getString("Tordini"));
             }
         }
@@ -102,7 +102,7 @@ public class DipendenteImpl implements DipendenteJDBC {
         try (ResultSet rs = getDipIntroiti.executeQuery()) {
             if (rs.next()) {
                 ordint.add(rs.getString("nome"));
-                ordint.add(rs.getString("cognome"));
+                ordint.add(rs.getString(COGNOME));
                 ordint.add(rs.getString("Sordine"));
             }
         }
@@ -124,7 +124,7 @@ public class DipendenteImpl implements DipendenteJDBC {
                 return new Dipendente(
                         id,
                         rs.getString("nome"),
-                        rs.getString("cognome"),
+                        rs.getString(COGNOME),
                         rs.getString("codicefiscale"),
                         rs.getString("email"),
                         rs.getString("indirizzo"),

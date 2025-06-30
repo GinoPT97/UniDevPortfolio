@@ -1,22 +1,21 @@
 package daoimplementation;
 
+import daointerface.TesseraJDBC;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import daointerface.TesseraJDBC;
 import model.Cliente;
 import model.Tessera;
 
 public class Tesseraimpl implements TesseraJDBC {
 
-    private PreparedStatement newtesseraStmt;
-    private PreparedStatement getpuntitStmt;
-    private PreparedStatement alltesseraStmt;
+    private final PreparedStatement newtesseraStmt;
+    private final PreparedStatement getpuntitStmt;
+    private final PreparedStatement alltesseraStmt;
 
-    private Connection connection;
+    private final Connection connection;
 
     public Tesseraimpl(Connection connection) throws SQLException {
         this.connection = connection;

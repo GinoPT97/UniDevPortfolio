@@ -1,13 +1,12 @@
 package daoimplementation;
 
+import daointerface.ArticoliJDBC;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-
-import daointerface.ArticoliJDBC;
 import model.Articoli;
 import model.Cliente;
 
@@ -40,6 +39,7 @@ public class ArticoliImpl implements ArticoliJDBC {
         }
     }
 
+    @Override
     public ArrayList<Cliente> searchClient() throws SQLException {
         ArrayList<Cliente> clienti = new ArrayList<>();
         String query = """

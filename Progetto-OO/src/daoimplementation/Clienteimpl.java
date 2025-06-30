@@ -11,7 +11,7 @@ import daointerface.ClienteJDBC;
 import model.Cliente;
 
 public class Clienteimpl implements ClienteJDBC {
-    private static final String CODCLIENTE = "codcliente"; // Define constant for "codcliente"
+    private static final String CODCLIENTE = "codcliente"; 
     private PreparedStatement setNewCt;
     private PreparedStatement cercaCl;
     private PreparedStatement updateCl;
