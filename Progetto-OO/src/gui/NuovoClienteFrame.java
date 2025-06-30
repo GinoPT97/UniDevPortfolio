@@ -36,7 +36,7 @@ public class NuovoClienteFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi() {
+    private void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 500);
         setLocationRelativeTo(null);
@@ -114,7 +114,7 @@ public class NuovoClienteFrame extends JFrame {
         telefonotf.setText("");
     }
 
-    public void azioni(Controller c) {
+    private void azioni(Controller c) {
         // Azione per il bottone "Indietro"
         backbutton.addActionListener(e -> {
             clean();
@@ -153,7 +153,9 @@ public class NuovoClienteFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Cliente e relativa tessera aggiunti");
             } catch (SQLException e1) {
                 // Gestione dell'errore
-                JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore: " + e1.getMessage());
+                JOptionPane.showMessageDialog(null, """
+                        Errore!
+                        Tipo di errore: """ + e1.getMessage());
             }
         });
 

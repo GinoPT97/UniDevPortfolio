@@ -23,7 +23,7 @@ public class VisioneDipendentiFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi(Controller c) {
+    private void elementi(Controller c) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
         setBounds(100, 100, 850, 500);
@@ -79,7 +79,7 @@ public class VisioneDipendentiFrame extends JFrame {
         return button;
     }
 
-    public void azioni(Controller c) throws SQLException {
+    private void azioni(Controller c) throws SQLException {
         c.allDipendenti();
 
         searchbutton.addActionListener(e -> {

@@ -23,7 +23,7 @@ public class VisioneProdottiFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi(Controller c) {
+    private void elementi(Controller c) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 900, 500);
         setLocationRelativeTo(null);
@@ -79,7 +79,7 @@ public class VisioneProdottiFrame extends JFrame {
         return button;
     }
 
-    public void azioni(Controller c) throws SQLException {
+    private void azioni(Controller c) throws SQLException {
         c.allProdotti();
 
         searchbutton.addActionListener(e -> {

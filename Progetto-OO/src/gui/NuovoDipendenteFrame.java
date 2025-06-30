@@ -36,7 +36,7 @@ public class NuovoDipendenteFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi() {
+    private void elementi() {
         // Imposta le proprietà di base della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 500);
@@ -112,7 +112,7 @@ public class NuovoDipendenteFrame extends JFrame {
         telefonotf.setText("");
     }
 
-    public void azioni(Controller c) {
+    private void azioni(Controller c) {
         // Listener per il bottone di aggiunta di un nuovo dipendente
         addbutton.addActionListener(e -> {
             try {
@@ -143,7 +143,9 @@ public class NuovoDipendenteFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
             } catch (SQLException e1) {
                 // Mostra un messaggio di errore in caso di eccezione
-                JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1.getMessage());
+                JOptionPane.showMessageDialog(null, """
+                        Errore!
+                        Tipo di errore : """ + e1.getMessage());
             }
         });
 

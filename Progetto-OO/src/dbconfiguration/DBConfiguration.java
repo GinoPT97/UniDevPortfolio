@@ -5,6 +5,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DBConfiguration {
@@ -49,7 +50,7 @@ public class DBConfiguration {
                     logger.info("Table Cliente already exists!");
                 }
             } catch (SQLException ex) {
-                logger.severe("SQL Exception in creation table Cliente: " + ex);
+                logger.log(Level.SEVERE, "SQL Exception in creation table Cliente: ", ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -81,7 +82,7 @@ public class DBConfiguration {
                     logger.info("Table Dipendente already exists!");
                 }
             } catch (SQLException ex) {
-                logger.severe("SQL Exception in creation table Dipendente: " + ex);
+                logger.log(Level.SEVERE, "SQL Exception in creation table Dipendente: ", ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -113,7 +114,7 @@ public class DBConfiguration {
                     logger.info("Table Tessera already exists!");
                 }
             } catch (SQLException ex) {
-                logger.severe("SQL Exception in creation table Tessera: " + ex);
+                logger.log(Level.SEVERE, "SQL Exception in creation table Tessera: ", ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -155,7 +156,7 @@ public class DBConfiguration {
                     logger.info("Table Prodotto already exists!");
                 }
             } catch (SQLException ex) {
-                logger.severe("SQL Exception in creation table Prodotto: " + ex);
+                logger.log(Level.SEVERE, "SQL Exception in creation table Prodotto: ", ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -193,7 +194,7 @@ public class DBConfiguration {
                     logger.info("Table Ordine already exists!");
                 }
             } catch (SQLException ex) {
-                logger.severe("SQL Exception in creation table Ordine: " + ex);
+                logger.log(Level.SEVERE, "SQL Exception in creation table Ordine: ", ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -232,7 +233,7 @@ public class DBConfiguration {
                     logger.info("Table ArticoliOrdine already exists!");
                 }
             } catch (SQLException ex) {
-                logger.severe("SQL Exception in creation table ArticoliOrdine: " + ex);
+                logger.log(Level.SEVERE, "SQL Exception in creation table ArticoliOrdine: ", ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -249,7 +250,7 @@ public class DBConfiguration {
                 String sql = "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'tipologia') THEN CREATE TYPE TIPOLOGIA AS ENUM('Ortofrutticoli','Latticini','Inscatolati','Farinacei'); END IF; END $$;";
                 result = statement.executeUpdate(sql);
             } catch (SQLException ex) {
-                logger.severe("SQL Exception in creation type tipologia: " + ex);
+                logger.log(Level.SEVERE, "SQL Exception in creation type tipologia: ", ex);
             }
         } else {
             throw new ConnectionException("A connection must exist!");
@@ -285,7 +286,7 @@ public class DBConfiguration {
             result += statement.executeUpdate(sqlDeleteCliente);
 
         } catch (SQLException e) {
-            logger.severe("Error while formatting tables: " + e);
+            logger.log(Level.SEVERE, "Error while formatting tables: ", e);
         }
 
         return result;
@@ -392,7 +393,7 @@ public class DBConfiguration {
             result += statement.executeUpdate(sqlArticoliOrdine);
 
         } catch (SQLException e) {
-            logger.severe("Error while populating database: " + e);
+            logger.log(Level.SEVERE, "Error while populating database: ", e);
         }
 
         return result;

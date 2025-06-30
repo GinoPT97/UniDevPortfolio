@@ -1,6 +1,5 @@
 package model;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -8,10 +7,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class ImagePanel extends JPanel {
-    private Image image;
-    private Image scaledImage;
+    private transient Image image;
+    private transient Image scaledImage;
     private int lastWidth = -1;
     private int lastHeight = -1;
 
@@ -44,7 +44,8 @@ public class ImagePanel extends JPanel {
             revalidate();
             repaint();
         } catch (IOException e) {
-            e.printStackTrace();
+            // Log dell'errore - in un'applicazione reale si userebbe un logger
+            throw new IllegalArgumentException("Errore durante il caricamento dell'immagine: " + e.getMessage(), e);
         }
     }
 

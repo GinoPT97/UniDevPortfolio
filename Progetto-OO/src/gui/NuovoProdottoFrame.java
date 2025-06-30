@@ -51,7 +51,7 @@ public class NuovoProdottoFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi() {
+    private void elementi() {
         // Configurazione della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 650, 500); // Aumenta l'altezza della finestra
@@ -117,10 +117,10 @@ public class NuovoProdottoFrame extends JFrame {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel label = new JLabel(labelText);
         panel.add(label);
-        if (inputComponent instanceof JTextField) {
-            ((JTextField) inputComponent).setEditable(editable);
-        } else if (inputComponent instanceof JCheckBox) {
-            ((JCheckBox) inputComponent).setEnabled(editable);
+        if (inputComponent instanceof JTextField textField) {
+            textField.setEditable(editable);
+        } else if (inputComponent instanceof JCheckBox checkBox) {
+            checkBox.setEnabled(editable);
         }
         panel.add(inputComponent);
         return panel;
@@ -147,7 +147,7 @@ public class NuovoProdottoFrame extends JFrame {
         glutcb.setSelected(false);
     }
 
-    public void azioni(Controller c) {
+    private void azioni(Controller c) {
         clearbutton.addActionListener(e -> clean());
 
         backbutton.addActionListener(e -> {
@@ -188,10 +188,10 @@ public class NuovoProdottoFrame extends JFrame {
                 c.prodModel.addRow(new Object[]{
                         nometf.getText(),
                         descta.getText(),
-                        Double.parseDouble(prezzotf.getText()),
+                        Double.valueOf(prezzotf.getText()),
                         provtf.getText(),
                         categoria,
-                        Integer.parseInt(scortatf.getText())
+                        Integer.valueOf(scortatf.getText())
                 });
 
                 // Pulisci i campi e mostra un messaggio di successo
@@ -199,7 +199,9 @@ public class NuovoProdottoFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
 
             } catch (NumberFormatException | SQLException | ParseException e1) {
-                JOptionPane.showMessageDialog(null, "Errore!" + "\n" + "Tipo di errore : " + e1);
+                JOptionPane.showMessageDialog(null, """
+                        Errore!
+                        Tipo di errore : """ + e1);
             }
         });
 

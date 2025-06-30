@@ -41,7 +41,7 @@ public class ModificaClienteFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi() {
+    private void elementi() {
         // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 500);
@@ -131,7 +131,7 @@ public class ModificaClienteFrame extends JFrame {
         telefonotf.setText(telefono);
     }
 
-    public void azioni(Controller c) {
+    private void azioni(Controller c) {
         backbutton.addActionListener(e -> {
             clean();
             c.visAndElem(3, 3); // Torna alla vista con indice 3

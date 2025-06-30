@@ -1,16 +1,15 @@
 package daoimplementation;
 
+import daointerface.ProdottoJDBC;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import daointerface.ProdottoJDBC;
 import model.Prodotto;
 
 public class ProdottoImpl implements ProdottoJDBC {
-    private Connection connection;
+    private final Connection connection;
     private PreparedStatement setNewProdottoStmt;
     private PreparedStatement getAllProdottiStmt;
     private PreparedStatement updateProdottoStmt;
@@ -21,7 +20,7 @@ public class ProdottoImpl implements ProdottoJDBC {
 
     // Metodo per inizializzare le query preparate
     private void initStatements() throws SQLException {
-        this.getAllProdottiStmt = connection.prepareStatement("SELECT * FROM prodotto ORDER BY nome DESC");
+        this.getAllProdottiStmt = connection.prepareStatement("SELECT codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta FROM prodotto ORDER BY nome DESC");
         this.setNewProdottoStmt = connection.prepareStatement(
                 "INSERT INTO prodotto (nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES (?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, CAST(? AS TIPOLOGIA), ?)"
         );
@@ -61,9 +60,7 @@ public class ProdottoImpl implements ProdottoJDBC {
             stmt.setString(2, codiceProdotto); // Ensure codiceProdotto is cast to INTEGER in the query
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
-        } catch (SQLException e) {
-            throw e;
-        }
+    }
     }
 
     @Override
@@ -82,7 +79,7 @@ public class ProdottoImpl implements ProdottoJDBC {
     @Override
     public ArrayList<Prodotto> getbycategoria(String categoria) throws SQLException {
         ArrayList<Prodotto> prodottiCategoria = new ArrayList<>();
-        String query = "SELECT * FROM prodotto WHERE categoria = ? ORDER BY nome DESC";
+        String query = "SELECT codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta FROM prodotto WHERE categoria = ? ORDER BY nome DESC";
         try (PreparedStatement getCategoriaStmt = connection.prepareStatement(query)) {
             getCategoriaStmt.setString(1, categoria);
             try (ResultSet rs = getCategoriaStmt.executeQuery()) {
@@ -101,30 +98,37 @@ public class ProdottoImpl implements ProdottoJDBC {
         stmt.setString(4, prodotto.getLuogoProv());
 
         switch (prodotto.getCategoria()) {
-            case "Ortofrutticoli":
+            case "Ortofrutticoli" -> {
                 stmt.setDate(5, new java.sql.Date(prodotto.getDataraccolta().getTime()));
                 stmt.setDate(6, null);
                 stmt.setBoolean(7, prodotto.isGlutine());
                 stmt.setDate(8, null);
-                break;
-            case "Inscatolati":
+            }
+            case "Inscatolati" -> {
                 stmt.setDate(5, null);
                 stmt.setDate(6, null);
                 stmt.setBoolean(7, prodotto.isGlutine());
                 stmt.setDate(8, new java.sql.Date(prodotto.getDatascadenza().getTime()));
-                break;
-            case "Latticini":
+            }
+            case "Latticini" -> {
                 stmt.setDate(5, null);
                 stmt.setDate(6, new java.sql.Date(prodotto.getDatamungitura().getTime()));
                 stmt.setBoolean(7, prodotto.isGlutine());
                 stmt.setDate(8, null);
-                break;
-            case "Farinacei":
+            }
+            case "Farinacei" -> {
                 stmt.setDate(5, null);
                 stmt.setDate(6, null);
                 stmt.setBoolean(7, prodotto.isGlutine());
                 stmt.setDate(8, null);
-                break;
+            }
+            default -> {
+                // Categoria non riconosciuta - imposta tutti i campi opzionali a null
+                stmt.setDate(5, null);
+                stmt.setDate(6, null);
+                stmt.setBoolean(7, false);
+                stmt.setDate(8, null);
+            }
         }
         stmt.setString(9, prodotto.getCategoria());
     }

@@ -2,6 +2,7 @@ package gui;
 
 import controller.Controller;
 import java.awt.*;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,10 +11,10 @@ import javax.swing.table.DefaultTableModel;
 public class CarrelloFrame extends JFrame {
     private static final String FONT_TAHOMA = "Tahoma";
     private static final String ERROR_TITLE = "Errore";
-    private DefaultTableModel ordModel = new DefaultTableModel();
-    private transient Object[] prodcolonne = {"Id", "Nome", "Prezzo", "Categoria", "Scorta"};
-    private transient Object[] ordinecolonne = {"Id", "Nome", "Prezzo", "Categoria", "Quantita"};
-    private LocalDate dataod = LocalDate.now();
+    private final DefaultTableModel ordModel = new DefaultTableModel();
+    private final transient Object[] prodcolonne = {"Id", "Nome", "Prezzo", "Categoria", "Scorta"};
+    private final transient Object[] ordinecolonne = {"Id", "Nome", "Prezzo", "Categoria", "Quantita"};
+    private final LocalDate dataod = LocalDate.now();
     private JTextField quantitatf;
     private JLabel totalelab;
     private JButton backbutton;
@@ -32,7 +33,7 @@ public class CarrelloFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi() {
+    private void elementi() {
         setBackground(Color.WHITE);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 1100, 500);
@@ -155,7 +156,7 @@ public class CarrelloFrame extends JFrame {
         return button;
     }
 
-    public void azioni(Controller c) {
+    private void azioni(Controller c) {
         popolazioni(c);
 
         selectbutton.addActionListener(e -> filtraProdotti(c));
@@ -294,7 +295,7 @@ public class CarrelloFrame extends JFrame {
                 String nomeCognome = idClienteTemp + " - " + nome + " " + cognome;
 
                 if (clienteSelezionato.equals(nomeCognome)) {
-                    idCliente = Integer.parseInt(idClienteTemp);
+                    idCliente = Integer.valueOf(idClienteTemp);
                     break;
                 }
             }
@@ -335,9 +336,9 @@ public class CarrelloFrame extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(null, "Cliente non trovato!");
             }
-        } catch (Exception e1) {
+        } catch (SQLException | NumberFormatException e1) {
             JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-            e1.printStackTrace();
+            // Log dell'errore in modo appropriato (eventualmente qui si potrebbe usare un logger)
         }
     }
 }

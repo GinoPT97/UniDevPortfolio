@@ -1,11 +1,11 @@
 package gui;
 
+import controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Toolkit;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -15,8 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-
-import controller.Controller;
 
 public class AdminFrame extends JFrame {
     private JButton logoutbutton;
@@ -33,7 +31,7 @@ public class AdminFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi(JPanel titlePanel) {
+    private void elementi(JPanel titlePanel) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 400);
         JPanel contentPane = new JPanel();
@@ -92,7 +90,7 @@ public class AdminFrame extends JFrame {
         contentPane.add(titlePanel, BorderLayout.WEST);
     }
 
-    public void azioni(Controller c) {
+    private void azioni(Controller c) {
         // Listener per il bottone di logout che richiama il metodo logout nel Controller
         logoutbutton.addActionListener(e -> c.logout(1));
 

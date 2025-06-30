@@ -61,19 +61,19 @@ public class Controller {
     public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
     public String iddip;
     // Dichiarazione dei frame
-    private LoginFrame logf;
-    private NuovoProdottoFrame nprodf;
-    private AdminFrame adminf;
-    private DipendenteFrame dipf;
-    private VisioneDipendentiFrame vdipf;
-    private VisioneProdottiFrame vprodf;
-    private StatisticheDipendentiFrame statdipf;
-    private CarrelloFrame carrf;
-    private VisioneClienteFrame visctf;
-    private NuovoDipendenteFrame ndipf;
-    private NuovoClienteFrame nclf;
-    private VisioneOrdineFrame visordf;
-    private RicercaFrame searchf;
+    private final LoginFrame logf;
+    private final NuovoProdottoFrame nprodf;
+    private final AdminFrame adminf;
+    private final DipendenteFrame dipf;
+    private final VisioneDipendentiFrame vdipf;
+    private final VisioneProdottiFrame vprodf;
+    private final StatisticheDipendentiFrame statdipf;
+    private final CarrelloFrame carrf;
+    private final VisioneClienteFrame visctf;
+    private final NuovoDipendenteFrame ndipf;
+    private final NuovoClienteFrame nclf;
+    private final VisioneOrdineFrame visordf;
+    private final RicercaFrame searchf;
     private DBConnection dbconn;
     private DBConfiguration config = null;
     private Connection connection = null;
@@ -111,7 +111,7 @@ public class Controller {
             try {
                 new Controller();
             } catch (SQLException | IOException e) {
-                e.printStackTrace();
+                System.err.println("Errore durante l'avvio dell'applicazione: " + e.getMessage());
             }
         });
     }
@@ -258,10 +258,8 @@ public class Controller {
             ordjdbc = new OrdiniImpl(connection);
             tsjdbc = new Tesseraimpl(connection);
             artjdbc = new ArticoliImpl(connection);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (dbconfiguration.ConnectionException e) {
-            e.printStackTrace();
+        } catch (SQLException | dbconfiguration.ConnectionException e) {
+            System.err.println("Errore durante la connessione: " + e.getMessage());
         }
     }
 

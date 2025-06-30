@@ -51,7 +51,7 @@ public class ModificaProdottiFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi() {
+    private void elementi() {
         // Impostazioni base della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 650, 500); // Aumenta l'altezza della finestra
@@ -133,10 +133,10 @@ public class ModificaProdottiFrame extends JFrame {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel label = new JLabel(labelText);
         panel.add(label);
-        if (inputComponent instanceof JTextField) {
-            ((JTextField) inputComponent).setEditable(editable);
-        } else if (inputComponent instanceof JCheckBox) {
-            ((JCheckBox) inputComponent).setEnabled(editable);
+        if (inputComponent instanceof JTextField textField) {
+            textField.setEditable(editable);
+        } else if (inputComponent instanceof JCheckBox checkBox) {
+            checkBox.setEnabled(editable);
         }
         panel.add(inputComponent);
         return panel;
@@ -162,21 +162,11 @@ public class ModificaProdottiFrame extends JFrame {
         glutcb.setSelected(glutine);
 
         switch (categoria) {
-            case "Ortofrutticoli":
-                categoriacb.setSelectedIndex(0);
-                break;
-            case "Inscatolati":
-                categoriacb.setSelectedIndex(1);
-                break;
-            case "Latticini":
-                categoriacb.setSelectedIndex(2);
-                break;
-            case "Farinacei":
-                categoriacb.setSelectedIndex(3);
-                break;
-            default:
-                categoriacb.setSelectedIndex(-1);
-                break;
+            case "Ortofrutticoli" -> categoriacb.setSelectedIndex(0);
+            case "Inscatolati" -> categoriacb.setSelectedIndex(1);
+            case "Latticini" -> categoriacb.setSelectedIndex(2);
+            case "Farinacei" -> categoriacb.setSelectedIndex(3);
+            default -> categoriacb.setSelectedIndex(-1);
         }
     }
 
@@ -192,7 +182,7 @@ public class ModificaProdottiFrame extends JFrame {
         glutcb.setSelected(false);
     }
 
-    public void azioni(Controller c) {
+    private void azioni(Controller c) {
         // Gestione del pulsante "Indietro"
         backbutton.addActionListener(e -> {
             clean(); // Pulisce i campi
@@ -261,10 +251,10 @@ public class ModificaProdottiFrame extends JFrame {
                     // Aggiorna direttamente con i valori dai campi
                     c.prodModel.setValueAt(nometf.getText(), rowIndex, 1);
                     c.prodModel.setValueAt(descta.getText(), rowIndex, 2);
-                    c.prodModel.setValueAt(Double.parseDouble(prezzotf.getText()), rowIndex, 3);
+                    c.prodModel.setValueAt(Double.valueOf(prezzotf.getText()), rowIndex, 3);
                     c.prodModel.setValueAt(provtf.getText(), rowIndex, 4);
                     c.prodModel.setValueAt(categoria, rowIndex, 9);
-                    c.prodModel.setValueAt(Integer.parseInt(scortatf.getText()), rowIndex, 10);
+                    c.prodModel.setValueAt(Integer.valueOf(scortatf.getText()), rowIndex, 10);
 
                     JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
                 } else {
