@@ -1,5 +1,6 @@
 package gui;
 
+import controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -12,11 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
-
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,12 +28,6 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
-
-import controller.Controller;
-import model.Prodotto;
-
-import javax.swing.JComponent;
-import javax.swing.BorderFactory;
 
 public class ModificaProdottiFrame extends JFrame {
     private String cod;
@@ -155,16 +151,17 @@ public class ModificaProdottiFrame extends JFrame {
         return button;
     }
 
-    public void viewprod(Prodotto pe) {
-        cod = pe.getCodProd();
-        nometf.setText(pe.getNome());
-        descta.setText(pe.getDescrizione());
-        provtf.setText(pe.getLuogoProv());
-        prezzotf.setText(String.valueOf(pe.getPrezzo()));
-        scortatf.setText(String.valueOf(pe.getScorta()));
-        glutcb.setSelected(pe.isGlutine());
+    public void viewprod(String codProdotto, String nome, String descrizione, String luogoProvenienza, 
+                        double prezzo, int scorta, boolean glutine, String categoria) {
+        cod = codProdotto;
+        nometf.setText(nome);
+        descta.setText(descrizione);
+        provtf.setText(luogoProvenienza);
+        prezzotf.setText(String.valueOf(prezzo));
+        scortatf.setText(String.valueOf(scorta));
+        glutcb.setSelected(glutine);
 
-        switch (pe.getCategoria()) {
+        switch (categoria) {
             case "Ortofrutticoli":
                 categoriacb.setSelectedIndex(0);
                 break;
@@ -239,18 +236,19 @@ public class ModificaProdottiFrame extends JFrame {
                     return;
                 }
 
-                // Crea il prodotto
-                Prodotto prodotto = new Prodotto(
+                // Aggiorna il prodotto nel database utilizzando il metodo refactorizzato
+                String categoria = categoriacb.getSelectedItem().toString();
+                c.upprod(
                         cod,
                         nometf.getText(),
                         descta.getText(),
                         Double.parseDouble(prezzotf.getText()),
                         provtf.getText(),
-                        "Ortofrutticoli".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(racctf.getText()) : null,
-                        "Latticini".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(mungtf.getText()) : null,
+                        "Ortofrutticoli".equals(categoria) ? new java.sql.Date(dateFormat.parse(racctf.getText()).getTime()) : null,
+                        "Latticini".equals(categoria) ? new java.sql.Date(dateFormat.parse(mungtf.getText()).getTime()) : null,
                         glutcb.isSelected(),
-                        "Inscatolati".equals(categoriacb.getSelectedItem().toString()) ? dateFormat.parse(scadtf.getText()) : null,
-                        categoriacb.getSelectedItem().toString(),
+                        "Inscatolati".equals(categoria) ? new java.sql.Date(dateFormat.parse(scadtf.getText()).getTime()) : null,
+                        categoria,
                         Integer.parseInt(scortatf.getText())
                 );
 
@@ -260,21 +258,13 @@ public class ModificaProdottiFrame extends JFrame {
                         .findFirst().orElse(-1);
 
                 if (rowIndex != -1) {
-                    Object[] updatedValues = {
-                            prodotto.getNome(),
-                            prodotto.getDescrizione(),
-                            prodotto.getPrezzo(),
-                            prodotto.getLuogoProv(),
-                            prodotto.getCategoria(),
-                            prodotto.getScorta(),
-                            prodotto.getDataraccolta() != null ? dateFormat.format(prodotto.getDataraccolta()) : null,
-                            prodotto.getDatamungitura() != null ? dateFormat.format(prodotto.getDatamungitura()) : null,
-                            prodotto.getDatascadenza() != null ? dateFormat.format(prodotto.getDatascadenza()) : null
-                    };
-
-                    for (int col = 1; col < updatedValues.length; col++) {
-                        c.prodModel.setValueAt(updatedValues[col - 1], rowIndex, col);
-                    }
+                    // Aggiorna direttamente con i valori dai campi
+                    c.prodModel.setValueAt(nometf.getText(), rowIndex, 1);
+                    c.prodModel.setValueAt(descta.getText(), rowIndex, 2);
+                    c.prodModel.setValueAt(Double.parseDouble(prezzotf.getText()), rowIndex, 3);
+                    c.prodModel.setValueAt(provtf.getText(), rowIndex, 4);
+                    c.prodModel.setValueAt(categoria, rowIndex, 9);
+                    c.prodModel.setValueAt(Integer.parseInt(scortatf.getText()), rowIndex, 10);
 
                     JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -283,7 +273,7 @@ public class ModificaProdottiFrame extends JFrame {
 
                 clean();
                 c.visAndElem(4, 3);
-            } catch (NumberFormatException | ParseException ex) {
+            } catch (NumberFormatException | ParseException | java.sql.SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });

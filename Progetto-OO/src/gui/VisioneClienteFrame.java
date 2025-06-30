@@ -1,5 +1,6 @@
 package gui;
 
+import controller.Controller;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
@@ -7,9 +8,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import controller.Controller;
-import model.Cliente;
 
 public class VisioneClienteFrame extends JFrame {
     private JTable table;
@@ -111,7 +109,15 @@ public class VisioneClienteFrame extends JFrame {
                 }
 
                 c.visAndElem(3, 2);
-                c.upclf.viewct(new Cliente(clienteData[0], clienteData[1], clienteData[2], clienteData[3], clienteData[4], clienteData[5], clienteData[6], null, null));
+                c.upclf.viewct(
+                        clienteData[0], // codCliente
+                        clienteData[1], // nome
+                        clienteData[2], // cognome
+                        clienteData[3], // codFis
+                        clienteData[5], // indirizzo
+                        clienteData[4], // email
+                        clienteData[6]  // telefono
+                );
             } else {
                 JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
             }

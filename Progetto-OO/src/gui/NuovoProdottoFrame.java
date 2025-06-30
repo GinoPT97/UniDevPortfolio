@@ -1,5 +1,6 @@
 package gui;
 
+import controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -11,11 +12,12 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -24,12 +26,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-
-import controller.Controller;
-import model.Prodotto;
-
-import javax.swing.JComponent;
-import javax.swing.BorderFactory;
 
 public class NuovoProdottoFrame extends JFrame {
     private JPanel contentPane;
@@ -172,27 +168,30 @@ public class NuovoProdottoFrame extends JFrame {
 
                 // Prepara i dati da salvare in base alla categoria selezionata
                 String categoria = categoriacb.getSelectedItem().toString();
-                Prodotto prodotto = new Prodotto(
-                        "", nometf.getText(), descta.getText(),
-                        Double.parseDouble(prezzotf.getText()), provtf.getText(),
-                        categoria.equals("Ortofrutticoli") ? data.parse(racctf.getText()) : null,
-                        categoria.equals("Latticini") ? data.parse(mungtf.getText()) : null,
-                        glutcb.isSelected(),
-                        categoria.equals("Inscatolati") ? data.parse(scadtf.getText()) : null,
-                        categoria, Integer.parseInt(scortatf.getText())
+                
+                // Salva il prodotto nel database utilizzando il metodo refactorizzato
+                c.newprod(
+                        "", // codProdotto
+                        nometf.getText(), // nome
+                        descta.getText(), // descrizione
+                        Double.parseDouble(prezzotf.getText()), // prezzo
+                        provtf.getText(), // luogoProvenienza
+                        categoria.equals("Ortofrutticoli") ? new java.sql.Date(data.parse(racctf.getText()).getTime()) : null, // dataRaccolta
+                        categoria.equals("Latticini") ? new java.sql.Date(data.parse(mungtf.getText()).getTime()) : null, // dataMungitura
+                        glutcb.isSelected(), // glutine
+                        categoria.equals("Inscatolati") ? new java.sql.Date(data.parse(scadtf.getText()).getTime()) : null, // dataScadenza
+                        categoria, // categoria
+                        Integer.parseInt(scortatf.getText()) // scorta
                 );
-
-                // Salva il prodotto nel database
-                c.newprod(prodotto);
 
                 // Aggiungi il prodotto anche al modello della tabella
                 c.prodModel.addRow(new Object[]{
-                        prodotto.getNome(),
-                        prodotto.getDescrizione(),
-                        prodotto.getPrezzo(),
-                        prodotto.getLuogoProv(),
-                        prodotto.getCategoria(),
-                        prodotto.getScorta()
+                        nometf.getText(),
+                        descta.getText(),
+                        Double.parseDouble(prezzotf.getText()),
+                        provtf.getText(),
+                        categoria,
+                        Integer.parseInt(scortatf.getText())
                 });
 
                 // Pulisci i campi e mostra un messaggio di successo

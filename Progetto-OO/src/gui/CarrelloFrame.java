@@ -1,14 +1,11 @@
 package gui;
 
+import controller.Controller;
 import java.awt.*;
 import java.time.LocalDate;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
-import controller.Controller;
-import model.Articoli;
-import model.Ordine;
 
 public class CarrelloFrame extends JFrame {
     private static final String FONT_TAHOMA = "Tahoma";
@@ -311,7 +308,7 @@ public class CarrelloFrame extends JFrame {
                 }
 
                 double totaleOrdine = totale();
-                c.nuovoordine(new Ordine("", sd, totaleOrdine, idCliente, idDipendente));
+                c.nuovoordine("", sd, totaleOrdine, idCliente, idDipendente);
 
                 for (int j = 0; j < ordModel.getRowCount(); j++) {
                     int quantita = Integer.parseInt(ordModel.getValueAt(j, 4).toString());
@@ -321,16 +318,15 @@ public class CarrelloFrame extends JFrame {
 
                     c.upscorte(quantita, codiceProdotto);
 
-                    Articoli articoli = new Articoli(
-                            c.CurrOrd(),
-                            codiceProdotto,
-                            prezzoUnitario,
-                            prezzoUnitario * quantita,
-                            quantita,
-                            categoria,
-                            idCliente
+                    c.newarticoli(
+                            c.CurrOrd(), // codOrdine
+                            codiceProdotto, // codProdotto
+                            prezzoUnitario, // prezzo
+                            prezzoUnitario * quantita, // numPunti
+                            quantita, // numeroArticoli
+                            categoria, // categoria
+                            idCliente // codCliente
                     );
-                    c.newarticoli(articoli);
                 }
 
                 c.uppunti(String.valueOf(idCliente), totaleOrdine);

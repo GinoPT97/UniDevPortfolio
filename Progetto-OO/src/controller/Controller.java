@@ -12,7 +12,6 @@ import daointerface.DipendenteJDBC;
 import daointerface.OrdiniJDBC;
 import daointerface.ProdottoJDBC;
 import daointerface.TesseraJDBC;
-import dbconfiguration.ConnectionException;
 import dbconfiguration.DBConfiguration;
 import dbconfiguration.DBConnection;
 import gui.AdminFrame;
@@ -259,7 +258,9 @@ public class Controller {
             ordjdbc = new OrdiniImpl(connection);
             tsjdbc = new Tesseraimpl(connection);
             artjdbc = new ArticoliImpl(connection);
-        } catch (SQLException | ConnectionException e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (dbconfiguration.ConnectionException e) {
             e.printStackTrace();
         }
     }
@@ -270,17 +271,21 @@ public class Controller {
     }
 
     // Aggiunge un nuovo dipendente al database
-    public boolean newdip(Dipendente dip) throws SQLException {
+    public boolean newdip(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
+        Dipendente dip = new Dipendente(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
         return dpjdbc.setNewDip(dip);
     }
 
     // Aggiunge un nuovo cliente al database
-    public boolean newclt(Cliente ct) throws SQLException {
+    public boolean newclt(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
+        Cliente ct = new Cliente(codCliente, nome, cognome, codFis, email, indirizzo, telefono, null, null);
         return cljdbc.setNewCt(ct);
     }
 
     // Aggiunge un nuovo prodotto al database
-    public boolean newprod(Prodotto pe) throws SQLException {
+    public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
+                          Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
+        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
         return prdjdbc.setNewProdotto(pe);
     }
 
@@ -306,17 +311,21 @@ public class Controller {
     }
 
     // Aggiorna le informazioni di un prodotto
-    public boolean upprod(Prodotto pe) throws SQLException {
+    public boolean upprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
+                         Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
+        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
         return prdjdbc.updateProdotto(pe);
     }
 
     // Aggiorna le informazioni di un dipendente
-    public boolean updip(Dipendente de) throws SQLException {
+    public boolean updip(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
+        Dipendente de = new Dipendente(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
         return dpjdbc.updatedipendente(de);
     }
 
     // Aggiorna le informazioni di un cliente
-    public boolean upcliente(Cliente ce) throws SQLException {
+    public boolean upcliente(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
+        Cliente ce = new Cliente(codCliente, nome, cognome, codFis, email, indirizzo, telefono, null, null);
         return cljdbc.updateCliente(ce);
     }
 
@@ -336,12 +345,14 @@ public class Controller {
     }
 
     // Aggiunge un nuovo ordine al database
-    public boolean nuovoordine(Ordine ordine) throws SQLException {
+    public boolean nuovoordine(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
+        Ordine ordine = new Ordine(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
         return ordjdbc.newordine(ordine);
     }
 
     // Aggiunge nuovi articoli a un ordine
-    public boolean newarticoli(Articoli articoli) throws SQLException {
+    public boolean newarticoli(String codOrdine, String codProdotto, double prezzo, double numPunti, int numeroArticoli, String categoria, int codCliente) throws SQLException {
+        Articoli articoli = new Articoli(codOrdine, codProdotto, prezzo, numPunti, numeroArticoli, categoria, codCliente);
         return artjdbc.newordine(articoli);
     }
 

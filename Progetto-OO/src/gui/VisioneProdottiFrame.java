@@ -1,5 +1,6 @@
 package gui;
 
+import controller.Controller;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
@@ -7,9 +8,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import controller.Controller;
-import model.Prodotto;
 
 public class VisioneProdottiFrame extends JFrame {
     private JTable table;
@@ -116,7 +114,7 @@ public class VisioneProdottiFrame extends JFrame {
                     int quantita = Integer.parseInt(table.getValueAt(i, 10).toString());
 
                     c.visAndElem(4, 2);
-                    c.modprodf.viewprod(new Prodotto(codice, nome, descrizione, prezzo, categoria, null, null, disponibile, null, fornitore, quantita));
+                    c.modprodf.viewprod(codice, nome, descrizione, categoria, prezzo, quantita, disponibile, fornitore);
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(),
                             "Errore", JOptionPane.ERROR_MESSAGE);

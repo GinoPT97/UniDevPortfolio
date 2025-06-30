@@ -1,12 +1,13 @@
 package gui;
 
+import controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.sql.SQLException;
-
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,11 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-
-import controller.Controller;
-import model.Cliente;
-
-import javax.swing.BorderFactory;
 
 public class ModificaClienteFrame extends JFrame {
     private JPanel contentPane;
@@ -125,14 +121,14 @@ public class ModificaClienteFrame extends JFrame {
         telefonotf.setText("");
     }
 
-    public void viewct(Cliente ce) {
-        cod = ce.getCodCl();
-        nometf.setText(ce.getNome());
-        cognometf.setText(ce.getCognome());
-        codfisctf.setText(ce.getCodFis());
-        indirizzotf.setText(ce.getInd());
-        emailtf.setText(ce.getEmail());
-        telefonotf.setText(ce.getTel());
+    public void viewct(String codCl, String nome, String cognome, String codFis, String indirizzo, String email, String telefono) {
+        cod = codCl;
+        nometf.setText(nome);
+        cognometf.setText(cognome);
+        codfisctf.setText(codFis);
+        indirizzotf.setText(indirizzo);
+        emailtf.setText(email);
+        telefonotf.setText(telefono);
     }
 
     public void azioni(Controller c) {
@@ -143,31 +139,26 @@ public class ModificaClienteFrame extends JFrame {
 
         addbutton.addActionListener(e -> {
             try {
-                // Aggiorna il cliente con i dati inseriti nei JTextField
-                Cliente clienteAggiornato = new Cliente(
-                        cod,
-                        nometf.getText(),
-                        cognometf.getText(),
-                        codfisctf.getText(),
-                        emailtf.getText(),
-                        indirizzotf.getText(),
-                        telefonotf.getText(),
-                        null,
-                        null
+                // Aggiorna il cliente nel database utilizzando il metodo refactorizzato
+                c.upcliente(
+                        cod, // codCliente
+                        nometf.getText(), // nome
+                        cognometf.getText(), // cognome
+                        codfisctf.getText(), // codFis
+                        emailtf.getText(), // email
+                        indirizzotf.getText(), // indirizzo
+                        telefonotf.getText() // telefono
                 );
-
-                // Aggiorna il cliente nel database
-                c.upcliente(clienteAggiornato);
 
                 // Aggiorna la riga corrispondente nel modello
                 for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
-                    if (c.clienteModel.getValueAt(i, 0).equals(clienteAggiornato.getCodCl())) { // Assumendo che il codice cliente sia il primo elemento
-                        c.clienteModel.setValueAt(clienteAggiornato.getNome(), i, 1);
-                        c.clienteModel.setValueAt(clienteAggiornato.getCognome(), i, 2);
-                        c.clienteModel.setValueAt(clienteAggiornato.getCodFis(), i, 3);
-                        c.clienteModel.setValueAt(clienteAggiornato.getEmail(), i, 4);
-                        c.clienteModel.setValueAt(clienteAggiornato.getInd(), i, 5);
-                        c.clienteModel.setValueAt(clienteAggiornato.getTel(), i, 6);
+                    if (c.clienteModel.getValueAt(i, 0).equals(cod)) { // Usa direttamente cod
+                        c.clienteModel.setValueAt(nometf.getText(), i, 1);
+                        c.clienteModel.setValueAt(cognometf.getText(), i, 2);
+                        c.clienteModel.setValueAt(codfisctf.getText(), i, 3);
+                        c.clienteModel.setValueAt(emailtf.getText(), i, 4);
+                        c.clienteModel.setValueAt(indirizzotf.getText(), i, 5);
+                        c.clienteModel.setValueAt(telefonotf.getText(), i, 6);
                         break; // Esci dal ciclo dopo aver trovato e aggiornato la riga
                     }
                 }

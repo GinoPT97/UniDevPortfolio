@@ -1,12 +1,13 @@
 package gui;
 
+import controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.sql.SQLException;
-
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,11 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-
-import controller.Controller;
-import model.Dipendente;
-
-import javax.swing.BorderFactory;
 
 public class NuovoDipendenteFrame extends JFrame {
     private JPanel contentPane;
@@ -120,26 +116,25 @@ public class NuovoDipendenteFrame extends JFrame {
         // Listener per il bottone di aggiunta di un nuovo dipendente
         addbutton.addActionListener(e -> {
             try {
-                // Crea un nuovo oggetto Dipendente utilizzando i valori dei campi di testo
-                Dipendente newDipendente = new Dipendente(
-                        "",
+                // Aggiungi il dipendente al database utilizzando il metodo refactorizzato
+                c.newdip(
+                        "", // codDipendente
+                        nometf.getText(), // nome
+                        cognometf.getText(), // cognome
+                        codfisctf.getText(), // codFis
+                        emailtf.getText(), // email
+                        indirizzotf.getText(), // indirizzo
+                        telefonotf.getText() // telefono
+                );
+
+                // Aggiunta del dipendente al modello
+                c.dipModel.addRow(new Object[]{
                         nometf.getText(),
                         cognometf.getText(),
                         codfisctf.getText(),
                         emailtf.getText(),
                         indirizzotf.getText(),
                         telefonotf.getText()
-                );
-                c.newdip(newDipendente); // Aggiungi il dipendente al database
-
-                // Aggiunta del dipendente al modello
-                c.dipModel.addRow(new Object[]{
-                        newDipendente.getNome(),
-                        newDipendente.getCognome(),
-                        newDipendente.getCodFis(),
-                        newDipendente.getEmail(),
-                        newDipendente.getInd(),
-                        newDipendente.getTel()
                 });
 
                 // Pulisce i campi di input

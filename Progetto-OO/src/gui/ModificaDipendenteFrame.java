@@ -1,12 +1,13 @@
 package gui;
 
+import controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.sql.SQLException;
-
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,11 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-
-import controller.Controller;
-import model.Dipendente;
-
-import javax.swing.BorderFactory;
 
 public class ModificaDipendenteFrame extends JFrame {
     private JPanel contentPane;
@@ -125,14 +121,14 @@ public class ModificaDipendenteFrame extends JFrame {
         telefonotf.setText("");
     }
 
-    public void viewdip(Dipendente de) {
-        cod = de.getCodDIP();
-        nometf.setText(de.getNome());
-        cognometf.setText(de.getCognome());
-        codfisctf.setText(de.getCodFis());
-        indirizzotf.setText(de.getInd());
-        emailtf.setText(de.getEmail());
-        telefonotf.setText(de.getTel());
+    public void viewdip(String codDip, String nome, String cognome, String codFis, String indirizzo, String email, String telefono) {
+        cod = codDip;
+        nometf.setText(nome);
+        cognometf.setText(cognome);
+        codfisctf.setText(codFis);
+        indirizzotf.setText(indirizzo);
+        emailtf.setText(email);
+        telefonotf.setText(telefono);
     }
 
     public void azioni(Controller c) {
@@ -143,28 +139,26 @@ public class ModificaDipendenteFrame extends JFrame {
 
         addbutton.addActionListener(e -> {
             try {
-                // Crea un nuovo oggetto Dipendente utilizzando i valori dai JTextField
-                Dipendente dipendente = new Dipendente(
-                        cod,
-                        nometf.getText(),
-                        cognometf.getText(),
-                        codfisctf.getText(),
-                        emailtf.getText(),
-                        indirizzotf.getText(),
-                        telefonotf.getText()
+                // Aggiorna il dipendente nel database utilizzando il metodo refactorizzato
+                c.updip(
+                        cod, // codDipendente
+                        nometf.getText(), // nome
+                        cognometf.getText(), // cognome
+                        codfisctf.getText(), // codFis
+                        emailtf.getText(), // email
+                        indirizzotf.getText(), // indirizzo
+                        telefonotf.getText() // telefono
                 );
-                // Aggiorna il dipendente nel database
-                c.updip(dipendente);
 
                 // Aggiorna il modello della tabella dei dipendenti
                 for (int i = 0; i < c.dipModel.getRowCount(); i++) {
-                    if (c.dipModel.getValueAt(i, 0).equals(dipendente.getCodDIP())) { // Assumendo che il codice dipendente sia il primo elemento
-                        c.dipModel.setValueAt(dipendente.getNome(), i, 1);
-                        c.dipModel.setValueAt(dipendente.getCognome(), i, 2);
-                        c.dipModel.setValueAt(dipendente.getCodFis(), i, 3);
-                        c.dipModel.setValueAt(dipendente.getEmail(), i, 4);
-                        c.dipModel.setValueAt(dipendente.getInd(), i, 5);
-                        c.dipModel.setValueAt(dipendente.getTel(), i, 6);
+                    if (c.dipModel.getValueAt(i, 0).equals(cod)) { // Usa direttamente cod
+                        c.dipModel.setValueAt(nometf.getText(), i, 1);
+                        c.dipModel.setValueAt(cognometf.getText(), i, 2);
+                        c.dipModel.setValueAt(codfisctf.getText(), i, 3);
+                        c.dipModel.setValueAt(emailtf.getText(), i, 4);
+                        c.dipModel.setValueAt(indirizzotf.getText(), i, 5);
+                        c.dipModel.setValueAt(telefonotf.getText(), i, 6);
                         break; // Esci dal ciclo dopo aver trovato e aggiornato la riga
                     }
                 }

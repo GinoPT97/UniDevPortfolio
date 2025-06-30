@@ -1,5 +1,6 @@
 package gui;
 
+import controller.Controller;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
@@ -7,9 +8,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-
-import controller.Controller;
-import model.Dipendente;
 
 public class VisioneDipendentiFrame extends JFrame {
     private JTable table;
@@ -106,15 +104,15 @@ public class VisioneDipendentiFrame extends JFrame {
             int i = table.getSelectedRow();
             if (i >= 0) {
                 c.visAndElem(2, 2);
-                c.updipf.viewdip(new Dipendente(
-                        table.getValueAt(i, 0).toString(),
-                        table.getValueAt(i, 1).toString(),
-                        table.getValueAt(i, 2).toString(),
-                        table.getValueAt(i, 3).toString(),
-                        table.getValueAt(i, 4).toString(),
-                        table.getValueAt(i, 5).toString(),
-                        table.getValueAt(i, 6).toString()
-                ));
+                c.updipf.viewdip(
+                        table.getValueAt(i, 0).toString(), // codDipendente
+                        table.getValueAt(i, 1).toString(), // nome
+                        table.getValueAt(i, 2).toString(), // cognome
+                        table.getValueAt(i, 3).toString(), // codFis
+                        table.getValueAt(i, 5).toString(), // indirizzo
+                        table.getValueAt(i, 4).toString(), // email
+                        table.getValueAt(i, 6).toString()  // telefono
+                );
             } else {
                 JOptionPane.showMessageDialog(null, "Scegli una riga da modificare");
             }

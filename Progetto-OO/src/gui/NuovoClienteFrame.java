@@ -1,5 +1,6 @@
 package gui;
 
+import controller.Controller;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -7,7 +8,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.sql.SQLException;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,9 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-
-import controller.Controller;
-import model.Cliente;
 
 public class NuovoClienteFrame extends JFrame {
     private JPanel contentPane;
@@ -127,34 +124,29 @@ public class NuovoClienteFrame extends JFrame {
         // Azione per il bottone "Aggiungi"
         addbutton.addActionListener(e -> {
             try {
-                // Creazione del nuovo cliente con i dati dai JTextField
-                Cliente newCliente = new Cliente(
-                        "",
-                        nometf.getText(),
-                        cognometf.getText(),
-                        codfisctf.getText(),
-                        emailtf.getText(),
-                        indirizzotf.getText(),
-                        telefonotf.getText(),
-                        null,
-                        null
+                // Aggiunta del nuovo cliente nel controller utilizzando il metodo refactorizzato
+                c.newclt(
+                        "", // codCliente
+                        nometf.getText(), // nome
+                        cognometf.getText(), // cognome
+                        codfisctf.getText(), // codFis
+                        emailtf.getText(), // email
+                        indirizzotf.getText(), // indirizzo
+                        telefonotf.getText() // telefono
                 );
-
-                // Aggiunta del nuovo cliente nel controller
-                c.newclt(newCliente);  // Aggiungi cliente nel database
 
                 // Aggiunta della tessera per il nuovo cliente
                 c.nuovatessera(nometf.getText(), cognometf.getText(), codfisctf.getText());
 
                 // Aggiunta del cliente al modello
                 c.clienteModel.addRow(new Object[]{
-                        newCliente.getCodCl(), // Assumendo che tu abbia il codice cliente
-                        newCliente.getNome(),
-                        newCliente.getCognome(),
-                        newCliente.getCodFis(),
-                        newCliente.getEmail(),
-                        newCliente.getInd(),
-                        newCliente.getTel()
+                        "", // codCliente vuoto per ora
+                        nometf.getText(),
+                        cognometf.getText(),
+                        codfisctf.getText(),
+                        emailtf.getText(),
+                        indirizzotf.getText(),
+                        telefonotf.getText()
                 });
 
                 clean(); // Pulisce i campi dopo l'aggiunta
