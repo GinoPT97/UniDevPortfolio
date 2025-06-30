@@ -1,21 +1,5 @@
 package controller;
 
-import java.awt.EventQueue;
-import java.awt.Frame;
-import java.awt.Image;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.table.DefaultTableModel;
-
 import daoimplementation.ArticoliImpl;
 import daoimplementation.Clienteimpl;
 import daoimplementation.DipendenteImpl;
@@ -47,6 +31,20 @@ import gui.VisioneClienteFrame;
 import gui.VisioneDipendentiFrame;
 import gui.VisioneOrdineFrame;
 import gui.VisioneProdottiFrame;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.Image;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
 import model.Articoli;
 import model.Cliente;
 import model.Dipendente;
@@ -186,50 +184,45 @@ public class Controller {
             case 3 -> handleClienteContext(x);
             case 4 -> handleProdottoContext(x);
             default -> {
-                // Default case for context
             }
         }
     }
 
     private void handleCarrelloContext(int x) {
         switch (x) {
-            case 1 -> setVisibleFrame(carrf, visordf); // Mostra il frame carrello
-            case 2 -> setVisibleFrame(visordf, carrf); // Mostra il frame ordine e nasconde carrello
+            case 1 -> setVisibleFrame(carrf, visordf);
+            case 2 -> setVisibleFrame(visordf, carrf);
             default -> {
-                // Default case for Carrello
             }
         }
     }
 
     private void handleDipendenteContext(int x) {
         switch (x) {
-            case 1 -> setVisibleFrame(ndipf, vdipf, updipf); // Nuovo dipendente
-            case 2 -> setVisibleFrame(updipf, vdipf, ndipf); // Modifica dipendente
-            case 3 -> setVisibleFrame(vdipf, ndipf, updipf); // Vista dipendenti
+            case 1 -> setVisibleFrame(ndipf, vdipf, updipf);
+            case 2 -> setVisibleFrame(updipf, vdipf, ndipf);
+            case 3 -> setVisibleFrame(vdipf, ndipf, updipf);
             default -> {
-                // Default case for Dipendente
             }
         }
     }
 
     private void handleClienteContext(int x) {
         switch (x) {
-            case 1 -> setVisibleFrame(nclf, visctf); // Nuovo cliente
-            case 2 -> setVisibleFrame(upclf, visctf); // Modifica cliente
-            case 3 -> setVisibleFrame(visctf, nclf, upclf); // Vista clienti
+            case 1 -> setVisibleFrame(nclf, visctf);
+            case 2 -> setVisibleFrame(upclf, visctf);
+            case 3 -> setVisibleFrame(visctf, nclf, upclf);
             default -> {
-                // Default case for Cliente
             }
         }
     }
 
     private void handleProdottoContext(int x) {
         switch (x) {
-            case 1 -> setVisibleFrame(nprodf, vprodf); // Nuovo prodotto
-            case 2 -> setVisibleFrame(modprodf, vprodf); // Modifica prodotto
-            case 3 -> setVisibleFrame(vprodf, nprodf, modprodf); // Vista prodotti
+            case 1 -> setVisibleFrame(nprodf, vprodf);
+            case 2 -> setVisibleFrame(modprodf, vprodf);
+            case 3 -> setVisibleFrame(vprodf, nprodf, modprodf);
             default -> {
-                // Default case for Prodotto
             }
         }
     }
