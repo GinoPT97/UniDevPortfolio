@@ -1,9 +1,8 @@
 package daointerface;
 
-import model.Tessera;
-
 import java.sql.SQLException;
 import java.util.List;
+import model.Tessera;
 
 public interface TesseraJDBC {
     public boolean newtessera(String cliente) throws SQLException;
@@ -13,4 +12,6 @@ public interface TesseraJDBC {
     public String getpuntit(String codt) throws SQLException;
 
     public boolean updatepunti(String codcl, double d) throws SQLException;
+    
+    public boolean hasTessera(String codCliente) throws SQLException;
 }

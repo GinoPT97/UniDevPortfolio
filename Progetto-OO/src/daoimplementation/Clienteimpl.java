@@ -1,10 +1,10 @@
 package daoimplementation;
 
 import daointerface.ClienteJDBC;
-import model.Cliente;
-
 import java.sql.*;
 import java.util.ArrayList;
+import model.Cliente;
+import model.Tessera;
 
 public class Clienteimpl implements ClienteJDBC {
     private static final String CODCLIENTE = "codcliente"; 
@@ -34,8 +34,20 @@ public class Clienteimpl implements ClienteJDBC {
     @Override
     public ArrayList<Cliente> getAllCt() throws SQLException {
         ArrayList<Cliente> clienti = new ArrayList<>();
-        try (ResultSet rs = getAllCt.executeQuery("SELECT codcliente, nome, cognome, codicefiscale, email, indirizzo, telefono FROM cliente ORDER BY cognome DESC")) {
+        String query = "SELECT c.codcliente, c.nome, c.cognome, c.codicefiscale, c.email, c.indirizzo, c.telefono, " +
+                       "t.codtessera, t.numeropunti " +
+                       "FROM cliente c " +
+                       "LEFT JOIN tessera t ON c.codcliente = t.codcliente " +
+                       "ORDER BY c.cognome DESC";
+        
+        try (ResultSet rs = getAllCt.executeQuery(query)) {
             while (rs.next()) {
+                Tessera tessera = null;
+                String codTessera = rs.getString("codtessera");
+                if (codTessera != null) {
+                    tessera = new Tessera(codTessera, rs.getInt("numeropunti"), null);
+                }
+                
                 clienti.add(new Cliente(
                         rs.getString(CODCLIENTE),
                         rs.getString("nome"),
@@ -44,7 +56,7 @@ public class Clienteimpl implements ClienteJDBC {
                         rs.getString("email"),
                         rs.getString("indirizzo"),
                         rs.getString("telefono"),
-                        null,
+                        tessera,
                         null));
             }
         }

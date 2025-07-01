@@ -5,10 +5,6 @@ import daointerface.*;
 import dbconfiguration.DBConfiguration;
 import dbconfiguration.DBConnection;
 import gui.*;
-import model.*;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.sql.Connection;
@@ -18,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import model.*;
 
 public class Controller {
     public ModificaProdottiFrame modprodf;

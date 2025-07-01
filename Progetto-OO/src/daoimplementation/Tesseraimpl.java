@@ -1,14 +1,13 @@
 package daoimplementation;
 
 import daointerface.TesseraJDBC;
-import model.Cliente;
-import model.Tessera;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import model.Cliente;
+import model.Tessera;
 
 public class Tesseraimpl implements TesseraJDBC {
 
@@ -72,17 +71,42 @@ public class Tesseraimpl implements TesseraJDBC {
 
     @Override
     public boolean updatepunti(String codCliente, double punti) throws SQLException {
-        String query = "UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = CAST(? AS INTEGER)";
+        String query = "UPDATE tessera SET numeropunti = numeropunti + ? WHERE codcliente = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setDouble(1, punti);
-            stmt.setInt(2, Integer.parseInt(codCliente)); // Ensure codCliente is cast to INTEGER
+            try {
+                // Try to parse as integer since database expects INTEGER
+                int clienteId = Integer.parseInt(codCliente);
+                stmt.setInt(2, clienteId);
+            } catch (NumberFormatException e) {
+                // Fallback: use as string and let database handle conversion
+                stmt.setString(2, codCliente);
+            }
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
         } catch (SQLException e) {
+            System.err.println("Errore nell'aggiornamento punti per cliente " + codCliente + ": " + e.getMessage());
             throw e;
-        } catch (NumberFormatException e) {
-            throw new SQLException("Errore di conversione: codCliente non è un intero valido.", e);
         }
+    }
+
+    @Override
+    public boolean hasTessera(String codCliente) throws SQLException {
+        String query = "SELECT COUNT(*) FROM tessera WHERE codcliente = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            try {
+                int clienteId = Integer.parseInt(codCliente);
+                stmt.setInt(1, clienteId);
+            } catch (NumberFormatException e) {
+                stmt.setString(1, codCliente);
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 }
 
