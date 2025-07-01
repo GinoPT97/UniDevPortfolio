@@ -1,13 +1,12 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 public class CarrelloFrame extends JFrame {
     private static final String FONT_TAHOMA = "Tahoma";
@@ -331,15 +330,16 @@ public class CarrelloFrame extends JFrame {
                     );
                 }
 
-                c.uppunti(String.valueOf(idCliente), totaleOrdine);
-                JOptionPane.showMessageDialog(null, "Ordine aggiunto");
+                // Calcola i punti come 10% del totale dell'ordine
+                double puntiDaAssegnare = totaleOrdine * 0.10;
+                c.uppunti(String.valueOf(idCliente), puntiDaAssegnare);
+                JOptionPane.showMessageDialog(null, "Ordine aggiunto - Punti assegnati: " + String.format("%.2f", puntiDaAssegnare));
                 clean();
             } else {
                 JOptionPane.showMessageDialog(null, "Cliente non trovato!");
             }
         } catch (SQLException | NumberFormatException e1) {
             JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-            // Log dell'errore in modo appropriato (eventualmente qui si potrebbe usare un logger)
         }
     }
 }
