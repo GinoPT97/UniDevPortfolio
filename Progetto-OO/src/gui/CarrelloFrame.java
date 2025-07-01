@@ -315,7 +315,20 @@ public class CarrelloFrame extends JFrame {
                     int quantita = Integer.parseInt(ordModel.getValueAt(j, 4).toString());
                     String codiceProdotto = ordModel.getValueAt(j, 0).toString();
                     double prezzoUnitario = Double.parseDouble(ordModel.getValueAt(j, 2).toString());
-                    String categoria = c.prodModel.getValueAt(j, 9).toString();
+                    
+                    // Trova la categoria del prodotto nel modello prodotti
+                    String categoria = "";
+                    for (int k = 0; k < c.prodModel.getRowCount(); k++) {
+                        if (c.prodModel.getValueAt(k, 0).toString().equals(codiceProdotto)) {
+                            categoria = c.prodModel.getValueAt(k, 9).toString();
+                            
+                            // Aggiorna le scorte nel modello prodotti
+                            int scorteAttuali = Integer.parseInt(c.prodModel.getValueAt(k, 10).toString());
+                            int nuoveScorte = scorteAttuali - quantita;
+                            c.prodModel.setValueAt(nuoveScorte, k, 10);
+                            break;
+                        }
+                    }
 
                     c.upscorte(quantita, codiceProdotto);
 
@@ -333,6 +346,26 @@ public class CarrelloFrame extends JFrame {
                 // Calcola i punti come 10% del totale dell'ordine
                 double puntiDaAssegnare = totaleOrdine * 0.10;
                 c.uppunti(String.valueOf(idCliente), puntiDaAssegnare);
+                
+                // Aggiorna i punti nel modello clienti
+                for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
+                    String idClienteModel = c.clienteModel.getValueAt(i, 0).toString();
+                    if (idClienteModel.equals(String.valueOf(idCliente))) {
+                        Object puntiAttualiObj = c.clienteModel.getValueAt(i, 8);
+                        double puntiAttuali = 0.0;
+                        if (puntiAttualiObj != null && !puntiAttualiObj.toString().equals("N/A")) {
+                            try {
+                                puntiAttuali = Double.parseDouble(puntiAttualiObj.toString());
+                            } catch (NumberFormatException ex) {
+                                puntiAttuali = 0.0;
+                            }
+                        }
+                        double nuoviPunti = puntiAttuali + puntiDaAssegnare;
+                        c.clienteModel.setValueAt(String.format("%.2f", nuoviPunti), i, 8);
+                        break;
+                    }
+                }
+                
                 JOptionPane.showMessageDialog(null, "Ordine aggiunto - Punti assegnati: " + String.format("%.2f", puntiDaAssegnare));
                 clean();
             } else {
