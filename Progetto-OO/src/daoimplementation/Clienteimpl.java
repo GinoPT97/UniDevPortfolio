@@ -79,7 +79,8 @@ public class Clienteimpl implements ClienteJDBC {
     @Override
     public boolean updateCliente(Cliente cliente) throws SQLException {
         setPreparedStatement(updateCl, cliente);
-        updateCl.setString(7, cliente.getCodCl());
+        // Il codice cliente nel database è INTEGER, quindi convertiamo da String
+        updateCl.setInt(7, Integer.parseInt(cliente.getCodCl()));
         return updateCl.executeUpdate() > 0;
     }
 

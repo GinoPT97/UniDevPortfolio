@@ -1,13 +1,12 @@
 package daoimplementation;
 
 import daointerface.ProdottoJDBC;
-import model.Prodotto;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import model.Prodotto;
 
 public class ProdottoImpl implements ProdottoJDBC {
     private final Connection connection;
@@ -80,7 +79,8 @@ public class ProdottoImpl implements ProdottoJDBC {
     @Override
     public ArrayList<Prodotto> getbycategoria(String categoria) throws SQLException {
         ArrayList<Prodotto> prodottiCategoria = new ArrayList<>();
-        String query = "SELECT codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta FROM prodotto WHERE categoria = ? ORDER BY nome DESC";
+        // Cast esplicito per confrontare ENUM con stringa
+        String query = "SELECT codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta FROM prodotto WHERE categoria::text = ? ORDER BY nome DESC";
         try (PreparedStatement getCategoriaStmt = connection.prepareStatement(query)) {
             getCategoriaStmt.setString(1, categoria);
             try (ResultSet rs = getCategoriaStmt.executeQuery()) {
