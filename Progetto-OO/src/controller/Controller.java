@@ -19,13 +19,44 @@ import javax.swing.table.DefaultTableModel;
 import model.*;
 
 public class Controller {
+    // Costanti per le colonne delle tabelle
+    private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"};
+    private static final String[] DIPENDENTE_COLUMNS = {"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"};
+    private static final String[] PRODOTTO_COLUMNS = {"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"};
+    private static final String[] ORDINE_COLUMNS = {"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"};
+    
+    // Costanti applicazione
+    private static final String GLUTINE_SI = "Si";
+    private static final String GLUTINE_NO = "No";
+    private static final String EMPTY_VALUE = "";
+    private static final String NULL_VALUE = "N/A";
+    
+    // Enum per i tipi di frame
+    public enum FrameType {
+        ADMIN(1), DIPENDENTE(2), CARRELLO(1), DIPENDENTE_CONTEXT(2), CLIENTE_CONTEXT(3), PRODOTTO_CONTEXT(4);
+        
+        private final int value;
+        
+        FrameType(int value) {
+            this.value = value;
+        }
+        
+        public int getValue() {
+            return value;
+        }
+    }
+    
+    // Frame references
     public ModificaProdottiFrame modprodf;
     public ModificaDipendenteFrame updipf;
     public ModificaClienteFrame upclf;
-    public DefaultTableModel clienteModel = new DefaultTableModel(new Object[]{"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"}, 0);
-    public DefaultTableModel dipModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"}, 0);
-    public DefaultTableModel prodModel = new DefaultTableModel(new Object[]{"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"}, 0);
-    public DefaultTableModel ordModel = new DefaultTableModel(new Object[]{"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"}, 0);
+    
+    // Table models
+    public DefaultTableModel clienteModel = new DefaultTableModel(CLIENTE_COLUMNS, 0);
+    public DefaultTableModel dipModel = new DefaultTableModel(DIPENDENTE_COLUMNS, 0);
+    public DefaultTableModel prodModel = new DefaultTableModel(PRODOTTO_COLUMNS, 0);
+    public DefaultTableModel ordModel = new DefaultTableModel(ORDINE_COLUMNS, 0);
+    
     public String iddip;
     // Dichiarazione dei frame
     private final LoginFrame logf;
@@ -198,99 +229,63 @@ public class Controller {
         model.setRowCount(0);
         items.forEach(item -> model.addRow(mapper.apply(item)));
     }
+    
+    // Metodo di utilità per aggiornare righe nel modello della tabella
+    private void updateTableRow(DefaultTableModel model, String searchValue, Object[] newValues) {
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0).equals(searchValue)) {
+                for (int j = 1; j < newValues.length; j++) {
+                    model.setValueAt(newValues[j], i, j);
+                }
+                break;
+            }
+        }
+    }
+    
+    // Metodo di utilità per creare array di oggetti con checkNull
+    private Object[] createRowData(Object... values) {
+        Object[] result = new Object[values.length];
+        for (int i = 0; i < values.length; i++) {
+            result[i] = checkNull(values[i]);
+        }
+        return result;
+    }
+    
+    // Metodo di utilità per formattare lo status del glutine
+    private String formatGlutineStatus(boolean glutine) {
+        return glutine ? GLUTINE_SI : GLUTINE_NO;
+    }
 
     // Metodi di supporto per l'aggiornamento dei model delle tabelle dopo inserimenti
     private void updateDipendenteModelAfterInsert(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        dipModel.addRow(new Object[]{
-                checkNull(codDipendente),
-                checkNull(nome),
-                checkNull(cognome),
-                checkNull(codFis),
-                checkNull(email),
-                checkNull(indirizzo),
-                checkNull(telefono)
-        });
+        dipModel.addRow(createRowData(codDipendente, nome, cognome, codFis, email, indirizzo, telefono));
     }
     
     private void updateClienteModelAfterInsert(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        clienteModel.addRow(new Object[]{
-                checkNull(codCliente),
-                checkNull(nome),
-                checkNull(cognome),
-                checkNull(codFis),
-                checkNull(email),
-                checkNull(indirizzo),
-                checkNull(telefono),
-                "", // Id Tessera (vuoto per ora)
-                ""  // Punti (vuoto per ora)
-        });
+        clienteModel.addRow(createRowData(codCliente, nome, cognome, codFis, email, indirizzo, telefono, EMPTY_VALUE, EMPTY_VALUE));
     }
     
     private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                                               Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
-        String glutenStatus = glutine ? "Si" : "No";
-        prodModel.addRow(new Object[]{
-                checkNull(codProdotto),
-                checkNull(nome),
-                checkNull(descrizione),
-                checkNull(prezzo),
-                checkNull(luogoProvenienza),
-                checkNull(dataRaccolta),
-                checkNull(dataMungitura),
-                glutenStatus,
-                checkNull(dataScadenza),
-                checkNull(categoria),
-                checkNull(scorta)
-        });
+        prodModel.addRow(createRowData(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
+                                     dataRaccolta, dataMungitura, formatGlutineStatus(glutine), 
+                                     dataScadenza, categoria, scorta));
     }
     
     // Metodi di supporto per l'aggiornamento dei model delle tabelle dopo modifiche
     private void updateDipendenteModelAfterUpdate(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        for (int i = 0; i < dipModel.getRowCount(); i++) {
-            if (dipModel.getValueAt(i, 0).equals(codDipendente)) {
-                dipModel.setValueAt(nome, i, 1);
-                dipModel.setValueAt(cognome, i, 2);
-                dipModel.setValueAt(codFis, i, 3);
-                dipModel.setValueAt(email, i, 4);
-                dipModel.setValueAt(indirizzo, i, 5);
-                dipModel.setValueAt(telefono, i, 6);
-                break;
-            }
-        }
+        updateTableRow(dipModel, codDipendente, new Object[]{codDipendente, nome, cognome, codFis, email, indirizzo, telefono});
     }
     
     private void updateClienteModelAfterUpdate(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        for (int i = 0; i < clienteModel.getRowCount(); i++) {
-            if (clienteModel.getValueAt(i, 0).equals(codCliente)) {
-                clienteModel.setValueAt(nome, i, 1);
-                clienteModel.setValueAt(cognome, i, 2);
-                clienteModel.setValueAt(codFis, i, 3);
-                clienteModel.setValueAt(email, i, 4);
-                clienteModel.setValueAt(indirizzo, i, 5);
-                clienteModel.setValueAt(telefono, i, 6);
-                break;
-            }
-        }
+        updateTableRow(clienteModel, codCliente, new Object[]{codCliente, nome, cognome, codFis, email, indirizzo, telefono});
     }
     
     private void updateProdottoModelAfterUpdate(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                                               Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
-        String glutenStatus = glutine ? "Si" : "No";
-        for (int i = 0; i < prodModel.getRowCount(); i++) {
-            if (prodModel.getValueAt(i, 0).equals(codProdotto)) {
-                prodModel.setValueAt(nome, i, 1);
-                prodModel.setValueAt(descrizione, i, 2);
-                prodModel.setValueAt(prezzo, i, 3);
-                prodModel.setValueAt(luogoProvenienza, i, 4);
-                prodModel.setValueAt(dataRaccolta, i, 5);
-                prodModel.setValueAt(dataMungitura, i, 6);
-                prodModel.setValueAt(glutenStatus, i, 7);
-                prodModel.setValueAt(dataScadenza, i, 8);
-                prodModel.setValueAt(categoria, i, 9);
-                prodModel.setValueAt(scorta, i, 10);
-                break;
-            }
-        }
+        updateTableRow(prodModel, codProdotto, new Object[]{codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
+                                                           dataRaccolta, dataMungitura, formatGlutineStatus(glutine), 
+                                                           dataScadenza, categoria, scorta});
     }
     
     // Metodo per aggiungere articoli al carrello (model degli ordini)
@@ -305,7 +300,7 @@ public class Controller {
 
     // Metodo di supporto per verificare se un campo è nullo o vuoto
     private String checkNull(Object value) {
-        return (value == null || value.toString().trim().isEmpty()) ? "N/A" : value.toString();
+        return (value == null || value.toString().trim().isEmpty()) ? NULL_VALUE : value.toString();
     }
 
     public void connect() throws SQLException {
@@ -482,94 +477,84 @@ public class Controller {
     // Popola il modello della tabella con i dati dei clienti
     public void ClientSearch(DefaultTableModel model) throws SQLException {
         List<Cliente> clienti = artjdbc.searchClient();
-        populateTable(clienti, model, c -> new Object[]{
+        populateTable(clienti, model, c -> createRowData(
                 c.getNome(),
                 c.getCognome(),
                 c.getArticoliOrdini().getCategoria(),
                 c.getArticoliOrdini().getNumPunti()
-        });
+        ));
     }
 
     // Popola il modello della tabella con i prodotti per categoria
     public void categoriaprodotti(String c, DefaultTableModel model) throws SQLException {
         List<Prodotto> prodotti = prdjdbc.getbycategoria(c);
-        populateTable(prodotti, model, p -> new Object[]{
+        populateTable(prodotti, model, p -> createRowData(
                 p.getCodProd(),
                 p.getNome(),
                 p.getPrezzo(),
                 p.getCategoria(),
                 p.getScorta()
-        });
+        ));
     }
 
     public void allCliente() throws SQLException {
         List<Cliente> clienti = cljdbc.getAllCt();
-        populateTable(clienti, clienteModel, c -> new Object[]{
-                checkNull(c.getCodCl()),
-                checkNull(c.getNome()),
-                checkNull(c.getCognome()),
-                checkNull(c.getCodFis()),
-                checkNull(c.getEmail()),
-                checkNull(c.getInd()),
-                checkNull(c.getTel()),
-                checkNull(c.getTessera() != null ? c.getTessera().getCodTessera() : null),
-                checkNull(c.getTessera() != null ? c.getTessera().getNPunti() : null)
-        });
+        populateTable(clienti, clienteModel, c -> createRowData(
+                c.getCodCl(),
+                c.getNome(),
+                c.getCognome(),
+                c.getCodFis(),
+                c.getEmail(),
+                c.getInd(),
+                c.getTel(),
+                c.getTessera() != null ? c.getTessera().getCodTessera() : null,
+                c.getTessera() != null ? c.getTessera().getNPunti() : null
+        ));
     }
 
     public void allDipendenti() throws SQLException {
         List<Dipendente> dipendenti = dpjdbc.getAllDip();
-        populateTable(dipendenti, dipModel, d -> new Object[]{
-                checkNull(d.getCodDIP()),
-                checkNull(d.getNome()),
-                checkNull(d.getCognome()),
-                checkNull(d.getCodFis()),
-                checkNull(d.getEmail()),
-                checkNull(d.getInd()),
-                checkNull(d.getTel())
-        });
+        populateTable(dipendenti, dipModel, d -> createRowData(
+                d.getCodDIP(),
+                d.getNome(),
+                d.getCognome(),
+                d.getCodFis(),
+                d.getEmail(),
+                d.getInd(),
+                d.getTel()
+        ));
     }
 
     public void allOrdini() throws SQLException {
-        // Ottimizzazione: cache locale di clienti e dipendenti per evitare query ripetute
         List<Cliente> clienti = cljdbc.getAllCt();
         List<Dipendente> dipendenti = dpjdbc.getAllDip();
         Map<String, Cliente> clientiMap = clienti.stream().collect(Collectors.toMap(c -> String.valueOf(c.getCodCl()), c -> c));
         Map<String, Dipendente> dipMap = dipendenti.stream().collect(Collectors.toMap(d -> String.valueOf(d.getCodDIP()), d -> d));
+        
         List<Ordine> ordini = ordjdbc.getallordini();
         populateTable(ordini, ordModel, o -> {
             Cliente ct = clientiMap.get(String.valueOf(o.getIdCliente()));
             Dipendente d = dipMap.get(String.valueOf(o.getIdDipendente()));
             String clienteNome = checkNull(ct != null ? ct.getCognome() + " " + ct.getNome() : null);
             String dipendenteNome = checkNull(d != null ? d.getCognome() + " " + d.getNome() : null);
-            return new Object[]{
-                checkNull(o.getCodOrd()),
-                checkNull(o.getDataAcquisto()),
-                checkNull(o.getPrezzoTotale()),
-                clienteNome,
-                dipendenteNome
-            };
+            return createRowData(o.getCodOrd(), o.getDataAcquisto(), o.getPrezzoTotale(), clienteNome, dipendenteNome);
         });
     }
 
     public void allProdotti() throws SQLException {
         List<Prodotto> prodotti = prdjdbc.getallprodotti();
-        populateTable(prodotti, prodModel, p -> {
-            String glutenStatus = p.isGlutine() ? "Si" : "No";
-
-            return new Object[]{
-                    checkNull(p.getCodProd()),
-                    checkNull(p.getNome()),
-                    checkNull(p.getDescrizione()),
-                    checkNull(p.getPrezzo()),
-                    checkNull(p.getLuogoProv()),
-                    checkNull(p.getDataraccolta()),
-                    checkNull(p.getDatamungitura()),
-                    glutenStatus,
-                    checkNull(p.getDatascadenza()),
-                    checkNull(p.getCategoria()),
-                    checkNull(p.getScorta())
-            };
-        });
+        populateTable(prodotti, prodModel, p -> createRowData(
+                p.getCodProd(),
+                p.getNome(),
+                p.getDescrizione(),
+                p.getPrezzo(),
+                p.getLuogoProv(),
+                p.getDataraccolta(),
+                p.getDatamungitura(),
+                formatGlutineStatus(p.isGlutine()),
+                p.getDatascadenza(),
+                p.getCategoria(),
+                p.getScorta()
+        ));
     }
 }
