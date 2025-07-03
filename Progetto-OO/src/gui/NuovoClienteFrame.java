@@ -1,11 +1,10 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.sql.SQLException;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class NuovoClienteFrame extends JFrame {
     private JPanel contentPane;
@@ -127,17 +126,6 @@ public class NuovoClienteFrame extends JFrame {
 
                 // Aggiunta della tessera per il nuovo cliente
                 c.nuovatessera(nometf.getText(), cognometf.getText(), codfisctf.getText());
-
-                // Aggiunta del cliente al modello
-                c.clienteModel.addRow(new Object[]{
-                        "", // codCliente vuoto per ora
-                        nometf.getText(),
-                        cognometf.getText(),
-                        codfisctf.getText(),
-                        emailtf.getText(),
-                        indirizzotf.getText(),
-                        telefonotf.getText()
-                });
 
                 clean(); // Pulisce i campi dopo l'aggiunta
                 JOptionPane.showMessageDialog(null, "Cliente e relativa tessera aggiunti");

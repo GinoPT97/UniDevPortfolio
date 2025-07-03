@@ -199,6 +199,110 @@ public class Controller {
         items.forEach(item -> model.addRow(mapper.apply(item)));
     }
 
+    // Metodi di supporto per l'aggiornamento dei model delle tabelle dopo inserimenti
+    private void updateDipendenteModelAfterInsert(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
+        dipModel.addRow(new Object[]{
+                checkNull(codDipendente),
+                checkNull(nome),
+                checkNull(cognome),
+                checkNull(codFis),
+                checkNull(email),
+                checkNull(indirizzo),
+                checkNull(telefono)
+        });
+    }
+    
+    private void updateClienteModelAfterInsert(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
+        clienteModel.addRow(new Object[]{
+                checkNull(codCliente),
+                checkNull(nome),
+                checkNull(cognome),
+                checkNull(codFis),
+                checkNull(email),
+                checkNull(indirizzo),
+                checkNull(telefono),
+                "", // Id Tessera (vuoto per ora)
+                ""  // Punti (vuoto per ora)
+        });
+    }
+    
+    private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
+                                              Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
+        String glutenStatus = glutine ? "Si" : "No";
+        prodModel.addRow(new Object[]{
+                checkNull(codProdotto),
+                checkNull(nome),
+                checkNull(descrizione),
+                checkNull(prezzo),
+                checkNull(luogoProvenienza),
+                checkNull(dataRaccolta),
+                checkNull(dataMungitura),
+                glutenStatus,
+                checkNull(dataScadenza),
+                checkNull(categoria),
+                checkNull(scorta)
+        });
+    }
+    
+    // Metodi di supporto per l'aggiornamento dei model delle tabelle dopo modifiche
+    private void updateDipendenteModelAfterUpdate(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
+        for (int i = 0; i < dipModel.getRowCount(); i++) {
+            if (dipModel.getValueAt(i, 0).equals(codDipendente)) {
+                dipModel.setValueAt(nome, i, 1);
+                dipModel.setValueAt(cognome, i, 2);
+                dipModel.setValueAt(codFis, i, 3);
+                dipModel.setValueAt(email, i, 4);
+                dipModel.setValueAt(indirizzo, i, 5);
+                dipModel.setValueAt(telefono, i, 6);
+                break;
+            }
+        }
+    }
+    
+    private void updateClienteModelAfterUpdate(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
+        for (int i = 0; i < clienteModel.getRowCount(); i++) {
+            if (clienteModel.getValueAt(i, 0).equals(codCliente)) {
+                clienteModel.setValueAt(nome, i, 1);
+                clienteModel.setValueAt(cognome, i, 2);
+                clienteModel.setValueAt(codFis, i, 3);
+                clienteModel.setValueAt(email, i, 4);
+                clienteModel.setValueAt(indirizzo, i, 5);
+                clienteModel.setValueAt(telefono, i, 6);
+                break;
+            }
+        }
+    }
+    
+    private void updateProdottoModelAfterUpdate(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
+                                              Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
+        String glutenStatus = glutine ? "Si" : "No";
+        for (int i = 0; i < prodModel.getRowCount(); i++) {
+            if (prodModel.getValueAt(i, 0).equals(codProdotto)) {
+                prodModel.setValueAt(nome, i, 1);
+                prodModel.setValueAt(descrizione, i, 2);
+                prodModel.setValueAt(prezzo, i, 3);
+                prodModel.setValueAt(luogoProvenienza, i, 4);
+                prodModel.setValueAt(dataRaccolta, i, 5);
+                prodModel.setValueAt(dataMungitura, i, 6);
+                prodModel.setValueAt(glutenStatus, i, 7);
+                prodModel.setValueAt(dataScadenza, i, 8);
+                prodModel.setValueAt(categoria, i, 9);
+                prodModel.setValueAt(scorta, i, 10);
+                break;
+            }
+        }
+    }
+    
+    // Metodo per aggiungere articoli al carrello (model degli ordini)
+    public void addToCarrelloModel(Object[] articleData) {
+        ordModel.addRow(articleData);
+    }
+    
+    // Metodo per pulire il model del carrello
+    public void clearCarrelloModel() {
+        ordModel.setRowCount(0);
+    }
+
     // Metodo di supporto per verificare se un campo è nullo o vuoto
     private String checkNull(Object value) {
         return (value == null || value.toString().trim().isEmpty()) ? "N/A" : value.toString();
@@ -238,20 +342,42 @@ public class Controller {
     // Aggiunge un nuovo dipendente al database
     public boolean newdip(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
         Dipendente dip = new Dipendente(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
-        return dpjdbc.setNewDip(dip);
+        boolean success = dpjdbc.setNewDip(dip);
+        
+        // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
+        if (success) {
+            updateDipendenteModelAfterInsert(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
+        }
+        
+        return success;
     }
 
     // Aggiunge un nuovo cliente al database
     public boolean newclt(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
         Cliente ct = new Cliente(codCliente, nome, cognome, codFis, email, indirizzo, telefono, null, null);
-        return cljdbc.setNewCt(ct);
+        boolean success = cljdbc.setNewCt(ct);
+        
+        // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
+        if (success) {
+            updateClienteModelAfterInsert(codCliente, nome, cognome, codFis, email, indirizzo, telefono);
+        }
+        
+        return success;
     }
 
     // Aggiunge un nuovo prodotto al database
     public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                           Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
         Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
-        return prdjdbc.setNewProdotto(pe);
+        boolean success = prdjdbc.setNewProdotto(pe);
+        
+        // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
+        if (success) {
+            updateProdottoModelAfterInsert(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
+                                         dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
+        }
+        
+        return success;
     }
 
     // Restituisce i punti associati a un codice tessera
@@ -279,19 +405,41 @@ public class Controller {
     public boolean upprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                          Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
         Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
-        return prdjdbc.updateProdotto(pe);
+        boolean success = prdjdbc.updateProdotto(pe);
+        
+        // Se l'aggiornamento nel database ha successo, aggiorna anche il model della tabella
+        if (success) {
+            updateProdottoModelAfterUpdate(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
+                                         dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
+        }
+        
+        return success;
     }
 
     // Aggiorna le informazioni di un dipendente
     public boolean updip(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
         Dipendente de = new Dipendente(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
-        return dpjdbc.updatedipendente(de);
+        boolean success = dpjdbc.updatedipendente(de);
+        
+        // Se l'aggiornamento nel database ha successo, aggiorna anche il model della tabella
+        if (success) {
+            updateDipendenteModelAfterUpdate(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
+        }
+        
+        return success;
     }
 
     // Aggiorna le informazioni di un cliente
     public boolean upcliente(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
         Cliente ce = new Cliente(codCliente, nome, cognome, codFis, email, indirizzo, telefono, null, null);
-        return cljdbc.updateCliente(ce);
+        boolean success = cljdbc.updateCliente(ce);
+        
+        // Se l'aggiornamento nel database ha successo, aggiorna anche il model della tabella
+        if (success) {
+            updateClienteModelAfterUpdate(codCliente, nome, cognome, codFis, email, indirizzo, telefono);
+        }
+        
+        return success;
     }
 
     // Restituisce l'ID del cliente associato a un codice fiscale

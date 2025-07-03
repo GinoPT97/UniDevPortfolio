@@ -1,9 +1,6 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -11,6 +8,8 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class NuovoProdottoFrame extends JFrame {
     private JPanel contentPane;
@@ -168,16 +167,6 @@ public class NuovoProdottoFrame extends JFrame {
                         categoria, // categoria
                         Integer.parseInt(scortatf.getText()) // scorta
                 );
-
-                // Aggiungi il prodotto anche al modello della tabella
-                c.prodModel.addRow(new Object[]{
-                        nometf.getText(),
-                        descta.getText(),
-                        Double.valueOf(prezzotf.getText()),
-                        provtf.getText(),
-                        categoria,
-                        Integer.valueOf(scortatf.getText())
-                });
 
                 // Pulisci i campi e mostra un messaggio di successo
                 clean();

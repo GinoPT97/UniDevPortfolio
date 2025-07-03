@@ -1,11 +1,10 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.sql.SQLException;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class ModificaDipendenteFrame extends JFrame {
     private JPanel contentPane;
@@ -138,19 +137,6 @@ public class ModificaDipendenteFrame extends JFrame {
                         indirizzotf.getText(), // indirizzo
                         telefonotf.getText() // telefono
                 );
-
-                // Aggiorna il modello della tabella dei dipendenti
-                for (int i = 0; i < c.dipModel.getRowCount(); i++) {
-                    if (c.dipModel.getValueAt(i, 0).equals(cod)) { // Usa direttamente cod
-                        c.dipModel.setValueAt(nometf.getText(), i, 1);
-                        c.dipModel.setValueAt(cognometf.getText(), i, 2);
-                        c.dipModel.setValueAt(codfisctf.getText(), i, 3);
-                        c.dipModel.setValueAt(emailtf.getText(), i, 4);
-                        c.dipModel.setValueAt(indirizzotf.getText(), i, 5);
-                        c.dipModel.setValueAt(telefonotf.getText(), i, 6);
-                        break; // Esci dal ciclo dopo aver trovato e aggiornato la riga
-                    }
-                }
 
                 clean(); // Pulisce i campi di input
                 c.visAndElem(2, 3); // Torna alla vista con indice 3

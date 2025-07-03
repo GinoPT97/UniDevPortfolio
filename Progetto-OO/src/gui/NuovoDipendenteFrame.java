@@ -1,11 +1,10 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.sql.SQLException;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class NuovoDipendenteFrame extends JFrame {
     private JPanel contentPane;
@@ -115,16 +114,6 @@ public class NuovoDipendenteFrame extends JFrame {
                         indirizzotf.getText(), // indirizzo
                         telefonotf.getText() // telefono
                 );
-
-                // Aggiunta del dipendente al modello
-                c.dipModel.addRow(new Object[]{
-                        nometf.getText(),
-                        cognometf.getText(),
-                        codfisctf.getText(),
-                        emailtf.getText(),
-                        indirizzotf.getText(),
-                        telefonotf.getText()
-                });
 
                 // Pulisce i campi di input
                 clean();

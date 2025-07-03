@@ -1,10 +1,6 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.text.DateFormat;
@@ -12,7 +8,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 
 public class ModificaProdottiFrame extends JFrame {
     private String cod;
@@ -227,24 +225,7 @@ public class ModificaProdottiFrame extends JFrame {
                         Integer.parseInt(scortatf.getText())
                 );
 
-                // Cerca la riga corrispondente nel modello
-                int rowIndex = IntStream.range(0, c.prodModel.getRowCount())
-                        .filter(i -> c.prodModel.getValueAt(i, 0).equals(cod))
-                        .findFirst().orElse(-1);
-
-                if (rowIndex != -1) {
-                    // Aggiorna direttamente con i valori dai campi
-                    c.prodModel.setValueAt(nometf.getText(), rowIndex, 1);
-                    c.prodModel.setValueAt(descta.getText(), rowIndex, 2);
-                    c.prodModel.setValueAt(Double.valueOf(prezzotf.getText()), rowIndex, 3);
-                    c.prodModel.setValueAt(provtf.getText(), rowIndex, 4);
-                    c.prodModel.setValueAt(categoria, rowIndex, 9);
-                    c.prodModel.setValueAt(Integer.valueOf(scortatf.getText()), rowIndex, 10);
-
-                    JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(this, "Prodotto non trovato!", "Errore", JOptionPane.ERROR_MESSAGE);
-                }
+                JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
 
                 clean();
                 c.visAndElem(4, 3);

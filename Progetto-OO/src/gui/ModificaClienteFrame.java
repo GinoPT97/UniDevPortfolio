@@ -1,11 +1,10 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.sql.SQLException;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class ModificaClienteFrame extends JFrame {
     private JPanel contentPane;
@@ -138,19 +137,6 @@ public class ModificaClienteFrame extends JFrame {
                         indirizzotf.getText(), // indirizzo
                         telefonotf.getText() // telefono
                 );
-
-                // Aggiorna la riga corrispondente nel modello
-                for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
-                    if (c.clienteModel.getValueAt(i, 0).equals(cod)) { // Usa direttamente cod
-                        c.clienteModel.setValueAt(nometf.getText(), i, 1);
-                        c.clienteModel.setValueAt(cognometf.getText(), i, 2);
-                        c.clienteModel.setValueAt(codfisctf.getText(), i, 3);
-                        c.clienteModel.setValueAt(emailtf.getText(), i, 4);
-                        c.clienteModel.setValueAt(indirizzotf.getText(), i, 5);
-                        c.clienteModel.setValueAt(telefonotf.getText(), i, 6);
-                        break; // Esci dal ciclo dopo aver trovato e aggiornato la riga
-                    }
-                }
 
                 clean(); // Pulisce i campi dopo l'aggiornamento
                 c.visAndElem(3, 3); // Torna alla vista con indice 3
