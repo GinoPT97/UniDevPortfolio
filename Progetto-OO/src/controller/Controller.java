@@ -297,12 +297,40 @@ public class Controller {
     public void clearCarrelloModel() {
         ordModel.setRowCount(0);
     }
-
+    
+    // Metodi di supporto per l'aggiornamento del model degli ordini
+    private void updateOrdineModelAfterInsert(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
+        // Recupera i nomi di cliente e dipendente per il model
+        List<Cliente> clienti = cljdbc.getAllCt();
+        List<Dipendente> dipendenti = dpjdbc.getAllDip();
+        
+        Cliente cliente = clienti.stream()
+                .filter(c -> c.getCodCl().equals(String.valueOf(idCliente)))
+                .findFirst()
+                .orElse(null);
+        
+        Dipendente dipendente = dipendenti.stream()
+                .filter(d -> d.getCodDIP().equals(String.valueOf(idDipendente)))
+                .findFirst()
+                .orElse(null);
+        
+        String clienteNome = checkNull(cliente != null ? cliente.getCognome() + " " + cliente.getNome() : null);
+        String dipendenteNome = checkNull(dipendente != null ? dipendente.getCognome() + " " + dipendente.getNome() : null);
+        
+        ordModel.addRow(createRowData(codOrdine, dataAcquisto, prezzoTotale, clienteNome, dipendenteNome));
+    }
+    
+    // Metodo pubblico per aggiornare completamente il model degli ordini (chiamabile dal carrello)
+    public void refreshOrdiniModel() throws SQLException {
+        allOrdini();
+    }
+    
     // Metodo di supporto per verificare se un campo è nullo o vuoto
     private String checkNull(Object value) {
         return (value == null || value.toString().trim().isEmpty()) ? NULL_VALUE : value.toString();
     }
-
+    
+    // Metodo per connettersi al database
     public void connect() throws SQLException {
         try {
             dbconn = DBConnection.getInstance();
@@ -455,7 +483,14 @@ public class Controller {
     // Aggiunge un nuovo ordine al database
     public boolean nuovoordine(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
         Ordine ordine = new Ordine(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
-        return ordjdbc.newordine(ordine);
+        boolean success = ordjdbc.newordine(ordine);
+        
+        // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
+        if (success) {
+            updateOrdineModelAfterInsert(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
+        }
+        
+        return success;
     }
 
     // Aggiunge nuovi articoli a un ordine
