@@ -27,8 +27,11 @@ public class Tesseraimpl implements TesseraJDBC {
 
     @Override
     public boolean newtessera(String codcl) throws SQLException {
+        if (codcl == null) return false; // Non può creare tessera senza codice cliente
+        
         newtesseraStmt.setDouble(1, 0.00);  // Tessera inizialmente con 0 punti
-        newtesseraStmt.setString(2, codcl); // Codice cliente associato
+        newtesseraStmt.setInt(2, Integer.parseInt(codcl)); // Conversione String -> int per codcliente
+        
         return newtesseraStmt.executeUpdate() > 0;  // Restituisce true se è stata inserita una riga
     }
 

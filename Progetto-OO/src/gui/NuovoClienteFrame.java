@@ -124,9 +124,6 @@ public class NuovoClienteFrame extends JFrame {
                         telefonotf.getText() // telefono
                 );
 
-                // Aggiunta della tessera per il nuovo cliente
-                c.nuovatessera(nometf.getText(), cognometf.getText(), codfisctf.getText());
-
                 clean(); // Pulisce i campi dopo l'aggiunta
                 JOptionPane.showMessageDialog(null, "Cliente e relativa tessera aggiunti");
             } catch (SQLException e1) {

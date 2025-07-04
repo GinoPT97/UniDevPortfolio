@@ -375,17 +375,23 @@ public class Controller {
         return success;
     }
 
-    // Aggiunge un nuovo cliente al database
+    // Aggiunge un nuovo cliente al database e crea automaticamente la tessera
     public boolean newclt(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
         Cliente ct = new Cliente(codCliente, nome, cognome, codFis, email, indirizzo, telefono, null, null);
-        boolean success = cljdbc.setNewCt(ct);
-        
-        // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
-        if (success) {
+        boolean clienteSuccess = cljdbc.setNewCt(ct);
+
+        if (clienteSuccess) {
             updateClienteModelAfterInsert(codCliente, nome, cognome, codFis, email, indirizzo, telefono);
+            String codClienteDb = cljdbc.getCtByNCCF(nome, cognome, codFis);
+            if (codClienteDb != null) {
+                try {
+                    tsjdbc.newtessera(codClienteDb);
+                } catch (SQLException e) {
+                    System.err.println("Errore creazione tessera cliente: " + e.getMessage());
+                }
+            }
         }
-        
-        return success;
+        return clienteSuccess;
     }
 
     // Aggiunge un nuovo prodotto al database
