@@ -1,5 +1,5 @@
 -- Creare il nuovo tipo ENUM con le categorie corrette e migliorato
-CREATE TYPE CATEGORIA_PRODOTTO AS ENUM (
+CREATE TYPE TIPOLOGIA AS ENUM (
     'FRUTTA',
     'VERDURA', 
     'FARINACEI',
@@ -9,7 +9,7 @@ CREATE TYPE CATEGORIA_PRODOTTO AS ENUM (
 );
 
 -- Creare tipo ENUM per lo stato della tessera
-CREATE TYPE STATO_TESSERA AS ENUM (
+CREATE TYPE STATOTESSERA AS ENUM (
     'ATTIVA',
     'SOSPESA',
     'SCADUTA'
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS tessera (
     numeropunti NUMERIC NOT NULL DEFAULT 0.00 CHECK (numeropunti >= 0.00),
     dataemissione DATE NOT NULL DEFAULT CURRENT_DATE,
     datascadenza DATE NOT NULL DEFAULT (CURRENT_DATE + INTERVAL '2 years'),
-    stato STATO_TESSERA NOT NULL DEFAULT 'ATTIVA',
+    stato STATOTESSERA NOT NULL DEFAULT 'ATTIVA',
     CONSTRAINT tessera_cliente_fk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente)
         ON UPDATE CASCADE
         ON DELETE CASCADE
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS prodotto (
     glutine BOOLEAN,
     datascadenza DATE,
     dataproduzione DATE,
-    categoria CATEGORIA_PRODOTTO,
+    categoria TIPOLOGIA,
     scorta INT CHECK (scorta >= 0)
 );
 
