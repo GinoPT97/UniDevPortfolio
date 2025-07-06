@@ -1,148 +1,147 @@
--- Funzione che aggiorna la scorta in base al numero di articoli selezionati
-CREATE OR REPLACE FUNCTION updateScorta()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    UPDATE PRODOTTO SET Scorta = Scorta - NEW.NumeroArticoli
-    WHERE CodProdotto = NEW.CodProdotto;
-    RETURN NEW;
-END;
-$$;
+-- Funzioni conformi alla struttura del database secondo la traccia accademica
 
--- Funzione che calcola automaticamente il prezzo dell'articolo in base alla quantità selezionata dall'utente
-CREATE OR REPLACE FUNCTION selectPrezzo()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
-DECLARE
-    var REAL := 0.0;
+-- Funzione per aggiornare la scorta quando viene inserito un articolo nell'ordine
+CREATE OR REPLACE FUNCTION aggiorna_scorta_prodotto()
+RETURNS TRIGGER AS $$
 BEGIN
-    FOR counter IN 1..NEW.NumeroArticoli LOOP
-        var := var + (SELECT P.Prezzo
-                      FROM PRODOTTO AS P
-                      WHERE P.CodProdotto = NEW.CodProdotto);
-    END LOOP;
-    UPDATE ARTICOLIORDINE SET Prezzo = var
-    WHERE CodProdotto = NEW.CodProdotto;
-    RETURN NEW;
-END;
-$$;
-
--- Funzione che (ri)calcola automaticamente il totale dell'ordine effettuato dal cliente ad ogni inserimento di un nuovo pezzo nella spesa
-CREATE OR REPLACE FUNCTION updatePrezzo()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    UPDATE ORDINE SET PrezzoTotale = PrezzoTotale + (SELECT AO.Prezzo
-                                                     FROM ARTICOLIORDINE AS AO
-                                                     WHERE AO.CodProdotto = NEW.CodProdotto);
-    RETURN NEW;
-END;
-$$;
-
--- Funzione che (ri)calcola automaticamente il totale dell'ordine effettuato dal cliente ad ogni rimozione di un pezzo nella spesa
-CREATE OR REPLACE FUNCTION updateDeletePrezzo()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    UPDATE ORDINE SET PrezzoTotale = PrezzoTotale - OLD.Prezzo;
-    RETURN NEW;
-END;
-$$;
-
--- Funzione che controlla la disponibilità del prodotto;
--- se la scorta è sufficiente a soddisfare la domanda, permette di lanciare il trigger updateScorta.
--- Qualora la scorta non fosse sufficiente, lancia un eccezione e notifica all'utente l'esaurimento delle scorte
-CREATE OR REPLACE FUNCTION checkScorta()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
-BEGIN
-    IF (NEW.NumeroArticoli <= (SELECT P.Scorta
-                               FROM PRODOTTO AS P
-                               WHERE P.CodProdotto = NEW.CodProdotto)) THEN
+    -- Diminuisce la scorta quando viene aggiunto un articolo all'ordine
+    IF TG_OP = 'INSERT' THEN
+        UPDATE prodotto
+        SET scorta = scorta - NEW.numeroarticoli
+        WHERE codprodotto = NEW.codprodotto;
+        
+        -- Controlla se la scorta diventa negativa
+        IF (SELECT scorta FROM prodotto WHERE codprodotto = NEW.codprodotto) < 0 THEN
+            RAISE EXCEPTION 'Scorta insufficiente per il prodotto con codice %', NEW.codprodotto;
+        END IF;
+        
         RETURN NEW;
-    ELSE
-        RAISE EXCEPTION 'La scorta dell articolo selezionato è inferiore rispetto alla quantità richiesta; il prodotto potrebbe essere esaurito o disponibile in quantità ridotte!';
     END IF;
+    
+    -- Ripristina la scorta quando viene rimosso un articolo dall'ordine
+    IF TG_OP = 'DELETE' THEN
+        UPDATE prodotto
+        SET scorta = scorta + OLD.numeroarticoli
+        WHERE codprodotto = OLD.codprodotto;
+        
+        RETURN OLD;
+    END IF;
+    
+    -- Gestisce l'aggiornamento della quantità
+    IF TG_OP = 'UPDATE' THEN
+        UPDATE prodotto
+        SET scorta = scorta + OLD.numeroarticoli - NEW.numeroarticoli
+        WHERE codprodotto = NEW.codprodotto;
+        
+        -- Controlla se la scorta diventa negativa
+        IF (SELECT scorta FROM prodotto WHERE codprodotto = NEW.codprodotto) < 0 THEN
+            RAISE EXCEPTION 'Scorta insufficiente per il prodotto con codice %', NEW.codprodotto;
+        END IF;
+        
+        RETURN NEW;
+    END IF;
+    
+    RETURN NULL;
 END;
-$$;
+$$ LANGUAGE plpgsql;
 
--- Funzione che aggiorna il saldo punti dei clienti in base al prezzo totale dell'ordine
-CREATE OR REPLACE FUNCTION updatePunti()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
+-- Funzione per calcolare il totale di un ordine
+CREATE OR REPLACE FUNCTION calcola_totale_ordine(p_codordine INTEGER)
+RETURNS NUMERIC AS $$
 DECLARE
-    temp NUMERIC;
+    totale NUMERIC := 0;
 BEGIN
-    SELECT P.Prezzo * NumeroArticoli INTO temp
-    FROM PRODOTTO AS P
-    WHERE P.CodProdotto = NEW.CodProdotto;
-    UPDATE TESSERA
-    SET NumeroPunti = NumeroPunti + (temp * 10) / 100
-    WHERE CodCliente = (SELECT O.CodCliente
-                        FROM ORDINE AS O
-                        WHERE CodOrdine = NEW.CodOrdine);
-    RETURN NEW;
+    SELECT COALESCE(SUM(prezzo * numeroarticoli), 0)
+    INTO totale
+    FROM articoliordine
+    WHERE codordine = p_codordine;
+    
+    RETURN totale;
 END;
-$$;
+$$ LANGUAGE plpgsql;
 
--- Funzione che ripristina la scorta di un articolo rimosso dall'ordine
-CREATE OR REPLACE FUNCTION restoreScorta()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
+-- Funzione per aggiornare automaticamente il prezzo totale dell'ordine
+CREATE OR REPLACE FUNCTION aggiorna_prezzo_totale_ordine()
+RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE PRODOTTO SET Scorta = Scorta + OLD.NumeroArticoli
-    WHERE CodProdotto = OLD.CodProdotto;
-    RETURN NEW;
+    -- Aggiorna il prezzo totale nell'ordine
+    UPDATE ordine 
+    SET prezzototale = calcola_totale_ordine(
+        CASE 
+            WHEN TG_OP = 'DELETE' THEN OLD.codordine
+            ELSE NEW.codordine
+        END
+    )
+    WHERE codordine = 
+        CASE 
+            WHEN TG_OP = 'DELETE' THEN OLD.codordine
+            ELSE NEW.codordine
+        END;
+    
+    RETURN COALESCE(NEW, OLD);
 END;
-$$;
+$$ LANGUAGE plpgsql;
 
--- Funzione che elimina dalla tessera i punti di un articolo rimosso da un ordine
-CREATE OR REPLACE FUNCTION updateDeletePunti()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
+-- Funzione per aggiornare i punti fedeltà del cliente (10% del valore della spesa)
+CREATE OR REPLACE FUNCTION aggiorna_punti_fedelta()
+RETURNS TRIGGER AS $$
 DECLARE
-    temp NUMERIC;
+    punti_da_aggiungere NUMERIC;
+    cod_cliente INTEGER;
 BEGIN
-    SELECT P.Prezzo * NumeroArticoli INTO temp
-    FROM PRODOTTO AS P
-    WHERE P.CodProdotto = OLD.CodProdotto;
-    UPDATE TESSERA
-    SET NumeroPunti = NumeroPunti - (temp * 10) / 100
-    WHERE CodCliente = (SELECT O.CodCliente
-                        FROM ORDINE AS O
-                        WHERE CodOrdine = OLD.CodOrdine);
+    -- Ottiene il codice cliente dall'ordine
+    SELECT codcliente INTO cod_cliente
+    FROM ordine
+    WHERE codordine = NEW.codordine;
+    
+    -- Calcola i punti (10% del valore della spesa per questo articolo)
+    punti_da_aggiungere := (NEW.prezzo * NEW.numeroarticoli) * 0.10;
+    
+    -- Aggiorna i punti nella tessera del cliente
+    UPDATE tessera
+    SET numeropunti = numeropunti + punti_da_aggiungere
+    WHERE codcliente = cod_cliente;
+    
     RETURN NEW;
 END;
-$$;
+$$ LANGUAGE plpgsql;
 
--- Funzione che aggiorna i punti del cliente dopo l'inserimento di un articolo
-CREATE OR REPLACE FUNCTION updatePuntiInserimento()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS
-$$
+-- Funzione per rimuovere punti fedeltà quando un articolo viene rimosso dall'ordine
+CREATE OR REPLACE FUNCTION rimuovi_punti_fedelta()
+RETURNS TRIGGER AS $$
+DECLARE
+    punti_da_rimuovere NUMERIC;
+    cod_cliente INTEGER;
 BEGIN
-    UPDATE TESSERA
-    SET NumeroPunti = NumeroPunti + (NEW.prezzo * 0.10)
-    WHERE CodCliente = (SELECT O.CodCliente
-                        FROM ORDINE AS O
-                        WHERE O.CodOrdine = NEW.CodOrdine);
+    -- Ottiene il codice cliente dall'ordine
+    SELECT codcliente INTO cod_cliente
+    FROM ordine
+    WHERE codordine = OLD.codordine;
+    
+    -- Calcola i punti da rimuovere (10% del valore della spesa per questo articolo)
+    punti_da_rimuovere := (OLD.prezzo * OLD.numeroarticoli) * 0.10;
+    
+    -- Rimuove i punti dalla tessera del cliente
+    UPDATE tessera
+    SET numeropunti = GREATEST(0, numeropunti - punti_da_rimuovere)
+    WHERE codcliente = cod_cliente;
+    
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Funzione per controllare la disponibilità del prodotto prima dell'inserimento
+CREATE OR REPLACE FUNCTION controlla_disponibilita_prodotto()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Controlla se la scorta è sufficiente
+    IF NEW.numeroarticoli > (SELECT scorta FROM prodotto WHERE codprodotto = NEW.codprodotto) THEN
+        RAISE EXCEPTION 'Scorta insufficiente per il prodotto %. Disponibili: %, Richiesti: %', 
+            NEW.codprodotto, 
+            (SELECT scorta FROM prodotto WHERE codprodotto = NEW.codprodotto),
+            NEW.numeroarticoli;
+    END IF;
+    
     RETURN NEW;
 END;
-$$;
+$$ LANGUAGE plpgsql;

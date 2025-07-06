@@ -1,97 +1,152 @@
--- Cliente
-INSERT INTO cliente (codcliente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES
-('11111','aldo','marzante','BBBBBB11B11B111B', 'Via Don Matteo','1234567890','aldo@arte.it'),
-('22222','luca','benson','AAAAAA22A22A222A', 'Via Don Corleone','1234567890','luca@arte.it'),
-('33333','mario','sarni','CCCCCC33C33C333C','Via San giovanni','1234567890','mario@arte.it'),
-('77777','alessio','sassi','DDDDDD44D44D444D','Via cremoni','1234567890','alessio@arte.it'),
-('44455','giorgio','rossi','WWWWWW55W55W555W', 'Via Don Carlo','1234567890','giorgio@arte.it'),
-('55566','paolo','verdi','QQQQQQ66Q66Q666Q', 'Via Don Alberto','1234567890','paolo@arte.it'),
-('66677','simone','bianchi','UUUUUU77U77U777U','Via Don Giuseppe','1234567890','simone@arte.it'),
-('88899','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it');
+-- Popolazione database conforme alla traccia accademica e allo script delle tabelle
 
--- Dipendente
-INSERT INTO dipendente (coddipendente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES
-('89899','dario','forte','FFFFFF11F11F111F','via andromeda','1234567890','dario@arte.it'),
-('79799','sandro','romano','LLLLLL22L22L222L','via omega','1234567890','sandro@arte.it'),
-('34345','giulio','cesare','PPPPPP88P88P888P','via roma','1234567890','giulio@arte.it'),
-('11111','mario','rossi','YYYYYY11Y11Y111Y','via parma','1234567890','mario@arte.it'),
-('22222','andrea','verdi','HHHHHH22H22H222H','via milano','1234567890','andrea@arte.it'),
-('33333','giuseppe','bianchi','KKKKKK88K88K888K','via torino','1234567890','giuseppe@arte.it'),
-('44444','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it');
+-- Inserimento clienti
+INSERT INTO cliente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES
+('Aldo', 'Marzante', 'BBBBBB11B11B111B', 'Via Don Matteo 1', '3331234567', 'aldo.marzante@email.it'),
+('Luca', 'Benson', 'AAAAAA22A22A222A', 'Via Don Corleone 2', '3332345678', 'luca.benson@email.it'),
+('Mario', 'Sarni', 'CCCCCC33C33C333C', 'Via San Giovanni 3', '3333456789', 'mario.sarni@email.it'),
+('Alessio', 'Sassi', 'DDDDDD44D44D444D', 'Via Cremoni 4', '3334567890', 'alessio.sassi@email.it'),
+('Giorgio', 'Rossi', 'EEEEEE55E55E555E', 'Via Don Carlo 5', '3335678901', 'giorgio.rossi@email.it'),
+('Paolo', 'Verdi', 'FFFFFF66F66F666F', 'Via Don Alberto 6', '3336789012', 'paolo.verdi@email.it'),
+('Simone', 'Bianchi', 'GGGGGG77G77G777G', 'Via Don Giuseppe 7', '3337890123', 'simone.bianchi@email.it'),
+('Enrico', 'Gialli', 'HHHHHH88H88H888H', 'Via Don Mario 8', '3338901234', 'enrico.gialli@email.it');
 
--- Tessera
-INSERT INTO tessera (codtessera, numeropunti, codcliente) VALUES
-('55555','20','11111'),
-('44444','30','22222'),
-('66666','100','33333'),
-('88888','0','77777'),
-('77777','50','44455'),
-('66667','80','55566'),
-('55551','10','66677'),
-('33333','150','88899');
+-- Inserimento tessere (riferimento ai clienti inseriti)
+INSERT INTO tessera (codcliente, numeropunti) VALUES
+(1, 20.00),
+(2, 30.00),
+(3, 100.00),
+(4, 0.00),
+(5, 50.00),
+(6, 80.00),
+(7, 10.00),
+(8, 150.00);
 
--- Prodotto
-INSERT INTO prodotto (codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES
-('11111', 'Mela Rossa', 'Mela italiana rossa', 1.50, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Frutta', 100),
-('22222', 'Formaggio Parmigiano', 'Formaggio Parmigiano Reggiano', 15.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 50),
-('33333', 'Pomodori in scatola', 'Pomodori pelati in scatola', 2.00, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Confezionati', 200),
-('44444', 'Spaghetti', 'Spaghetti di grano duro', 1.20, 'Italia', NULL, NULL, TRUE, NULL, 'Farinacei', 300),
-('55555', 'Arance', 'Arance siciliane', 1.20, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Frutta', 150),
-('66666', 'Parmigiano', 'Parmigiano Reggiano DOP', 18.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 70),
-('77777', 'Tonno in scatola', 'Tonno al naturale in scatola', 3.50, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Confezionati', 100),
-('88888', 'Farina', 'Farina di grano tenero tipo "00"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200),
-('99999', 'Latte', 'Latte fresco intero', 1.20, 'Italia', NULL, '2023-07-01', NULL, '2023-07-10', 'Latticini', 80),
-('10101', 'Uova', 'Uova biologiche', 2.50, 'Italia', NULL, NULL, NULL, '2023-07-15', 'Uova', 150),
-('20202', 'Carote', 'Carote fresche', 1.00, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Verdura', 120),
-('30303', 'Pane', 'Pane integrale', 1.50, 'Italia', NULL, NULL, TRUE, NULL, 'Farinacei', 180),
-('40404', 'Yogurt', 'Yogurt naturale', 0.90, 'Italia', NULL, '2023-07-01', NULL, '2023-07-20', 'Latticini', 90),
-('50505', 'Biscotti', 'Biscotti al cioccolato', 2.00, 'Italia', NULL, NULL, TRUE, '2024-12-31', 'Confezionati', 250),
-('60606', 'Zucchine', 'Zucchine fresche', 1.30, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Verdura', 130),
-('70707', 'Mozzarella', 'Mozzarella di bufala', 2.50, 'Italia', NULL, '2023-07-01', NULL, '2023-07-10', 'Latticini', 60),
-('80808', 'Cereali', 'Cereali integrali', 3.00, 'Italia', NULL, NULL, TRUE, '2024-12-31', 'Confezionati', 150),
-('90909', 'Pasta', 'Pasta di semola', 1.00, 'Italia', NULL, NULL, TRUE, NULL, 'Farinacei', 200),
-('101010', 'Miele', 'Miele biologico', 5.00, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Confezionati', 80);
+-- Inserimento dipendenti
+INSERT INTO dipendente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES
+('Dario', 'Forte', 'IIIIII11I11I111I', 'Via Andromeda 1', '3901234567', 'dario.forte@negozio.it'),
+('Sandro', 'Romano', 'JJJJJJ22J22J222J', 'Via Omega 2', '3902345678', 'sandro.romano@negozio.it'),
+('Giulio', 'Cesare', 'KKKKKK33K33K333K', 'Via Roma 3', '3903456789', 'giulio.cesare@negozio.it'),
+('Mario', 'Rossi', 'LLLLLL44L44L444L', 'Via Parma 4', '3904567890', 'mario.rossi@negozio.it'),
+('Andrea', 'Verdi', 'MMMMMM55M55M555M', 'Via Milano 5', '3905678901', 'andrea.verdi@negozio.it'),
+('Giuseppe', 'Bianchi', 'NNNNNN66N66N666N', 'Via Torino 6', '3906789012', 'giuseppe.bianchi@negozio.it'),
+('Marco', 'Gialli', 'OOOOOO77O77O777O', 'Via Napoli 7', '3907890123', 'marco.gialli@negozio.it');
 
--- Ordine
-INSERT INTO ordine (codordine, prezzototale, dataacquisto, codcliente, coddipendente) VALUES
-('12122','57','2001-02-12','11111','89899'),
-('11112','45','2010-03-22','11111','89899'),
-('11132','47','2011-07-02','11111','89899'),
-('13112','105','2017-11-22','11111','79799'),
-('13312','185','2007-10-02','11111','79799'),
-('13512','15','2004-12-09','11111','34345'),
-('14142','20','2009-11-08','55566','11111'),
-('12131','55','2015-03-12','66677','22222'),
-('15151','30','2023-05-15','88899','34345'),
-('16161','80','2023-08-22','55566','79799'),
-('17171','25','2024-01-10','33333','44444'),
-('12132','120','2013-06-17','88899','33333'),
-('18181','40','2023-12-05','44455','22222'),
-('19191','65','2024-04-18','66677','33333'),
-('20202','55','2024-02-28','88899','79799');
+-- Inserimento prodotti conformi alla traccia accademica
+INSERT INTO prodotto (nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, dataproduzione, categoria, scorta) VALUES
+-- FRUTTA (deve avere dataraccolta)
+('Mela Rossa', 'Mela italiana rossa', 1.50, 'Trentino', '2023-09-15', NULL, NULL, NULL, NULL, 'FRUTTA', 100),
+('Arance', 'Arance siciliane', 1.20, 'Sicilia', '2023-11-20', NULL, NULL, NULL, NULL, 'FRUTTA', 150),
+('Banane', 'Banane ecuadoriane', 2.00, 'Ecuador', '2023-12-01', NULL, NULL, NULL, NULL, 'FRUTTA', 80),
 
-INSERT INTO articoliordine (CodOrdine, CodProdotto, CodCliente, prezzo, numeropunti, numeroarticoli) VALUES
-('12122', '44444', '11111', '1.20', '3.00', '2'),
-('13112', '22222', '11111', '15.00', '30.00', '2'),
-('11112', '33333', '11111', '2.00', '6.00', '3'),
-('13512', '22222', '11111', '15.00', '30.00', '2'),
-('13312', '33333', '11111', '2.00', '4.50', '3'),
-('12131', '33333', '66677', '2.00', '6.00', '3'),
-('12132', '44444', '88899', '1.50', '3.00', '2'),
-('12122', '55555', '11111', '1.00', '2.50', '2'),
-('12122', '33333', '11111', '1.80', '4.50', '3'),
-('13312', '77777', '11111', '1.50', '3.50', '2'),
-('13512', '55555', '11111', '14.50', '29.00', '3'),
-('14142', '44444', '55566', '2.00', '4.00', '4'),
-('12131', '77777', '66677', '2.50', '6.00', '3'),
-('15151', '33333', '88899', '2.00', '4.00', '3'),
-('15151', '77777', '88899', '1.50', '3.00', '2'),
-('16161', '55555', '55566', '14.50', '29.00', '3'),
-('16161', '44444', '55566', '2.00', '4.00', '4'),
-('17171', '77777', '33333', '1.50', '3.50', '2'),
-('18181', '77777', '44455', '2.50', '6.00', '3'),
-('18181', '33333', '44455', '1.80', '4.50', '3'),
-('19191', '22222', '66677', '15.00', '30.00', '2'),
-('19191', '77777', '66677', '2.50', '6.00', '3'),
-('20202', '44444', '88899', '1.20', '3.00', '2'),
-('20202', '55555', '88899', '1.00', '2.50', '2');
+-- VERDURA (deve avere dataraccolta)
+('Carote', 'Carote fresche', 1.00, 'Emilia-Romagna', '2023-10-10', NULL, NULL, NULL, NULL, 'VERDURA', 120),
+('Zucchine', 'Zucchine fresche', 1.30, 'Lazio', '2023-11-05', NULL, NULL, NULL, NULL, 'VERDURA', 130),
+('Pomodori', 'Pomodori freschi', 2.50, 'Campania', '2023-08-25', NULL, NULL, NULL, NULL, 'VERDURA', 90),
+
+-- LATTICINI (deve avere datamungitura, dataproduzione e datascadenza)
+('Latte Fresco', 'Latte fresco intero', 1.20, 'Lombardia', NULL, '2023-12-10', NULL, '2023-12-15', '2023-12-11', 'LATTICINI', 80),
+('Parmigiano Reggiano', 'Parmigiano Reggiano DOP', 18.00, 'Emilia-Romagna', NULL, '2022-06-01', NULL, '2023-12-31', '2023-01-15', 'LATTICINI', 50),
+('Mozzarella', 'Mozzarella di bufala', 2.50, 'Campania', NULL, '2023-12-08', NULL, '2023-12-15', '2023-12-09', 'LATTICINI', 60),
+('Yogurt', 'Yogurt naturale', 0.90, 'Piemonte', NULL, '2023-12-05', NULL, '2023-12-20', '2023-12-06', 'LATTICINI', 90),
+
+-- FARINACEI (deve avere glutine)
+('Spaghetti', 'Spaghetti di grano duro', 1.20, 'Puglia', NULL, NULL, true, NULL, NULL, 'FARINACEI', 300),
+('Pane Integrale', 'Pane integrale', 1.50, 'Toscana', NULL, NULL, true, NULL, NULL, 'FARINACEI', 180),
+('Pasta Senza Glutine', 'Pasta di riso', 2.50, 'Veneto', NULL, NULL, false, NULL, NULL, 'FARINACEI', 150),
+('Farina 00', 'Farina di grano tenero tipo 00', 0.80, 'Piemonte', NULL, NULL, true, NULL, NULL, 'FARINACEI', 200),
+
+-- UOVA (deve avere datascadenza)
+('Uova Biologiche', 'Uova da allevamento biologico', 2.50, 'Umbria', NULL, NULL, NULL, '2023-12-20', NULL, 'UOVA', 150),
+('Uova Fresche', 'Uova fresche da galline allevate a terra', 2.00, 'Marche', NULL, NULL, NULL, '2023-12-18', NULL, 'UOVA', 120),
+
+-- CONFEZIONATI (deve avere datascadenza)
+('Pomodori Pelati', 'Pomodori pelati in scatola', 2.00, 'Campania', NULL, NULL, NULL, '2025-06-30', NULL, 'CONFEZIONATI', 200),
+('Tonno in Scatola', 'Tonno al naturale in scatola', 3.50, 'Sicilia', NULL, NULL, NULL, '2025-03-15', NULL, 'CONFEZIONATI', 100),
+('Biscotti', 'Biscotti al cioccolato', 2.00, 'Lombardia', NULL, NULL, NULL, '2024-12-31', NULL, 'CONFEZIONATI', 250),
+('Cereali', 'Cereali integrali', 3.00, 'Emilia-Romagna', NULL, NULL, NULL, '2024-08-20', NULL, 'CONFEZIONATI', 150),
+('Miele', 'Miele millefiori', 5.00, 'Abruzzo', NULL, NULL, NULL, '2025-12-31', NULL, 'CONFEZIONATI', 80);
+
+-- Inserimento ordini
+INSERT INTO ordine (prezzototale, dataacquisto, codcliente, coddipendente) VALUES
+(0.00, '2023-12-01', 1, 1),
+(0.00, '2023-12-02', 2, 2),
+(0.00, '2023-12-03', 3, 3),
+(0.00, '2023-12-04', 4, 4),
+(0.00, '2023-12-05', 5, 5),
+(0.00, '2023-12-06', 6, 6),
+(0.00, '2023-12-07', 7, 7),
+(0.00, '2023-12-08', 8, 1),
+(0.00, '2023-12-09', 1, 2),
+(0.00, '2023-12-10', 2, 3),
+(0.00, '2023-12-11', 3, 4),
+(0.00, '2023-12-12', 4, 5),
+(0.00, '2023-12-13', 5, 6),
+(0.00, '2023-12-14', 6, 7),
+(0.00, '2023-12-15', 7, 1);
+
+-- Inserimento articoli negli ordini (prezzo sarà calcolato automaticamente dai trigger)
+INSERT INTO articoliordine (codordine, codprodotto, prezzo, numeroarticoli) VALUES
+-- Ordine 1: Cliente 1
+(1, 1, 1.50, 3),  -- Mele rosse
+(1, 4, 1.00, 2),  -- Carote
+(1, 13, 1.20, 1), -- Spaghetti
+
+-- Ordine 2: Cliente 2
+(2, 2, 1.20, 5),  -- Arance
+(2, 8, 18.00, 1), -- Parmigiano
+
+-- Ordine 3: Cliente 3
+(3, 7, 1.20, 2),  -- Latte fresco
+(3, 15, 2.50, 6), -- Uova biologiche
+(3, 17, 2.00, 4), -- Pomodori pelati
+
+-- Ordine 4: Cliente 4
+(4, 5, 1.30, 3),  -- Zucchine
+(4, 9, 2.50, 2),  -- Mozzarella
+(4, 18, 3.50, 1), -- Tonno in scatola
+
+-- Ordine 5: Cliente 5
+(5, 11, 1.50, 2), -- Pane integrale
+(5, 16, 2.00, 4), -- Uova fresche
+
+-- Ordine 6: Cliente 6
+(6, 3, 2.00, 2),  -- Banane
+(6, 10, 0.90, 6), -- Yogurt
+
+-- Ordine 7: Cliente 7
+(7, 6, 2.50, 1),  -- Pomodori freschi
+(7, 19, 2.00, 3), -- Biscotti
+
+-- Ordine 8: Cliente 8
+(8, 12, 2.50, 2), -- Pasta senza glutine
+(8, 21, 5.00, 1), -- Miele
+
+-- Ordine 9: Cliente 1 (secondo ordine)
+(9, 14, 0.80, 3), -- Farina
+(9, 20, 3.00, 2), -- Cereali
+
+-- Ordine 10: Cliente 2 (secondo ordine)
+(10, 1, 1.50, 4), -- Mele rosse
+(10, 4, 1.00, 3), -- Carote
+(10, 7, 1.20, 2), -- Latte fresco
+
+-- Ordine 11: Cliente 3 (secondo ordine)
+(11, 8, 18.00, 1), -- Parmigiano
+(11, 13, 1.20, 5), -- Spaghetti
+
+-- Ordine 12: Cliente 4 (secondo ordine)
+(12, 2, 1.20, 6), -- Arance
+(12, 15, 2.50, 4), -- Uova biologiche
+
+-- Ordine 13: Cliente 5 (secondo ordine)
+(13, 17, 2.00, 3), -- Pomodori pelati
+(13, 18, 3.50, 2), -- Tonno in scatola
+
+-- Ordine 14: Cliente 6 (secondo ordine)
+(14, 5, 1.30, 2), -- Zucchine
+(14, 9, 2.50, 3), -- Mozzarella
+
+-- Ordine 15: Cliente 7 (secondo ordine)
+(15, 19, 2.00, 4), -- Biscotti
+(15, 21, 5.00, 1); -- Miele

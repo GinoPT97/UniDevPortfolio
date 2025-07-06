@@ -1,53 +1,31 @@
--- Trigger per aggiornare la scorta dopo l'inserimento di un articolo
-CREATE TRIGGER updateScorta
-AFTER INSERT ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE FUNCTION updateScorta();
+-- Trigger conformi alla struttura del database secondo la traccia accademica
 
--- Trigger per calcolare il prezzo dell'articolo
-CREATE TRIGGER selectPrezzo
-AFTER INSERT ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE FUNCTION selectPrezzo();
+-- Trigger per controllare la disponibilità del prodotto prima dell'inserimento
+CREATE OR REPLACE TRIGGER controlla_disponibilita
+    BEFORE INSERT ON articoliordine
+    FOR EACH ROW
+    EXECUTE FUNCTION controlla_disponibilita_prodotto();
+
+-- Trigger per aggiornare la scorta dopo inserimento/aggiornamento/eliminazione
+CREATE OR REPLACE TRIGGER aggiorna_scorta
+    AFTER INSERT OR UPDATE OR DELETE ON articoliordine
+    FOR EACH ROW
+    EXECUTE FUNCTION aggiorna_scorta_prodotto();
 
 -- Trigger per aggiornare il prezzo totale dell'ordine
-CREATE TRIGGER updatePrezzo
-AFTER INSERT OR UPDATE ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE FUNCTION updatePrezzo();
+CREATE OR REPLACE TRIGGER aggiorna_prezzo_totale
+    AFTER INSERT OR UPDATE OR DELETE ON articoliordine
+    FOR EACH ROW
+    EXECUTE FUNCTION aggiorna_prezzo_totale_ordine();
 
--- Trigger per aggiornare il prezzo totale dopo la rimozione di un articolo
-CREATE TRIGGER updateDeletePrezzo
-AFTER DELETE ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE FUNCTION updateDeletePrezzo();
+-- Trigger per aggiornare i punti fedeltà del cliente dopo l'inserimento di un articolo
+CREATE OR REPLACE TRIGGER aggiorna_punti_inserimento
+    AFTER INSERT ON articoliordine
+    FOR EACH ROW
+    EXECUTE FUNCTION aggiorna_punti_fedelta();
 
--- Trigger per controllare la scorta prima di inserire un articolo
-CREATE TRIGGER checkScorta
-BEFORE INSERT ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE FUNCTION checkScorta();
-
--- Trigger per aggiornare i punti del cliente
-CREATE TRIGGER updatePunti
-AFTER UPDATE OF PrezzoTotale ON ORDINE
-FOR EACH ROW
-EXECUTE FUNCTION updatePunti();
-
--- Trigger per ripristinare la scorta dopo la rimozione di un articolo
-CREATE TRIGGER restoreScorta
-AFTER DELETE ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE FUNCTION restoreScorta();
-
--- Trigger per eliminare i punti dopo la rimozione di un articolo
-CREATE TRIGGER updateDeletePunti
-AFTER DELETE ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE FUNCTION updateDeletePunti();
-
--- Trigger per aggiornare i punti del cliente dopo l'inserimento di un articolo
-CREATE TRIGGER updatePuntiInserimento
-AFTER INSERT ON ARTICOLIORDINE
-FOR EACH ROW
-EXECUTE FUNCTION updatePunti();
+-- Trigger per rimuovere i punti fedeltà quando un articolo viene rimosso dall'ordine
+CREATE OR REPLACE TRIGGER rimuovi_punti_eliminazione
+    AFTER DELETE ON articoliordine
+    FOR EACH ROW
+    EXECUTE FUNCTION rimuovi_punti_fedelta();
