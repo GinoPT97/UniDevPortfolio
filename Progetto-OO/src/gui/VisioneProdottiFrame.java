@@ -1,14 +1,13 @@
 package gui;
 
 import controller.Controller;
-
+import java.awt.*;
+import java.sql.SQLException;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.*;
-import java.sql.SQLException;
-import java.util.regex.PatternSyntaxException;
 
 public class VisioneProdottiFrame extends JFrame {
     private JTable table;
@@ -109,13 +108,13 @@ public class VisioneProdottiFrame extends JFrame {
                     String nome = table.getValueAt(i, 1).toString();
                     String descrizione = table.getValueAt(i, 2).toString();
                     double prezzo = Double.parseDouble(table.getValueAt(i, 3).toString());
-                    String categoria = table.getValueAt(i, 4).toString();
-                    boolean disponibile = Boolean.parseBoolean(table.getValueAt(i, 7).toString());
-                    String fornitore = table.getValueAt(i, 9).toString();
-                    int quantita = Integer.parseInt(table.getValueAt(i, 10).toString());
+                    String luogoProvenienza = table.getValueAt(i, 4).toString();
+                    boolean glutine = "Si".equals(table.getValueAt(i, 7).toString());
+                    String categoria = table.getValueAt(i, 10).toString();
+                    int scorta = Integer.parseInt(table.getValueAt(i, 11).toString());
 
                     c.visAndElem(4, 2);
-                    c.modprodf.viewprod(codice, nome, descrizione, categoria, prezzo, quantita, disponibile, fornitore);
+                    c.modprodf.viewprod(codice, nome, descrizione, luogoProvenienza, prezzo, scorta, glutine, categoria);
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(),
                             "Errore", JOptionPane.ERROR_MESSAGE);

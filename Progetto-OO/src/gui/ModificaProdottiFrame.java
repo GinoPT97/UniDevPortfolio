@@ -241,16 +241,34 @@ public class ModificaProdottiFrame extends JFrame {
 
                 // Aggiorna il prodotto nel database utilizzando il metodo refactorizzato
                 String categoria = categoriacb.getSelectedItem().toString();
+                
+                // Gestione delle date in base alla categoria
+                java.sql.Date dataRaccolta = null;
+                java.sql.Date dataMungitura = null;
+                java.sql.Date dataScadenza = null;
+                
+                if ((FRUTTA.equals(categoria) || VERDURA.equals(categoria)) && !racctf.getText().trim().isEmpty()) {
+                    dataRaccolta = new java.sql.Date(dateFormat.parse(racctf.getText()).getTime());
+                }
+                
+                if (LATTICINI.equals(categoria) && !mungtf.getText().trim().isEmpty()) {
+                    dataMungitura = new java.sql.Date(dateFormat.parse(mungtf.getText()).getTime());
+                }
+                
+                if ((UOVA.equals(categoria) || CONFEZIONATI.equals(categoria) || LATTICINI.equals(categoria)) && !scadtf.getText().trim().isEmpty()) {
+                    dataScadenza = new java.sql.Date(dateFormat.parse(scadtf.getText()).getTime());
+                }
+                
                 c.upprod(
                         cod,
                         nometf.getText(),
                         descta.getText(),
                         Double.parseDouble(prezzotf.getText()),
                         provtf.getText(),
-                        "Ortofrutticoli".equals(categoria) ? new java.sql.Date(dateFormat.parse(racctf.getText()).getTime()) : null,
-                        "Latticini".equals(categoria) ? new java.sql.Date(dateFormat.parse(mungtf.getText()).getTime()) : null,
+                        dataRaccolta,
+                        dataMungitura,
                         glutcb.isSelected(),
-                        "Inscatolati".equals(categoria) ? new java.sql.Date(dateFormat.parse(scadtf.getText()).getTime()) : null,
+                        dataScadenza,
                         categoria,
                         Integer.parseInt(scortatf.getText())
                 );
