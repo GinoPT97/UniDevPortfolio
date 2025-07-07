@@ -518,15 +518,11 @@ public class DBConfiguration {
         }
         
         try {
-            // 1. Pulisci database esistente
-            result += formatTables();
-            logger.info("Database pulito");
-            
-            // 2. Crea tipi ENUM
+            // 1. Crea tipi ENUM
             result += createTipologie();
             logger.info("Tipi ENUM creati");
             
-            // 3. Crea tabelle nell'ordine corretto
+            // 2. Crea tabelle nell'ordine corretto
             result += createTableCliente();
             result += createTableTessera();  
             result += createTableDipendente();
@@ -535,7 +531,7 @@ public class DBConfiguration {
             result += createTableArticoliOrdine();
             logger.info("Tabelle create");
             
-            // 4. Popola con dati di test
+            // 3. Popola con dati di test
             result += populateDatabase();
             logger.info("Database popolato con dati di test");
             

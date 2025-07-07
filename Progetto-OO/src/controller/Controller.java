@@ -336,16 +336,9 @@ public class Controller {
             dbconn = DBConnection.getInstance();
             connection = dbconn.getConnection();
             config = new DBConfiguration(connection);
-            // Metodi per la definizione del DB:
+            // Inizializzazione completa del database
             //config.formatTables();
-            config.createTipologie();
-            config.createTableCliente();
-            config.createTableDipendente();
-            config.createTableOrdine();
-            config.createTableProdotto();
-            config.createTableTessera();
-            config.createTableArticoliOrdine();
-            config.populateDatabase();
+            config.initializeCompleteDatabase();
             cljdbc = new Clienteimpl(connection);
             dpjdbc = new DipendenteImpl(connection);
             prdjdbc = new ProdottoImpl(connection);
