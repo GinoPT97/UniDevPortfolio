@@ -328,6 +328,16 @@ public class DBConfiguration {
             throw new ConnectionException("A connection must exist!");
         }
 
+        try {
+            // Verifica se il database è già popolato
+            if (isDatabasePopulated()) {
+                logger.info("Database già popolato, salto l'inserimento dei dati");
+                return result;
+            }
+        } catch (SQLException e) {
+            logger.log(Level.WARNING, "Errore durante la verifica del popolamento database, procedo comunque: ", e);
+        }
+
         try (Statement statement = connection.createStatement()) {
             // Inserimento clienti conformi a Popolazione.sql
             String sqlCliente = """
@@ -340,7 +350,7 @@ public class DBConfiguration {
                 ('Paolo', 'Verdi', 'FFFFFF66F66F666F', 'Via Don Alberto 6', '3336789012', 'paolo.verdi@email.it'),
                 ('Simone', 'Bianchi', 'GGGGGG77G77G777G', 'Via Don Giuseppe 7', '3337890123', 'simone.bianchi@email.it'),
                 ('Enrico', 'Gialli', 'HHHHHH88H88H888H', 'Via Don Mario 8', '3338901234', 'enrico.gialli@email.it')
-                ON CONFLICT (email) DO NOTHING;
+                ON CONFLICT (codicefiscale) DO NOTHING;
                 """;
             result += statement.executeUpdate(sqlCliente);
 
@@ -369,7 +379,7 @@ public class DBConfiguration {
                 ('Andrea', 'Verdi', 'MMMMMM55M55M555M', 'Via Milano 5', '3905678901', 'andrea.verdi@negozio.it'),
                 ('Giuseppe', 'Bianchi', 'NNNNNN66N66N666N', 'Via Torino 6', '3906789012', 'giuseppe.bianchi@negozio.it'),
                 ('Marco', 'Gialli', 'OOOOOO77O77O777O', 'Via Napoli 7', '3907890123', 'marco.gialli@negozio.it')
-                ON CONFLICT (email) DO NOTHING;
+                ON CONFLICT (codicefiscale) DO NOTHING;
                 """;
             result += statement.executeUpdate(sqlDipendente);
 
@@ -402,8 +412,7 @@ public class DBConfiguration {
                 ('Tonno in Scatola', 'Tonno al naturale in scatola', 3.50, 'Sicilia', NULL, NULL, NULL, '2025-03-15', NULL, 'CONFEZIONATI', 100),
                 ('Biscotti', 'Biscotti al cioccolato', 2.00, 'Lombardia', NULL, NULL, NULL, '2024-12-31', NULL, 'CONFEZIONATI', 250),
                 ('Cereali', 'Cereali integrali', 3.00, 'Emilia-Romagna', NULL, NULL, NULL, '2024-08-20', NULL, 'CONFEZIONATI', 150),
-                ('Miele', 'Miele millefiori', 5.00, 'Abruzzo', NULL, NULL, NULL, '2025-12-31', NULL, 'CONFEZIONATI', 80)
-                ON CONFLICT (codprodotto) DO NOTHING;
+                ('Miele', 'Miele millefiori', 5.00, 'Abruzzo', NULL, NULL, NULL, '2025-12-31', NULL, 'CONFEZIONATI', 80);
                 """;
             result += statement.executeUpdate(sqlProdotto);
 
@@ -543,5 +552,19 @@ public class DBConfiguration {
         }
         
         return result;
+    }
+    
+    /**
+     * Verifica se il database è già popolato contando i record nelle tabelle principali
+     */
+    private boolean isDatabasePopulated() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM cliente";
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(sql)) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+        return false;
     }
 }
