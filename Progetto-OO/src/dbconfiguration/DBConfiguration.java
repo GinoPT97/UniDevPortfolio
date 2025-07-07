@@ -34,10 +34,10 @@ public class DBConfiguration {
                                 codcliente SERIAL PRIMARY KEY,
                                 nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),
                                 cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),
-                                codicefiscale VARCHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),
+                                codicefiscale CHAR(16) NOT NULL UNIQUE CHECK(codicefiscale ~* '^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$'),
                                 indirizzo VARCHAR(255) NOT NULL,
                                 telefono VARCHAR(20) CHECK(telefono ~* '^[0-9+ ]+$'),
-                                email VARCHAR(255) NOT NULL CHECK(email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$')
+                                email VARCHAR(255) NOT NULL UNIQUE CHECK(email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+$')
                             );
                             """;
 
@@ -66,10 +66,10 @@ public class DBConfiguration {
                                 coddipendente SERIAL PRIMARY KEY,
                                 nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),
                                 cognome VARCHAR(255) NOT NULL CHECK(cognome ~* '^[A-Za-z ]+$'),
-                                codicefiscale VARCHAR(16) NOT NULL CHECK(codicefiscale ~* '^[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]$'),
+                                codicefiscale CHAR(16) NOT NULL UNIQUE CHECK(codicefiscale ~* '^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$'),
                                 indirizzo VARCHAR(255) NOT NULL,
                                 telefono VARCHAR(20) CHECK(telefono ~* '^[0-9+ ]+$'),
-                                email VARCHAR(255) NOT NULL CHECK(email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$')
+                                email VARCHAR(255) NOT NULL UNIQUE CHECK(email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[A-Za-z]+$')
                             );
                             """;
 
@@ -96,9 +96,12 @@ public class DBConfiguration {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS tessera(
                                 codtessera SERIAL PRIMARY KEY,
-                                numeropunti REAL NOT NULL DEFAULT 0.00 CHECK(numeropunti >= 0),
                                 codcliente INTEGER NOT NULL UNIQUE,
-                                CONSTRAINT TesseraFK FOREIGN KEY(codcliente)
+                                numeropunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(numeropunti >= 0.00),
+                                dataemissione DATE NOT NULL DEFAULT CURRENT_DATE,
+                                datascadenza DATE NOT NULL DEFAULT (CURRENT_DATE + INTERVAL '2 years'),
+                                stato STATOTESSERA NOT NULL DEFAULT 'ATTIVA',
+                                CONSTRAINT tessera_cliente_fk FOREIGN KEY(codcliente)
                                     REFERENCES cliente(codcliente)
                                     ON UPDATE CASCADE
                                     ON DELETE CASCADE
@@ -130,24 +133,39 @@ public class DBConfiguration {
                                 codprodotto SERIAL PRIMARY KEY,
                                 nome VARCHAR(255) NOT NULL CHECK(nome ~* '^[A-Za-z ]+$'),
                                 descrizione VARCHAR(500),
-                                prezzo NUMERIC DEFAULT 0.00 CHECK(prezzo >= 0),
+                                prezzo NUMERIC DEFAULT 0.00 CHECK(prezzo >= 0.00),
                                 luogoprovenienza VARCHAR(255),
                                 dataraccolta DATE,
                                 datamungitura DATE,
                                 glutine BOOLEAN,
                                 datascadenza DATE,
+                                dataproduzione DATE,
                                 categoria TIPOLOGIA,
-                                scorta INT CHECK(scorta >= 0),
-                                CONSTRAINT categoria CHECK (
-                                    (categoria = 'Ortofrutticoli' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
-                                    (categoria = 'Latticini' AND dataraccolta IS NULL AND datamungitura IS NOT NULL AND datascadenza IS NULL AND glutine IS NULL) OR
-                                    (categoria = 'Inscatolati' AND dataraccolta IS NULL AND datamungitura IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
-                                    (categoria = 'Farinacei' AND dataraccolta IS NULL AND datamungitura IS NULL AND datascadenza IS NULL AND glutine IS NOT NULL)
-                                )
+                                scorta INT CHECK(scorta >= 0)
                             );
                             """;
 
                     result = statement.executeUpdate(sql);
+                    
+                    // Aggiungere il vincolo CHECK per le categorie
+                    String constraintSql = """
+                            ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
+                                -- FRUTTA: deve avere data di raccolta
+                                (categoria = 'FRUTTA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
+                                -- VERDURA: deve avere data di raccolta  
+                                (categoria = 'VERDURA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
+                                -- LATTICINI: devono avere data di mungitura del latte e data di produzione
+                                (categoria = 'LATTICINI' AND dataraccolta IS NULL AND datamungitura IS NOT NULL AND dataproduzione IS NOT NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
+                                -- FARINACEI: informazioni sul glutine
+                                (categoria = 'FARINACEI' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NOT NULL) OR
+                                -- UOVA: solo data di scadenza
+                                (categoria = 'UOVA' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
+                                -- CONFEZIONATI: solo data di scadenza
+                                (categoria = 'CONFEZIONATI' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)
+                            );
+                            """;
+                    
+                    statement.executeUpdate(constraintSql);
                 } else {
                     logger.info("Table Prodotto already exists!");
                 }
@@ -209,18 +227,17 @@ public class DBConfiguration {
                             CREATE TABLE IF NOT EXISTS articoliordine(
                                 codordine INTEGER NOT NULL,
                                 codprodotto INTEGER NOT NULL,
-                                codcliente INTEGER NOT NULL,
-                                prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK(prezzo >= 0),
-                                numeropunti NUMERIC NOT NULL DEFAULT 0.00 CHECK(numeropunti >= 0),
+                                prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK(prezzo >= 0.00),
                                 numeroarticoli INT NOT NULL CHECK(numeroarticoli > 0),
-                                categoria TIPOLOGIA,
-                                CONSTRAINT pk_articoliordine PRIMARY KEY(codordine, codprodotto),
-                                CONSTRAINT articoliordineclientefk FOREIGN KEY(codcliente)
-                                    REFERENCES cliente(codcliente),
+                                CONSTRAINT PK_ArticoliOrdine PRIMARY KEY(codordine, codprodotto),
                                 CONSTRAINT articoliordineprodottofk FOREIGN KEY(codprodotto)
-                                    REFERENCES prodotto(codprodotto),
-                                CONSTRAINT articoliordineordinefk FOREIGN KEY(codordine)
+                                    REFERENCES prodotto(codprodotto)
+                                    ON UPDATE CASCADE
+                                    ON DELETE NO ACTION,
+                                CONSTRAINT articoliordineordinek FOREIGN KEY(codordine)
                                     REFERENCES ordine(codordine)
+                                    ON UPDATE CASCADE
+                                    ON DELETE CASCADE
                             );
                             """;
 
@@ -243,8 +260,12 @@ public class DBConfiguration {
 
         if (connectionExists()) {
             try (Statement statement = connection.createStatement()) {
-                String sql = "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'tipologia') THEN CREATE TYPE TIPOLOGIA AS ENUM('Ortofrutticoli','Latticini','Inscatolati','Farinacei'); END IF; END $$;";
+                String sql = "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'tipologia') THEN CREATE TYPE TIPOLOGIA AS ENUM('FRUTTA','VERDURA','FARINACEI','LATTICINI','UOVA','CONFEZIONATI'); END IF; END $$;";
                 result = statement.executeUpdate(sql);
+                
+                // Creazione del tipo STATOTESSERA
+                String sqlStato = "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statotessera') THEN CREATE TYPE STATOTESSERA AS ENUM('ATTIVA','SOSPESA','SCADUTA'); END IF; END $$;";
+                result += statement.executeUpdate(sqlStato);
             } catch (SQLException ex) {
                 logger.log(Level.SEVERE, "SQL Exception in creation type tipologia: ", ex);
             }
@@ -308,102 +329,223 @@ public class DBConfiguration {
         }
 
         try (Statement statement = connection.createStatement()) {
-            // Inserimento dati nella tabella cliente
-            String sqlCliente = "INSERT INTO cliente (codcliente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
-                    + "('11111','aldo','marzante','BBBBBB11B11B111B', 'Via Don Matteo','1234567890','aldo@arte.it'),"
-                    + "('22222','luca','benson','AAAAAA22A22A222A', 'Via Don Corleone','1234567890','luca@arte.it'),"
-                    + "('33333','mario','sarni','CCCCCC33C33C333C','Via San giovanni','1234567890','mario@arte.it'),"
-                    + "('44444','alessio','sassi','DDDDDD44D44D444D','Via cremoni','1234567890','alessio@arte.it'),"
-                    + "('55555','giorgio','rossi','WWWWWW55W55W555W', 'Via Don Carlo','1234567890','giorgio@arte.it'),"
-                    + "('66666','paolo','verdi','QQQQQQ66Q66Q666Q', 'Via Don Alberto','1234567890','paolo@arte.it'),"
-                    + "('77777','simone','bianchi','UUUUUU77U77U777U','Via Don Giuseppe','1234567890','simone@arte.it'),"
-                    + "('88888','enrico','gialli','VVVVVV99V99V999V','Via Don Mario','1234567890','enrico@arte.it') "
-                    + "ON CONFLICT (codcliente) DO NOTHING;";
+            // Inserimento clienti conformi a Popolazione.sql
+            String sqlCliente = """
+                INSERT INTO cliente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES
+                ('Aldo', 'Marzante', 'BBBBBB11B11B111B', 'Via Don Matteo 1', '3331234567', 'aldo.marzante@email.it'),
+                ('Luca', 'Benson', 'AAAAAA22A22A222A', 'Via Don Corleone 2', '3332345678', 'luca.benson@email.it'),
+                ('Mario', 'Sarni', 'CCCCCC33C33C333C', 'Via San Giovanni 3', '3333456789', 'mario.sarni@email.it'),
+                ('Alessio', 'Sassi', 'DDDDDD44D44D444D', 'Via Cremoni 4', '3334567890', 'alessio.sassi@email.it'),
+                ('Giorgio', 'Rossi', 'EEEEEE55E55E555E', 'Via Don Carlo 5', '3335678901', 'giorgio.rossi@email.it'),
+                ('Paolo', 'Verdi', 'FFFFFF66F66F666F', 'Via Don Alberto 6', '3336789012', 'paolo.verdi@email.it'),
+                ('Simone', 'Bianchi', 'GGGGGG77G77G777G', 'Via Don Giuseppe 7', '3337890123', 'simone.bianchi@email.it'),
+                ('Enrico', 'Gialli', 'HHHHHH88H88H888H', 'Via Don Mario 8', '3338901234', 'enrico.gialli@email.it')
+                ON CONFLICT (email) DO NOTHING;
+                """;
             result += statement.executeUpdate(sqlCliente);
 
-            // Inserimento dati nella tabella dipendente
-            String sqlDipendente = "INSERT INTO dipendente (coddipendente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES "
-                    + "('89899','dario','forte','FFFFFF11F11F111F','via andromeda','1234567890','dario@arte.it'),"
-                    + "('79799','sandro','romano','LLLLLL22L22L222L','via omega','1234567890','sandro@arte.it'),"
-                    + "('34345','giulio','cesare','PPPPPP88P88P888P','via roma','1234567890','giulio@arte.it'),"
-                    + "('11112','mario','rossi','YYYYYY11Y11Y111Y','via parma','1234567890','mario@arte.it'),"
-                    + "('22223','andrea','verdi','HHHHHH22H22H222H','via milano','1234567890','andrea@arte.it'),"
-                    + "('33334','giuseppe','bianchi','KKKKKK88K88K888K','via torino','1234567890','giuseppe@arte.it'),"
-                    + "('44445','marco','gialli','GGGLLN80A01H501P','via napoli','1234567890','marco@arte.it'),"
-                    + "('00000','admin','administrator','ADMINA00A00A000A','Admin Address','0000000000','admin@company.com') "
-                    + "ON CONFLICT (coddipendente) DO NOTHING;";
-            result += statement.executeUpdate(sqlDipendente);
-
-            // Inserimento dati nella tabella tessera
-            String sqlTessera = "INSERT INTO tessera (codtessera, numeropunti, codcliente) VALUES "
-                    + "('55551','20','11111'),"
-                    + "('44441','30','22222'),"
-                    + "('66661','100','33333'),"
-                    + "('88881','0','77777'),"
-                    + "('77771','50','44444'),"
-                    + "('66662','80','55555'),"
-                    + "('55552','10','66666'),"
-                    + "('33331','150','88888') "
-                    + "ON CONFLICT (codtessera) DO NOTHING;";
+            // Inserimento tessere conformi a Popolazione.sql
+            String sqlTessera = """
+                INSERT INTO tessera (codcliente, numeropunti) VALUES
+                (1, 20.00),
+                (2, 30.00),
+                (3, 100.00),
+                (4, 0.00),
+                (5, 50.00),
+                (6, 80.00),
+                (7, 10.00),
+                (8, 150.00)
+                ON CONFLICT (codcliente) DO NOTHING;
+                """;
             result += statement.executeUpdate(sqlTessera);
 
-            // Inserimento dati nella tabella prodotto
-            String sqlProdotto = "INSERT INTO prodotto (codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES "
-                    + "('11112', 'Mela Rossa', 'Mela italiana rossa', 1.50, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Ortofrutticoli', 100),"
-                    + "('22223', 'Formaggio Parmigiano', 'Formaggio Parmigiano Reggiano', 15.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 50),"
-                    + "('33334', 'Pomodori in scatola', 'Pomodori pelati in scatola', 2.00, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Inscatolati', 200),"
-                    + "('44445', 'Spaghetti', 'Spaghetti di grano duro', 1.20, 'Italia', NULL, NULL, TRUE, NULL, 'Farinacei', 300),"
-                    + "('55556', 'Arance', 'Arance siciliane', 1.20, 'Italia', '2022-07-01', NULL, NULL, NULL, 'Ortofrutticoli', 150),"
-                    + "('66667', 'Parmigiano', 'Parmigiano Reggiano DOP', 18.00, 'Italia', NULL, '2023-06-01', NULL, NULL, 'Latticini', 70),"
-                    + "('77778', 'Tonno in scatola', 'Tonno al naturale in scatola', 3.50, 'Italia', NULL, NULL, NULL, '2024-12-31', 'Inscatolati', 100),"
-                    + "('88888', 'Farina', 'Farina di grano tenero tipo \"00\"', 0.80, 'Italia', NULL, NULL, FALSE, NULL, 'Farinacei', 200) "
-                    + "ON CONFLICT (codprodotto) DO NOTHING;";
+            // Inserimento dipendenti conformi a Popolazione.sql
+            String sqlDipendente = """
+                INSERT INTO dipendente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES
+                ('Dario', 'Forte', 'IIIIII11I11I111I', 'Via Andromeda 1', '3901234567', 'dario.forte@negozio.it'),
+                ('Sandro', 'Romano', 'JJJJJJ22J22J222J', 'Via Omega 2', '3902345678', 'sandro.romano@negozio.it'),
+                ('Giulio', 'Cesare', 'KKKKKK33K33K333K', 'Via Roma 3', '3903456789', 'giulio.cesare@negozio.it'),
+                ('Mario', 'Rossi', 'LLLLLL44L44L444L', 'Via Parma 4', '3904567890', 'mario.rossi@negozio.it'),
+                ('Andrea', 'Verdi', 'MMMMMM55M55M555M', 'Via Milano 5', '3905678901', 'andrea.verdi@negozio.it'),
+                ('Giuseppe', 'Bianchi', 'NNNNNN66N66N666N', 'Via Torino 6', '3906789012', 'giuseppe.bianchi@negozio.it'),
+                ('Marco', 'Gialli', 'OOOOOO77O77O777O', 'Via Napoli 7', '3907890123', 'marco.gialli@negozio.it')
+                ON CONFLICT (email) DO NOTHING;
+                """;
+            result += statement.executeUpdate(sqlDipendente);
+
+            // Inserimento prodotti conformi a Popolazione.sql
+            String sqlProdotto = """
+                INSERT INTO prodotto (nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, dataproduzione, categoria, scorta) VALUES
+                -- FRUTTA
+                ('Mela Rossa', 'Mela italiana rossa', 1.50, 'Trentino', '2023-09-15', NULL, NULL, NULL, NULL, 'FRUTTA', 100),
+                ('Arance', 'Arance siciliane', 1.20, 'Sicilia', '2023-11-20', NULL, NULL, NULL, NULL, 'FRUTTA', 150),
+                ('Banane', 'Banane ecuadoriane', 2.00, 'Ecuador', '2023-12-01', NULL, NULL, NULL, NULL, 'FRUTTA', 80),
+                -- VERDURA
+                ('Carote', 'Carote fresche', 1.00, 'Emilia-Romagna', '2023-10-10', NULL, NULL, NULL, NULL, 'VERDURA', 120),
+                ('Zucchine', 'Zucchine fresche', 1.30, 'Lazio', '2023-11-05', NULL, NULL, NULL, NULL, 'VERDURA', 130),
+                ('Pomodori', 'Pomodori freschi', 2.50, 'Campania', '2023-08-25', NULL, NULL, NULL, NULL, 'VERDURA', 90),
+                -- LATTICINI
+                ('Latte Fresco', 'Latte fresco intero', 1.20, 'Lombardia', NULL, '2023-12-10', NULL, '2023-12-15', '2023-12-11', 'LATTICINI', 80),
+                ('Parmigiano Reggiano', 'Parmigiano Reggiano DOP', 18.00, 'Emilia-Romagna', NULL, '2022-06-01', NULL, '2023-12-31', '2023-01-15', 'LATTICINI', 50),
+                ('Mozzarella', 'Mozzarella di bufala', 2.50, 'Campania', NULL, '2023-12-08', NULL, '2023-12-15', '2023-12-09', 'LATTICINI', 60),
+                ('Yogurt', 'Yogurt naturale', 0.90, 'Piemonte', NULL, '2023-12-05', NULL, '2023-12-20', '2023-12-06', 'LATTICINI', 90),
+                -- FARINACEI
+                ('Spaghetti', 'Spaghetti di grano duro', 1.20, 'Puglia', NULL, NULL, true, NULL, NULL, 'FARINACEI', 300),
+                ('Pane Integrale', 'Pane integrale', 1.50, 'Toscana', NULL, NULL, true, NULL, NULL, 'FARINACEI', 180),
+                ('Pasta Senza Glutine', 'Pasta di riso', 2.50, 'Veneto', NULL, NULL, false, NULL, NULL, 'FARINACEI', 150),
+                ('Farina Doppio Zero', 'Farina di grano tenero tipo 00', 0.80, 'Piemonte', NULL, NULL, true, NULL, NULL, 'FARINACEI', 200),
+                -- UOVA
+                ('Uova Biologiche', 'Uova da allevamento biologico', 2.50, 'Umbria', NULL, NULL, NULL, '2023-12-20', NULL, 'UOVA', 150),
+                ('Uova Fresche', 'Uova fresche da galline allevate a terra', 2.00, 'Marche', NULL, NULL, NULL, '2023-12-18', NULL, 'UOVA', 120),
+                -- CONFEZIONATI
+                ('Pomodori Pelati', 'Pomodori pelati in scatola', 2.00, 'Campania', NULL, NULL, NULL, '2025-06-30', NULL, 'CONFEZIONATI', 200),
+                ('Tonno in Scatola', 'Tonno al naturale in scatola', 3.50, 'Sicilia', NULL, NULL, NULL, '2025-03-15', NULL, 'CONFEZIONATI', 100),
+                ('Biscotti', 'Biscotti al cioccolato', 2.00, 'Lombardia', NULL, NULL, NULL, '2024-12-31', NULL, 'CONFEZIONATI', 250),
+                ('Cereali', 'Cereali integrali', 3.00, 'Emilia-Romagna', NULL, NULL, NULL, '2024-08-20', NULL, 'CONFEZIONATI', 150),
+                ('Miele', 'Miele millefiori', 5.00, 'Abruzzo', NULL, NULL, NULL, '2025-12-31', NULL, 'CONFEZIONATI', 80)
+                ON CONFLICT (codprodotto) DO NOTHING;
+                """;
             result += statement.executeUpdate(sqlProdotto);
 
-            // Inserimento dati nella tabella ordine
-            String sqlOrdine = "INSERT INTO ordine (codordine, prezzototale, dataacquisto, codcliente, coddipendente) VALUES "
-                    + "('12123','57','2001-02-12','11111','89899'),"
-                    + "('11114','45','2010-03-22','11111','89899'),"
-                    + "('11134','47','2011-07-02','11111','89899'),"
-                    + "('13114','105','2017-11-22','11111','79799'),"
-                    + "('13314','185','2007-10-02','11111','79799'),"
-                    + "('13514','15','2004-12-09','11111','34345'),"
-                    + "('14144','20','2009-11-08','55555','11112'),"
-                    + "('12133','55','2015-03-12','66666','22223'),"
-                    + "('15153','30','2023-05-15','88888','34345'),"
-                    + "('16163','80','2023-08-22','55555','79799'),"
-                    + "('17173','25','2024-01-10','33333','44445'),"
-                    + "('12134','120','2013-06-17','88888','33334'),"
-                    + "('18183','40','2023-12-05','44444','22223'),"
-                    + "('19193','65','2024-04-18','66666','33334'),"
-                    + "('20204','55','2024-02-28','88888','79799') "
-                    + "ON CONFLICT (codordine) DO NOTHING;";
+            // Inserimento ordini conformi a Popolazione.sql  
+            String sqlOrdine = """
+                INSERT INTO ordine (prezzototale, dataacquisto, codcliente, coddipendente) VALUES
+                (7.70, '2023-12-01', 1, 1),
+                (24.00, '2023-12-02', 2, 2),
+                (25.40, '2023-12-03', 3, 3),
+                (12.40, '2023-12-04', 4, 4),
+                (11.00, '2023-12-05', 5, 5),
+                (9.40, '2023-12-06', 6, 6),
+                (8.50, '2023-12-07', 7, 7),
+                (10.00, '2023-12-08', 8, 1),
+                (8.40, '2023-12-09', 1, 2),
+                (11.40, '2023-12-10', 2, 3),
+                (24.00, '2023-12-11', 3, 4),
+                (17.20, '2023-12-12', 4, 5),
+                (13.00, '2023-12-13', 5, 6),
+                (10.10, '2023-12-14', 6, 7),
+                (13.00, '2023-12-15', 7, 1)
+                ON CONFLICT (codordine) DO NOTHING;
+                """;
             result += statement.executeUpdate(sqlOrdine);
 
-            // Inserimento dati nella tabella articoliordine
-            String sqlArticoliOrdine = "INSERT INTO articoliordine (CodOrdine, CodProdotto, CodCliente, prezzo, numeropunti, numeroarticoli, categoria) VALUES "
-                    + "('12123','88888','11111', '0.80', '2', '10', 'Farinacei'),"
-                    + "('11114','88888','11111', '0.80', '2', '10', 'Farinacei'),"
-                    + "('11134','77778','11111', '3.50', '2', '10', 'Inscatolati'),"
-                    + "('13114','66667','11111', '18.00', '5', '4', 'Latticini'),"
-                    + "('13314','66667','11111', '18.00', '5', '4', 'Latticini'),"
-                    + "('13514','55556','11111', '1.20', '3', '15', 'Ortofrutticoli'),"
-                    + "('14144','55556','11111', '1.20', '3', '15', 'Ortofrutticoli'),"
-                    + "('12133','11112','55555', '1.50', '2', '20', 'Ortofrutticoli'),"
-                    + "('15153','11112','88888', '1.50', '2', '10', 'Ortofrutticoli'),"
-                    + "('16163','77778','55555', '3.50', '2', '15', 'Inscatolati'),"
-                    + "('17173','77778','33333', '3.50', '2', '10', 'Inscatolati'),"
-                    + "('12134','55556','88888', '1.20', '3', '25', 'Ortofrutticoli'),"
-                    + "('18183','55556','44444', '1.20', '3', '20', 'Ortofrutticoli'),"
-                    + "('19193','77778','66666', '3.50', '2', '30', 'Inscatolati'),"
-                    + "('20204','33334','88888', '2.00', '5', '12', 'Inscatolati') "
-                    + "ON CONFLICT DO NOTHING;";
+            // Inserimento articoli negli ordini conformi a Popolazione.sql
+            String sqlArticoliOrdine = """
+                INSERT INTO articoliordine (codordine, codprodotto, prezzo, numeroarticoli) VALUES
+                -- Ordine 1: Cliente 1
+                (1, 1, 1.50, 3),  -- Mele rosse
+                (1, 4, 1.00, 2),  -- Carote
+                (1, 13, 1.20, 1), -- Spaghetti
+                
+                -- Ordine 2: Cliente 2
+                (2, 2, 1.20, 5),  -- Arance
+                (2, 8, 18.00, 1), -- Parmigiano
+                
+                -- Ordine 3: Cliente 3
+                (3, 7, 1.20, 2),  -- Latte fresco
+                (3, 15, 2.50, 6), -- Uova biologiche
+                (3, 17, 2.00, 4), -- Pomodori pelati
+                
+                -- Ordine 4: Cliente 4
+                (4, 5, 1.30, 3),  -- Zucchine
+                (4, 9, 2.50, 2),  -- Mozzarella
+                (4, 18, 3.50, 1), -- Tonno in scatola
+                
+                -- Ordine 5: Cliente 5
+                (5, 11, 1.50, 2), -- Pane integrale
+                (5, 16, 2.00, 4), -- Uova fresche
+                
+                -- Ordine 6: Cliente 6
+                (6, 3, 2.00, 2),  -- Banane
+                (6, 10, 0.90, 6), -- Yogurt
+                
+                -- Ordine 7: Cliente 7
+                (7, 6, 2.50, 1),  -- Pomodori freschi
+                (7, 19, 2.00, 3), -- Biscotti
+                
+                -- Ordine 8: Cliente 8
+                (8, 12, 2.50, 2), -- Pasta senza glutine
+                (8, 21, 5.00, 1), -- Miele
+                
+                -- Ordine 9: Cliente 1 (secondo ordine)
+                (9, 14, 0.80, 3), -- Farina
+                (9, 20, 3.00, 2), -- Cereali
+                
+                -- Ordine 10: Cliente 2 (secondo ordine)
+                (10, 1, 1.50, 4), -- Mele rosse
+                (10, 4, 1.00, 3), -- Carote
+                (10, 7, 1.20, 2), -- Latte fresco
+                
+                -- Ordine 11: Cliente 3 (secondo ordine)
+                (11, 8, 18.00, 1), -- Parmigiano
+                (11, 13, 1.20, 5), -- Spaghetti
+                
+                -- Ordine 12: Cliente 4 (secondo ordine)
+                (12, 2, 1.20, 6), -- Arance
+                (12, 15, 2.50, 4), -- Uova biologiche
+                
+                -- Ordine 13: Cliente 5 (secondo ordine)
+                (13, 17, 2.00, 3), -- Pomodori pelati
+                (13, 18, 3.50, 2), -- Tonno in scatola
+                
+                -- Ordine 14: Cliente 6 (secondo ordine)
+                (14, 5, 1.30, 2), -- Zucchine
+                (14, 9, 2.50, 3), -- Mozzarella
+                
+                -- Ordine 15: Cliente 7 (secondo ordine)
+                (15, 19, 2.00, 4), -- Biscotti
+                (15, 21, 5.00, 1)  -- Miele
+                ON CONFLICT (codordine, codprodotto) DO NOTHING;
+                """;
             result += statement.executeUpdate(sqlArticoliOrdine);
 
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error while populating database: ", e);
         }
 
+        return result;
+    }
+    
+    /**
+     * Metodo per inizializzare completamente il database
+     * Crea prima i tipi, poi le tabelle e infine popola con i dati
+     */
+    public int initializeCompleteDatabase() throws ConnectionException {
+        int result = 0;
+        
+        if (!connectionExists()) {
+            throw new ConnectionException("A connection must exist!");
+        }
+        
+        try {
+            // 1. Pulisci database esistente
+            result += formatTables();
+            logger.info("Database pulito");
+            
+            // 2. Crea tipi ENUM
+            result += createTipologie();
+            logger.info("Tipi ENUM creati");
+            
+            // 3. Crea tabelle nell'ordine corretto
+            result += createTableCliente();
+            result += createTableTessera();  
+            result += createTableDipendente();
+            result += createTableProdotto();
+            result += createTableOrdine();
+            result += createTableArticoliOrdine();
+            logger.info("Tabelle create");
+            
+            // 4. Popola con dati di test
+            result += populateDatabase();
+            logger.info("Database popolato con dati di test");
+            
+            logger.info("Inizializzazione database completata con successo!");
+            
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Errore durante l'inizializzazione del database: ", e);
+            throw new ConnectionException("Errore durante l'inizializzazione: " + e.getMessage());
+        }
+        
         return result;
     }
 }

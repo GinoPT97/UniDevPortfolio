@@ -11,10 +11,28 @@ public class Prodotto {
     private Date datamungitura;
     private Date datascadenza;
     private Date dataraccolta;
+    private Date dataproduzione;
     private boolean glutine;
     private String categoria;
     private int scorta;
 
+    public Prodotto(String codprodotto, String nome, String descrizione, double prezzo, String luogoprov,
+                    Date dataraccolta, Date datamungitura, boolean glutine, Date datascadenza, Date dataproduzione, String categoria, int scorta) {
+        this.codprodotto = codprodotto;
+        this.nome = nome;
+        this.descrizione = descrizione;
+        this.luogoprov = luogoprov;
+        this.prezzo = prezzo;
+        this.glutine = glutine;
+        this.datamungitura = datamungitura;
+        this.dataraccolta = dataraccolta;
+        this.datascadenza = datascadenza;
+        this.dataproduzione = dataproduzione;
+        this.categoria = categoria;
+        this.scorta = scorta;
+    }
+
+    // Costruttore compatibile con il codice esistente
     public Prodotto(String codprodotto, String nome, String descrizione, double prezzo, String luogoprov,
                     Date dataraccolta, Date datamungitura, boolean glutine, Date datascadenza, String categoria, int scorta) {
         this.codprodotto = codprodotto;
@@ -26,8 +44,26 @@ public class Prodotto {
         this.datamungitura = datamungitura;
         this.dataraccolta = dataraccolta;
         this.datascadenza = datascadenza;
+        this.dataproduzione = null; // Imposta a null per compatibilità
         this.categoria = categoria;
         this.scorta = scorta;
+    }
+
+    // Costruttore per creazione da ResultSet del database
+    public Prodotto(String codprodotto, String nome, String descrizione, double prezzo, String luogoprov,
+                    Date dataraccolta, Date datamungitura, boolean glutine, Date datascadenza, String categoria, int scorta, Date dataproduzione) {
+        this.codprodotto = codprodotto;
+        this.nome = nome;
+        this.descrizione = descrizione;
+        this.luogoprov = luogoprov;
+        this.prezzo = prezzo;
+        this.glutine = glutine;
+        this.datamungitura = datamungitura;
+        this.dataraccolta = dataraccolta;
+        this.datascadenza = datascadenza;
+        this.categoria = categoria;
+        this.scorta = scorta;
+        this.dataproduzione = dataproduzione;
     }
 
     public String getCodProd() {
@@ -110,6 +146,14 @@ public class Prodotto {
         this.categoria = categoria;
     }
 
+    public Date getDataProduzione() {
+        return dataproduzione;
+    }
+
+    public void setDataProduzione(Date dataproduzione) {
+        this.dataproduzione = dataproduzione;
+    }
+
     public int getScorta() {
         return scorta;
     }
@@ -121,6 +165,6 @@ public class Prodotto {
     @Override
     public String toString() {
         return codprodotto + " " + nome + " " + descrizione + " " + prezzo + " " + luogoprov + " " + dataraccolta + " "
-                + datamungitura + " " + glutine + " " + datascadenza + " " + categoria + " " + scorta + " ";
+                + datamungitura + " " + glutine + " " + datascadenza + " " + dataproduzione + " " + categoria + " " + scorta + " ";
     }
 }

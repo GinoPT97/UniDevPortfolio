@@ -20,12 +20,12 @@ public class ProdottoImpl implements ProdottoJDBC {
 
     // Metodo per inizializzare le query preparate
     private void initStatements() throws SQLException {
-        this.getAllProdottiStmt = connection.prepareStatement("SELECT codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta FROM prodotto ORDER BY nome DESC");
+        this.getAllProdottiStmt = connection.prepareStatement("SELECT codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta, dataproduzione FROM prodotto ORDER BY nome DESC");
         this.setNewProdottoStmt = connection.prepareStatement(
-                "INSERT INTO prodotto (nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta) VALUES (?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, ?::TIPOLOGIA, ?)"
+                "INSERT INTO prodotto (nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta, dataproduzione) VALUES (?, ?, ?, ?, ?, ?, CAST(? AS BOOLEAN), ?, ?::TIPOLOGIA, ?, ?)"
         );
         this.updateProdottoStmt = connection.prepareStatement(
-                "UPDATE prodotto SET nome=?, descrizione=?, prezzo=?, luogoprovenienza=?, dataraccolta=?, datamungitura=?, glutine=CAST(? AS BOOLEAN), datascadenza=?, categoria=?::TIPOLOGIA, scorta=? WHERE codprodotto = CAST(? AS INTEGER)"
+                "UPDATE prodotto SET nome=?, descrizione=?, prezzo=?, luogoprovenienza=?, dataraccolta=?, datamungitura=?, glutine=CAST(? AS BOOLEAN), datascadenza=?, categoria=?::TIPOLOGIA, scorta=?, dataproduzione=? WHERE codprodotto = CAST(? AS INTEGER)"
         );
     }
 
@@ -34,6 +34,7 @@ public class ProdottoImpl implements ProdottoJDBC {
         initStatements(); // Inizializza le query preparate
         setCommonProdottoFields(setNewProdottoStmt, prodotto);
         setNewProdottoStmt.setInt(10, prodotto.getScorta());
+        setNewProdottoStmt.setDate(11, prodotto.getDataProduzione() != null ? new java.sql.Date(prodotto.getDataProduzione().getTime()) : null);
 
         boolean result = setNewProdottoStmt.executeUpdate() > 0;
         closeStatements();
@@ -45,7 +46,8 @@ public class ProdottoImpl implements ProdottoJDBC {
         initStatements(); // Inizializza le query preparate
         setCommonProdottoFields(updateProdottoStmt, prodotto);
         updateProdottoStmt.setInt(10, prodotto.getScorta());
-        updateProdottoStmt.setString(11, prodotto.getCodProd());
+        updateProdottoStmt.setDate(11, prodotto.getDataProduzione() != null ? new java.sql.Date(prodotto.getDataProduzione().getTime()) : null);
+        updateProdottoStmt.setString(12, prodotto.getCodProd());
 
         boolean result = updateProdottoStmt.executeUpdate() > 0;
         closeStatements();
@@ -80,7 +82,7 @@ public class ProdottoImpl implements ProdottoJDBC {
     public ArrayList<Prodotto> getbycategoria(String categoria) throws SQLException {
         ArrayList<Prodotto> prodottiCategoria = new ArrayList<>();
         // Cast esplicito per confrontare ENUM con stringa
-        String query = "SELECT codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta FROM prodotto WHERE categoria::text = ? ORDER BY nome DESC";
+        String query = "SELECT codprodotto, nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, categoria, scorta, dataproduzione FROM prodotto WHERE categoria::text = ? ORDER BY nome DESC";
         try (PreparedStatement getCategoriaStmt = connection.prepareStatement(query)) {
             getCategoriaStmt.setString(1, categoria);
             try (ResultSet rs = getCategoriaStmt.executeQuery()) {
@@ -99,29 +101,33 @@ public class ProdottoImpl implements ProdottoJDBC {
         stmt.setString(4, prodotto.getLuogoProv());
 
         switch (prodotto.getCategoria()) {
-            case "Ortofrutticoli" -> {
+            case "FRUTTA", "VERDURA" -> {
                 stmt.setDate(5, new java.sql.Date(prodotto.getDataraccolta().getTime()));
                 stmt.setDate(6, null); // datamungitura deve essere NULL
                 stmt.setNull(7, java.sql.Types.BOOLEAN); // glutine deve essere NULL
                 stmt.setDate(8, null); // datascadenza deve essere NULL
+                stmt.setDate(11, null); // dataproduzione deve essere NULL
             }
-            case "Inscatolati" -> {
+            case "UOVA", "CONFEZIONATI" -> {
                 stmt.setDate(5, null); // dataraccolta deve essere NULL
                 stmt.setDate(6, null); // datamungitura deve essere NULL
                 stmt.setNull(7, java.sql.Types.BOOLEAN); // glutine deve essere NULL
                 stmt.setDate(8, new java.sql.Date(prodotto.getDatascadenza().getTime()));
+                stmt.setDate(11, null); // dataproduzione deve essere NULL
             }
-            case "Latticini" -> {
+            case "LATTICINI" -> {
                 stmt.setDate(5, null); // dataraccolta deve essere NULL
                 stmt.setDate(6, new java.sql.Date(prodotto.getDatamungitura().getTime()));
                 stmt.setNull(7, java.sql.Types.BOOLEAN); // glutine deve essere NULL
-                stmt.setDate(8, null); // datascadenza deve essere NULL
+                stmt.setDate(8, new java.sql.Date(prodotto.getDatascadenza().getTime()));
+                stmt.setDate(11, new java.sql.Date(prodotto.getDataProduzione().getTime()));
             }
-            case "Farinacei" -> {
+            case "FARINACEI" -> {
                 stmt.setDate(5, null); // dataraccolta deve essere NULL
                 stmt.setDate(6, null); // datamungitura deve essere NULL
                 stmt.setBoolean(7, prodotto.isGlutine()); // glutine deve essere NOT NULL
                 stmt.setDate(8, null); // datascadenza deve essere NULL
+                stmt.setDate(11, null); // dataproduzione deve essere NULL
             }
             default -> {
                 // Categoria non riconosciuta - imposta tutti i campi opzionali a null
@@ -129,6 +135,7 @@ public class ProdottoImpl implements ProdottoJDBC {
                 stmt.setDate(6, null);
                 stmt.setNull(7, java.sql.Types.BOOLEAN);
                 stmt.setDate(8, null);
+                stmt.setDate(11, null);
             }
         }
         stmt.setString(9, prodotto.getCategoria());
@@ -146,7 +153,8 @@ public class ProdottoImpl implements ProdottoJDBC {
                 rs.getBoolean("glutine"),
                 rs.getDate("datascadenza"),
                 rs.getString("categoria"),
-                rs.getInt("scorta")
+                rs.getInt("scorta"),
+                rs.getDate("dataproduzione")
         );
     }
 

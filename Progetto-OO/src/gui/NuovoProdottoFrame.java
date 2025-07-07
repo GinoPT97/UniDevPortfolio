@@ -12,8 +12,14 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class NuovoProdottoFrame extends JFrame {
-    private JPanel contentPane;
-    private JPanel buttonpanel;
+    // Costanti per le categorie
+    private static final String FRUTTA = "FRUTTA";
+    private static final String VERDURA = "VERDURA";
+    private static final String FARINACEI = "FARINACEI";
+    private static final String LATTICINI = "LATTICINI";
+    private static final String UOVA = "UOVA";
+    private static final String CONFEZIONATI = "CONFEZIONATI";
+    
     private JButton backbutton;
     private JButton clearbutton;
     private JButton insertbutton;
@@ -25,6 +31,7 @@ public class NuovoProdottoFrame extends JFrame {
     private JTextField mungtf;
     private JTextField scadtf;
     private JTextField scortatf;
+    private JTextField prodtf;
     private JTextArea descta;
     private JCheckBox glutcb;
     private JComboBox<String> categoriacb;
@@ -43,7 +50,7 @@ public class NuovoProdottoFrame extends JFrame {
         setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoProdottoFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello principale
-        contentPane = new JPanel();
+        JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
         contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
@@ -54,27 +61,40 @@ public class NuovoProdottoFrame extends JFrame {
         elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
         contentPane.add(elempanel, BorderLayout.CENTER);
 
-        // Metodo per creare i pannelli di input
-        elempanel.add(createInputPanel("Nome :", nometf = new JTextField(10)));
-        elempanel.add(createInputPanel("Descrizione :", descta = new JTextArea(2, 10)));
-        elempanel.add(createInputPanel("Provenienza :", provtf = new JTextField(10)));
-        elempanel.add(createInputPanel("Prezzo :", prezzotf = new JTextField(10)));
-        elempanel.add(createInputPanel("Data Raccolta (YYYY-MM-DD) :", racctf = new JTextField(10), false));
-        elempanel.add(createInputPanel("Data Mungitura (YYYY-MM-DD) :", mungtf = new JTextField(10), false));
-        elempanel.add(createInputPanel("Glutine :", glutcb = new JCheckBox("Si"), false));
-        elempanel.add(createInputPanel("Data Scadenza (YYYY-MM-DD) :", scadtf = new JTextField(10), false));
-        elempanel.add(createInputPanel("Scorta :", scortatf = new JTextField(10)));
+        // Inizializza i componenti prima di usarli
+        nometf = new JTextField(10);
+        descta = new JTextArea(2, 10);
+        provtf = new JTextField(10);
+        prezzotf = new JTextField(10);
+        racctf = new JTextField(10);
+        mungtf = new JTextField(10);
+        prodtf = new JTextField(10);
+        glutcb = new JCheckBox("Si");
+        scadtf = new JTextField(10);
+        scortatf = new JTextField(10);
+        
+        // Crea i pannelli di input
+        elempanel.add(createInputPanel("Nome :", nometf));
+        elempanel.add(createInputPanel("Descrizione :", descta));
+        elempanel.add(createInputPanel("Provenienza :", provtf));
+        elempanel.add(createInputPanel("Prezzo :", prezzotf));
+        elempanel.add(createInputPanel("Data Raccolta (YYYY-MM-DD) :", racctf, false));
+        elempanel.add(createInputPanel("Data Mungitura (YYYY-MM-DD) :", mungtf, false));
+        elempanel.add(createInputPanel("Data Produzione (YYYY-MM-DD) :", prodtf, false));
+        elempanel.add(createInputPanel("Glutine :", glutcb, false));
+        elempanel.add(createInputPanel("Data Scadenza (YYYY-MM-DD) :", scadtf, false));
+        elempanel.add(createInputPanel("Scorta :", scortatf));
 
         // Categoria e pulsante di selezione
         JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        categoriacb = new JComboBox<>(new String[]{"Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
+        categoriacb = new JComboBox<>(new String[]{FRUTTA, VERDURA, FARINACEI, LATTICINI, UOVA, CONFEZIONATI});
         categoriapanel.add(categoriacb);
         selbutton = creaButton("Selezione", new Color(46, 139, 87));
         categoriapanel.add(selbutton);
         elempanel.add(categoriapanel);
 
         // Pannello per i pulsanti di azione
-        buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         insertbutton = creaButton("Inserisci", new Color(34, 139, 34));
         buttonpanel.add(insertbutton);
         clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
@@ -127,6 +147,7 @@ public class NuovoProdottoFrame extends JFrame {
         scortatf.setText("");
         racctf.setText("");
         mungtf.setText("");
+        prodtf.setText("");
         scadtf.setText("");
         glutcb.setSelected(false);
     }
@@ -160,10 +181,11 @@ public class NuovoProdottoFrame extends JFrame {
                         descta.getText(), // descrizione
                         Double.parseDouble(prezzotf.getText()), // prezzo
                         provtf.getText(), // luogoProvenienza
-                        categoria.equals("Ortofrutticoli") ? new java.sql.Date(data.parse(racctf.getText()).getTime()) : null, // dataRaccolta
-                        categoria.equals("Latticini") ? new java.sql.Date(data.parse(mungtf.getText()).getTime()) : null, // dataMungitura
+                        (categoria.equals(FRUTTA) || categoria.equals(VERDURA)) ? new java.sql.Date(data.parse(racctf.getText()).getTime()) : null, // dataRaccolta
+                        categoria.equals(LATTICINI) ? new java.sql.Date(data.parse(mungtf.getText()).getTime()) : null, // dataMungitura
                         glutcb.isSelected(), // glutine
-                        categoria.equals("Inscatolati") ? new java.sql.Date(data.parse(scadtf.getText()).getTime()) : null, // dataScadenza
+                        (categoria.equals(UOVA) || categoria.equals(CONFEZIONATI) || categoria.equals(LATTICINI)) ? new java.sql.Date(data.parse(scadtf.getText()).getTime()) : null, // dataScadenza
+                        categoria.equals(LATTICINI) ? new java.sql.Date(data.parse(prodtf.getText()).getTime()) : null, // dataproduzione
                         categoria, // categoria
                         Integer.parseInt(scortatf.getText()) // scorta
                 );
@@ -182,10 +204,31 @@ public class NuovoProdottoFrame extends JFrame {
         selbutton.addActionListener(event -> {
             // Abilita o disabilita i campi in base alla categoria selezionata
             int type = categoriacb.getSelectedIndex();
-            racctf.setEditable(type == 0);
-            mungtf.setEditable(type == 2);
-            scadtf.setEditable(type == 1);
-            glutcb.setEnabled(type == 3);
+            
+            // Reset di tutti i campi
+            racctf.setEditable(false);
+            mungtf.setEditable(false);
+            prodtf.setEditable(false);
+            scadtf.setEditable(false);
+            glutcb.setEnabled(false);
+            
+            // Abilita i campi specifici per categoria
+            switch (type) {
+                case 0, 1 -> // FRUTTA, VERDURA
+                    racctf.setEditable(true);
+                case 2 -> // FARINACEI
+                    glutcb.setEnabled(true);
+                case 3 -> { // LATTICINI
+                    mungtf.setEditable(true);
+                    prodtf.setEditable(true);
+                    scadtf.setEditable(true);
+                }
+                case 4, 5 -> // UOVA, CONFEZIONATI
+                    scadtf.setEditable(true);
+                default -> {
+                    // Caso default per valori non previsti
+                }
+            }
         });
 
         descta.addKeyListener(new KeyAdapter() {

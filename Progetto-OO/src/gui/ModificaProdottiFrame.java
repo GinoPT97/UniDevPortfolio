@@ -7,18 +7,26 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
 
 public class ModificaProdottiFrame extends JFrame {
+    // Costanti per le categorie
+    private static final String FRUTTA = "FRUTTA";
+    private static final String VERDURA = "VERDURA";
+    private static final String FARINACEI = "FARINACEI";
+    private static final String LATTICINI = "LATTICINI";
+    private static final String UOVA = "UOVA";
+    private static final String CONFEZIONATI = "CONFEZIONATI";
+    
     private String cod;
     private JTextField nometf;
     private JTextField provtf;
     private JTextField prezzotf;
     private JTextField racctf;
     private JTextField mungtf;
+    private JTextField prodtf;
     private JTextField scadtf;
     private JTextField scortatf;
     private JTextArea descta;
@@ -51,20 +59,33 @@ public class ModificaProdottiFrame extends JFrame {
         contentPane.add(elempanel, BorderLayout.CENTER);
         elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
 
-        // Metodo per creare i pannelli di input
-        elempanel.add(createInputPanel("Nome :", nometf = new JTextField(10)));
-        elempanel.add(createInputPanel("Descrizione :", descta = new JTextArea(1, 10)));
-        elempanel.add(createInputPanel("Provenienza :", provtf = new JTextField(10)));
-        elempanel.add(createInputPanel("Prezzo :", prezzotf = new JTextField(10)));
-        elempanel.add(createInputPanel("Data Raccolta (YYYY-MM-DD) :", racctf = new JTextField(10), false));
-        elempanel.add(createInputPanel("Data Mungitura (YYYY-MM-DD) :", mungtf = new JTextField(10), false));
-        elempanel.add(createInputPanel("Glutine :", glutcb = new JCheckBox("Si"), false));
-        elempanel.add(createInputPanel("Data Scadenza (YYYY-MM-DD) :", scadtf = new JTextField(10), false));
-        elempanel.add(createInputPanel("Scorta :", scortatf = new JTextField(10)));
+        // Inizializza i componenti prima di usarli
+        nometf = new JTextField(10);
+        descta = new JTextArea(1, 10);
+        provtf = new JTextField(10);
+        prezzotf = new JTextField(10);
+        racctf = new JTextField(10);
+        mungtf = new JTextField(10);
+        prodtf = new JTextField(10);
+        glutcb = new JCheckBox("Si");
+        scadtf = new JTextField(10);
+        scortatf = new JTextField(10);
+        
+        // Crea i pannelli di input
+        elempanel.add(createInputPanel("Nome :", nometf));
+        elempanel.add(createInputPanel("Descrizione :", descta));
+        elempanel.add(createInputPanel("Provenienza :", provtf));
+        elempanel.add(createInputPanel("Prezzo :", prezzotf));
+        elempanel.add(createInputPanel("Data Raccolta (YYYY-MM-DD) :", racctf, false));
+        elempanel.add(createInputPanel("Data Mungitura (YYYY-MM-DD) :", mungtf, false));
+        elempanel.add(createInputPanel("Data Produzione (YYYY-MM-DD) :", prodtf, false));
+        elempanel.add(createInputPanel("Glutine :", glutcb, false));
+        elempanel.add(createInputPanel("Data Scadenza (YYYY-MM-DD) :", scadtf, false));
+        elempanel.add(createInputPanel("Scorta :", scortatf));
 
         // Pannello per categorie
         JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        categoriacb = new JComboBox<>(new String[]{"Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
+        categoriacb = new JComboBox<>(new String[]{FRUTTA, VERDURA, FARINACEI, LATTICINI, UOVA, CONFEZIONATI});
         categoriapanel.add(categoriacb);
         JButton selbutton = creaButton("Seleziona", new Color(46, 139, 87));
         categoriapanel.add(selbutton);
@@ -145,10 +166,12 @@ public class ModificaProdottiFrame extends JFrame {
         glutcb.setSelected(glutine);
 
         switch (categoria) {
-            case "Ortofrutticoli" -> categoriacb.setSelectedIndex(0);
-            case "Inscatolati" -> categoriacb.setSelectedIndex(1);
-            case "Latticini" -> categoriacb.setSelectedIndex(2);
-            case "Farinacei" -> categoriacb.setSelectedIndex(3);
+            case FRUTTA -> categoriacb.setSelectedIndex(0);
+            case VERDURA -> categoriacb.setSelectedIndex(1);
+            case FARINACEI -> categoriacb.setSelectedIndex(2);
+            case LATTICINI -> categoriacb.setSelectedIndex(3);
+            case UOVA -> categoriacb.setSelectedIndex(4);
+            case CONFEZIONATI -> categoriacb.setSelectedIndex(5);
             default -> categoriacb.setSelectedIndex(-1);
         }
     }
@@ -161,6 +184,7 @@ public class ModificaProdottiFrame extends JFrame {
         scortatf.setText("");
         racctf.setText("");
         mungtf.setText("");
+        prodtf.setText("");
         scadtf.setText("");
         glutcb.setSelected(false);
     }
@@ -180,20 +204,26 @@ public class ModificaProdottiFrame extends JFrame {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 String selectedCategory = (String) categoriacb.getSelectedItem();
 
-                // Mappa campi legati alla categoria
-                Map<String, JTextField> categoryFields = Map.of(
-                        "Ortofrutticoli", racctf,
-                        "Latticini", mungtf,
-                        "Inscatolati", scadtf
-                );
-
                 // Disabilita tutti i campi relativi alle categorie
-                categoryFields.values().forEach(field -> field.setEnabled(false));
+                racctf.setEnabled(false);
+                mungtf.setEnabled(false);
+                prodtf.setEnabled(false);
+                scadtf.setEnabled(false);
+                glutcb.setEnabled(false);
 
                 // Abilita solo il campo pertinente alla categoria selezionata
-                JTextField fieldToEnable = categoryFields.getOrDefault(selectedCategory, null);
-                if (fieldToEnable != null) {
-                    fieldToEnable.setEnabled(true);
+                switch (selectedCategory) {
+                    case FRUTTA, VERDURA -> racctf.setEnabled(true);
+                    case FARINACEI -> glutcb.setEnabled(true);
+                    case LATTICINI -> {
+                        mungtf.setEnabled(true);
+                        prodtf.setEnabled(true);
+                        scadtf.setEnabled(true);
+                    }
+                    case UOVA, CONFEZIONATI -> scadtf.setEnabled(true);
+                    default -> {
+                        // Caso default per valori non previsti
+                    }
                 }
             }
         });

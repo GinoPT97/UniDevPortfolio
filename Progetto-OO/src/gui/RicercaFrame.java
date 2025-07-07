@@ -1,29 +1,37 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public class RicercaFrame extends JFrame {
+    // Costanti per le categorie
+    private static final String FRUTTA = "FRUTTA";
+    private static final String VERDURA = "VERDURA";
+    private static final String FARINACEI = "FARINACEI";
+    private static final String LATTICINI = "LATTICINI";
+    private static final String UOVA = "UOVA";
+    private static final String CONFEZIONATI = "CONFEZIONATI";
+    private static final String TUTTI = "Tutti";
+    
     private JTable searchtable;
     private JComboBox<String> categoriacb;
-    private DefaultTableModel searchmodel = new DefaultTableModel();
-    private Object[] searchcolonne = {"Nome", "Cognome", "Categoria", "Numero Punti"};
+    private final DefaultTableModel searchmodel = new DefaultTableModel();
+    private final Object[] searchcolonne = {"Nome", "Cognome", "Categoria", "Numero Punti"};
     private JButton backbutton;
     private JButton searchbutton;
     private JComboBox<String> punticb;
 
     public RicercaFrame(String title, Controller c) throws SQLException {
         super(title);
-        this.elementi();
-        this.azioni(c);
+        elementi();
+        azioni(c);
     }
 
     public void elementi() {
@@ -72,10 +80,10 @@ public class RicercaFrame extends JFrame {
         JPanel filterPanel = new JPanel();
         buttonPanel.add(filterPanel);
 
-        categoriacb = new JComboBox<>(new String[]{"Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei", "Tutti"});
+        categoriacb = new JComboBox<>(new String[]{FRUTTA, VERDURA, FARINACEI, LATTICINI, UOVA, CONFEZIONATI, TUTTI});
         filterPanel.add(categoriacb);
 
-        punticb = new JComboBox<>(new String[]{"0-500", "501-1000", "1001-5000", ">5000", "Tutti"});
+        punticb = new JComboBox<>(new String[]{"0-500", "501-1000", "1001-5000", ">5000", TUTTI});
         filterPanel.add(punticb);
 
         searchbutton = new JButton("Ricerca");
@@ -102,7 +110,7 @@ public class RicercaFrame extends JFrame {
             List<RowFilter<Object, Object>> filters = new ArrayList<>();
 
             // Filtro categoria
-            if (!"Tutti".equals(categoriaSelezionata)) {
+            if (!TUTTI.equals(categoriaSelezionata)) {
                 filters.add(RowFilter.regexFilter(categoriaSelezionata, 2));
             }
 

@@ -20,9 +20,9 @@ public class Tesseraimpl implements TesseraJDBC {
     public Tesseraimpl(Connection connection) throws SQLException {
         this.connection = connection;
         // Preparazione delle query
-        newtesseraStmt = connection.prepareStatement("INSERT INTO tessera (numeropunti, codcliente) VALUES (?, ?)");
+        newtesseraStmt = connection.prepareStatement("INSERT INTO tessera (numeropunti, codcliente, dataemissione, datascadenza, stato) VALUES (?, ?, CURRENT_DATE, CURRENT_DATE + INTERVAL '2 years', 'ATTIVA')");
         getpuntitStmt = connection.prepareStatement("SELECT numeropunti FROM tessera WHERE codtessera = ?");
-        alltesseraStmt = connection.prepareStatement("SELECT codtessera, numeropunti, codcliente FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC");
+        alltesseraStmt = connection.prepareStatement("SELECT T.codtessera, T.numeropunti, T.codcliente, T.dataemissione, T.datascadenza, T.stato, C.nome, C.cognome, C.codicefiscale, C.email, C.indirizzo, C.telefono FROM tessera AS T JOIN cliente AS C ON T.codcliente = C.codcliente ORDER BY C.cognome DESC");
     }
 
     @Override
@@ -54,9 +54,9 @@ public class Tesseraimpl implements TesseraJDBC {
                 // Creo e aggiungo una nuova Tessera all'elenco
                 tessere.add(new Tessera(
                         rs.getString("codtessera"),
-                        rs.getInt("numeropunti"),
+                        rs.getDouble("numeropunti"),
                         new Cliente(
-                                null,
+                                rs.getString("codcliente"),
                                 rs.getString("nome"),
                                 rs.getString("cognome"),
                                 rs.getString("codicefiscale"),
@@ -65,7 +65,10 @@ public class Tesseraimpl implements TesseraJDBC {
                                 rs.getString("telefono"),
                                 null,
                                 null
-                        )
+                        ),
+                        rs.getDate("dataemissione"),
+                        rs.getDate("datascadenza"),
+                        rs.getString("stato")
                 ));
             }
         }

@@ -1,11 +1,10 @@
 package daoimplementation;
 
 import daointerface.ArticoliJDBC;
-import model.Articoli;
-import model.Cliente;
-
 import java.sql.*;
 import java.util.ArrayList;
+import model.Articoli;
+import model.Cliente;
 
 public class ArticoliImpl implements ArticoliJDBC {
 
@@ -40,10 +39,12 @@ public class ArticoliImpl implements ArticoliJDBC {
     public ArrayList<Cliente> searchClient() throws SQLException {
         ArrayList<Cliente> clienti = new ArrayList<>();
         String query = """
-                SELECT C.codcliente, C.nome, C.cognome, AO.categoria, SUM(AO.numeropunti) AS total_punti
+                SELECT C.codcliente, C.nome, C.cognome, P.categoria, SUM(AO.prezzo * AO.numeroarticoli) AS total_punti
                 FROM cliente AS C
-                JOIN articoliordine AS AO ON C.codcliente = AO.codcliente
-                GROUP BY C.codcliente, C.nome, C.cognome, AO.categoria
+                JOIN ordine AS O ON C.codcliente = O.codcliente
+                JOIN articoliordine AS AO ON O.codordine = AO.codordine
+                JOIN prodotto AS P ON AO.codprodotto = P.codprodotto
+                GROUP BY C.codcliente, C.nome, C.cognome, P.categoria
                 """;
 
         try (Statement searchClient = connection.createStatement();

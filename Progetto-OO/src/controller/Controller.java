@@ -20,9 +20,9 @@ import model.*;
 
 public class Controller {
     // Costanti per le colonne delle tabelle
-    private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti"};
+    private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti", "Stato Tessera"};
     private static final String[] DIPENDENTE_COLUMNS = {"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"};
-    private static final String[] PRODOTTO_COLUMNS = {"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Categoria", "Scorta"};
+    private static final String[] PRODOTTO_COLUMNS = {"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Produzione", "Categoria", "Scorta"};
     private static final String[] ORDINE_COLUMNS = {"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"};
     
     // Costanti applicazione
@@ -262,14 +262,14 @@ public class Controller {
     }
     
     private void updateClienteModelAfterInsert(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        clienteModel.addRow(createRowData(codCliente, nome, cognome, codFis, email, indirizzo, telefono, EMPTY_VALUE, EMPTY_VALUE));
+        clienteModel.addRow(createRowData(codCliente, nome, cognome, codFis, email, indirizzo, telefono, EMPTY_VALUE, EMPTY_VALUE, EMPTY_VALUE));
     }
     
     private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                                               Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
         prodModel.addRow(createRowData(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
                                      dataRaccolta, dataMungitura, formatGlutineStatus(glutine), 
-                                     dataScadenza, categoria, scorta));
+                                     dataScadenza, null, categoria, scorta)); // dataproduzione è null per compatibilità
     }
     
     // Metodi di supporto per l'aggiornamento dei model delle tabelle dopo modifiche
@@ -285,7 +285,7 @@ public class Controller {
                                               Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
         updateTableRow(prodModel, codProdotto, new Object[]{codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
                                                            dataRaccolta, dataMungitura, formatGlutineStatus(glutine), 
-                                                           dataScadenza, categoria, scorta});
+                                                           dataScadenza, null, categoria, scorta}); // dataproduzione è null per compatibilità
     }
     
     // Metodo per aggiungere articoli al carrello (model degli ordini)
@@ -337,7 +337,7 @@ public class Controller {
             connection = dbconn.getConnection();
             config = new DBConfiguration(connection);
             // Metodi per la definizione del DB:
-            config.formatTables();
+            //config.formatTables();
             config.createTipologie();
             config.createTableCliente();
             config.createTableDipendente();
@@ -398,6 +398,21 @@ public class Controller {
     public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                           Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
         Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
+        boolean success = prdjdbc.setNewProdotto(pe);
+        
+        // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
+        if (success) {
+            updateProdottoModelAfterInsert(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
+                                         dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
+        }
+        
+        return success;
+    }
+
+    // Aggiunge un nuovo prodotto al database con supporto per dataproduzione
+    public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
+                          Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, Date dataproduzione, String categoria, int scorta) throws SQLException {
+        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, dataproduzione, categoria, scorta);
         boolean success = prdjdbc.setNewProdotto(pe);
         
         // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
@@ -549,7 +564,8 @@ public class Controller {
                 c.getInd(),
                 c.getTel(),
                 c.getTessera() != null ? c.getTessera().getCodTessera() : null,
-                c.getTessera() != null ? c.getTessera().getNPunti() : null
+                c.getTessera() != null ? c.getTessera().getNPunti() : null,
+                c.getTessera() != null ? c.getTessera().getStato() : null
         ));
     }
 
@@ -594,6 +610,7 @@ public class Controller {
                 p.getDatamungitura(),
                 formatGlutineStatus(p.isGlutine()),
                 p.getDatascadenza(),
+                p.getDataProduzione(),
                 p.getCategoria(),
                 p.getScorta()
         ));
