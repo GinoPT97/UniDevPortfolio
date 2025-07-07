@@ -54,7 +54,7 @@ INSERT INTO prodotto (nome, descrizione, prezzo, luogoprovenienza, dataraccolta,
 ('Spaghetti', 'Spaghetti di grano duro', 1.20, 'Puglia', NULL, NULL, true, NULL, NULL, 'FARINACEI', 300),
 ('Pane Integrale', 'Pane integrale', 1.50, 'Toscana', NULL, NULL, true, NULL, NULL, 'FARINACEI', 180),
 ('Pasta Senza Glutine', 'Pasta di riso', 2.50, 'Veneto', NULL, NULL, false, NULL, NULL, 'FARINACEI', 150),
-('Farina 00', 'Farina di grano tenero tipo 00', 0.80, 'Piemonte', NULL, NULL, true, NULL, NULL, 'FARINACEI', 200),
+('Farina Doppio Zero', 'Farina di grano tenero tipo 00', 0.80, 'Piemonte', NULL, NULL, true, NULL, NULL, 'FARINACEI', 200),
 
 -- UOVA (deve avere datascadenza)
 ('Uova Biologiche', 'Uova da allevamento biologico', 2.50, 'Umbria', NULL, NULL, NULL, '2023-12-20', NULL, 'UOVA', 150),
