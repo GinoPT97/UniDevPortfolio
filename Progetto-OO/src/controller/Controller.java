@@ -337,6 +337,7 @@ public class Controller {
             connection = dbconn.getConnection();
             config = new DBConfiguration(connection);
             // Metodi per la definizione del DB:
+            config.formatTables();
             config.createTipologie();
             config.createTableCliente();
             config.createTableDipendente();
@@ -344,7 +345,6 @@ public class Controller {
             config.createTableProdotto();
             config.createTableTessera();
             config.createTableArticoliOrdine();
-            //config.formatTables();
             config.populateDatabase();
             cljdbc = new Clienteimpl(connection);
             dpjdbc = new DipendenteImpl(connection);
