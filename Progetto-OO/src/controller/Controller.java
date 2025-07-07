@@ -28,23 +28,7 @@ public class Controller {
     // Costanti applicazione
     private static final String GLUTINE_SI = "Si";
     private static final String GLUTINE_NO = "No";
-    private static final String EMPTY_VALUE = "";
     private static final String NULL_VALUE = "N/A";
-    
-    // Enum per i tipi di frame
-    public enum FrameType {
-        ADMIN(1), DIPENDENTE(2), CARRELLO(1), DIPENDENTE_CONTEXT(2), CLIENTE_CONTEXT(3), PRODOTTO_CONTEXT(4);
-        
-        private final int value;
-        
-        FrameType(int value) {
-            this.value = value;
-        }
-        
-        public int getValue() {
-            return value;
-        }
-    }
     
     // Frame references
     public ModificaProdottiFrame modprodf;
@@ -234,7 +218,7 @@ public class Controller {
     private void updateTableRow(DefaultTableModel model, String searchValue, Object[] newValues) {
         for (int i = 0; i < model.getRowCount(); i++) {
             if (model.getValueAt(i, 0).equals(searchValue)) {
-                for (int j = 1; j < newValues.length; j++) {
+                for (int j = 0; j < newValues.length; j++) {
                     model.setValueAt(newValues[j], i, j);
                 }
                 break;
@@ -262,7 +246,7 @@ public class Controller {
     }
     
     private void updateClienteModelAfterInsert(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        clienteModel.addRow(createRowData(codCliente, nome, cognome, codFis, email, indirizzo, telefono, EMPTY_VALUE, EMPTY_VALUE, EMPTY_VALUE));
+        clienteModel.addRow(createRowData(codCliente, nome, cognome, codFis, email, indirizzo, telefono, "", "", ""));
     }
     
     private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
@@ -285,7 +269,7 @@ public class Controller {
                                               Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
         updateTableRow(prodModel, codProdotto, new Object[]{codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
                                                            dataRaccolta, dataMungitura, formatGlutineStatus(glutine), 
-                                                           dataScadenza, null, categoria, scorta}); // dataproduzione è null per compatibilità
+                                                           dataScadenza, null, categoria, scorta});
     }
     
     // Metodo per aggiungere articoli al carrello (model degli ordini)
@@ -390,16 +374,7 @@ public class Controller {
     // Aggiunge un nuovo prodotto al database
     public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                           Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
-        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
-        boolean success = prdjdbc.setNewProdotto(pe);
-        
-        // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
-        if (success) {
-            updateProdottoModelAfterInsert(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
-                                         dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
-        }
-        
-        return success;
+        return newprod(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, null, categoria, scorta);
     }
 
     // Aggiunge un nuovo prodotto al database con supporto per dataproduzione
