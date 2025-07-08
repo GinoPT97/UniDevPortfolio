@@ -524,10 +524,7 @@ public class Controller {
         ));
     }
     
-    /**
-     * Crea una riga di dati per la ricerca clienti mantenendo i tipi numerici
-     * necessari per il corretto funzionamento dei filtri di Swing
-     */
+    // Crea una riga di dati per la ricerca clienti mantenendo i tipi numerici necessari per il corretto funzionamento dei filtri di Swing
     private Object[] createClientSearchRowData(Object codCliente, Object nome, Object cognome, 
                                              Object categoria, Object puntiCategoria, Object spesaTotale, Object ordiniCategoria) {
         return new Object[]{
