@@ -5,28 +5,21 @@ import java.awt.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 public class CarrelloFrame extends JFrame {
-    private static final String FONT_TAHOMA = "Tahoma";
-    private static final String ERROR_TITLE = "Errore";
-    private static final String CATEGORIA_TUTTI = "Tutti";
+    private static final String FONT_TAHOMA = "Tahoma", ERROR_TITLE = "Errore", CATEGORIA_TUTTI = "Tutti";
+    private static final String[] CATEGORIE = {CATEGORIA_TUTTI, "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"};
+    private static final Object[] PROD_COLUMNS = {"Id", "Nome", "Prezzo", "Categoria", "Scorta"};
+    private static final Object[] ORDINE_COLUMNS = {"Id", "Nome", "Prezzo", "Categoria", "Quantita"};
+    
     private final DefaultTableModel ordModel = new DefaultTableModel();
-    private final transient Object[] prodcolonne = {"Id", "Nome", "Prezzo", "Categoria", "Scorta"};
-    private final transient Object[] ordinecolonne = {"Id", "Nome", "Prezzo", "Categoria", "Quantita"};
     private final LocalDate dataod = LocalDate.now();
     private JTextField quantitatf;
     private JLabel totalelab;
-    private JButton backbutton;
-    private JButton ordinebutton;
-    private JButton selectbutton;
-    private JButton removebutton;
-    private JButton insertbutton;
-    private JComboBox<String> categoriacb;
-    private JComboBox<String> clienteComboBox;
-    private JTable prodottotable;
-    private JTable ordinetable;
+    private JButton backbutton, ordinebutton, selectbutton, removebutton, insertbutton;
+    private JComboBox<String> categoriacb, clienteComboBox;
+    private JTable prodottotable, ordinetable;
 
     public CarrelloFrame(String title, Controller c) {
         super(title);
@@ -35,117 +28,96 @@ public class CarrelloFrame extends JFrame {
     }
 
     private void elementi() {
+        configurateFrame();
+        JPanel contentPane = new JPanel(new BorderLayout());
+        contentPane.setBackground(Color.WHITE);
+        setContentPane(contentPane);
+
+        contentPane.add(createTitlePanel(), BorderLayout.NORTH);
+        contentPane.add(createBottomPanel(), BorderLayout.SOUTH);
+        contentPane.add(createTablePanel("Prodotti Disponibili", prodottotable = new JTable(new DefaultTableModel(PROD_COLUMNS, 0))), BorderLayout.WEST);
+        contentPane.add(createTablePanel("Ordine Corrente", ordinetable = createOrderTable()), BorderLayout.EAST);
+        contentPane.add(createCenterControls(), BorderLayout.CENTER);
+    }
+
+    private void configurateFrame() {
         setBackground(Color.WHITE);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 1100, 500);
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(CarrelloFrame.class.getResource("/Immagini/ImmIcon.png")));
+    }
 
-        JPanel contentPane = new JPanel(new BorderLayout(0, 0));
-        contentPane.setBackground(Color.WHITE);
-        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        setContentPane(contentPane);
+    private JPanel createTitlePanel() {
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(0, 0, 139));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JLabel label = new JLabel("Nuovo Ordine");
+        label.setFont(new Font(FONT_TAHOMA, Font.BOLD, 30));
+        label.setForeground(Color.WHITE);
+        panel.add(label);
+        return panel;
+    }
 
-        JPanel titlepanel = new JPanel();
-        titlepanel.setBackground(new Color(0, 0, 139));
-        titlepanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        contentPane.add(titlepanel, BorderLayout.NORTH);
-
-        JLabel titlelabel = new JLabel("Nuovo Ordine");
-        titlelabel.setFont(new Font(FONT_TAHOMA, Font.BOLD, 30));
-        titlelabel.setForeground(Color.WHITE);
-        titlepanel.add(titlelabel);
-
-        JPanel bottonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        bottonpanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        contentPane.add(bottonpanel, BorderLayout.SOUTH);
-
-        JLabel datalab = new JLabel("Data Odierna: " + dataod.toString());
-        bottonpanel.add(datalab);
-
-        JLabel clienteLabel = new JLabel("Seleziona Cliente: ");
-        bottonpanel.add(clienteLabel);
-
+    private JPanel createBottomPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.add(new JLabel("Data Odierna: " + dataod.toString()));
+        panel.add(new JLabel("Seleziona Cliente: "));
         clienteComboBox = new JComboBox<>();
         clienteComboBox.setPreferredSize(new Dimension(200, 25));
-        bottonpanel.add(clienteComboBox);
+        panel.add(clienteComboBox);
+        panel.add(ordinebutton = creaButton("Inserisci Ordine", new Color(34, 139, 34)));
+        panel.add(backbutton = creaButton("Indietro", new Color(178, 34, 34)));
+        return panel;
+    }
 
-        ordinebutton = creaButton("Inserisci Ordine", new Color(34, 139, 34));
-        bottonpanel.add(ordinebutton);
+    private JPanel createTablePanel(String title, JTable table) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        JLabel label = new JLabel(title);
+        label.setFont(new Font(FONT_TAHOMA, Font.BOLD, 14));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(label, BorderLayout.NORTH);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        panel.add(new JScrollPane(table), BorderLayout.CENTER);
+        return panel;
+    }
 
-        backbutton = creaButton("Indietro", new Color(178, 34, 34));
-        bottonpanel.add(backbutton);
+    private JTable createOrderTable() {
+        JTable table = new JTable(ordModel);
+        ordModel.setColumnIdentifiers(ORDINE_COLUMNS);
+        return table;
+    }
 
-        JPanel prodottopanel = new JPanel(new BorderLayout());
-        prodottopanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        contentPane.add(prodottopanel, BorderLayout.WEST);
+    private JPanel createCenterControls() {
+        JPanel center = new JPanel();
+        center.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
 
-        JLabel prodottiLabel = new JLabel("Prodotti Disponibili");
-        prodottiLabel.setFont(new Font(FONT_TAHOMA, Font.BOLD, 14));
-        prodottiLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        prodottopanel.add(prodottiLabel, BorderLayout.NORTH);
-
-        JScrollPane prodottiscrollPane = new JScrollPane();
-        prodottopanel.add(prodottiscrollPane, BorderLayout.CENTER);
-
-        prodottotable = new JTable(new DefaultTableModel(prodcolonne, 0));
-        prodottotable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        prodottiscrollPane.setViewportView(prodottotable);
-
-        JPanel ordinepanel = new JPanel(new BorderLayout());
-        ordinepanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        contentPane.add(ordinepanel, BorderLayout.EAST);
-
-        JLabel ordineLabel = new JLabel("Ordine Corrente");
-        ordineLabel.setFont(new Font(FONT_TAHOMA, Font.BOLD, 14));
-        ordineLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        ordinepanel.add(ordineLabel, BorderLayout.NORTH);
-
-        JScrollPane ordinescrollPane = new JScrollPane();
-        ordinepanel.add(ordinescrollPane, BorderLayout.CENTER);
-
-        ordinetable = new JTable(ordModel);
-        ordModel.setColumnIdentifiers(ordinecolonne);
-        ordinetable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ordinescrollPane.setViewportView(ordinetable);
-
-        JPanel centerpanel = new JPanel();
-        centerpanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        centerpanel.setLayout(new BoxLayout(centerpanel, BoxLayout.Y_AXIS));
-        contentPane.add(centerpanel, BorderLayout.CENTER);
-
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        centerpanel.add(topPanel);
-
-        categoriacb = new JComboBox<>(new String[]{CATEGORIA_TUTTI, "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"});
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        categoriacb = new JComboBox<>(CATEGORIE);
         categoriacb.setMaximumSize(categoriacb.getPreferredSize());
-        topPanel.add(categoriacb);
+        top.add(categoriacb);
+        top.add(selectbutton = creaButton("Seleziona", new Color(70, 130, 180)));
 
-        selectbutton = creaButton("Seleziona", new Color(70, 130, 180));
-        topPanel.add(selectbutton);
-
-        JPanel middlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        centerpanel.add(middlePanel);
-
-        JLabel quantitalab = new JLabel("Seleziona Quantità:");
-        middlePanel.add(quantitalab);
-
+        JPanel middle = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        middle.add(new JLabel("Seleziona Quantità:"));
         quantitatf = new JTextField(5);
         quantitatf.setPreferredSize(new Dimension(100, 25));
-        middlePanel.add(quantitatf);
-
+        middle.add(quantitatf);
         totalelab = new JLabel("Totale: 0.00");
         totalelab.setFont(new Font(FONT_TAHOMA, Font.BOLD, 14));
-        middlePanel.add(totalelab);
+        middle.add(totalelab);
 
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        centerpanel.add(bottomPanel);
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        bottom.add(removebutton = creaButton("Rimuovi", new Color(178, 34, 34)));
+        bottom.add(insertbutton = creaButton("Inserisci", new Color(0, 153, 255)));
 
-        removebutton = creaButton("Rimuovi", new Color(178, 34, 34));
-        bottomPanel.add(removebutton);
-
-        insertbutton = creaButton("Inserisci", new Color(0, 153, 255));
-        bottomPanel.add(insertbutton);
+        center.add(top);
+        center.add(middle);
+        center.add(bottom);
+        return center;
     }
 
     private JButton creaButton(String text, Color color) {
@@ -202,48 +174,34 @@ public class CarrelloFrame extends JFrame {
     }
 
     public void popolazioni(Controller c) {
-        // Pulisci le tabelle prima di ripopolare
         clienteComboBox.removeAllItems();
         ((DefaultTableModel) prodottotable.getModel()).setRowCount(0);
         
-        // Popola clienti nella ComboBox
+        // Popola clienti e prodotti in un unico ciclo quando possibile
         for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
-            String id = c.clienteModel.getValueAt(i, 0).toString();
-            String nome = c.clienteModel.getValueAt(i, 1).toString();
-            String cognome = c.clienteModel.getValueAt(i, 2).toString();
-            clienteComboBox.addItem(id + " - " + nome + " " + cognome);
+            clienteComboBox.addItem(String.format("%s - %s %s", 
+                c.clienteModel.getValueAt(i, 0), c.clienteModel.getValueAt(i, 1), c.clienteModel.getValueAt(i, 2)));
         }
 
-        // Popola tabella prodotti
+        DefaultTableModel prodModel = (DefaultTableModel) prodottotable.getModel();
         for (int i = 0; i < c.prodModel.getRowCount(); i++) {
-            Object[] rowData = new Object[5];
-            rowData[0] = c.prodModel.getValueAt(i, 0);  // ID
-            rowData[1] = c.prodModel.getValueAt(i, 1);  // Nome
-            rowData[2] = c.prodModel.getValueAt(i, 3);  // Prezzo
-            rowData[3] = c.prodModel.getValueAt(i, 10); // Categoria
-            rowData[4] = c.prodModel.getValueAt(i, 11); // Scorta
-            ((DefaultTableModel) prodottotable.getModel()).addRow(rowData);
+            prodModel.addRow(new Object[]{c.prodModel.getValueAt(i, 0), c.prodModel.getValueAt(i, 1), 
+                c.prodModel.getValueAt(i, 3), c.prodModel.getValueAt(i, 10), c.prodModel.getValueAt(i, 11)});
         }
     }
 
     private void filtraProdotti(Controller c) {
-        String categoriaSelezionata = (String) categoriacb.getSelectedItem();
+        String categoria = (String) categoriacb.getSelectedItem();
         DefaultTableModel filteredModel = new DefaultTableModel();
-        filteredModel.setColumnIdentifiers(prodcolonne);
+        filteredModel.setColumnIdentifiers(PROD_COLUMNS);
 
         for (int i = 0; i < c.prodModel.getRowCount(); i++) {
             String categoriaProdotto = c.prodModel.getValueAt(i, 10).toString();
-            if (categoriaSelezionata.equalsIgnoreCase(CATEGORIA_TUTTI) || categoriaProdotto.equalsIgnoreCase(categoriaSelezionata)) {
-                filteredModel.addRow(new Object[]{
-                        c.prodModel.getValueAt(i, 0),
-                        c.prodModel.getValueAt(i, 1),
-                        c.prodModel.getValueAt(i, 3),
-                        categoriaProdotto,
-                        c.prodModel.getValueAt(i, 11)
-                });
+            if (CATEGORIA_TUTTI.equalsIgnoreCase(categoria) || categoriaProdotto.equalsIgnoreCase(categoria)) {
+                filteredModel.addRow(new Object[]{c.prodModel.getValueAt(i, 0), c.prodModel.getValueAt(i, 1),
+                    c.prodModel.getValueAt(i, 3), categoriaProdotto, c.prodModel.getValueAt(i, 11)});
             }
         }
-
         prodottotable.setModel(filteredModel);
     }
 
@@ -256,20 +214,13 @@ public class CarrelloFrame extends JFrame {
             return;
         }
 
-        int quantita;
         try {
-            quantita = Integer.parseInt(quantitaText);
+            int quantita = Integer.parseInt(quantitaText);
             if (quantita <= 0) {
                 JOptionPane.showMessageDialog(null, "La quantità deve essere un numero positivo!", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(null, "Quantità non valida! Assicurati di inserire un numero intero.", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
-        try {
-            // Leggi i dati direttamente dalla tabella prodotti visualizzata
             String codiceProdotto = prodottotable.getValueAt(selectedRow, 0).toString();
             String nomeProdotto = prodottotable.getValueAt(selectedRow, 1).toString();
             double prezzoUnitario = Double.parseDouble(prodottotable.getValueAt(selectedRow, 2).toString());
@@ -281,25 +232,13 @@ public class CarrelloFrame extends JFrame {
                 return;
             }
 
-            double totaleProdotto = prezzoUnitario * quantita;
-            Object[] p = {
-                    codiceProdotto,
-                    nomeProdotto,
-                    prezzoUnitario,
-                    categoria,
-                    quantita,
-                    totaleProdotto
-            };
-
-            ordModel.addRow(p);
+            ordModel.addRow(new Object[]{codiceProdotto, nomeProdotto, prezzoUnitario, categoria, quantita, prezzoUnitario * quantita});
             quantitatf.setText("");
             totale();
-            
-            // Aggiorna la visualizzazione delle scorte nella tabella prodotti
             prodottotable.setValueAt(scorte - quantita, selectedRow, 4);
             
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(null, "Dati non validi nel prodotto selezionato!", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Dati non validi!", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -350,7 +289,7 @@ public class CarrelloFrame extends JFrame {
             
             if (successoCompleto) {
                 if (puntiAssegnati) {
-                    // Aggiorna il modello degli ordini per mantenere la sincronizzazione
+                    // Delega al controller l'aggiornamento di tutti i modelli
                     c.refreshOrdiniModel();
                     JOptionPane.showMessageDialog(null, "Ordine creato con successo!\nPunti assegnati: " + String.format("%.2f", totaleOrdine * 0.10));
                 } else {
@@ -364,18 +303,12 @@ public class CarrelloFrame extends JFrame {
         }
     }
     
-    /**
-     * Trova l'ID del cliente selezionato dalla ComboBox
-     */
     private Integer trovaIdCliente(Controller c, String clienteSelezionato) {
         for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
-            String idClienteTemp = c.clienteModel.getValueAt(i, 0).toString();
-            String nome = c.clienteModel.getValueAt(i, 1).toString();
-            String cognome = c.clienteModel.getValueAt(i, 2).toString();
-            String nomeCognome = idClienteTemp + " - " + nome + " " + cognome;
-
-            if (clienteSelezionato.equals(nomeCognome)) {
-                return Integer.valueOf(idClienteTemp);
+            String display = String.format("%s - %s %s", c.clienteModel.getValueAt(i, 0), 
+                c.clienteModel.getValueAt(i, 1), c.clienteModel.getValueAt(i, 2));
+            if (clienteSelezionato.equals(display)) {
+                return Integer.valueOf(c.clienteModel.getValueAt(i, 0).toString());
             }
         }
         return null;
@@ -393,7 +326,7 @@ public class CarrelloFrame extends JFrame {
             double prezzoUnitario = Double.parseDouble(ordModel.getValueAt(j, 2).toString());
             
             try {
-                // Prima aggiorna le scorte nel database
+                // Aggiorna scorte nel database
                 boolean scorteAggiornate = c.upscorte(quantita, codiceProdotto);
                 if (!scorteAggiornate) {
                     JOptionPane.showMessageDialog(null, 
@@ -402,18 +335,9 @@ public class CarrelloFrame extends JFrame {
                     successoCompleto = false;
                     continue;
                 }
-                
-                // Poi aggiorna il modello prodotti solo se l'aggiornamento database è riuscito
-                aggiornaModelloProdotti(c, codiceProdotto, quantita);
 
                 // Aggiungi l'articolo all'ordine nel database
-                boolean articoloAggiunto = c.newarticoli(
-                        codOrdineCorrente, // codOrdine
-                        codiceProdotto, // codProdotto
-                        prezzoUnitario, // prezzo
-                        quantita // numeroArticoli
-                );
-                
+                boolean articoloAggiunto = c.newarticoli(codOrdineCorrente, codiceProdotto, prezzoUnitario, quantita);
                 if (!articoloAggiunto) {
                     JOptionPane.showMessageDialog(null, 
                         "Errore nell'aggiunta dell'articolo: " + codiceProdotto, 
@@ -428,102 +352,35 @@ public class CarrelloFrame extends JFrame {
                 successoCompleto = false;
             }
         }
-        
         return successoCompleto;
     }
     
-    /**
-     * Aggiorna le scorte nel modello prodotti locale
-     */
-    private void aggiornaModelloProdotti(Controller c, String codiceProdotto, int quantita) {
-        for (int k = 0; k < c.prodModel.getRowCount(); k++) {
-            if (c.prodModel.getValueAt(k, 0).toString().equals(codiceProdotto)) {
-                int scorteAttuali = Integer.parseInt(c.prodModel.getValueAt(k, 11).toString());
-                int nuoveScorte = scorteAttuali - quantita;
-                c.prodModel.setValueAt(nuoveScorte, k, 11);
-                break;
-            }
-        }
-    }
-    
-    /**
-     * Assegna i punti fedeltà al cliente
-     */
     private boolean assegnaPunti(Controller c, int idCliente, double totaleOrdine) {
-        double puntiDaAssegnare = totaleOrdine * 0.10;
-        
         try {
-            boolean puntiAggiornati = c.uppunti(String.valueOf(idCliente), puntiDaAssegnare);
-            
-            if (puntiAggiornati) {
-                // Aggiorna i punti nel modello clienti solo se l'aggiornamento database è riuscito
-                aggiornaModelliClienti(c, idCliente, puntiDaAssegnare);
-                return true;
-            }
+            return c.uppunti(String.valueOf(idCliente), totaleOrdine * 0.10);
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, 
-                "Errore nell'aggiornamento punti: " + ex.getMessage(), 
-                ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Aggiorna i punti nel modello clienti locale
-     */
-    private void aggiornaModelliClienti(Controller c, int idCliente, double puntiDaAssegnare) {
-        for (int i = 0; i < c.clienteModel.getRowCount(); i++) {
-            String idClienteModel = c.clienteModel.getValueAt(i, 0).toString();
-            if (idClienteModel.equals(String.valueOf(idCliente))) {
-                Object puntiAttualiObj = c.clienteModel.getValueAt(i, 8);
-                double puntiAttuali = 0.0;
-                if (puntiAttualiObj != null && !puntiAttualiObj.toString().equals("N/A")) {
-                    try {
-                        puntiAttuali = Double.parseDouble(puntiAttualiObj.toString());
-                    } catch (NumberFormatException ex) {
-                        puntiAttuali = 0.0;
-                    }
-                }
-                double nuoviPunti = puntiAttuali + puntiDaAssegnare;
-                c.clienteModel.setValueAt(String.format("%.2f", nuoviPunti), i, 8);
-                break;
-            }
+            JOptionPane.showMessageDialog(null, "Errore punti: " + ex.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            return false;
         }
     }
     
-    /**
-     * Aggiorna la tabella prodotti con i dati più recenti dal database
-     */
     public void aggiornaTabellaProdotti(Controller c) {
         try {
-            // Ricarica tutti i prodotti dal database
             c.allProdotti();
-            
-            // Ripopola la tabella con i dati aggiornati
             DefaultTableModel model = (DefaultTableModel) prodottotable.getModel();
             model.setRowCount(0);
             
             for (int i = 0; i < c.prodModel.getRowCount(); i++) {
-                Object[] rowData = new Object[5];
-                rowData[0] = c.prodModel.getValueAt(i, 0);  // ID
-                rowData[1] = c.prodModel.getValueAt(i, 1);  // Nome
-                rowData[2] = c.prodModel.getValueAt(i, 3);  // Prezzo
-                rowData[3] = c.prodModel.getValueAt(i, 10); // Categoria
-                rowData[4] = c.prodModel.getValueAt(i, 11); // Scorta
-                model.addRow(rowData);
+                model.addRow(new Object[]{c.prodModel.getValueAt(i, 0), c.prodModel.getValueAt(i, 1), 
+                    c.prodModel.getValueAt(i, 3), c.prodModel.getValueAt(i, 10), c.prodModel.getValueAt(i, 11)});
             }
             
-            // Riapplica il filtro categoria se necessario
-            String categoriaSelezionata = (String) categoriacb.getSelectedItem();
-            if (categoriaSelezionata != null && !categoriaSelezionata.equals(CATEGORIA_TUTTI)) {
+            String categoria = (String) categoriacb.getSelectedItem();
+            if (categoria != null && !categoria.equals(CATEGORIA_TUTTI)) {
                 filtraProdotti(c);
             }
-            
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, 
-                "Errore nell'aggiornamento della tabella prodotti: " + ex.getMessage(), 
-                ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Errore nell'aggiornamento: " + ex.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
 }
