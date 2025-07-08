@@ -36,21 +36,45 @@ public class ArticoliImpl implements ArticoliJDBC {
     public ArrayList<Cliente> searchClient() throws SQLException {
         ArrayList<Cliente> clienti = new ArrayList<>();
         String query = """
-                SELECT C.codcliente, C.nome, C.cognome, P.categoria, SUM(AO.prezzo * AO.numeroarticoli) AS total_punti
-                FROM cliente AS C
-                JOIN ordine AS O ON C.codcliente = O.codcliente
-                JOIN articoliordine AS AO ON O.codordine = AO.codordine
-                JOIN prodotto AS P ON AO.codprodotto = P.codprodotto
-                GROUP BY C.codcliente, C.nome, C.cognome, P.categoria
+                SELECT 
+                    c.codcliente,
+                    c.nome,
+                    c.cognome,
+                    p.categoria,
+                    COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) as punti_categoria,
+                    COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0) as spesa_totale_categoria,
+                    COUNT(DISTINCT o.codordine) as ordini_nella_categoria
+                FROM cliente c
+                INNER JOIN ordine o ON c.codcliente = o.codcliente
+                INNER JOIN articoliordine ao ON o.codordine = ao.codordine
+                INNER JOIN prodotto p ON ao.codprodotto = p.codprodotto
+                GROUP BY c.codcliente, c.nome, c.cognome, p.categoria
+                ORDER BY c.codcliente, p.categoria
                 """;
 
         try (Statement searchClient = connection.createStatement();
              ResultSet rs = searchClient.executeQuery(query)) {
 
             while (rs.next()) {
+                // Creiamo un oggetto Articoli per memorizzare i dati della ricerca
+                // codProdotto -> categoria
+                // prezzo -> punti_categoria  
+                // numeroArticoli -> ordini_nella_categoria
+                // codCliente -> spesa_totale_categoria (convertita a int per semplicità)
+                Articoli articoliInfo = new Articoli(
+                        null, // codOrdine non necessario
+                        rs.getString("categoria"), // categoria nel campo codProdotto
+                        rs.getDouble("punti_categoria"), // punti categoria
+                        rs.getInt("ordini_nella_categoria"), // ordini nella categoria
+                        (int)rs.getDouble("spesa_totale_categoria") // spesa totale (convertita a int)
+                );
+                
                 clienti.add(new Cliente(
-                        null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null,
-                        new Articoli(null, null, rs.getDouble("total_punti"), 0, rs.getInt("codcliente"))
+                        rs.getString("codcliente"), 
+                        rs.getString("nome"), 
+                        rs.getString("cognome"), 
+                        null, null, null, null, null,
+                        articoliInfo
                 ));
             }
         }

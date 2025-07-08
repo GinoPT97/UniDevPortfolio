@@ -23,7 +23,7 @@ public class RicercaFrame extends JFrame {
     private JTable searchtable;
     private JComboBox<String> categoriacb;
     private final DefaultTableModel searchmodel = new DefaultTableModel();
-    private final Object[] searchcolonne = {"Nome", "Cognome", "Categoria", "Numero Punti"};
+    private final Object[] searchcolonne = {"Cod Cliente", "Nome", "Cognome", "Categoria", "Punti Categoria", "Spesa Totale", "Ordini Categoria"};
     private JButton backbutton;
     private JButton searchbutton;
     private JComboBox<String> punticb;
@@ -109,40 +109,55 @@ public class RicercaFrame extends JFrame {
 
             List<RowFilter<Object, Object>> filters = new ArrayList<>();
 
-            // Filtro categoria
+            // Filtro categoria (colonna 3)
             if (!TUTTI.equals(categoriaSelezionata)) {
-                filters.add(RowFilter.regexFilter(categoriaSelezionata, 2));
+                filters.add(RowFilter.regexFilter(categoriaSelezionata, 3));
             }
 
-            // Filtro punti basato sull'intervallo selezionato
-            RowFilter<Object, Object> puntiFilter = switch (intervalloPunti) {
-                case "0-500" -> RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 3);
-                case "501-1000" -> RowFilter.andFilter(List.of(
-                        RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 3),
-                        RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 3)
-                ));
-                case "1001-5000" -> RowFilter.andFilter(List.of(
-                        RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 3),
-                        RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 3)
-                ));
-                case ">5000" -> RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 3);
-                default -> null;
-            };
-
-            // Aggiunge il filtro per i punti, se applicabile
-            if (puntiFilter != null) {
-                filters.add(puntiFilter);
+            // Filtro punti basato sull'intervallo selezionato (colonna 4 - Punti Categoria)
+            if (!TUTTI.equals(intervalloPunti)) {
+                try {
+                    RowFilter<Object, Object> puntiFilter = switch (intervalloPunti) {
+                        case "0-500" -> RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 501, 4);
+                        case "501-1000" -> RowFilter.andFilter(List.of(
+                                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 500, 4),
+                                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 1001, 4)
+                        ));
+                        case "1001-5000" -> RowFilter.andFilter(List.of(
+                                RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 1000, 4),
+                                RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, 5001, 4)
+                        ));
+                        case ">5000" -> RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 5000, 4);
+                        default -> null;
+                    };
+                    if (puntiFilter != null) {
+                        filters.add(puntiFilter);
+                    }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, 
+                        "Errore nel filtro punti: " + ex.getMessage(), 
+                        "Errore Filtro", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
             }
 
-            // Applica i filtri alla tabella
-            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
-            sorter.setRowFilter(filters.isEmpty() ? null : RowFilter.andFilter(filters));
-            searchtable.setRowSorter(sorter);
+            try {
+                // Applica i filtri alla tabella
+                TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
+                if (!filters.isEmpty()) {
+                    sorter.setRowFilter(RowFilter.andFilter(filters));
+                } else {
+                    sorter.setRowFilter(null);
+                }
+                searchtable.setRowSorter(sorter);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, 
+                    "Errore nell'applicazione dei filtri: " + ex.getMessage(), 
+                    "Errore", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         // Gestione del click sul pulsante "Indietro"
         backbutton.addActionListener(e -> c.returnToLastFrame());
     }
 }
-
-
