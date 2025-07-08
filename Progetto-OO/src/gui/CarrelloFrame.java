@@ -303,9 +303,7 @@ public class CarrelloFrame extends JFrame {
         return null;
     }
     
-    /**
-     * Processa tutti gli articoli dell'ordine: aggiorna scorte e inserisce articoli nel database
-     */
+    // Processa tutti gli articoli dell'ordine: aggiorna scorte e inserisce articoli nel database
     private boolean processaArticoliOrdine(Controller c, String codOrdine) {
         boolean successoCompleto = true;
         
