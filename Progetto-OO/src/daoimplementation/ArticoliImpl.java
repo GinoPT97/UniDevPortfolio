@@ -41,9 +41,9 @@ public class ArticoliImpl implements ArticoliJDBC {
                     c.nome,
                     c.cognome,
                     p.categoria,
-                    COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) as punti_categoria,
-                    COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0) as spesa_totale_categoria,
-                    COUNT(DISTINCT o.codordine) as ordini_nella_categoria
+                    COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) AS punti_categoria,
+                    COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0) AS spesa_totale_categoria,
+                    COUNT(DISTINCT o.codordine) AS ordini_nella_categoria
                 FROM cliente c
                 INNER JOIN ordine o ON c.codcliente = o.codcliente
                 INNER JOIN articoliordine ao ON o.codordine = ao.codordine
@@ -56,17 +56,12 @@ public class ArticoliImpl implements ArticoliJDBC {
              ResultSet rs = searchClient.executeQuery(query)) {
 
             while (rs.next()) {
-                // Creiamo un oggetto Articoli per memorizzare i dati della ricerca
-                // codProdotto -> categoria
-                // prezzo -> punti_categoria  
-                // numeroArticoli -> ordini_nella_categoria
-                // codCliente -> spesa_totale_categoria (convertita a int per semplicità)
                 Articoli articoliInfo = new Articoli(
-                        null, // codOrdine non necessario
-                        rs.getString("categoria"), // categoria nel campo codProdotto
-                        rs.getDouble("punti_categoria"), // punti categoria
-                        rs.getInt("ordini_nella_categoria"), // ordini nella categoria
-                        (int)rs.getDouble("spesa_totale_categoria") // spesa totale (convertita a int)
+                        null, // codOrdine non necessario per la ricerca
+                        rs.getString("categoria"), // categoria -> codProdotto
+                        rs.getDouble("punti_categoria"), // punti -> prezzo
+                        rs.getInt("ordini_nella_categoria"), // ordini -> numeroArticoli
+                        (int)rs.getDouble("spesa_totale_categoria") // spesa -> codCliente
                 );
                 
                 clienti.add(new Cliente(

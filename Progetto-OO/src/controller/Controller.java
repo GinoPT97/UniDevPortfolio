@@ -517,24 +517,27 @@ public class Controller {
                 c.getCodCl(), // Cod Cliente
                 c.getNome(), // Nome
                 c.getCognome(), // Cognome
-                c.getArticoliOrdini() != null ? c.getArticoliOrdini().getCodProdotto() : null, // Categoria
-                c.getArticoliOrdini() != null ? c.getArticoliOrdini().getPrezzo() : 0.0, // Punti Categoria
-                c.getArticoliOrdini() != null ? c.getArticoliOrdini().getCodCliente() : 0, // Spesa Totale
-                c.getArticoliOrdini() != null ? c.getArticoliOrdini().getNumeroArticoli() : 0 // Ordini Categoria
+                c.getArticoliOrdini().getCodProdotto(), // Categoria (mappata in codProdotto)
+                c.getArticoliOrdini().getPrezzo(), // Punti Categoria (mappati in prezzo)
+                c.getArticoliOrdini().getCodCliente(), // Spesa Totale (mappata in codCliente)
+                c.getArticoliOrdini().getNumeroArticoli() // Ordini Categoria (mappati in numeroArticoli)
         ));
     }
     
-    // Metodo specifico per creare righe di ricerca clienti mantenendo i tipi numerici
+    /**
+     * Crea una riga di dati per la ricerca clienti mantenendo i tipi numerici
+     * necessari per il corretto funzionamento dei filtri di Swing
+     */
     private Object[] createClientSearchRowData(Object codCliente, Object nome, Object cognome, 
                                              Object categoria, Object puntiCategoria, Object spesaTotale, Object ordiniCategoria) {
         return new Object[]{
-            checkNull(codCliente),      // Colonna 0: String
-            checkNull(nome),            // Colonna 1: String  
-            checkNull(cognome),         // Colonna 2: String
-            checkNull(categoria),       // Colonna 3: String
-            puntiCategoria,             // Colonna 4: Double (mantiene tipo numerico)
-            spesaTotale,                // Colonna 5: Integer (mantiene tipo numerico)
-            ordiniCategoria             // Colonna 6: Integer (mantiene tipo numerico)
+            checkNull(codCliente),      // Colonna 0: Cod Cliente (String)
+            checkNull(nome),            // Colonna 1: Nome (String)
+            checkNull(cognome),         // Colonna 2: Cognome (String)
+            checkNull(categoria),       // Colonna 3: Categoria (String)
+            puntiCategoria,             // Colonna 4: Punti Categoria (Double - tipo numerico per filtri)
+            spesaTotale,                // Colonna 5: Spesa Totale (Integer - tipo numerico per filtri)
+            ordiniCategoria             // Colonna 6: Ordini Categoria (Integer - tipo numerico per filtri)
         };
     }
 
