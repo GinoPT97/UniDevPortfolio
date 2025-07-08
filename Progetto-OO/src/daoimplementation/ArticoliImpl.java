@@ -16,15 +16,12 @@ public class ArticoliImpl implements ArticoliJDBC {
 
     @Override
     public boolean newordine(Articoli articoli) throws SQLException {
-        String query = "INSERT INTO articoliordine (CodOrdine, CodProdotto, Prezzo, NumeroPunti, NumeroArticoli, Categoria, CodCliente) VALUES (CAST(? AS INTEGER), CAST(? AS INTEGER), ?, ?, ?, CAST(? AS TIPOLOGIA), ?)";
+        String query = "INSERT INTO articoliordine (codordine, codprodotto, prezzo, numeroarticoli) VALUES (CAST(? AS INTEGER), CAST(? AS INTEGER), ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, Integer.parseInt(articoli.getCodOrdine()));
             stmt.setInt(2, Integer.parseInt(articoli.getCodProdotto()));
             stmt.setDouble(3, articoli.getPrezzo());
-            stmt.setDouble(4, articoli.getNumPunti());
-            stmt.setInt(5, articoli.getNumeroArticoli());
-            stmt.setString(6, articoli.getCategoria());
-            stmt.setInt(7, articoli.getCodCliente());
+            stmt.setInt(4, articoli.getNumeroArticoli());
 
             int rowsInserted = stmt.executeUpdate();
             return rowsInserted > 0;
@@ -53,7 +50,7 @@ public class ArticoliImpl implements ArticoliJDBC {
             while (rs.next()) {
                 clienti.add(new Cliente(
                         null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null,
-                        new Articoli(null, null, 0.0, rs.getDouble("total_punti"), 0, rs.getString("categoria"), rs.getInt("codcliente"))
+                        new Articoli(null, null, rs.getDouble("total_punti"), 0, rs.getInt("codcliente"))
                 ));
             }
         }

@@ -495,8 +495,8 @@ public class Controller {
     }
 
     // Aggiunge nuovi articoli a un ordine
-    public boolean newarticoli(String codOrdine, String codProdotto, double prezzo, double numPunti, int numeroArticoli, String categoria, int codCliente) throws SQLException {
-        Articoli articoli = new Articoli(codOrdine, codProdotto, prezzo, numPunti, numeroArticoli, categoria, codCliente);
+    public boolean newarticoli(String codOrdine, String codProdotto, double prezzo, int numeroArticoli) throws SQLException {
+        Articoli articoli = new Articoli(codOrdine, codProdotto, prezzo, numeroArticoli, 0); // codCliente non necessario per articoliordine
         return artjdbc.newordine(articoli);
     }
 
@@ -516,8 +516,7 @@ public class Controller {
         populateTable(clienti, model, c -> createRowData(
                 c.getNome(),
                 c.getCognome(),
-                c.getArticoliOrdini().getCategoria(),
-                c.getArticoliOrdini().getNumPunti()
+                c.getArticoliOrdini().getPrezzo()
         ));
     }
 
