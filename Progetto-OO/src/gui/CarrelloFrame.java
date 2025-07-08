@@ -159,7 +159,6 @@ public class CarrelloFrame extends JFrame {
     public void inizializzaFrame(Controller c) {
         clean();
         popolazioni(c);
-        aggiornaTabellaProdotti(c);
     }
 
     public double totale() {
@@ -243,7 +242,6 @@ public class CarrelloFrame extends JFrame {
     }
 
     private void creaOrdine(Controller c) {
-        // Validazione input
         if (ordModel.getRowCount() == 0) {
             JOptionPane.showMessageDialog(null, "Il carrello è vuoto! Aggiungi almeno un prodotto.", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return;
@@ -256,9 +254,7 @@ public class CarrelloFrame extends JFrame {
         }
 
         try {
-            java.sql.Date sd = java.sql.Date.valueOf(dataod.toString());
             Integer idCliente = trovaIdCliente(c, clienteSelezionato);
-
             if (idCliente == null) {
                 JOptionPane.showMessageDialog(null, "Cliente non trovato!", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                 return;
@@ -271,35 +267,28 @@ public class CarrelloFrame extends JFrame {
             }
 
             double totaleOrdine = totale();
+            java.sql.Date dataOrdine = java.sql.Date.valueOf(dataod.toString());
             
-            // Crea il nuovo ordine nel database
-            boolean ordineCreato = c.nuovoordine("", sd, totaleOrdine, idCliente, idDipendente);
-            
-            if (!ordineCreato) {
+            if (!c.nuovoordine("", dataOrdine, totaleOrdine, idCliente, idDipendente)) {
                 JOptionPane.showMessageDialog(null, "Errore nella creazione dell'ordine!", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            // Ottieni l'ID dell'ordine appena creato
-            String codOrdineCorrente = c.CurrOrd();
-            
-            // Processa articoli e gestisci punti
-            boolean successoCompleto = processaArticoliOrdine(c, codOrdineCorrente);
+            String codOrdine = c.CurrOrd();
+            boolean successoCompleto = processaArticoliOrdine(c, codOrdine);
             boolean puntiAssegnati = assegnaPunti(c, idCliente, totaleOrdine);
             
             if (successoCompleto) {
-                if (puntiAssegnati) {
-                    // Delega al controller l'aggiornamento di tutti i modelli
-                    c.refreshOrdiniModel();
-                    JOptionPane.showMessageDialog(null, "Ordine creato con successo!\nPunti assegnati: " + String.format("%.2f", totaleOrdine * 0.10));
-                } else {
-                    JOptionPane.showMessageDialog(null, "Ordine creato ma errore nell'assegnazione punti!", "Attenzione", JOptionPane.WARNING_MESSAGE);
-                }
+                String messaggio = puntiAssegnati ? 
+                    "Ordine creato con successo!\nPunti assegnati: " + String.format("%.2f", totaleOrdine * 0.10) :
+                    "Ordine creato ma errore nell'assegnazione punti!";
+                JOptionPane.showMessageDialog(null, messaggio, puntiAssegnati ? "Successo" : "Attenzione", 
+                    puntiAssegnati ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.WARNING_MESSAGE);
                 clean();
             }
             
-        } catch (SQLException | NumberFormatException e1) {
-            JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Errore: " + e.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -317,7 +306,7 @@ public class CarrelloFrame extends JFrame {
     /**
      * Processa tutti gli articoli dell'ordine: aggiorna scorte e inserisce articoli nel database
      */
-    private boolean processaArticoliOrdine(Controller c, String codOrdineCorrente) {
+    private boolean processaArticoliOrdine(Controller c, String codOrdine) {
         boolean successoCompleto = true;
         
         for (int j = 0; j < ordModel.getRowCount(); j++) {
@@ -326,29 +315,19 @@ public class CarrelloFrame extends JFrame {
             double prezzoUnitario = Double.parseDouble(ordModel.getValueAt(j, 2).toString());
             
             try {
-                // Aggiorna scorte nel database
-                boolean scorteAggiornate = c.upscorte(quantita, codiceProdotto);
-                if (!scorteAggiornate) {
-                    JOptionPane.showMessageDialog(null, 
-                        "Errore nell'aggiornamento delle scorte per il prodotto: " + codiceProdotto, 
-                        ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                if (!c.upscorte(quantita, codiceProdotto)) {
+                    JOptionPane.showMessageDialog(null, "Errore nell'aggiornamento delle scorte per il prodotto: " + codiceProdotto, ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                     successoCompleto = false;
                     continue;
                 }
 
-                // Aggiungi l'articolo all'ordine nel database
-                boolean articoloAggiunto = c.newarticoli(codOrdineCorrente, codiceProdotto, prezzoUnitario, quantita);
-                if (!articoloAggiunto) {
-                    JOptionPane.showMessageDialog(null, 
-                        "Errore nell'aggiunta dell'articolo: " + codiceProdotto, 
-                        ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                if (!c.newarticoli(codOrdine, codiceProdotto, prezzoUnitario, quantita)) {
+                    JOptionPane.showMessageDialog(null, "Errore nell'aggiunta dell'articolo: " + codiceProdotto, ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                     successoCompleto = false;
                 }
                 
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, 
-                    "Errore database per prodotto " + codiceProdotto + ": " + ex.getMessage(), 
-                    ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Errore database per prodotto " + codiceProdotto + ": " + ex.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                 successoCompleto = false;
             }
         }
@@ -361,26 +340,6 @@ public class CarrelloFrame extends JFrame {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Errore punti: " + ex.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return false;
-        }
-    }
-    
-    public void aggiornaTabellaProdotti(Controller c) {
-        try {
-            c.allProdotti();
-            DefaultTableModel model = (DefaultTableModel) prodottotable.getModel();
-            model.setRowCount(0);
-            
-            for (int i = 0; i < c.prodModel.getRowCount(); i++) {
-                model.addRow(new Object[]{c.prodModel.getValueAt(i, 0), c.prodModel.getValueAt(i, 1), 
-                    c.prodModel.getValueAt(i, 3), c.prodModel.getValueAt(i, 10), c.prodModel.getValueAt(i, 11)});
-            }
-            
-            String categoria = (String) categoriacb.getSelectedItem();
-            if (categoria != null && !categoria.equals(CATEGORIA_TUTTI)) {
-                filtraProdotti(c);
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Errore nell'aggiornamento: " + ex.getMessage(), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
 }
