@@ -35,11 +35,23 @@ public class Controller {
     public ModificaDipendenteFrame updipf;
     public ModificaClienteFrame upclf;
     
-    // Table models
-    public DefaultTableModel clienteModel = new DefaultTableModel(CLIENTE_COLUMNS, 0);
-    public DefaultTableModel dipModel = new DefaultTableModel(DIPENDENTE_COLUMNS, 0);
-    public DefaultTableModel prodModel = new DefaultTableModel(PRODOTTO_COLUMNS, 0);
-    public DefaultTableModel ordModel = new DefaultTableModel(ORDINE_COLUMNS, 0);
+    // Classe helper per creare TableModel non editabili
+    private static class ReadOnlyTableModel extends DefaultTableModel {
+        public ReadOnlyTableModel(Object[] columnNames, int rowCount) {
+            super(columnNames, rowCount);
+        }
+        
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // Nessuna cella è editabile
+        }
+    }
+    
+    // Table models - Non editabili
+    public DefaultTableModel clienteModel = new ReadOnlyTableModel(CLIENTE_COLUMNS, 0);
+    public DefaultTableModel dipModel = new ReadOnlyTableModel(DIPENDENTE_COLUMNS, 0);
+    public DefaultTableModel prodModel = new ReadOnlyTableModel(PRODOTTO_COLUMNS, 0);
+    public DefaultTableModel ordModel = new ReadOnlyTableModel(ORDINE_COLUMNS, 0);
     
     public String iddip;
     // Dichiarazione dei frame
