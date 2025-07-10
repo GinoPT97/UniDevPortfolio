@@ -45,7 +45,7 @@ public class Clienteimpl implements ClienteJDBC {
                 Tessera tessera = null;
                 String codTessera = rs.getString("codtessera");
                 if (codTessera != null) {
-                    tessera = new Tessera(codTessera, rs.getInt("numeropunti"), null);
+                    tessera = new Tessera(codTessera, rs.getDouble("numeropunti"), null, null, null, null);
                 }
                 
                 clienti.add(new Cliente(
@@ -80,7 +80,7 @@ public class Clienteimpl implements ClienteJDBC {
     public boolean updateCliente(Cliente cliente) throws SQLException {
         setPreparedStatement(updateCl, cliente);
         // Il codice cliente nel database è INTEGER, quindi convertiamo da String
-        updateCl.setInt(7, Integer.parseInt(cliente.getCodCl()));
+        updateCl.setInt(7, Integer.parseInt(cliente.getCodCliente()));
         return updateCl.executeUpdate() > 0;
     }
 
@@ -107,9 +107,9 @@ public class Clienteimpl implements ClienteJDBC {
     private void setPreparedStatement(PreparedStatement ps, Cliente cliente) throws SQLException {
         ps.setString(1, cliente.getNome());
         ps.setString(2, cliente.getCognome());
-        ps.setString(3, cliente.getCodFis());
-        ps.setString(4, cliente.getInd());
-        ps.setString(5, cliente.getTel());
+        ps.setString(3, cliente.getCodiceFiscale());
+        ps.setString(4, cliente.getIndirizzo());
+        ps.setString(5, cliente.getTelefono());
         ps.setString(6, cliente.getEmail());
     }
 }

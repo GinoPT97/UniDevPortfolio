@@ -1,11 +1,10 @@
 package daoimplementation;
 
 import daointerface.DipendenteJDBC;
-import model.Dipendente;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.Dipendente;
 
 public class DipendenteImpl implements DipendenteJDBC {
     private static final String COGNOME = "cognome";
@@ -69,7 +68,8 @@ public class DipendenteImpl implements DipendenteJDBC {
                         rs.getString("codicefiscale"),
                         rs.getString("email"),
                         rs.getString("indirizzo"),
-                        rs.getString("telefono")));
+                        rs.getString("telefono")
+                ));
             }
         }
         return dipendenti;
@@ -124,7 +124,8 @@ public class DipendenteImpl implements DipendenteJDBC {
                         rs.getString("codicefiscale"),
                         rs.getString("email"),
                         rs.getString("indirizzo"),
-                        rs.getString("telefono"));
+                        rs.getString("telefono")
+                );
             }
         }
         return null;

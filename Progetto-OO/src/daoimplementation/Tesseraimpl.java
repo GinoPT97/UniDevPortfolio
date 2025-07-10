@@ -55,6 +55,9 @@ public class Tesseraimpl implements TesseraJDBC {
                 tessere.add(new Tessera(
                         rs.getString("codtessera"),
                         rs.getDouble("numeropunti"),
+                        rs.getDate("dataemissione"),
+                        rs.getDate("datascadenza"),
+                        rs.getString("stato"),
                         new Cliente(
                                 rs.getString("codcliente"),
                                 rs.getString("nome"),
@@ -65,10 +68,7 @@ public class Tesseraimpl implements TesseraJDBC {
                                 rs.getString("telefono"),
                                 null,
                                 null
-                        ),
-                        rs.getDate("dataemissione"),
-                        rs.getDate("datascadenza"),
-                        rs.getString("stato")
+                        )
                 ));
             }
         }

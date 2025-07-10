@@ -1,13 +1,12 @@
 package daoimplementation;
 
 import daointerface.OrdiniJDBC;
-import model.Ordine;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Ordine;
 
 public class OrdiniImpl implements OrdiniJDBC {
     private final Connection connection;
@@ -82,9 +81,3 @@ public class OrdiniImpl implements OrdiniJDBC {
         if (connection != null) connection.close(); // Chiudo la connessione
     }
 }
-
-
-
-
-
-

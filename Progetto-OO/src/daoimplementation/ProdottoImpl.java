@@ -47,7 +47,7 @@ public class ProdottoImpl implements ProdottoJDBC {
         setCommonProdottoFields(updateProdottoStmt, prodotto);
         updateProdottoStmt.setInt(10, prodotto.getScorta());
         updateProdottoStmt.setDate(11, prodotto.getDataProduzione() != null ? new java.sql.Date(prodotto.getDataProduzione().getTime()) : null);
-        updateProdottoStmt.setString(12, prodotto.getCodProd());
+        updateProdottoStmt.setString(12, prodotto.getCodProdotto());
 
         boolean result = updateProdottoStmt.executeUpdate() > 0;
         closeStatements();
@@ -98,7 +98,7 @@ public class ProdottoImpl implements ProdottoJDBC {
         stmt.setString(1, prodotto.getNome());
         stmt.setString(2, prodotto.getDescrizione());
         stmt.setDouble(3, prodotto.getPrezzo());
-        stmt.setString(4, prodotto.getLuogoProv());
+        stmt.setString(4, prodotto.getLuogoProvenienza());
 
         switch (prodotto.getCategoria()) {
             case "FRUTTA", "VERDURA" -> {
