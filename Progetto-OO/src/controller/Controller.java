@@ -251,37 +251,6 @@ public class Controller {
     private String formatGlutineStatus(boolean glutine) {
         return glutine ? GLUTINE_SI : GLUTINE_NO;
     }
-
-    // --- Metodi di supporto per l'aggiornamento dei model delle tabelle (CENTRALIZZATI) ---
-    private void updateDipendenteModelAfterInsert(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        dipModel.addRow(createRowData(codDipendente, nome, cognome, codFis, email, indirizzo, telefono));
-    }
-    
-    private void updateClienteModelAfterInsert(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        clienteModel.addRow(createRowData(codCliente, nome, cognome, codFis, email, indirizzo, telefono, "", "", ""));
-    }
-    
-    private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
-                                              Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
-        prodModel.addRow(createRowData(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
-                                     dataRaccolta, dataMungitura, formatGlutineStatus(glutine), 
-                                     dataScadenza, null, categoria, scorta)); // dataproduzione è null per compatibilità
-    }
-    
-    private void updateDipendenteModelAfterUpdate(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        updateTableRow(dipModel, codDipendente, new Object[]{codDipendente, nome, cognome, codFis, email, indirizzo, telefono});
-    }
-    
-    private void updateClienteModelAfterUpdate(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        updateTableRow(clienteModel, codCliente, new Object[]{codCliente, nome, cognome, codFis, email, indirizzo, telefono});
-    }
-    
-    private void updateProdottoModelAfterUpdate(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
-                                              Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
-        updateTableRow(prodModel, codProdotto, new Object[]{codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
-                                                           dataRaccolta, dataMungitura, formatGlutineStatus(glutine), 
-                                                           dataScadenza, null, categoria, scorta});
-    }
     
     public void addToCarrelloModel(Object[] articleData) {
         ordModel.addRow(articleData);
@@ -289,27 +258,6 @@ public class Controller {
     
     public void clearCarrelloModel() {
         ordModel.setRowCount(0);
-    }
-    
-    private void updateOrdineModelAfterInsert(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
-        // Recupera i nomi di cliente e dipendente per il model
-        List<Cliente> clienti = cljdbc.getAllCt();
-        List<Dipendente> dipendenti = dpjdbc.getAllDip();
-        
-        Cliente cliente = clienti.stream()
-                .filter(c -> c.getCodCliente().equals(String.valueOf(idCliente)))
-                .findFirst()
-                .orElse(null);
-        
-        Dipendente dipendente = dipendenti.stream()
-                .filter(d -> d.getCodDIP().equals(String.valueOf(idDipendente)))
-                .findFirst()
-                .orElse(null);
-        
-        String clienteNome = checkNull(cliente != null ? cliente.getCognome() + " " + cliente.getNome() : null);
-        String dipendenteNome = checkNull(dipendente != null ? dipendente.getCognome() + " " + dipendente.getNome() : null);
-        
-        ordModel.addRow(createRowData(codOrdine, dataAcquisto, prezzoTotale, clienteNome, dipendenteNome));
     }
     
     // Metodo di supporto per verificare se un campo è nullo o vuoto
@@ -583,5 +531,45 @@ public class Controller {
                 p.getCategoria(),
                 p.getScorta()
         ));
+    }
+
+    // --- Metodi di supporto per l'aggiornamento dei model delle tabelle (CENTRALIZZATI E OTTIMIZZATI) ---
+    private void updateDipendenteModelAfterInsert(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
+        dipModel.addRow(createRowData(codDipendente, nome, cognome, codFis, email, indirizzo, telefono));
+    }
+
+    private void updateClienteModelAfterInsert(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
+        clienteModel.addRow(createRowData(codCliente, nome, cognome, codFis, email, indirizzo, telefono, "", "", ""));
+    }
+
+    private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza,
+                                                Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
+        prodModel.addRow(createRowData(codProdotto, nome, descrizione, prezzo, luogoProvenienza,
+                dataRaccolta, dataMungitura, formatGlutineStatus(glutine),
+                dataScadenza, null, categoria, scorta));
+    }
+
+    private void updateDipendenteModelAfterUpdate(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
+        updateTableRow(dipModel, codDipendente, new Object[]{codDipendente, nome, cognome, codFis, email, indirizzo, telefono});
+    }
+
+    private void updateClienteModelAfterUpdate(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
+        updateTableRow(clienteModel, codCliente, new Object[]{codCliente, nome, cognome, codFis, email, indirizzo, telefono});
+    }
+
+    private void updateProdottoModelAfterUpdate(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza,
+                                                Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
+        updateTableRow(prodModel, codProdotto, new Object[]{codProdotto, nome, descrizione, prezzo, luogoProvenienza,
+                dataRaccolta, dataMungitura, formatGlutineStatus(glutine),
+                dataScadenza, null, categoria, scorta});
+    }
+
+    private void updateOrdineModelAfterInsert(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
+        if (cljdbc == null || dpjdbc == null) return;
+        Cliente c = cljdbc.getAllCt().stream().filter(x -> String.valueOf(x.getCodCliente()).equals(String.valueOf(idCliente))).findFirst().orElse(null);
+        Dipendente d = dpjdbc.getAllDip().stream().filter(x -> String.valueOf(x.getCodDIP()).equals(String.valueOf(idDipendente))).findFirst().orElse(null);
+        ordModel.addRow(createRowData(codOrdine, dataAcquisto, prezzoTotale,
+            checkNull(c != null ? c.getCognome() + " " + c.getNome() : null),
+            checkNull(d != null ? d.getCognome() + " " + d.getNome() : null)));
     }
 }
