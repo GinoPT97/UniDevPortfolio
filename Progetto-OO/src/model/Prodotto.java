@@ -16,40 +16,7 @@ public class Prodotto {
     private String categoria;
     private int scorta;
 
-    public Prodotto(String codprodotto, String nome, String descrizione, double prezzo, String luogoprov,
-                    Date dataraccolta, Date datamungitura, boolean glutine, Date datascadenza, Date dataproduzione, String categoria, int scorta) {
-        this.codprodotto = codprodotto;
-        this.nome = nome;
-        this.descrizione = descrizione;
-        this.luogoprov = luogoprov;
-        this.prezzo = prezzo;
-        this.glutine = glutine;
-        this.datamungitura = datamungitura;
-        this.dataraccolta = dataraccolta;
-        this.datascadenza = datascadenza;
-        this.dataproduzione = dataproduzione;
-        this.categoria = categoria;
-        this.scorta = scorta;
-    }
-
-    // Costruttore compatibile con il codice esistente
-    public Prodotto(String codprodotto, String nome, String descrizione, double prezzo, String luogoprov,
-                    Date dataraccolta, Date datamungitura, boolean glutine, Date datascadenza, String categoria, int scorta) {
-        this.codprodotto = codprodotto;
-        this.nome = nome;
-        this.descrizione = descrizione;
-        this.luogoprov = luogoprov;
-        this.prezzo = prezzo;
-        this.glutine = glutine;
-        this.datamungitura = datamungitura;
-        this.dataraccolta = dataraccolta;
-        this.datascadenza = datascadenza;
-        this.dataproduzione = null; // Imposta a null per compatibilità
-        this.categoria = categoria;
-        this.scorta = scorta;
-    }
-
-    // Costruttore per creazione da ResultSet del database
+    // Costruttore unico
     public Prodotto(String codprodotto, String nome, String descrizione, double prezzo, String luogoprov,
                     Date dataraccolta, Date datamungitura, boolean glutine, Date datascadenza, String categoria, int scorta, Date dataproduzione) {
         this.codprodotto = codprodotto;
@@ -66,11 +33,11 @@ public class Prodotto {
         this.dataproduzione = dataproduzione;
     }
 
-    public String getCodProd() {
+    public String getCodProdotto() {
         return codprodotto;
     }
 
-    public void setCodProd(String codprodotto) {
+    public void setCodProdotto(String codprodotto) {
         this.codprodotto = codprodotto;
     }
 
@@ -90,11 +57,11 @@ public class Prodotto {
         this.descrizione = descrizione;
     }
 
-    public String getLuogoProv() {
+    public String getLuogoProvenienza() {
         return luogoprov;
     }
 
-    public void setLuogoProv(String luogoprov) {
+    public void setLuogoProvenienza(String luogoprov) {
         this.luogoprov = luogoprov;
     }
 

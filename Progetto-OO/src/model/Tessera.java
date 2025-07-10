@@ -10,6 +10,7 @@ public class Tessera {
     private String stato;
     private Cliente proprietario;
 
+    // Costruttore unico
     public Tessera(String codtessera, double numeropunti, Date dataemissione, Date datascadenza, String stato, Cliente proprietario) {
         this.codtessera = codtessera;
         this.numeropunti = numeropunti;
@@ -17,26 +18,6 @@ public class Tessera {
         this.datascadenza = datascadenza;
         this.stato = stato;
         this.proprietario = proprietario;
-    }
-
-    // Costruttore compatibile con il codice esistente
-    public Tessera(String codtessera, int npunti, Cliente proprietario) {
-        this.codtessera = codtessera;
-        this.numeropunti = npunti;
-        this.dataemissione = new Date();
-        this.datascadenza = new Date(System.currentTimeMillis() + (2L * 365 * 24 * 60 * 60 * 1000)); // 2 anni
-        this.stato = "ATTIVA";
-        this.proprietario = proprietario;
-    }
-
-    // Costruttore per la creazione da ResultSet del database
-    public Tessera(String codtessera, double numeropunti, Cliente proprietario, Date dataemissione, Date datascadenza, String stato) {
-        this.codtessera = codtessera;
-        this.numeropunti = numeropunti;
-        this.proprietario = proprietario;
-        this.dataemissione = dataemissione;
-        this.datascadenza = datascadenza;
-        this.stato = stato;
     }
 
     public String getCodTessera() {
@@ -53,15 +34,6 @@ public class Tessera {
 
     public void setNumeroPunti(double numeropunti) {
         this.numeropunti = numeropunti;
-    }
-
-    // Metodo compatibile con il codice esistente
-    public int getNPunti() {
-        return (int) numeropunti;
-    }
-
-    public void setNPunti(int npunti) {
-        this.numeropunti = npunti;
     }
 
     public Date getDataEmissione() {

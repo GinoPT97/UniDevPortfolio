@@ -11,6 +11,7 @@ public class Cliente {
     private Tessera tessera;
     private Articoli articoliordini;
 
+    // Costruttore unico
     public Cliente(String codcliente, String nome, String cognome, String codicefiscale, String email, String indirizzo,
                    String telefono, Tessera tessera, Articoli articoliordini) {
         this.codcliente = codcliente;
@@ -24,11 +25,11 @@ public class Cliente {
         this.articoliordini = articoliordini;
     }
 
-    public String getCodCl() {
+    public String getCodCliente() {
         return codcliente;
     }
 
-    public void setCodCL(String codcliente) {
+    public void setCodCliente(String codcliente) {
         this.codcliente = codcliente;
     }
 
@@ -44,15 +45,15 @@ public class Cliente {
         return cognome;
     }
 
-    public void setcognome(String cognome) {
+    public void setCognome(String cognome) {
         this.cognome = cognome;
     }
 
-    public String getCodFis() {
+    public String getCodiceFiscale() {
         return codicefiscale;
     }
 
-    public void setCodFis(String codicefiscale) {
+    public void setCodiceFiscale(String codicefiscale) {
         this.codicefiscale = codicefiscale;
     }
 
@@ -64,19 +65,19 @@ public class Cliente {
         this.email = email;
     }
 
-    public String getInd() {
+    public String getIndirizzo() {
         return indirizzo;
     }
 
-    public void setInd(String indirizzo) {
+    public void setIndirizzo(String indirizzo) {
         this.indirizzo = indirizzo;
     }
 
-    public String getTel() {
+    public String getTelefono() {
         return telefono;
     }
 
-    public void setTel(String telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 

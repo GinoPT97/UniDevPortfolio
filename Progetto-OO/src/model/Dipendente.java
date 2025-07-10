@@ -9,6 +9,7 @@ public class Dipendente {
     private String indirizzo;
     private String telefono;
 
+    // Costruttore unico
     public Dipendente(String coddipendente, String nome, String cognome, String codicefiscale, String email,
                       String indirizzo, String telefono) {
         this.coddipendente = coddipendente;

@@ -7,6 +7,7 @@ public class Articoli {
     private int numeroArticoli;
     private int codCliente;
 
+    // Costruttore unico
     public Articoli(String codOrdine, String codProdotto, double prezzo, int numeroArticoli, int codCliente) {
         this.codOrdine = codOrdine;
         this.codProdotto = codProdotto;

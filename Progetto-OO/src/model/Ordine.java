@@ -9,6 +9,7 @@ public class Ordine {
     private int idct;
     private int iddip;
 
+    // Costruttore unico
     public Ordine(String codordine, Date datacquisto, double prezzotot, int idct, int iddip) {
         this.codordine = codordine;
         this.datacquisto = datacquisto;
@@ -17,11 +18,11 @@ public class Ordine {
         this.iddip = iddip;
     }
 
-    public String getCodOrd() {
+    public String getCodOrdine() {
         return codordine;
     }
 
-    public void setCodOrd(String codordine) {
+    public void setCodOrdine(String codordine) {
         this.codordine = codordine;
     }
 
