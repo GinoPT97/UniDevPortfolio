@@ -252,7 +252,7 @@ public class Controller {
         return glutine ? GLUTINE_SI : GLUTINE_NO;
     }
 
-    // Metodi di supporto per l'aggiornamento dei model delle tabelle dopo inserimenti
+    // --- Metodi di supporto per l'aggiornamento dei model delle tabelle (CENTRALIZZATI) ---
     private void updateDipendenteModelAfterInsert(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
         dipModel.addRow(createRowData(codDipendente, nome, cognome, codFis, email, indirizzo, telefono));
     }
@@ -268,7 +268,6 @@ public class Controller {
                                      dataScadenza, null, categoria, scorta)); // dataproduzione è null per compatibilità
     }
     
-    // Metodi di supporto per l'aggiornamento dei model delle tabelle dopo modifiche
     private void updateDipendenteModelAfterUpdate(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
         updateTableRow(dipModel, codDipendente, new Object[]{codDipendente, nome, cognome, codFis, email, indirizzo, telefono});
     }
@@ -284,17 +283,14 @@ public class Controller {
                                                            dataScadenza, null, categoria, scorta});
     }
     
-    // Metodo per aggiungere articoli al carrello (model degli ordini)
     public void addToCarrelloModel(Object[] articleData) {
         ordModel.addRow(articleData);
     }
     
-    // Metodo per pulire il model del carrello
     public void clearCarrelloModel() {
         ordModel.setRowCount(0);
     }
     
-    // Metodi di supporto per l'aggiornamento del model degli ordini
     private void updateOrdineModelAfterInsert(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
         // Recupera i nomi di cliente e dipendente per il model
         List<Cliente> clienti = cljdbc.getAllCt();
@@ -418,50 +414,33 @@ public class Controller {
     public List<String> venditedip(Date di, Date df) throws SQLException {
         return dpjdbc.getDipVendite(di, df);
     }
-
     // Aggiorna le informazioni di un prodotto
     public boolean upprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                          Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
-        // Conversione Date: se sono java.sql.Date, convertirle in java.util.Date
-        java.util.Date raccolta = (dataRaccolta instanceof java.sql.Date) ? new java.util.Date(dataRaccolta.getTime()) : dataRaccolta;
-        java.util.Date mungitura = (dataMungitura instanceof java.sql.Date) ? new java.util.Date(dataMungitura.getTime()) : dataMungitura;
-        java.util.Date scadenza = (dataScadenza instanceof java.sql.Date) ? new java.util.Date(dataScadenza.getTime()) : dataScadenza;
-        // dataProduzione non disponibile per update, passo null
-        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, raccolta, mungitura, glutine, scadenza, categoria, scorta, null);
+        Prodotto pe = new Prodotto(
+            codProdotto, nome, descrizione, prezzo, luogoProvenienza,
+            (dataRaccolta instanceof java.sql.Date) ? new java.util.Date(dataRaccolta.getTime()) : dataRaccolta,
+            (dataMungitura instanceof java.sql.Date) ? new java.util.Date(dataMungitura.getTime()) : dataMungitura,
+            glutine,
+            (dataScadenza instanceof java.sql.Date) ? new java.util.Date(dataScadenza.getTime()) : dataScadenza,
+            categoria, scorta, null
+        );
         boolean success = prdjdbc.updateProdotto(pe);
-        
-        // Se l'aggiornamento nel database ha successo, aggiorna anche il model della tabella
-        if (success) {
-            updateProdottoModelAfterUpdate(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
-                                         dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
-        }
-        
+        if (success) updateProdottoModelAfterUpdate(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
         return success;
     }
 
     // Aggiorna le informazioni di un dipendente
     public boolean updip(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
-        Dipendente de = new Dipendente(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
-        boolean success = dpjdbc.updatedipendente(de);
-        
-        // Se l'aggiornamento nel database ha successo, aggiorna anche il model della tabella
-        if (success) {
-            updateDipendenteModelAfterUpdate(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
-        }
-        
+        boolean success = dpjdbc.updatedipendente(new Dipendente(codDipendente, nome, cognome, codFis, email, indirizzo, telefono));
+        if (success) updateDipendenteModelAfterUpdate(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
         return success;
     }
 
     // Aggiorna le informazioni di un cliente
     public boolean upcliente(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
-        Cliente ce = new Cliente(codCliente, nome, cognome, codFis, email, indirizzo, telefono, null, null);
-        boolean success = cljdbc.updateCliente(ce);
-        
-        // Se l'aggiornamento nel database ha successo, aggiorna anche il model della tabella
-        if (success) {
-            updateClienteModelAfterUpdate(codCliente, nome, cognome, codFis, email, indirizzo, telefono);
-        }
-        
+        boolean success = cljdbc.updateCliente(new Cliente(codCliente, nome, cognome, codFis, email, indirizzo, telefono, null, null));
+        if (success) updateClienteModelAfterUpdate(codCliente, nome, cognome, codFis, email, indirizzo, telefono);
         return success;
     }
 
@@ -482,14 +461,8 @@ public class Controller {
 
     // Aggiunge un nuovo ordine al database
     public boolean nuovoordine(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
-        Ordine ordine = new Ordine(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
-        boolean success = ordjdbc.newordine(ordine);
-        
-        // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
-        if (success) {
-            updateOrdineModelAfterInsert(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
-        }
-        
+        boolean success = ordjdbc.newordine(new Ordine(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente));
+        if (success) updateOrdineModelAfterInsert(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
         return success;
     }
 
