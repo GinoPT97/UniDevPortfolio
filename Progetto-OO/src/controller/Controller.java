@@ -301,7 +301,7 @@ public class Controller {
         List<Dipendente> dipendenti = dpjdbc.getAllDip();
         
         Cliente cliente = clienti.stream()
-                .filter(c -> c.getCodCl().equals(String.valueOf(idCliente)))
+                .filter(c -> c.getCodCliente().equals(String.valueOf(idCliente)))
                 .findFirst()
                 .orElse(null);
         
@@ -385,14 +385,13 @@ public class Controller {
 
     // Aggiunge un nuovo prodotto al database
     public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
-                          Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
-        return newprod(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, null, categoria, scorta);
-    }
-
-    // Aggiunge un nuovo prodotto al database con supporto per dataproduzione
-    public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                           Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, Date dataproduzione, String categoria, int scorta) throws SQLException {
-        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, dataproduzione, categoria, scorta);
+        // Conversione Date: se sono java.sql.Date, convertirle in java.util.Date
+        java.util.Date raccolta = (dataRaccolta instanceof java.sql.Date) ? new java.util.Date(dataRaccolta.getTime()) : dataRaccolta;
+        java.util.Date mungitura = (dataMungitura instanceof java.sql.Date) ? new java.util.Date(dataMungitura.getTime()) : dataMungitura;
+        java.util.Date scadenza = (dataScadenza instanceof java.sql.Date) ? new java.util.Date(dataScadenza.getTime()) : dataScadenza;
+        java.util.Date produzione = (dataproduzione instanceof java.sql.Date) ? new java.util.Date(dataproduzione.getTime()) : dataproduzione;
+        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, raccolta, mungitura, glutine, scadenza, categoria, scorta, produzione);
         boolean success = prdjdbc.setNewProdotto(pe);
         
         // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
@@ -428,7 +427,12 @@ public class Controller {
     // Aggiorna le informazioni di un prodotto
     public boolean upprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                          Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
-        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
+        // Conversione Date: se sono java.sql.Date, convertirle in java.util.Date
+        java.util.Date raccolta = (dataRaccolta instanceof java.sql.Date) ? new java.util.Date(dataRaccolta.getTime()) : dataRaccolta;
+        java.util.Date mungitura = (dataMungitura instanceof java.sql.Date) ? new java.util.Date(dataMungitura.getTime()) : dataMungitura;
+        java.util.Date scadenza = (dataScadenza instanceof java.sql.Date) ? new java.util.Date(dataScadenza.getTime()) : dataScadenza;
+        // dataProduzione non disponibile per update, passo null
+        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, raccolta, mungitura, glutine, scadenza, categoria, scorta, null);
         boolean success = prdjdbc.updateProdotto(pe);
         
         // Se l'aggiornamento nel database ha successo, aggiorna anche il model della tabella
@@ -514,13 +518,13 @@ public class Controller {
     public void ClientSearch(DefaultTableModel model) throws SQLException {
         List<Cliente> clienti = artjdbc.searchClient();
         populateTable(clienti, model, c -> createClientSearchRowData(
-                c.getCodCl(), // Cod Cliente
+                c.getCodCliente(), // Cod Cliente
                 c.getNome(), // Nome
                 c.getCognome(), // Cognome
-                c.getArticoliOrdini().getCodProdotto(), // Categoria (mappata in codProdotto)
-                c.getArticoliOrdini().getPrezzo(), // Punti Categoria (mappati in prezzo)
-                c.getArticoliOrdini().getCodCliente(), // Spesa Totale (mappata in codCliente)
-                c.getArticoliOrdini().getNumeroArticoli() // Ordini Categoria (mappati in numeroArticoli)
+                c.getArticoliOrdini() != null ? c.getArticoliOrdini().getCodProdotto() : null, // Categoria
+                c.getArticoliOrdini() != null ? c.getArticoliOrdini().getPrezzo() : null, // Punti Categoria
+                c.getArticoliOrdini() != null ? c.getArticoliOrdini().getCodCliente() : null, // Spesa Totale
+                c.getArticoliOrdini() != null ? c.getArticoliOrdini().getNumeroArticoli() : null // Ordini Categoria
         ));
     }
     
@@ -542,7 +546,7 @@ public class Controller {
     public void categoriaprodotti(String c, DefaultTableModel model) throws SQLException {
         List<Prodotto> prodotti = prdjdbc.getbycategoria(c);
         populateTable(prodotti, model, p -> createRowData(
-                p.getCodProd(),
+                p.getCodProdotto(),
                 p.getNome(),
                 p.getPrezzo(),
                 p.getCategoria(),
@@ -553,15 +557,15 @@ public class Controller {
     public void allCliente() throws SQLException {
         List<Cliente> clienti = cljdbc.getAllCt();
         populateTable(clienti, clienteModel, c -> createRowData(
-                c.getCodCl(),
+                c.getCodCliente(),
                 c.getNome(),
                 c.getCognome(),
-                c.getCodFis(),
+                c.getCodiceFiscale(),
                 c.getEmail(),
-                c.getInd(),
-                c.getTel(),
+                c.getIndirizzo(),
+                c.getTelefono(),
                 c.getTessera() != null ? c.getTessera().getCodTessera() : null,
-                c.getTessera() != null ? c.getTessera().getNPunti() : null,
+                c.getTessera() != null ? c.getTessera().getNumeroPunti() : null,
                 c.getTessera() != null ? c.getTessera().getStato() : null
         ));
     }
@@ -582,7 +586,7 @@ public class Controller {
     public void allOrdini() throws SQLException {
         List<Cliente> clienti = cljdbc.getAllCt();
         List<Dipendente> dipendenti = dpjdbc.getAllDip();
-        Map<String, Cliente> clientiMap = clienti.stream().collect(Collectors.toMap(c -> String.valueOf(c.getCodCl()), c -> c));
+        Map<String, Cliente> clientiMap = clienti.stream().collect(Collectors.toMap(c -> String.valueOf(c.getCodCliente()), c -> c));
         Map<String, Dipendente> dipMap = dipendenti.stream().collect(Collectors.toMap(d -> String.valueOf(d.getCodDIP()), d -> d));
         
         List<Ordine> ordini = ordjdbc.getallordini();
@@ -591,18 +595,18 @@ public class Controller {
             Dipendente d = dipMap.get(String.valueOf(o.getIdDipendente()));
             String clienteNome = checkNull(ct != null ? ct.getCognome() + " " + ct.getNome() : null);
             String dipendenteNome = checkNull(d != null ? d.getCognome() + " " + d.getNome() : null);
-            return createRowData(o.getCodOrd(), o.getDataAcquisto(), o.getPrezzoTotale(), clienteNome, dipendenteNome);
+            return createRowData(o.getCodOrdine(), o.getDataAcquisto(), o.getPrezzoTotale(), clienteNome, dipendenteNome);
         });
     }
 
     public void allProdotti() throws SQLException {
         List<Prodotto> prodotti = prdjdbc.getallprodotti();
         populateTable(prodotti, prodModel, p -> createRowData(
-                p.getCodProd(),
+                p.getCodProdotto(),
                 p.getNome(),
                 p.getDescrizione(),
                 p.getPrezzo(),
-                p.getLuogoProv(),
+                p.getLuogoProvenienza(),
                 p.getDataraccolta(),
                 p.getDatamungitura(),
                 formatGlutineStatus(p.isGlutine()),
