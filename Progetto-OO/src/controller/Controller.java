@@ -316,11 +316,6 @@ public class Controller {
         ordModel.addRow(createRowData(codOrdine, dataAcquisto, prezzoTotale, clienteNome, dipendenteNome));
     }
     
-    // Metodo pubblico per aggiornare completamente il model degli ordini (chiamabile dal carrello)
-    public void refreshOrdiniModel() throws SQLException {
-        allOrdini();
-    }
-    
     // Metodo di supporto per verificare se un campo è nullo o vuoto
     private String checkNull(Object value) {
         return (value == null || value.toString().trim().isEmpty()) ? NULL_VALUE : value.toString();
