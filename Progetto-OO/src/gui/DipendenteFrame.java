@@ -1,10 +1,9 @@
 package gui;
 
 import controller.Controller;
-
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
 
 public class DipendenteFrame extends JFrame {
     private JButton logoututton;
@@ -15,7 +14,7 @@ public class DipendenteFrame extends JFrame {
 
     public DipendenteFrame(String title, Controller c) {
         super(title);
-        JPanel titlePanel = c.createImagePanel("/Immagini/ImmDipendenti.jpg");
+        JPanel titlePanel = new ImagePanel(new ImageIcon(ImagePanel.class.getResource("/Immagini/ImmDipendenti.jpg")).getImage());
         this.elementi(titlePanel);
         this.azioni(c);
     }

@@ -1,13 +1,13 @@
-package model;
+package gui;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class ImagePanel extends JPanel {
     private transient Image image;
@@ -44,7 +44,6 @@ public class ImagePanel extends JPanel {
             revalidate();
             repaint();
         } catch (IOException e) {
-            // Log dell'errore - in un'applicazione reale si userebbe un logger
             throw new IllegalArgumentException("Errore durante il caricamento dell'immagine: " + e.getMessage(), e);
         }
     }
@@ -76,7 +75,6 @@ public class ImagePanel extends JPanel {
         if (panelWidth <= 0 || panelHeight <= 0) {
             return;
         }
-        // Aggiorna solo se le dimensioni sono cambiate
         if (panelWidth != lastWidth || panelHeight != lastHeight) {
             BufferedImage bufferedScaledImage = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = bufferedScaledImage.createGraphics();
@@ -95,8 +93,6 @@ public class ImagePanel extends JPanel {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
         if (panelWidth <= 0 || panelHeight <= 0) return;
-
-        // Se non esiste una scaledImage o le dimensioni non corrispondono a quelle correnti, ricalcola
         if (scaledImage == null || scaledImage.getWidth(this) != panelWidth || scaledImage.getHeight(this) != panelHeight) {
             BufferedImage bufferedScaledImage = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = bufferedScaledImage.createGraphics();
@@ -107,7 +103,6 @@ public class ImagePanel extends JPanel {
             lastWidth = panelWidth;
             lastHeight = panelHeight;
         }
-
         g.drawImage(scaledImage, 0, 0, this);
     }
 }

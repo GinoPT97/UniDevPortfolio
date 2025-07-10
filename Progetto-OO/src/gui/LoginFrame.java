@@ -1,13 +1,12 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class LoginFrame extends JFrame {
     private JPanel contentPane;
@@ -18,7 +17,7 @@ public class LoginFrame extends JFrame {
     public LoginFrame(String title, Controller c) throws SQLException {
         super(title);
         c.connect();
-        JPanel titlePanel = c.createImagePanel("/Immagini/ImmLog.jpg");
+        JPanel titlePanel = new ImagePanel(new ImageIcon(ImagePanel.class.getResource("/Immagini/ImmLog.jpg")).getImage());
         SwingUtilities.invokeLater(() -> {
             elementi(titlePanel);
             azioni(c);

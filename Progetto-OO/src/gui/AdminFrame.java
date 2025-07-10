@@ -1,10 +1,9 @@
 package gui;
 
 import controller.Controller;
-
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
 
 public class AdminFrame extends JFrame {
     private JButton logoutbutton;
@@ -16,7 +15,7 @@ public class AdminFrame extends JFrame {
 
     public AdminFrame(String title, Controller c) {
         super(title);
-        JPanel titlePanel = c.createImagePanel("/Immagini/ImmAdmin.png");
+        JPanel titlePanel = new ImagePanel(new ImageIcon(ImagePanel.class.getResource("/Immagini/ImmAdmin.png")).getImage());
         this.elementi(titlePanel);
         this.azioni(c);
     }

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import model.*;
 
@@ -108,12 +107,6 @@ public class Controller {
                 System.err.println("Errore durante l'avvio dell'applicazione: " + e.getMessage());
             }
         });
-    }
-
-    // Crea un pannello con un'immagine
-    public JPanel createImagePanel(String imagePath) {
-        Image image = new ImageIcon(ImagePanel.class.getResource(imagePath)).getImage();
-        return new ImagePanel(image);
     }
 
     // Torna all'ultimo frame visibile
@@ -537,39 +530,25 @@ public class Controller {
     private void updateDipendenteModelAfterInsert(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
         dipModel.addRow(createRowData(codDipendente, nome, cognome, codFis, email, indirizzo, telefono));
     }
-
     private void updateClienteModelAfterInsert(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
         clienteModel.addRow(createRowData(codCliente, nome, cognome, codFis, email, indirizzo, telefono, "", "", ""));
     }
-
-    private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza,
-                                                Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
-        prodModel.addRow(createRowData(codProdotto, nome, descrizione, prezzo, luogoProvenienza,
-                dataRaccolta, dataMungitura, formatGlutineStatus(glutine),
-                dataScadenza, null, categoria, scorta));
+    private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
+        prodModel.addRow(createRowData(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, formatGlutineStatus(glutine), dataScadenza, null, categoria, scorta));
     }
-
     private void updateDipendenteModelAfterUpdate(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
         updateTableRow(dipModel, codDipendente, new Object[]{codDipendente, nome, cognome, codFis, email, indirizzo, telefono});
     }
-
     private void updateClienteModelAfterUpdate(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
         updateTableRow(clienteModel, codCliente, new Object[]{codCliente, nome, cognome, codFis, email, indirizzo, telefono});
     }
-
-    private void updateProdottoModelAfterUpdate(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza,
-                                                Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
-        updateTableRow(prodModel, codProdotto, new Object[]{codProdotto, nome, descrizione, prezzo, luogoProvenienza,
-                dataRaccolta, dataMungitura, formatGlutineStatus(glutine),
-                dataScadenza, null, categoria, scorta});
+    private void updateProdottoModelAfterUpdate(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
+        updateTableRow(prodModel, codProdotto, new Object[]{codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, formatGlutineStatus(glutine), dataScadenza, null, categoria, scorta});
     }
-
     private void updateOrdineModelAfterInsert(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
         if (cljdbc == null || dpjdbc == null) return;
         Cliente c = cljdbc.getAllCt().stream().filter(x -> String.valueOf(x.getCodCliente()).equals(String.valueOf(idCliente))).findFirst().orElse(null);
         Dipendente d = dpjdbc.getAllDip().stream().filter(x -> String.valueOf(x.getCodDIP()).equals(String.valueOf(idDipendente))).findFirst().orElse(null);
-        ordModel.addRow(createRowData(codOrdine, dataAcquisto, prezzoTotale,
-            checkNull(c != null ? c.getCognome() + " " + c.getNome() : null),
-            checkNull(d != null ? d.getCognome() + " " + d.getNome() : null)));
+        ordModel.addRow(createRowData(codOrdine, dataAcquisto, prezzoTotale, checkNull(c != null ? c.getCognome() + " " + c.getNome() : null), checkNull(d != null ? d.getCognome() + " " + d.getNome() : null)));
     }
 }
