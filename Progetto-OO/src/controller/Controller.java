@@ -371,7 +371,7 @@ public class Controller {
 
         if (clienteSuccess) {
             updateClienteModelAfterInsert(codCliente, nome, cognome, codFis, email, indirizzo, telefono);
-            String codClienteDb = cljdbc.getCtByNCCF(nome, cognome, codFis);
+            String codClienteDb = cljdbc.getIdCt(codFis); // Recupera solo tramite codice fiscale
             if (codClienteDb != null) {
                 try {
                     tsjdbc.newtessera(codClienteDb);
@@ -382,6 +382,12 @@ public class Controller {
         }
         return clienteSuccess;
     }
+
+    // Aggiunge una nuova tessera associata a un cliente tramite codice fiscale
+    public boolean nuovatessera(String codFisc) throws SQLException {
+        return tsjdbc.newtessera(cljdbc.getIdCt(codFisc));
+    }
+
 
     // Aggiunge un nuovo prodotto al database
     public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
@@ -416,12 +422,6 @@ public class Controller {
     // Restituisce le vendite dei dipendenti per un intervallo di date
     public List<String> venditedip(Date di, Date df) throws SQLException {
         return dpjdbc.getDipVendite(di, df);
-    }
-
-    // Aggiunge una nuova tessera associata a un cliente
-    public boolean nuovatessera(String a, String b, String c) throws SQLException {
-        // Recupera il cliente con i dati forniti e crea una nuova tessera
-        return tsjdbc.newtessera(cljdbc.getCtByNCCF(a, b, c));
     }
 
     // Aggiorna le informazioni di un prodotto

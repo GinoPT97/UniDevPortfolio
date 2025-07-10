@@ -64,13 +64,10 @@ public class Clienteimpl implements ClienteJDBC {
     }
 
     @Override
-    public String getCtByNCCF(String nome, String cognome, String codicefiscale) throws SQLException {
-        cercaCl.setString(1, nome);
-        cercaCl.setString(2, cognome);
-        cercaCl.setString(3, codicefiscale);
-        try (ResultSet rs = cercaCl.executeQuery()) {
+    public String getIdCt(String codicefiscale) throws SQLException {
+        try (ResultSet rs = idCl.executeQuery("SELECT " + CODCLIENTE + " FROM cliente WHERE codicefiscale = '" + codicefiscale + "'")) {
             if (rs.next()) {
-                return rs.getString(CODCLIENTE);
+                return rs.getString(CODCLIENTE); // Use constant
             }
         }
         return null;
@@ -82,16 +79,6 @@ public class Clienteimpl implements ClienteJDBC {
         // Il codice cliente nel database è INTEGER, quindi convertiamo da String
         updateCl.setInt(7, Integer.parseInt(cliente.getCodCliente()));
         return updateCl.executeUpdate() > 0;
-    }
-
-    @Override
-    public String getIdCt(String codicefiscale) throws SQLException {
-        try (ResultSet rs = idCl.executeQuery("SELECT " + CODCLIENTE + " FROM cliente WHERE codicefiscale = '" + codicefiscale + "'")) {
-            if (rs.next()) {
-                return rs.getString(CODCLIENTE); // Use constant
-            }
-        }
-        return null;
     }
 
     @Override
