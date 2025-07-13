@@ -14,7 +14,6 @@ public class VisioneClienteFrame extends JFrame {
     private JButton backbutton;
     private JButton addbutton;
     private JButton updatebutton;
-    private JButton dettagliTesseraButton;
     private JTextField searchtf;
     private JButton searchbutton;
 
@@ -67,8 +66,7 @@ public class VisioneClienteFrame extends JFrame {
         updatebutton = creaButton("Modifica", new Color(70, 130, 180));
         buttonpanel.add(updatebutton);
 
-        dettagliTesseraButton = creaButton("Dettagli Tessera", new Color(255, 140, 0));
-        buttonpanel.add(dettagliTesseraButton);
+        // ...existing code...
 
         backbutton = creaButton("Indietro", new Color(178, 34, 34));
         buttonpanel.add(backbutton);
@@ -128,28 +126,5 @@ public class VisioneClienteFrame extends JFrame {
         });
 
         backbutton.addActionListener(e -> c.returnToLastFrame());
-
-        dettagliTesseraButton.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow >= 0) {
-                // Indici colonne: 7 = Id Tessera, 8 = Punti, 9 = Stato Tessera
-                Object idTessera = table.getValueAt(selectedRow, 7);
-                Object punti = table.getValueAt(selectedRow, 8);
-                Object stato = table.getValueAt(selectedRow, 9);
-                String scadenza = "N/A";
-                // Prova a recuperare la data scadenza se presente nel modello (opzionale)
-                if (table.getColumnCount() > 10) {
-                    Object val = table.getValueAt(selectedRow, 10);
-                    if (val != null) scadenza = val.toString();
-                }
-                String msg = "ID Tessera: " + (idTessera != null ? idTessera : "N/A") +
-                        "\nPunti: " + (punti != null ? punti : "N/A") +
-                        "\nStato: " + (stato != null ? stato : "N/A") +
-                        "\nScadenza: " + scadenza;
-                JOptionPane.showMessageDialog(this, msg, "Dettagli Tessera", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Seleziona un cliente per vedere i dettagli della tessera", "Attenzione", JOptionPane.WARNING_MESSAGE);
-            }
-        });
     }
 }

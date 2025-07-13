@@ -370,15 +370,17 @@ public class DBConfiguration {
             result += statement.executeUpdate(sqlTessera);
 
             // Inserimento dipendenti conformi a Popolazione.sql
+            // Inserisce anche l'amministratore con codice dipendente 0
             String sqlDipendente = """
-                INSERT INTO dipendente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES
-                ('Dario', 'Forte', 'IIIIII11I11I111I', 'Via Andromeda 1', '3901234567', 'dario.forte@negozio.it'),
-                ('Sandro', 'Romano', 'JJJJJJ22J22J222J', 'Via Omega 2', '3902345678', 'sandro.romano@negozio.it'),
-                ('Giulio', 'Cesare', 'KKKKKK33K33K333K', 'Via Roma 3', '3903456789', 'giulio.cesare@negozio.it'),
-                ('Mario', 'Rossi', 'LLLLLL44L44L444L', 'Via Parma 4', '3904567890', 'mario.rossi@negozio.it'),
-                ('Andrea', 'Verdi', 'MMMMMM55M55M555M', 'Via Milano 5', '3905678901', 'andrea.verdi@negozio.it'),
-                ('Giuseppe', 'Bianchi', 'NNNNNN66N66N666N', 'Via Torino 6', '3906789012', 'giuseppe.bianchi@negozio.it'),
-                ('Marco', 'Gialli', 'OOOOOO77O77O777O', 'Via Napoli 7', '3907890123', 'marco.gialli@negozio.it')
+                INSERT INTO dipendente (coddipendente, nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES
+                (0, 'Admin', 'Admin', 'RSSMRA85M01H501Z', 'Via Amministratore 0', '0000000000', 'admin@negozio.it'),
+                (DEFAULT, 'Dario', 'Forte', 'IIIIII11I11I111I', 'Via Andromeda 1', '3901234567', 'dario.forte@negozio.it'),
+                (DEFAULT, 'Sandro', 'Romano', 'JJJJJJ22J22J222J', 'Via Omega 2', '3902345678', 'sandro.romano@negozio.it'),
+                (DEFAULT, 'Giulio', 'Cesare', 'KKKKKK33K33K333K', 'Via Roma 3', '3903456789', 'giulio.cesare@negozio.it'),
+                (DEFAULT, 'Mario', 'Rossi', 'LLLLLL44L44L444L', 'Via Parma 4', '3904567890', 'mario.rossi@negozio.it'),
+                (DEFAULT, 'Andrea', 'Verdi', 'MMMMMM55M55M555M', 'Via Milano 5', '3905678901', 'andrea.verdi@negozio.it'),
+                (DEFAULT, 'Giuseppe', 'Bianchi', 'NNNNNN66N66N666N', 'Via Torino 6', '3906789012', 'giuseppe.bianchi@negozio.it'),
+                (DEFAULT, 'Marco', 'Gialli', 'OOOOOO77O77O777O', 'Via Napoli 7', '3907890123', 'marco.gialli@negozio.it')
                 ON CONFLICT (codicefiscale) DO NOTHING;
                 """;
             result += statement.executeUpdate(sqlDipendente);
