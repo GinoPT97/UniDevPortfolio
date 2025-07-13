@@ -85,17 +85,37 @@ public class VisioneClienteFrame extends JFrame {
         c.allCliente();
 
         searchbutton.addActionListener(e -> {
-            String query = searchtf.getText().trim().toLowerCase();
+            String query = searchtf.getText().trim();
             TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.clienteModel);
             table.setRowSorter(sorter);
             if (query.isEmpty()) {
                 sorter.setRowFilter(null);
             } else {
+                String[] parole = query.split("\\s+");
                 try {
-                    sorter.setRowFilter(RowFilter.regexFilter("(?i)" + query));
-                } catch (PatternSyntaxException ex) {
-                    JOptionPane.showMessageDialog(null, "Errore nella sintassi della ricerca: " + ex.getMessage(),
-                            "Errore", JOptionPane.ERROR_MESSAGE);
+                    RowFilter<DefaultTableModel, Object> filtro = new RowFilter<DefaultTableModel, Object>() {
+                        public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                            for (String parola : parole) {
+                                boolean trovata = false;
+                                for (int i = 0; i < entry.getValueCount(); i++) {
+                                    Object cell = entry.getValue(i);
+                                    if (cell != null && cell.toString().toLowerCase().contains(parola.toLowerCase())) {
+                                        trovata = true;
+                                        break;
+                                    }
+                                }
+                                if (!trovata) return false;
+                            }
+                            return true;
+                        }
+                    };
+                    sorter.setRowFilter(filtro);
+                    if (table.getRowCount() == 0) {
+                        JOptionPane.showMessageDialog(null, "Nessun risultato trovato.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                        sorter.setRowFilter(null);
+                    }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
