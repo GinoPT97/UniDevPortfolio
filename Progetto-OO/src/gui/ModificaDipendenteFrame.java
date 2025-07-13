@@ -9,19 +9,11 @@ import javax.swing.border.EmptyBorder;
 public class ModificaDipendenteFrame extends JFrame {
     private JPanel contentPane;
     private String cod;
-    private JPanel buttonpanel;
-    private JPanel elempanel;
+    private final String[] labels = {"Nome:", "Cognome:", "Codice Fiscale:", "Email:", "Indirizzo:", "Telefono: +39"};
+    private final JTextField[] fields = new JTextField[labels.length];
     private JButton backbutton;
     private JButton clearbutton;
     private JButton addbutton;
-    private JTextField nometf;
-    private JTextField cognometf;
-    private JTextField codfisctf;
-    private JTextField emailtf;
-    private JTextField indirizzotf;
-    private JTextField telefonotf;
-    private JPanel titlepanel;
-    private JLabel titlelabel;
 
     public ModificaDipendenteFrame(String title, Controller c) {
         super(title);
@@ -30,57 +22,41 @@ public class ModificaDipendenteFrame extends JFrame {
     }
 
     private void elementi() {
-        // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 500);
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaDipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-        // Pannello principale
-        contentPane = new JPanel();
+        contentPane = new JPanel(new BorderLayout(0, 0));
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        contentPane.setLayout(new BorderLayout(0, 0));
         setContentPane(contentPane);
 
-        // Pannello del titolo
-        titlepanel = new JPanel();
+        JPanel titlepanel = new JPanel();
         titlepanel.setBackground(Color.ORANGE);
-        titlelabel = new JLabel("Modifica Dipendente");
+        JLabel titlelabel = new JLabel("Modifica Dipendente");
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlelabel.setForeground(Color.WHITE);
         titlepanel.add(titlelabel);
         contentPane.add(titlepanel, BorderLayout.NORTH);
 
-        // Pannello per i bottoni
-        buttonpanel = new JPanel();
-        buttonpanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        addbutton = creaButton("Inserisci", new Color(34, 139, 34));
+        clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
+        backbutton = creaButton("Indietro", new Color(178, 34, 34));
+        buttonpanel.add(addbutton);
+        buttonpanel.add(clearbutton);
+        buttonpanel.add(backbutton);
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-        // Bottone Inserisci
-        addbutton = creaButton("Inserisci", new Color(34, 139, 34));
-        buttonpanel.add(addbutton);
-
-        // Bottone Pulisci
-        clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
-        buttonpanel.add(clearbutton);
-
-        // Bottone Indietro
-        backbutton = creaButton("Indietro", new Color(178, 34, 34));
-        buttonpanel.add(backbutton);
-
-        // Pannello per gli elementi di input
-        elempanel = new JPanel();
+        JPanel elempanel = new JPanel();
         elempanel.setBorder(new EmptyBorder(20, 50, 20, 50));
         elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
         contentPane.add(elempanel, BorderLayout.CENTER);
 
-        // Metodo per creare i pannelli di input
-        elempanel.add(createInputPanel("Nome :", nometf = new JTextField(10)));
-        elempanel.add(createInputPanel("Cognome :", cognometf = new JTextField(10)));
-        elempanel.add(createInputPanel("Codice Fiscale :", codfisctf = new JTextField(10)));
-        elempanel.add(createInputPanel("Email :", emailtf = new JTextField(10)));
-        elempanel.add(createInputPanel("Indirizzo :", indirizzotf = new JTextField(10)));
-        elempanel.add(createInputPanel("Telefono : +39", telefonotf = new JTextField(10)));
+        for (int i = 0; i < labels.length; i++) {
+            fields[i] = new JTextField(10);
+            elempanel.add(createInputPanel(labels[i], fields[i]));
+        }
     }
 
     private JPanel createInputPanel(String labelText, JTextField textField) {
@@ -101,51 +77,39 @@ public class ModificaDipendenteFrame extends JFrame {
     }
 
     public void clean() {
-        nometf.setText("");
-        cognometf.setText("");
-        codfisctf.setText("");
-        indirizzotf.setText("");
-        emailtf.setText("");
-        telefonotf.setText("");
+        for (JTextField field : fields) field.setText("");
     }
 
     public void viewdip(String codDip, String nome, String cognome, String codFis, String indirizzo, String email, String telefono) {
         cod = codDip;
-        nometf.setText(nome);
-        cognometf.setText(cognome);
-        codfisctf.setText(codFis);
-        indirizzotf.setText(indirizzo);
-        emailtf.setText(email);
-        telefonotf.setText(telefono);
+        fields[0].setText(nome);
+        fields[1].setText(cognome);
+        fields[2].setText(codFis);
+        fields[3].setText(email);
+        fields[4].setText(indirizzo);
+        fields[5].setText(telefono);
     }
 
     private void azioni(Controller c) {
-        backbutton.addActionListener(e -> {
-            clean();
-            c.visAndElem(2, 3);
-        });
-
+        backbutton.addActionListener(e -> { clean(); c.visAndElem(2, 3); });
         addbutton.addActionListener(e -> {
             try {
-                // Aggiorna il dipendente nel database utilizzando il metodo refactorizzato
                 c.updip(
-                        cod, // codDipendente
-                        nometf.getText(), // nome
-                        cognometf.getText(), // cognome
-                        codfisctf.getText(), // codFis
-                        emailtf.getText(), // email
-                        indirizzotf.getText(), // indirizzo
-                        telefonotf.getText() // telefono
+                        cod,
+                        fields[0].getText(),
+                        fields[1].getText(),
+                        fields[2].getText(),
+                        fields[3].getText(),
+                        fields[4].getText(),
+                        fields[5].getText()
                 );
-
-                clean(); // Pulisce i campi di input
-                c.visAndElem(2, 3); // Torna alla vista con indice 3
+                clean();
+                c.visAndElem(2, 3);
                 JOptionPane.showMessageDialog(this, "Dipendente modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
             } catch (SQLException e1) {
-                JOptionPane.showMessageDialog(this, "Errore!" + "\n" + "Tipo di errore: " + e1, "Errore", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Errore!\nTipo di errore: " + e1, "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });
-
         clearbutton.addActionListener(e -> clean());
     }
 }

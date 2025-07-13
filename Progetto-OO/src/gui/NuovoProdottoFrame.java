@@ -19,21 +19,13 @@ public class NuovoProdottoFrame extends JFrame {
     private static final String LATTICINI = "LATTICINI";
     private static final String UOVA = "UOVA";
     private static final String CONFEZIONATI = "CONFEZIONATI";
-    
+
+    private final String[] labels = {"Nome:", "Descrizione:", "Provenienza:", "Prezzo:", "Data Raccolta (YYYY-MM-DD):", "Data Mungitura (YYYY-MM-DD):", "Data Produzione (YYYY-MM-DD):", "Glutine:", "Data Scadenza (YYYY-MM-DD):", "Scorta:"};
+    private final JComponent[] fields = new JComponent[labels.length];
     private JButton backbutton;
     private JButton clearbutton;
     private JButton insertbutton;
     private JButton selbutton;
-    private JTextField nometf;
-    private JTextField provtf;
-    private JTextField prezzotf;
-    private JTextField racctf;
-    private JTextField mungtf;
-    private JTextField scadtf;
-    private JTextField scortatf;
-    private JTextField prodtf;
-    private JTextArea descta;
-    private JCheckBox glutcb;
     private JComboBox<String> categoriacb;
 
     public NuovoProdottoFrame(String title, Controller c) {
@@ -43,49 +35,45 @@ public class NuovoProdottoFrame extends JFrame {
     }
 
     private void elementi() {
-        // Configurazione della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 650, 500); // Aumenta l'altezza della finestra
+        setBounds(100, 100, 650, 500);
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoProdottoFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-        // Pannello principale
         JPanel contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
 
-        // Pannello per il contenuto centrale
         JPanel elempanel = new JPanel();
-        elempanel.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
+        elempanel.setBorder(new EmptyBorder(0, 0, 0, 0));
         elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
         contentPane.add(elempanel, BorderLayout.CENTER);
 
-        // Inizializza i componenti prima di usarli
-        nometf = new JTextField(10);
-        descta = new JTextArea(2, 10);
-        provtf = new JTextField(10);
-        prezzotf = new JTextField(10);
-        racctf = new JTextField(10);
-        mungtf = new JTextField(10);
-        prodtf = new JTextField(10);
-        glutcb = new JCheckBox("Si");
-        scadtf = new JTextField(10);
-        scortatf = new JTextField(10);
-        
-        // Crea i pannelli di input
-        elempanel.add(createInputPanel("Nome :", nometf));
-        elempanel.add(createInputPanel("Descrizione :", descta));
-        elempanel.add(createInputPanel("Provenienza :", provtf));
-        elempanel.add(createInputPanel("Prezzo :", prezzotf));
-        elempanel.add(createInputPanel("Data Raccolta (YYYY-MM-DD) :", racctf, false));
-        elempanel.add(createInputPanel("Data Mungitura (YYYY-MM-DD) :", mungtf, false));
-        elempanel.add(createInputPanel("Data Produzione (YYYY-MM-DD) :", prodtf, false));
-        elempanel.add(createInputPanel("Glutine :", glutcb, false));
-        elempanel.add(createInputPanel("Data Scadenza (YYYY-MM-DD) :", scadtf, false));
-        elempanel.add(createInputPanel("Scorta :", scortatf));
+        // Inizializza i componenti e li inserisce nell'array
+        fields[0] = new JTextField(10); // Nome
+        fields[1] = new JTextArea(2, 10); // Descrizione
+        fields[2] = new JTextField(10); // Provenienza
+        fields[3] = new JTextField(10); // Prezzo
+        fields[4] = new JTextField(10); // Data Raccolta
+        fields[5] = new JTextField(10); // Data Mungitura
+        fields[6] = new JTextField(10); // Data Produzione
+        fields[7] = new JCheckBox("Si"); // Glutine
+        fields[8] = new JTextField(10); // Data Scadenza
+        fields[9] = new JTextField(10); // Scorta
 
-        // Categoria e pulsante di selezione
+        for (int i = 0; i < labels.length; i++) {
+            if (i == 1) {
+                elempanel.add(createInputPanel(labels[i], fields[i]));
+            } else if (i == 7) {
+                elempanel.add(createInputPanel(labels[i], fields[i], false));
+            } else if (i >= 4 && i <= 6 || i == 8) {
+                elempanel.add(createInputPanel(labels[i], fields[i], false));
+            } else {
+                elempanel.add(createInputPanel(labels[i], fields[i]));
+            }
+        }
+
         JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         categoriacb = new JComboBox<>(new String[]{FRUTTA, VERDURA, FARINACEI, LATTICINI, UOVA, CONFEZIONATI});
         categoriapanel.add(categoriacb);
@@ -140,101 +128,69 @@ public class NuovoProdottoFrame extends JFrame {
     }
 
     public void clean() {
-        nometf.setText("");
-        descta.setText("");
-        prezzotf.setText("");
-        provtf.setText("");
-        scortatf.setText("");
-        racctf.setText("");
-        mungtf.setText("");
-        prodtf.setText("");
-        scadtf.setText("");
-        glutcb.setSelected(false);
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i] instanceof JTextField tf) tf.setText("");
+            if (fields[i] instanceof JTextArea ta) ta.setText("");
+            if (fields[i] instanceof JCheckBox cb) cb.setSelected(false);
+        }
     }
 
     private void azioni(Controller c) {
         clearbutton.addActionListener(e -> clean());
-
-        backbutton.addActionListener(e -> {
-            clean();
-            c.visAndElem(4, 3);
-        });
-
+        backbutton.addActionListener(e -> { clean(); c.visAndElem(4, 3); });
         insertbutton.addActionListener(e -> {
             DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 // Verifica che tutti i campi obbligatori siano compilati
-                if (nometf.getText().isEmpty() || descta.getText().isEmpty() ||
-                        prezzotf.getText().isEmpty() || provtf.getText().isEmpty() ||
-                        scortatf.getText().isEmpty()) {
+                if (((JTextField)fields[0]).getText().isEmpty() || ((JTextArea)fields[1]).getText().isEmpty() ||
+                        ((JTextField)fields[3]).getText().isEmpty() || ((JTextField)fields[2]).getText().isEmpty() ||
+                        ((JTextField)fields[9]).getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
                     return;
                 }
-
-                // Prepara i dati da salvare in base alla categoria selezionata
                 String categoria = categoriacb.getSelectedItem().toString();
-                
-                // Salva il prodotto nel database utilizzando il metodo refactorizzato
                 c.newprod(
-                        "", // codProdotto
-                        nometf.getText(), // nome
-                        descta.getText(), // descrizione
-                        Double.parseDouble(prezzotf.getText()), // prezzo
-                        provtf.getText(), // luogoProvenienza
-                        (categoria.equals(FRUTTA) || categoria.equals(VERDURA)) ? new java.sql.Date(data.parse(racctf.getText()).getTime()) : null, // dataRaccolta
-                        categoria.equals(LATTICINI) ? new java.sql.Date(data.parse(mungtf.getText()).getTime()) : null, // dataMungitura
-                        glutcb.isSelected(), // glutine
-                        (categoria.equals(UOVA) || categoria.equals(CONFEZIONATI) || categoria.equals(LATTICINI)) ? new java.sql.Date(data.parse(scadtf.getText()).getTime()) : null, // dataScadenza
-                        categoria.equals(LATTICINI) ? new java.sql.Date(data.parse(prodtf.getText()).getTime()) : null, // dataproduzione
-                        categoria, // categoria
-                        Integer.parseInt(scortatf.getText()) // scorta
+                        "",
+                        ((JTextField)fields[0]).getText(),
+                        ((JTextArea)fields[1]).getText(),
+                        Double.parseDouble(((JTextField)fields[3]).getText()),
+                        ((JTextField)fields[2]).getText(),
+                        (categoria.equals(FRUTTA) || categoria.equals(VERDURA)) ? new java.sql.Date(data.parse(((JTextField)fields[4]).getText()).getTime()) : null,
+                        categoria.equals(LATTICINI) ? new java.sql.Date(data.parse(((JTextField)fields[5]).getText()).getTime()) : null,
+                        ((JCheckBox)fields[7]).isSelected(),
+                        (categoria.equals(UOVA) || categoria.equals(CONFEZIONATI) || categoria.equals(LATTICINI)) ? new java.sql.Date(data.parse(((JTextField)fields[8]).getText()).getTime()) : null,
+                        categoria.equals(LATTICINI) ? new java.sql.Date(data.parse(((JTextField)fields[6]).getText()).getTime()) : null,
+                        categoria,
+                        Integer.parseInt(((JTextField)fields[9]).getText())
                 );
-
-                // Pulisci i campi e mostra un messaggio di successo
                 clean();
                 JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
-
             } catch (NumberFormatException | SQLException | ParseException e1) {
-                JOptionPane.showMessageDialog(null, """
-                        Errore!
-                        Tipo di errore : """ + e1);
+                JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore : " + e1);
             }
         });
-
         selbutton.addActionListener(event -> {
-            // Abilita o disabilita i campi in base alla categoria selezionata
             int type = categoriacb.getSelectedIndex();
-            
-            // Reset di tutti i campi
-            racctf.setEditable(false);
-            mungtf.setEditable(false);
-            prodtf.setEditable(false);
-            scadtf.setEditable(false);
-            glutcb.setEnabled(false);
-            
-            // Abilita i campi specifici per categoria
+            ((JTextField)fields[4]).setEditable(false);
+            ((JTextField)fields[5]).setEditable(false);
+            ((JTextField)fields[6]).setEditable(false);
+            ((JTextField)fields[8]).setEditable(false);
+            ((JCheckBox)fields[7]).setEnabled(false);
             switch (type) {
-                case 0, 1 -> // FRUTTA, VERDURA
-                    racctf.setEditable(true);
-                case 2 -> // FARINACEI
-                    glutcb.setEnabled(true);
-                case 3 -> { // LATTICINI
-                    mungtf.setEditable(true);
-                    prodtf.setEditable(true);
-                    scadtf.setEditable(true);
+                case 0, 1 -> ((JTextField)fields[4]).setEditable(true);
+                case 2 -> ((JCheckBox)fields[7]).setEnabled(true);
+                case 3 -> {
+                    ((JTextField)fields[5]).setEditable(true);
+                    ((JTextField)fields[6]).setEditable(true);
+                    ((JTextField)fields[8]).setEditable(true);
                 }
-                case 4, 5 -> // UOVA, CONFEZIONATI
-                    scadtf.setEditable(true);
-                default -> {
-                    // Caso default per valori non previsti
-                }
+                case 4, 5 -> ((JTextField)fields[8]).setEditable(true);
             }
         });
-
-        descta.addKeyListener(new KeyAdapter() {
+        ((JTextArea)fields[1]).addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                if (descta.getText().length() >= 500) {
+                if (((JTextArea)fields[1]).getText().length() >= 500) {
                     e.consume();
                 }
             }

@@ -8,12 +8,8 @@ import javax.swing.border.EmptyBorder;
 
 public class NuovoDipendenteFrame extends JFrame {
     private JPanel contentPane;
-    private JTextField nometf;
-    private JTextField cognometf;
-    private JTextField codfisctf;
-    private JTextField emailtf;
-    private JTextField indirizzotf;
-    private JTextField telefonotf;
+    private final String[] labels = {"Nome:", "Cognome:", "Codice Fiscale:", "Email:", "Indirizzo:", "Telefono: +39"};
+    private final JTextField[] fields = new JTextField[labels.length];
     private JButton addbutton;
     private JButton clearbutton;
     private JButton backbutton;
@@ -25,46 +21,34 @@ public class NuovoDipendenteFrame extends JFrame {
     }
 
     private void elementi() {
-        // Imposta le proprietà di base della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 500);
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-        // Imposta il pannello principale e il layout BorderLayout
-        contentPane = new JPanel();
+        contentPane = new JPanel(new BorderLayout(0, 0));
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
-        contentPane.setLayout(new BorderLayout(0, 0));
 
-        // Pannello dei pulsanti
         JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
-
         addbutton = creaButton("Aggiungi", new Color(34, 139, 34));
-        buttonpanel.add(addbutton);
-
         clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
-        buttonpanel.add(clearbutton);
-
         backbutton = creaButton("Indietro", new Color(178, 34, 34));
+        buttonpanel.add(addbutton);
+        buttonpanel.add(clearbutton);
         buttonpanel.add(backbutton);
 
-        // Pannello per gli elementi
         JPanel elempanel = new JPanel();
         elempanel.setBorder(new EmptyBorder(20, 100, 20, 100));
         elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
         contentPane.add(elempanel, BorderLayout.CENTER);
 
-        // Metodo per creare i pannelli di input
-        elempanel.add(createInputPanel("Nome :", nometf = new JTextField(10)));
-        elempanel.add(createInputPanel("Cognome :", cognometf = new JTextField(10)));
-        elempanel.add(createInputPanel("Codice Fiscale :", codfisctf = new JTextField(10)));
-        elempanel.add(createInputPanel("Email :", emailtf = new JTextField(10)));
-        elempanel.add(createInputPanel("Indirizzo :", indirizzotf = new JTextField(10)));
-        elempanel.add(createInputPanel("Telefono : +39", telefonotf = new JTextField(10)));
+        for (int i = 0; i < labels.length; i++) {
+            fields[i] = new JTextField(10);
+            elempanel.add(createInputPanel(labels[i], fields[i]));
+        }
 
-        // Pannello del titolo
         JPanel titlepanel = new JPanel();
         titlepanel.setBackground(Color.ORANGE);
         contentPane.add(titlepanel, BorderLayout.NORTH);
@@ -92,48 +76,27 @@ public class NuovoDipendenteFrame extends JFrame {
     }
 
     public void clean() {
-        nometf.setText("");
-        cognometf.setText("");
-        codfisctf.setText("");
-        indirizzotf.setText("");
-        emailtf.setText("");
-        telefonotf.setText("");
+        for (JTextField field : fields) field.setText("");
     }
 
     private void azioni(Controller c) {
-        // Listener per il bottone di aggiunta di un nuovo dipendente
         addbutton.addActionListener(e -> {
             try {
-                // Aggiungi il dipendente al database utilizzando il metodo refactorizzato
-                c.newdip(
-                        "", // codDipendente
-                        nometf.getText(), // nome
-                        cognometf.getText(), // cognome
-                        codfisctf.getText(), // codFis
-                        emailtf.getText(), // email
-                        indirizzotf.getText(), // indirizzo
-                        telefonotf.getText() // telefono
+                c.newdip("",
+                        fields[0].getText(), // nome
+                        fields[1].getText(), // cognome
+                        fields[2].getText(), // codFis
+                        fields[3].getText(), // email
+                        fields[4].getText(), // indirizzo
+                        fields[5].getText()  // telefono
                 );
-
-                // Pulisce i campi di input
                 clean();
-                // Mostra un messaggio di successo
                 JOptionPane.showMessageDialog(null, "Dipendente aggiunto");
             } catch (SQLException e1) {
-                // Mostra un messaggio di errore in caso di eccezione
-                JOptionPane.showMessageDialog(null, """
-                        Errore!
-                        Tipo di errore : """ + e1.getMessage());
+                JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore : " + e1.getMessage());
             }
         });
-
-        // Listener per il bottone di pulizia dei campi di input
         clearbutton.addActionListener(e -> clean());
-
-        // Listener per il bottone di ritorno alla schermata precedente
-        backbutton.addActionListener(e -> {
-            clean(); // Pulisce i campi di input
-            c.visAndElem(2, 3); // Passa alla schermata dipendenti
-        });
+        backbutton.addActionListener(e -> { clean(); c.visAndElem(2, 3); });
     }
 }

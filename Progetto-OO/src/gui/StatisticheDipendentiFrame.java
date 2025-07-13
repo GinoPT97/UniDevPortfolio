@@ -1,24 +1,24 @@
 package gui;
 
 import controller.Controller;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 public class StatisticheDipendentiFrame extends JFrame {
-    // Definizione dei componenti principali dell'interfaccia
     private JPanel contentPane;
-    private String[] datacb = {"3 mesi", "6 mesi", "9 mesi", "12 mesi", "Tutti"};
-    private LocalDate dataod = LocalDate.now();
+    private final String[] datacb = {"3 mesi", "6 mesi", "9 mesi", "12 mesi", "Tutti"};
+    private final LocalDate dataod = LocalDate.now();
     private JPanel searchPanel, introitiPanel, venditePanel, buttonPanel, titlePanel;
     private JButton selectButton, backButton, clearButton, searchButton;
     private JComboBox<String> periodoCB;
     private JLabel periodoLab, cognomeVenditeLab, titleLabel, startLab, finalLab, nomeLab, cognomeLab, introitiValLab, nomeVenditeLab, venditeValLab;
-    private JTextField startTF, finalTF, nomeIntroitiTF, cognomeIntroitiTF, introitiTF, nomeVenditeTF, cognomeVenditeTF, venditeTF;
+    private JTextField startTF, finalTF;
+    private final JTextField[] introitiFields = new JTextField[3]; // nome, cognome, introiti
+    private final JTextField[] venditeFields = new JTextField[3]; // nome, cognome, vendite
 
     public StatisticheDipendentiFrame(String title, Controller c) throws SQLException {
         super(title);
@@ -98,14 +98,14 @@ public class StatisticheDipendentiFrame extends JFrame {
         introitiPanel.setLayout(introitiLayout);
 
         nomeLab = new JLabel("Nome :");
-        nomeIntroitiTF = new JTextField(15);
-        nomeIntroitiTF.setEditable(false);
+        introitiFields[0] = new JTextField(15);
+        introitiFields[0].setEditable(false);
         cognomeLab = new JLabel("Cognome :");
-        cognomeIntroitiTF = new JTextField(15);
-        cognomeIntroitiTF.setEditable(false);
+        introitiFields[1] = new JTextField(15);
+        introitiFields[1].setEditable(false);
         introitiValLab = new JLabel("Introiti :");
-        introitiTF = new JTextField(15);
-        introitiTF.setEditable(false);
+        introitiFields[2] = new JTextField(15);
+        introitiFields[2].setEditable(false);
 
         introitiLayout.setAutoCreateGaps(true);
         introitiLayout.setAutoCreateContainerGaps(true);
@@ -117,22 +117,22 @@ public class StatisticheDipendentiFrame extends JFrame {
                                 .addComponent(cognomeLab)
                                 .addComponent(introitiValLab))
                         .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(nomeIntroitiTF)
-                                .addComponent(cognomeIntroitiTF)
-                                .addComponent(introitiTF))
+                                .addComponent(introitiFields[0])
+                                .addComponent(introitiFields[1])
+                                .addComponent(introitiFields[2]))
         );
 
         introitiLayout.setVerticalGroup(
                 introitiLayout.createSequentialGroup()
                         .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(nomeLab)
-                                .addComponent(nomeIntroitiTF))
+                                .addComponent(introitiFields[0]))
                         .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(cognomeLab)
-                                .addComponent(cognomeIntroitiTF))
+                                .addComponent(introitiFields[1]))
                         .addGroup(introitiLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(introitiValLab)
-                                .addComponent(introitiTF))
+                                .addComponent(introitiFields[2]))
         );
 
         contentPane.add(introitiPanel, BorderLayout.CENTER);
@@ -144,14 +144,14 @@ public class StatisticheDipendentiFrame extends JFrame {
         venditePanel.setLayout(venditeLayout);
 
         nomeVenditeLab = new JLabel("Nome :");
-        nomeVenditeTF = new JTextField(15);
-        nomeVenditeTF.setEditable(false);
+        venditeFields[0] = new JTextField(15);
+        venditeFields[0].setEditable(false);
         cognomeVenditeLab = new JLabel("Cognome :");
-        cognomeVenditeTF = new JTextField(15);
-        cognomeVenditeTF.setEditable(false);
+        venditeFields[1] = new JTextField(15);
+        venditeFields[1].setEditable(false);
         venditeValLab = new JLabel("Vendite :");
-        venditeTF = new JTextField(15);
-        venditeTF.setEditable(false);
+        venditeFields[2] = new JTextField(15);
+        venditeFields[2].setEditable(false);
 
         venditeLayout.setAutoCreateGaps(true);
         venditeLayout.setAutoCreateContainerGaps(true);
@@ -163,22 +163,22 @@ public class StatisticheDipendentiFrame extends JFrame {
                                 .addComponent(cognomeVenditeLab)
                                 .addComponent(venditeValLab))
                         .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(nomeVenditeTF)
-                                .addComponent(cognomeVenditeTF)
-                                .addComponent(venditeTF))
+                                .addComponent(venditeFields[0])
+                                .addComponent(venditeFields[1])
+                                .addComponent(venditeFields[2]))
         );
 
         venditeLayout.setVerticalGroup(
                 venditeLayout.createSequentialGroup()
                         .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(nomeVenditeLab)
-                                .addComponent(nomeVenditeTF))
+                                .addComponent(venditeFields[0]))
                         .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(cognomeVenditeLab)
-                                .addComponent(cognomeVenditeTF))
+                                .addComponent(venditeFields[1]))
                         .addGroup(venditeLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(venditeValLab)
-                                .addComponent(venditeTF))
+                                .addComponent(venditeFields[2]))
         );
 
         contentPane.add(venditePanel, BorderLayout.EAST);
@@ -235,12 +235,8 @@ public class StatisticheDipendentiFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "In questo lasso di tempo non ci sono risultati!\nAmpliare il lasso di tempo");
                     clean();
                 } else {
-                    nomeIntroitiTF.setText(ordInt.get(0));
-                    cognomeIntroitiTF.setText(ordInt.get(1));
-                    introitiTF.setText(ordInt.get(2));
-                    nomeVenditeTF.setText(ordVen.get(0));
-                    cognomeVenditeTF.setText(ordVen.get(1));
-                    venditeTF.setText(ordVen.get(2));
+                    for (int i = 0; i < 3; i++) introitiFields[i].setText(ordInt.get(i));
+                    for (int i = 0; i < 3; i++) venditeFields[i].setText(ordVen.get(i));
                 }
             } catch (SQLException e1) {
                 JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1);
@@ -260,11 +256,7 @@ public class StatisticheDipendentiFrame extends JFrame {
     private void clean() {
         startTF.setText("");
         finalTF.setText("");
-        nomeIntroitiTF.setText("");
-        cognomeIntroitiTF.setText("");
-        nomeVenditeTF.setText("");
-        cognomeVenditeTF.setText("");
-        introitiTF.setText("");
-        venditeTF.setText("");
+        for (JTextField f : introitiFields) f.setText("");
+        for (JTextField f : venditeFields) f.setText("");
     }
 }

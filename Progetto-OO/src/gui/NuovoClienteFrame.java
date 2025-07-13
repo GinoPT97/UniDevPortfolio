@@ -8,12 +8,8 @@ import javax.swing.border.EmptyBorder;
 
 public class NuovoClienteFrame extends JFrame {
     private JPanel contentPane;
-    private JTextField nometf;
-    private JTextField cognometf;
-    private JTextField codfisctf;
-    private JTextField emailtf;
-    private JTextField indirizzotf;
-    private JTextField telefonotf;
+    private final String[] labels = {"Nome:", "Cognome:", "Codice Fiscale:", "Email:", "Indirizzo:", "Telefono: +39"};
+    private final JTextField[] fields = new JTextField[labels.length];
     private JButton addbutton;
     private JButton clearbutton;
     private JButton backbutton;
@@ -31,47 +27,36 @@ public class NuovoClienteFrame extends JFrame {
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-        // Impostazione del contenuto e del layout principale
         contentPane = new JPanel(new BorderLayout(0, 0));
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
 
         // Pannello per i pulsanti
-        JPanel buttonpanel = new JPanel();
-        buttonpanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
-
         addbutton = creaButton("Aggiungi", new Color(34, 139, 34));
-        buttonpanel.add(addbutton);
-
         clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
-        buttonpanel.add(clearbutton);
-
         backbutton = creaButton("Indietro", new Color(178, 34, 34));
+        buttonpanel.add(addbutton);
+        buttonpanel.add(clearbutton);
         buttonpanel.add(backbutton);
 
         // Pannello principale per i campi di inserimento
         JPanel elempanel = new JPanel();
         elempanel.setBorder(new EmptyBorder(20, 40, 20, 40));
-        elempanel.setLayout(new GridLayout(7, 2, 10, 10)); // 7 righe e 2 colonne per i campi di input
+        elempanel.setLayout(new GridLayout(labels.length + 1, 1, 10, 10));
         contentPane.add(elempanel, BorderLayout.CENTER);
 
-        // Creazione e aggiunta dei componenti al pannello dei campi di inserimento
-        elempanel.add(createInputPanel("Nome:", nometf = new JTextField(20)));
-        elempanel.add(createInputPanel("Cognome:", cognometf = new JTextField(20)));
-        elempanel.add(createInputPanel("Codice Fiscale:", codfisctf = new JTextField(20)));
-        elempanel.add(createInputPanel("Email:", emailtf = new JTextField(20)));
-        elempanel.add(createInputPanel("Indirizzo:", indirizzotf = new JTextField(20)));
-        elempanel.add(createInputPanel("Telefono: +39", telefonotf = new JTextField(20)));
-
-        JLabel tesseralab = new JLabel("La relativa tessera verrà creata in automatico");
-        elempanel.add(tesseralab);
+        for (int i = 0; i < labels.length; i++) {
+            fields[i] = new JTextField(20);
+            elempanel.add(createInputPanel(labels[i], fields[i]));
+        }
+        elempanel.add(new JLabel("La relativa tessera verrà creata in automatico"));
 
         // Pannello del titolo
         JPanel titlepanel = new JPanel();
         titlepanel.setBackground(new Color(85, 107, 47));
         contentPane.add(titlepanel, BorderLayout.NORTH);
-
         JLabel titlelabel = new JLabel("Inserimento Nuovo Utente");
         titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
         titlepanel.add(titlelabel);
@@ -94,47 +79,27 @@ public class NuovoClienteFrame extends JFrame {
     }
 
     public void clean() {
-        // Pulizia dei campi di testo
-        nometf.setText("");
-        cognometf.setText("");
-        codfisctf.setText("");
-        indirizzotf.setText("");
-        emailtf.setText("");
-        telefonotf.setText("");
+        for (JTextField field : fields) field.setText("");
     }
 
     private void azioni(Controller c) {
-        // Azione per il bottone "Indietro"
-        backbutton.addActionListener(e -> {
-            clean();
-            c.visAndElem(3, 3);
-        });
-
-        // Azione per il bottone "Aggiungi"
+        backbutton.addActionListener(e -> { clean(); c.visAndElem(3, 3); });
         addbutton.addActionListener(e -> {
             try {
-                // Aggiunta del nuovo cliente nel controller utilizzando il metodo refactorizzato
-                c.newclt(
-                        "", // codCliente
-                        nometf.getText(), // nome
-                        cognometf.getText(), // cognome
-                        codfisctf.getText(), // codFis
-                        emailtf.getText(), // email
-                        indirizzotf.getText(), // indirizzo
-                        telefonotf.getText() // telefono
+                c.newclt("",
+                        fields[0].getText(), // nome
+                        fields[1].getText(), // cognome
+                        fields[2].getText(), // codFis
+                        fields[3].getText(), // email
+                        fields[4].getText(), // indirizzo
+                        fields[5].getText()  // telefono
                 );
-
-                clean(); // Pulisce i campi dopo l'aggiunta
+                clean();
                 JOptionPane.showMessageDialog(null, "Cliente e relativa tessera aggiunti");
             } catch (SQLException e1) {
-                // Gestione dell'errore
-                JOptionPane.showMessageDialog(null, """
-                        Errore!
-                        Tipo di errore: """ + e1.getMessage());
+                JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore: " + e1.getMessage());
             }
         });
-
-        // Azione per il bottone "Pulisci"
         clearbutton.addActionListener(e -> clean());
     }
 }
