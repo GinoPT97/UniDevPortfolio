@@ -35,7 +35,7 @@ public class Clienteimpl implements ClienteJDBC {
     public ArrayList<Cliente> getAllCt() throws SQLException {
         ArrayList<Cliente> clienti = new ArrayList<>();
         String query = "SELECT c.codcliente, c.nome, c.cognome, c.codicefiscale, c.email, c.indirizzo, c.telefono, " +
-                       "t.codtessera, t.numeropunti " +
+                       "t.codtessera, t.numeropunti, t.stato, t.datascadenza " +
                        "FROM cliente c " +
                        "LEFT JOIN tessera t ON c.codcliente = t.codcliente " +
                        "ORDER BY c.cognome DESC";
@@ -45,9 +45,17 @@ public class Clienteimpl implements ClienteJDBC {
                 Tessera tessera = null;
                 String codTessera = rs.getString("codtessera");
                 if (codTessera != null) {
-                    tessera = new Tessera(codTessera, rs.getDouble("numeropunti"), null, null, null, null);
+                    java.sql.Date dataScadenza = rs.getDate("datascadenza");
+                    String stato = rs.getString("stato");
+                    tessera = new Tessera(
+                        codTessera,
+                        rs.getDouble("numeropunti"),
+                        null, // dataemissione non disponibile
+                        dataScadenza,
+                        stato,
+                        null // proprietario non necessario qui
+                    );
                 }
-                
                 clienti.add(new Cliente(
                         rs.getString(CODCLIENTE),
                         rs.getString("nome"),

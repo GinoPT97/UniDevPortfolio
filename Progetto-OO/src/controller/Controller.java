@@ -19,7 +19,7 @@ import model.*;
 
 public class Controller {
     // Costanti per le colonne delle tabelle
-    private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti", "Stato Tessera"};
+private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti", "Stato Tessera", "Data Scadenza Tessera"};
     private static final String[] DIPENDENTE_COLUMNS = {"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"};
     private static final String[] PRODOTTO_COLUMNS = {"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Produzione", "Categoria", "Scorta"};
     private static final String[] ORDINE_COLUMNS = {"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"};
@@ -475,7 +475,8 @@ public class Controller {
                 c.getTelefono(),
                 c.getTessera() != null ? c.getTessera().getCodTessera() : null,
                 c.getTessera() != null ? c.getTessera().getNumeroPunti() : null,
-                c.getTessera() != null ? c.getTessera().getStato() : null
+                c.getTessera() != null ? c.getTessera().getStato() : null,
+                c.getTessera() != null && c.getTessera().getDataScadenza() != null ? c.getTessera().getDataScadenza().toString() : null
         ));
     }
 
