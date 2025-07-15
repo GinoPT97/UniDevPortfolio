@@ -17,15 +17,15 @@ public class ImagePanel extends JPanel {
 
     public ImagePanel(Image image) {
         this.image = image;
-        setLayout(new BorderLayout(0, 0));
-        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder());
         setDoubleBuffered(true);
 
-        // Aggiorna l'immagine scalata quando il pannello viene ridimensionato
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 updateScaledImage();
+                repaint();
             }
         });
     }
@@ -33,15 +33,13 @@ public class ImagePanel extends JPanel {
     public void resetImage(Image newImage) {
         this.image = newImage;
         updateScaledImage();
-        revalidate();
         repaint();
     }
 
     public void setBackgroundImage(String filePath) {
         try {
-            BufferedImage bufferedImage = ImageIO.read(new File(filePath));
-            this.image = bufferedImage;
-            revalidate();
+            this.image = ImageIO.read(new File(filePath));
+            updateScaledImage();
             repaint();
         } catch (IOException e) {
             throw new IllegalArgumentException("Errore durante il caricamento dell'immagine: " + e.getMessage(), e);
@@ -61,10 +59,9 @@ public class ImagePanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        if (getParent() != null) {
-            int parentWidth = getParent().getWidth();
-            int parentHeight = getParent().getHeight();
-            return new Dimension(parentWidth / 2, parentHeight);
+        Container parent = getParent();
+        if (parent != null) {
+            return new Dimension(parent.getWidth() / 2, parent.getHeight());
         }
         return super.getPreferredSize();
     }
@@ -72,7 +69,8 @@ public class ImagePanel extends JPanel {
     private void updateScaledImage() {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        if (panelWidth <= 0 || panelHeight <= 0) {
+        if (panelWidth <= 0 || panelHeight <= 0 || image == null) {
+            scaledImage = null;
             return;
         }
         if (panelWidth != lastWidth || panelHeight != lastHeight) {
@@ -90,19 +88,14 @@ public class ImagePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (image == null) return;
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        if (panelWidth <= 0 || panelHeight <= 0) return;
-        if (scaledImage == null || scaledImage.getWidth(this) != panelWidth || scaledImage.getHeight(this) != panelHeight) {
-            BufferedImage bufferedScaledImage = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = bufferedScaledImage.createGraphics();
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g2.drawImage(image, 0, 0, panelWidth, panelHeight, null);
-            g2.dispose();
-            scaledImage = bufferedScaledImage;
-            lastWidth = panelWidth;
-            lastHeight = panelHeight;
+        if (scaledImage == null || panelWidth != lastWidth || panelHeight != lastHeight) {
+            updateScaledImage();
         }
-        g.drawImage(scaledImage, 0, 0, this);
+        if (scaledImage != null) {
+            g.drawImage(scaledImage, 0, 0, this);
+        }
     }
 }
