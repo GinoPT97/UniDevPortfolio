@@ -81,71 +81,74 @@ public class VisioneProdottiFrame extends JFrame {
     private void azioni(Controller c) throws SQLException {
         c.allProdotti();
 
-        searchbutton.addActionListener(e -> {
-            String query = searchtf.getText().trim();
-            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel);
-            table.setRowSorter(sorter);
-            if (query.isEmpty()) {
-                sorter.setRowFilter(null);
-            } else {
-                // Permetti ricerca multipla per parole separate da spazio
-                String[] parole = query.split("\\s+");
-                try {
-                    RowFilter<DefaultTableModel, Object> filtro = new RowFilter<DefaultTableModel, Object>() {
-                        public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
-                            for (String parola : parole) {
-                                boolean trovata = false;
-                                for (int i = 0; i < entry.getValueCount(); i++) {
-                                    Object cell = entry.getValue(i);
-                                    if (cell != null && cell.toString().toLowerCase().contains(parola.toLowerCase())) {
-                                        trovata = true;
-                                        break;
-                                    }
-                                }
-                                if (!trovata) return false;
-                            }
-                            return true;
-                        }
-                    };
-                    sorter.setRowFilter(filtro);
-                    if (table.getRowCount() == 0) {
-                        JOptionPane.showMessageDialog(null, "Nessun risultato trovato.", "Info", JOptionPane.INFORMATION_MESSAGE);
-                        sorter.setRowFilter(null);
-                    }
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
+        searchbutton.addActionListener(e -> filtraTabella(c));
         addbutton.addActionListener(e -> c.visAndElem(4, 1));
-
-        updatebutton.addActionListener(e -> {
-            int i = table.getSelectedRow();
-            if (i >= 0) {
-                try {
-                    String codice = table.getValueAt(i, 0).toString();
-                    String nome = table.getValueAt(i, 1).toString();
-                    String descrizione = table.getValueAt(i, 2).toString();
-                    double prezzo = Double.parseDouble(table.getValueAt(i, 3).toString());
-                    String luogoProvenienza = table.getValueAt(i, 4).toString();
-                    boolean glutine = "Si".equals(table.getValueAt(i, 7).toString());
-                    String categoria = table.getValueAt(i, 10).toString();
-                    int scorta = Integer.parseInt(table.getValueAt(i, 11).toString());
-
-                    c.visAndElem(4, 2);
-                    c.modprodf.viewprod(codice, nome, descrizione, luogoProvenienza, prezzo, scorta, glutine, categoria);
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(),
-                            "Errore", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Scegli una riga da modificare",
-                        "Attenzione", JOptionPane.WARNING_MESSAGE);
-            }
-        });
-
+        updatebutton.addActionListener(e -> aggiornaProdotto(c));
         backbutton.addActionListener(e -> c.returnToLastFrame());
+    }
+
+    private void filtraTabella(Controller c) {
+        String query = searchtf.getText().trim();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel);
+        table.setRowSorter(sorter);
+        if (query.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            try {
+                RowFilter<DefaultTableModel, Object> filtro = creaFiltro(query);
+                sorter.setRowFilter(filtro);
+                if (table.getRowCount() == 0) {
+                    JOptionPane.showMessageDialog(null, "Nessun risultato trovato.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    sorter.setRowFilter(null);
+                }
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private RowFilter<DefaultTableModel, Object> creaFiltro(String query) {
+        String[] parole = query.split("\\s+");
+        return new RowFilter<DefaultTableModel, Object>() {
+            @Override
+            public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                for (String parola : parole) {
+                    boolean trovata = false;
+                    for (int i = 0; i < entry.getValueCount(); i++) {
+                        Object cell = entry.getValue(i);
+                        if (cell != null && cell.toString().toLowerCase().contains(parola.toLowerCase())) {
+                            trovata = true;
+                            break;
+                        }
+                    }
+                    if (!trovata) return false;
+                }
+                return true;
+            }
+        };
+    }
+
+    private void aggiornaProdotto(Controller c) {
+        int i = table.getSelectedRow();
+        if (i >= 0) {
+            try {
+                String codice = table.getValueAt(i, 0).toString();
+                String nome = table.getValueAt(i, 1).toString();
+                String descrizione = table.getValueAt(i, 2).toString();
+                double prezzo = Double.parseDouble(table.getValueAt(i, 3).toString());
+                String luogoProvenienza = table.getValueAt(i, 4).toString();
+                boolean glutine = "Si".equals(table.getValueAt(i, 7).toString());
+                String categoria = table.getValueAt(i, 10).toString();
+                int scorta = Integer.parseInt(table.getValueAt(i, 11).toString());
+
+                c.visAndElem(4, 2);
+                c.modprodf.viewprod(codice, nome, descrizione, luogoProvenienza, prezzo, scorta, glutine, categoria);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
+        }
     }
 }
 

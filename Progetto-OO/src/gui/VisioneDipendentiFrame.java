@@ -82,62 +82,68 @@ public class VisioneDipendentiFrame extends JFrame {
     private void azioni(Controller c) throws SQLException {
         c.allDipendenti();
 
-        searchbutton.addActionListener(e -> {
-            String query = searchtf.getText().trim();
-            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.dipModel);
-            table.setRowSorter(sorter);
-            if (query.isEmpty()) {
-                sorter.setRowFilter(null);
-            } else {
-                String[] parole = query.split("\\s+");
-                try {
-                    RowFilter<DefaultTableModel, Object> filtro = new RowFilter<DefaultTableModel, Object>() {
-                        public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
-                            for (String parola : parole) {
-                                boolean trovata = false;
-                                for (int i = 0; i < entry.getValueCount(); i++) {
-                                    Object cell = entry.getValue(i);
-                                    if (cell != null && cell.toString().toLowerCase().contains(parola.toLowerCase())) {
-                                        trovata = true;
-                                        break;
-                                    }
-                                }
-                                if (!trovata) return false;
-                            }
-                            return true;
-                        }
-                    };
-                    sorter.setRowFilter(filtro);
-                    if (table.getRowCount() == 0) {
-                        JOptionPane.showMessageDialog(null, "Nessun risultato trovato.", "Info", JOptionPane.INFORMATION_MESSAGE);
-                        sorter.setRowFilter(null);
-                    }
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
+        searchbutton.addActionListener(e -> filtraTabella(c));
         addbutton.addActionListener(e -> c.visAndElem(2, 1));
-
-        updatebutton.addActionListener(e -> {
-            int i = table.getSelectedRow();
-            if (i >= 0) {
-                c.visAndElem(2, 2);
-                c.updipf.viewdip(
-                        table.getValueAt(i, 0).toString(), // codDipendente
-                        table.getValueAt(i, 1).toString(), // nome
-                        table.getValueAt(i, 2).toString(), // cognome
-                        table.getValueAt(i, 3).toString(), // codFis
-                        table.getValueAt(i, 5).toString(), // indirizzo
-                        table.getValueAt(i, 4).toString(), // email
-                        table.getValueAt(i, 6).toString()  // telefono
-                );
-            } else {
-                JOptionPane.showMessageDialog(null, "Scegli una riga da modificare");
-            }
-        });
-
+        updatebutton.addActionListener(e -> aggiornaDipendente(c));
         backbutton.addActionListener(e -> c.returnToLastFrame());
+    }
+
+    private void filtraTabella(Controller c) {
+        String query = searchtf.getText().trim();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.dipModel);
+        table.setRowSorter(sorter);
+        if (query.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            try {
+                RowFilter<DefaultTableModel, Object> filtro = creaFiltro(query);
+                sorter.setRowFilter(filtro);
+                if (table.getRowCount() == 0) {
+                    JOptionPane.showMessageDialog(null, "Nessun risultato trovato.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    sorter.setRowFilter(null);
+                }
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private RowFilter<DefaultTableModel, Object> creaFiltro(String query) {
+        String[] parole = query.split("\\s+");
+        return new RowFilter<DefaultTableModel, Object>() {
+            @Override
+            public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                for (String parola : parole) {
+                    boolean trovata = false;
+                    for (int i = 0; i < entry.getValueCount(); i++) {
+                        Object cell = entry.getValue(i);
+                        if (cell != null && cell.toString().toLowerCase().contains(parola.toLowerCase())) {
+                            trovata = true;
+                            break;
+                        }
+                    }
+                    if (!trovata) return false;
+                }
+                return true;
+            }
+        };
+    }
+
+    private void aggiornaDipendente(Controller c) {
+        int i = table.getSelectedRow();
+        if (i >= 0) {
+            c.visAndElem(2, 2);
+            c.updipf.viewdip(
+                    table.getValueAt(i, 0).toString(), // codDipendente
+                    table.getValueAt(i, 1).toString(), // nome
+                    table.getValueAt(i, 2).toString(), // cognome
+                    table.getValueAt(i, 3).toString(), // codFis
+                    table.getValueAt(i, 5).toString(), // indirizzo
+                    table.getValueAt(i, 4).toString(), // email
+                    table.getValueAt(i, 6).toString()  // telefono
+            );
+        } else {
+            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare");
+        }
     }
 }

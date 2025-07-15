@@ -22,7 +22,7 @@ public class VisioneOrdineFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi(Controller c) {
+    private void elementi(Controller c) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 1000, 450);
         setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
@@ -75,46 +75,52 @@ public class VisioneOrdineFrame extends JFrame {
         return button;
     }
 
-    public void azioni(Controller c) throws SQLException {
+    private void azioni(Controller c) throws SQLException {
         c.allOrdini();
 
-        searchbutton.addActionListener(e -> {
-            String query = searchtf.getText().trim();
-            TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.ordModel);
-            table.setRowSorter(sorter);
-            if (query.isEmpty()) {
-                sorter.setRowFilter(null);
-            } else {
-                String[] parole = query.split("\\s+");
-                try {
-                    RowFilter<DefaultTableModel, Object> filtro = new RowFilter<DefaultTableModel, Object>() {
-                        public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
-                            for (String parola : parole) {
-                                boolean trovata = false;
-                                for (int i = 0; i < entry.getValueCount(); i++) {
-                                    Object cell = entry.getValue(i);
-                                    if (cell != null && cell.toString().toLowerCase().contains(parola.toLowerCase())) {
-                                        trovata = true;
-                                        break;
-                                    }
-                                }
-                                if (!trovata) return false;
-                            }
-                            return true;
-                        }
-                    };
-                    sorter.setRowFilter(filtro);
-                    if (table.getRowCount() == 0) {
-                        JOptionPane.showMessageDialog(null, "Nessun risultato trovato.", "Info", JOptionPane.INFORMATION_MESSAGE);
-                        sorter.setRowFilter(null);
-                    }
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
+        searchbutton.addActionListener(e -> filtraTabella(c));
         ordinebutton.addActionListener(e -> c.visAndElem(1, 1));
         backbutton.addActionListener(e -> c.returnToLastFrame());
+    }
+
+    private void filtraTabella(Controller c) {
+        String query = searchtf.getText().trim();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.ordModel);
+        table.setRowSorter(sorter);
+        if (query.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            try {
+                RowFilter<DefaultTableModel, Object> filtro = creaFiltro(query);
+                sorter.setRowFilter(filtro);
+                if (table.getRowCount() == 0) {
+                    JOptionPane.showMessageDialog(null, "Nessun risultato trovato.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    sorter.setRowFilter(null);
+                }
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private RowFilter<DefaultTableModel, Object> creaFiltro(String query) {
+        String[] parole = query.split("\\s+");
+        return new RowFilter<DefaultTableModel, Object>() {
+            @Override
+            public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                for (String parola : parole) {
+                    boolean trovata = false;
+                    for (int i = 0; i < entry.getValueCount(); i++) {
+                        Object cell = entry.getValue(i);
+                        if (cell != null && cell.toString().toLowerCase().contains(parola.toLowerCase())) {
+                            trovata = true;
+                            break;
+                        }
+                    }
+                    if (!trovata) return false;
+                }
+                return true;
+            }
+        };
     }
 }

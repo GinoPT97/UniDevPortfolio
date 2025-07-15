@@ -6,6 +6,10 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class DipendenteFrame extends JFrame {
+    private static final String LOGOUT = "Logout";
+    private static final String CLIENTI = "Clienti";
+    private static final String ORDINE = "Ordine";
+    private static final String PRODOTTI = "Prodotti";
     private JButton logoututton;
     private JButton clientebutton;
     private JButton ordineutton;
@@ -19,7 +23,7 @@ public class DipendenteFrame extends JFrame {
         this.azioni(c);
     }
 
-    public void elementi(JPanel titlePanel) {
+    private void elementi(JPanel titlePanel) {
         // Impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 450);
@@ -37,8 +41,8 @@ public class DipendenteFrame extends JFrame {
         titlePanel.add(titlelab, BorderLayout.CENTER);
 
         // Bottone di logout esteso orizzontalmente
-        logoututton = new JButton("Logout");
-        logoututton = new JButton("Logout", gui.IconUtils.getIconForText("Logout", Color.RED));
+        logoututton = new JButton(LOGOUT);
+        logoututton = new JButton(LOGOUT, gui.IconUtils.getIconForText(LOGOUT, Color.RED));
         logoututton.setBackground(Color.RED);
         logoututton.setForeground(Color.WHITE);
         logoututton.setFocusPainted(false);
@@ -52,8 +56,8 @@ public class DipendenteFrame extends JFrame {
         // Creazione e aggiunta dei bottoni al pannello
         buttonpanel.add(Box.createVerticalGlue());
 
-        clientebutton = new JButton("Clienti");
-        clientebutton = new JButton("Clienti", gui.IconUtils.getIconForText("Clienti", new Color(52, 152, 219)));
+        clientebutton = new JButton(CLIENTI);
+        clientebutton = new JButton(CLIENTI, gui.IconUtils.getIconForText(CLIENTI, new Color(52, 152, 219)));
         clientebutton.setBackground(new Color(52, 152, 219));
         clientebutton.setForeground(Color.WHITE);
         clientebutton.setFocusPainted(false);
@@ -72,8 +76,8 @@ public class DipendenteFrame extends JFrame {
 
         buttonpanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        ordineutton = new JButton("Ordine");
-        ordineutton = new JButton("Ordine", gui.IconUtils.getIconForText("Ordine", new Color(230, 126, 34)));
+        ordineutton = new JButton(ORDINE);
+        ordineutton = new JButton(ORDINE, gui.IconUtils.getIconForText(ORDINE, new Color(230, 126, 34)));
         ordineutton.setBackground(new Color(230, 126, 34));
         ordineutton.setForeground(Color.WHITE);
         ordineutton.setFocusPainted(false);
@@ -83,8 +87,8 @@ public class DipendenteFrame extends JFrame {
         buttonpanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         // Bottone per la gestione dei prodotti
-        prodButton = new JButton("Prodotti");
-        prodButton = new JButton("Prodotti", gui.IconUtils.getIconForText("Prodotti", new Color(155, 89, 182)));
+        prodButton = new JButton(PRODOTTI);
+        prodButton = new JButton(PRODOTTI, gui.IconUtils.getIconForText(PRODOTTI, new Color(155, 89, 182)));
         prodButton.setBackground(new Color(155, 89, 182));
         prodButton.setForeground(Color.WHITE);
         prodButton.setFocusPainted(false);
@@ -96,7 +100,7 @@ public class DipendenteFrame extends JFrame {
         contentPane.add(titlePanel, BorderLayout.WEST);
     }
 
-    public void azioni(Controller c) {
+    private void azioni(Controller c) {
         // Listener per il pulsante di logout, chiama il metodo logout del Controller con parametro 2
         logoututton.addActionListener(e -> c.logout(2));
 
