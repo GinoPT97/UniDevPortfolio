@@ -26,7 +26,6 @@ public class LoginFrame extends JFrame {
 
     private void elementi(JPanel titlePanel) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.class.getResource("/Immagini/ImmIcon.png")));
         setBounds(100, 100, 700, 450);
         setLocationRelativeTo(null);
 
