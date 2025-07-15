@@ -20,18 +20,18 @@ public class RicercaFrame extends JFrame {
     private JTable searchtable;
     private JComboBox<String> categoriacb;
     private final DefaultTableModel searchmodel = new DefaultTableModel();
-    private final Object[] searchcolonne = {"Cod Cliente", "Nome", "Cognome", "Categoria", "Punti Categoria", "Spesa Totale", "Ordini Categoria"};
+    private static final Object[] searchcolonne = {"Cod Cliente", "Nome", "Cognome", "Categoria", "Punti Categoria", "Spesa Totale", "Ordini Categoria"};
     private JButton backbutton;
     private JButton searchbutton;
     private JComboBox<String> punticb;
 
     public RicercaFrame(String title, Controller c) throws SQLException {
         super(title);
-        elementi();
-        azioni(c);
+        this.elementi();
+        this.azioni(c);
     }
 
-    public void elementi() {
+    private void elementi() {
         // Imposta l'icona del frame
         setIconImage(Toolkit.getDefaultToolkit().getImage(RicercaFrame.class.getResource("/Immagini/ImmIcon.png")));
 
@@ -95,7 +95,7 @@ public class RicercaFrame extends JFrame {
         searchmodel.setColumnIdentifiers(searchcolonne);
     }
 
-    public void azioni(Controller c) throws SQLException {
+    private void azioni(Controller c) throws SQLException {
         // Popola la tabella inizialmente con i dati dei clienti
         c.ClientSearch(searchmodel);
 
