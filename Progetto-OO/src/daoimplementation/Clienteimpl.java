@@ -8,17 +8,14 @@ import model.Tessera;
 
 public class Clienteimpl implements ClienteJDBC {
     private static final String CODCLIENTE = "codcliente"; 
-    private PreparedStatement setNewCt;
-    private PreparedStatement cercaCl;
-    private PreparedStatement updateCl;
-    private Statement getAllCt;
-    private Statement idCl;
+    private final PreparedStatement setNewCt;
+    private final PreparedStatement updateCl;
+    private final Statement getAllCt;
+    private final Statement idCl;
 
     // Costruttore
     public Clienteimpl(Connection connection) throws SQLException {
         getAllCt = connection.createStatement();
-        cercaCl = connection.prepareStatement(
-                "SELECT codcliente FROM cliente WHERE nome = ? AND cognome = ? AND codicefiscale = ?");
         setNewCt = connection.prepareStatement("INSERT INTO cliente (nome, cognome, codicefiscale, indirizzo, telefono, email) VALUES (?, ?, ?, ?, ?, ?)");
         updateCl = connection.prepareStatement(
                 "UPDATE cliente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE codcliente = ?");
