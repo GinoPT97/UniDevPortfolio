@@ -83,11 +83,11 @@ public class RicercaFrame extends JFrame {
         punticb = new JComboBox<>(OPZIONI_PUNTI);
         filterPanel.add(punticb);
 
-        searchbutton = new JButton("Ricerca");
+        searchbutton = new JButton("Ricerca", gui.IconUtils.getIconForText("Ricerca", new Color(52, 152, 219)));
         searchbutton.setBackground(new Color(30, 144, 255));
         buttonPanel.add(searchbutton);
 
-        backbutton = new JButton("Indietro");
+        backbutton = new JButton("Indietro", gui.IconUtils.getIconForText("Indietro", Color.RED));
         backbutton.setBackground(Color.RED);
         buttonPanel.add(backbutton);
 

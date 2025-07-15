@@ -37,27 +37,47 @@ public class AdminFrame extends JFrame {
 
         buttonpanel.add(Box.createVerticalGlue());
 
-        dipbutton = new JButton("Dipendenti");
+        dipbutton = new JButton("Dipendenti", gui.IconUtils.getIconForText("Dipendenti", new Color(52, 152, 219)));
+        dipbutton = new JButton("Dipendenti", gui.IconUtils.getIconForText("Dipendenti", new Color(52, 152, 219)));
+        dipbutton.setBackground(new Color(52, 152, 219));
+        dipbutton.setForeground(Color.WHITE);
+        dipbutton.setFocusPainted(false);
         dipbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(dipbutton);
         buttonpanel.add(Box.createVerticalStrut(10));
 
-        statistichebutton = new JButton("Statistiche");
+        statistichebutton = new JButton("Statistiche", gui.IconUtils.getIconForText("Statistiche", new Color(39, 174, 96)));
+        statistichebutton = new JButton("Statistiche", gui.IconUtils.getIconForText("Statistiche", new Color(39, 174, 96)));
+        statistichebutton.setBackground(new Color(39, 174, 96));
+        statistichebutton.setForeground(Color.WHITE);
+        statistichebutton.setFocusPainted(false);
         statistichebutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(statistichebutton);
         buttonpanel.add(Box.createVerticalStrut(10));
 
-        searchbutton = new JButton("Ricerca Clienti");
+        searchbutton = new JButton("Ricerca Clienti", gui.IconUtils.getIconForText("Ricerca", new Color(241, 196, 15)));
+        searchbutton = new JButton("Ricerca Clienti", gui.IconUtils.getIconForText("Ricerca", new Color(241, 196, 15)));
+        searchbutton.setBackground(new Color(241, 196, 15));
+        searchbutton.setForeground(Color.WHITE);
+        searchbutton.setFocusPainted(false);
         searchbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(searchbutton);
         buttonpanel.add(Box.createVerticalStrut(10));
 
-        prodbutton = new JButton("Prodotti");
+        prodbutton = new JButton("Prodotti", gui.IconUtils.getIconForText("Prodotti", new Color(155, 89, 182)));
+        prodbutton = new JButton("Prodotti", gui.IconUtils.getIconForText("Prodotti", new Color(155, 89, 182)));
+        prodbutton.setBackground(new Color(155, 89, 182));
+        prodbutton.setForeground(Color.WHITE);
+        prodbutton.setFocusPainted(false);
         prodbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(prodbutton);
         buttonpanel.add(Box.createVerticalStrut(10));
 
-        visordbutt = new JButton("Ordini");
+        visordbutt = new JButton("Ordini", gui.IconUtils.getIconForText("Ordini", new Color(230, 126, 34)));
+        visordbutt = new JButton("Ordini", gui.IconUtils.getIconForText("Ordini", new Color(230, 126, 34)));
+        visordbutt.setBackground(new Color(230, 126, 34));
+        visordbutt.setForeground(Color.WHITE);
+        visordbutt.setFocusPainted(false);
         visordbutt.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(visordbutt);
 
@@ -71,8 +91,10 @@ public class AdminFrame extends JFrame {
 
         // Bottone di logout che occupa l'intera larghezza del pannello
         logoutbutton = new JButton("Logout");
+        logoutbutton = new JButton("Logout", gui.IconUtils.getIconForText("Logout", Color.RED));
         logoutbutton.setBackground(Color.RED);
         logoutbutton.setForeground(Color.WHITE);
+        logoutbutton.setFocusPainted(false);
         titlePanel.add(logoutbutton, BorderLayout.SOUTH);
 
         // Aggiungi il pannello dell'immagine

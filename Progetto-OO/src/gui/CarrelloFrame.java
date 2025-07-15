@@ -139,10 +139,11 @@ public class CarrelloFrame extends JFrame {
     }
 
     private JButton createButton(String text, Color color) {
-        JButton button = new JButton(text);
+        JButton button = new JButton(text, IconUtils.getIconForText(text, color));
         button.setBackground(color);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         return button;
     }
 

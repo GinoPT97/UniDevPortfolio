@@ -38,8 +38,10 @@ public class DipendenteFrame extends JFrame {
 
         // Bottone di logout esteso orizzontalmente
         logoututton = new JButton("Logout");
+        logoututton = new JButton("Logout", gui.IconUtils.getIconForText("Logout", Color.RED));
         logoututton.setBackground(Color.RED);
         logoututton.setForeground(Color.WHITE);
+        logoututton.setFocusPainted(false);
         titlePanel.add(logoututton, BorderLayout.SOUTH);
 
         // Pannello per i bottoni centrati
@@ -51,18 +53,30 @@ public class DipendenteFrame extends JFrame {
         buttonpanel.add(Box.createVerticalGlue());
 
         clientebutton = new JButton("Clienti");
+        clientebutton = new JButton("Clienti", gui.IconUtils.getIconForText("Clienti", new Color(52, 152, 219)));
+        clientebutton.setBackground(new Color(52, 152, 219));
+        clientebutton.setForeground(Color.WHITE);
+        clientebutton.setFocusPainted(false);
         clientebutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(clientebutton);
 
         buttonpanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         searchbutton = new JButton("Ricerca Clienti");
+        searchbutton = new JButton("Ricerca Clienti", gui.IconUtils.getIconForText("Ricerca", new Color(241, 196, 15)));
+        searchbutton.setBackground(new Color(241, 196, 15));
+        searchbutton.setForeground(Color.WHITE);
+        searchbutton.setFocusPainted(false);
         searchbutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(searchbutton);
 
         buttonpanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         ordineutton = new JButton("Ordine");
+        ordineutton = new JButton("Ordine", gui.IconUtils.getIconForText("Ordine", new Color(230, 126, 34)));
+        ordineutton.setBackground(new Color(230, 126, 34));
+        ordineutton.setForeground(Color.WHITE);
+        ordineutton.setFocusPainted(false);
         ordineutton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(ordineutton);
 
@@ -70,6 +84,10 @@ public class DipendenteFrame extends JFrame {
 
         // Bottone per la gestione dei prodotti
         prodButton = new JButton("Prodotti");
+        prodButton = new JButton("Prodotti", gui.IconUtils.getIconForText("Prodotti", new Color(155, 89, 182)));
+        prodButton.setBackground(new Color(155, 89, 182));
+        prodButton.setForeground(Color.WHITE);
+        prodButton.setFocusPainted(false);
         prodButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonpanel.add(prodButton);
 

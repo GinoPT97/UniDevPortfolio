@@ -71,10 +71,12 @@ public class NuovoClienteFrame extends JFrame {
     }
 
     private JButton creaButton(String text, Color color) {
-        JButton button = new JButton(text);
+        JButton button = new JButton(text, IconUtils.getIconForText(text, color));
         button.setBackground(color);
         button.setForeground(Color.WHITE);
         button.setFont(new Font("Tahoma", Font.BOLD, 14));
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
         return button;
     }
 

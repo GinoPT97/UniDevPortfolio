@@ -57,7 +57,10 @@ public class StatisticheDipendentiFrame extends JFrame {
         finalTF = new JTextField(10);
         periodoCB = new JComboBox<>(datacb);
         periodoCB.setMaximumRowCount(5);
-        selectButton = new JButton("Seleziona");
+        selectButton = new JButton("Seleziona", gui.IconUtils.getIconForText("Seleziona", new Color(46, 204, 113)));
+        selectButton.setBackground(new Color(46, 204, 113));
+        selectButton.setForeground(Color.WHITE);
+        selectButton.setFocusPainted(false);
 
         searchLayout.setAutoCreateGaps(true);
         searchLayout.setAutoCreateContainerGaps(true);
@@ -186,16 +189,22 @@ public class StatisticheDipendentiFrame extends JFrame {
         // Pannello dei pulsanti
         buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        searchButton = new JButton("Cerca");
-        searchButton.setBackground(Color.GREEN);
+        searchButton = new JButton("Cerca", gui.IconUtils.getIconForText("Cerca", new Color(52, 152, 219)));
+        searchButton.setBackground(new Color(52, 152, 219));
+        searchButton.setForeground(Color.WHITE);
+        searchButton.setFocusPainted(false);
         buttonPanel.add(searchButton);
 
-        clearButton = new JButton("Pulisci");
-        clearButton.setBackground(Color.WHITE);
+        clearButton = new JButton("Pulisci", gui.IconUtils.getIconForText("Pulisci", new Color(255, 140, 0)));
+        clearButton.setBackground(new Color(255, 140, 0));
+        clearButton.setForeground(Color.WHITE);
+        clearButton.setFocusPainted(false);
         buttonPanel.add(clearButton);
 
-        backButton = new JButton("Indietro");
-        backButton.setBackground(Color.RED);
+        backButton = new JButton("Indietro", gui.IconUtils.getIconForText("Indietro", new Color(178, 34, 34)));
+        backButton.setBackground(new Color(178, 34, 34));
+        backButton.setForeground(Color.WHITE);
+        backButton.setFocusPainted(false);
         buttonPanel.add(backButton);
 
         contentPane.add(buttonPanel, BorderLayout.SOUTH);
