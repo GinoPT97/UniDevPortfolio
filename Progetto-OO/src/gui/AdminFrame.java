@@ -6,6 +6,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class AdminFrame extends JFrame {
+    private static final String DIPENDENTI = "Dipendenti";
+    private static final String STATISTICHE = "Statistiche";
+    private static final String PRODOTTI = "Prodotti";
+    private static final String ORDINI = "Ordini";
+    private static final String LOGOUT = "Logout";
     private JButton logoutbutton;
     private JButton statistichebutton;
     private JButton dipbutton;
@@ -37,8 +42,8 @@ public class AdminFrame extends JFrame {
 
         buttonpanel.add(Box.createVerticalGlue());
 
-        dipbutton = new JButton("Dipendenti", gui.IconUtils.getIconForText("Dipendenti", new Color(52, 152, 219)));
-        dipbutton = new JButton("Dipendenti", gui.IconUtils.getIconForText("Dipendenti", new Color(52, 152, 219)));
+        dipbutton = new JButton(DIPENDENTI, gui.IconUtils.getIconForText(DIPENDENTI, new Color(52, 152, 219)));
+        dipbutton = new JButton(DIPENDENTI, gui.IconUtils.getIconForText(DIPENDENTI, new Color(52, 152, 219)));
         dipbutton.setBackground(new Color(52, 152, 219));
         dipbutton.setForeground(Color.WHITE);
         dipbutton.setFocusPainted(false);
@@ -46,8 +51,8 @@ public class AdminFrame extends JFrame {
         buttonpanel.add(dipbutton);
         buttonpanel.add(Box.createVerticalStrut(10));
 
-        statistichebutton = new JButton("Statistiche", gui.IconUtils.getIconForText("Statistiche", new Color(39, 174, 96)));
-        statistichebutton = new JButton("Statistiche", gui.IconUtils.getIconForText("Statistiche", new Color(39, 174, 96)));
+        statistichebutton = new JButton(STATISTICHE, gui.IconUtils.getIconForText(STATISTICHE, new Color(39, 174, 96)));
+        statistichebutton = new JButton(STATISTICHE, gui.IconUtils.getIconForText(STATISTICHE, new Color(39, 174, 96)));
         statistichebutton.setBackground(new Color(39, 174, 96));
         statistichebutton.setForeground(Color.WHITE);
         statistichebutton.setFocusPainted(false);
@@ -64,8 +69,8 @@ public class AdminFrame extends JFrame {
         buttonpanel.add(searchbutton);
         buttonpanel.add(Box.createVerticalStrut(10));
 
-        prodbutton = new JButton("Prodotti", gui.IconUtils.getIconForText("Prodotti", new Color(155, 89, 182)));
-        prodbutton = new JButton("Prodotti", gui.IconUtils.getIconForText("Prodotti", new Color(155, 89, 182)));
+        prodbutton = new JButton(PRODOTTI, gui.IconUtils.getIconForText(PRODOTTI, new Color(155, 89, 182)));
+        prodbutton = new JButton(PRODOTTI, gui.IconUtils.getIconForText(PRODOTTI, new Color(155, 89, 182)));
         prodbutton.setBackground(new Color(155, 89, 182));
         prodbutton.setForeground(Color.WHITE);
         prodbutton.setFocusPainted(false);
@@ -73,8 +78,8 @@ public class AdminFrame extends JFrame {
         buttonpanel.add(prodbutton);
         buttonpanel.add(Box.createVerticalStrut(10));
 
-        visordbutt = new JButton("Ordini", gui.IconUtils.getIconForText("Ordini", new Color(230, 126, 34)));
-        visordbutt = new JButton("Ordini", gui.IconUtils.getIconForText("Ordini", new Color(230, 126, 34)));
+        visordbutt = new JButton(ORDINI, gui.IconUtils.getIconForText(ORDINI, new Color(230, 126, 34)));
+        visordbutt = new JButton(ORDINI, gui.IconUtils.getIconForText(ORDINI, new Color(230, 126, 34)));
         visordbutt.setBackground(new Color(230, 126, 34));
         visordbutt.setForeground(Color.WHITE);
         visordbutt.setFocusPainted(false);
@@ -90,8 +95,8 @@ public class AdminFrame extends JFrame {
         titlePanel.add(titlelabel, BorderLayout.NORTH);
 
         // Bottone di logout che occupa l'intera larghezza del pannello
-        logoutbutton = new JButton("Logout");
-        logoutbutton = new JButton("Logout", gui.IconUtils.getIconForText("Logout", Color.RED));
+        logoutbutton = new JButton(LOGOUT);
+        logoutbutton = new JButton(LOGOUT, gui.IconUtils.getIconForText(LOGOUT, Color.RED));
         logoutbutton.setBackground(Color.RED);
         logoutbutton.setForeground(Color.WHITE);
         logoutbutton.setFocusPainted(false);
