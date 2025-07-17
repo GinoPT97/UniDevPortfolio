@@ -47,6 +47,16 @@ public class VisioneOrdineFrame extends JFrame {
 
         table = new JTable(c.ordModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setAutoCreateRowSorter(true);
+        table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) c.setBackground(row % 2 == 0 ? java.awt.Color.WHITE : new java.awt.Color(240,240,240));
+                return c;
+            }
+        });
+        table.getTableHeader().setToolTipText("Clicca per ordinare la colonna");
         scrollPane.setViewportView(table);
 
         JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

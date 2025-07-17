@@ -66,6 +66,16 @@ public class RicercaFrame extends JFrame {
         searchtable = new JTable();
         searchtable.setModel(searchmodel);
         searchtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        searchtable.setAutoCreateRowSorter(true);
+        searchtable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) c.setBackground(row % 2 == 0 ? java.awt.Color.WHITE : new java.awt.Color(240,240,240));
+                return c;
+            }
+        });
+        searchtable.getTableHeader().setToolTipText("Clicca per ordinare la colonna");
         scrollPane.setViewportView(searchtable);
 
         // Pannello dei pulsanti

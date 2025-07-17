@@ -84,11 +84,31 @@ public class CarrelloFrame extends JFrame {
 
     private JPanel createProductTable() {
         prodottotable = new JTable(new DefaultTableModel(PROD_COLUMNS, 0));
+        prodottotable.setAutoCreateRowSorter(true);
+        prodottotable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) c.setBackground(row % 2 == 0 ? java.awt.Color.WHITE : new java.awt.Color(240,240,240));
+                return c;
+            }
+        });
+        prodottotable.getTableHeader().setToolTipText("Clicca per ordinare la colonna");
         return createTablePanel("Prodotti Disponibili", prodottotable);
     }
 
     private JPanel createOrderTable() {
         ordinetable = new JTable(ordModel);
+        ordinetable.setAutoCreateRowSorter(true);
+        ordinetable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) c.setBackground(row % 2 == 0 ? java.awt.Color.WHITE : new java.awt.Color(240,240,240));
+                return c;
+            }
+        });
+        ordinetable.getTableHeader().setToolTipText("Clicca per ordinare la colonna");
         ordModel.setColumnIdentifiers(ORDINE_COLUMNS);
         return createTablePanel("Ordine Corrente", ordinetable);
     }
