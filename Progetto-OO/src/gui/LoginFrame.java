@@ -49,7 +49,7 @@ public class LoginFrame extends JFrame {
         idLab.setAlignmentX(CENTER_ALIGNMENT);
         infoPanel.add(idLab);
 
-        idtf = new JTextField("00000", 10);
+        idtf = new JTextField("", 10);
         idtf.setHorizontalAlignment(SwingConstants.CENTER);
         idtf.setMaximumSize(new Dimension(200, 30));
         infoPanel.add(idtf);
@@ -88,7 +88,7 @@ public class LoginFrame extends JFrame {
         logbutt.addActionListener(e -> {
             try {
                 String id = idtf.getText();
-                if ("00000".equals(id) || "0".equals(id)) {
+                if ("0".equals(id)) {
                     c.iddip = id;
                     c.logtoutente(1);
                     showMessage("Accesso Admin");
