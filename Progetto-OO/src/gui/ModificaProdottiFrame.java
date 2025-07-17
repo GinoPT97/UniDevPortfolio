@@ -6,10 +6,8 @@ import java.awt.event.ItemEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.JTextComponent;
 
 public class ModificaProdottiFrame extends JFrame {
     // Costanti per le categorie
@@ -176,17 +174,75 @@ public class ModificaProdottiFrame extends JFrame {
         }
     }
 
+
     public void clean() {
-        nometf.setText("");
+        JTextField[] textFields = {nometf, provtf, prezzotf, racctf, mungtf, prodtf, scadtf, scortatf};
+        for (JTextField tf : textFields) {
+            tf.setText("");
+            tf.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+        }
         descta.setText("");
-        prezzotf.setText("");
-        provtf.setText("");
-        scortatf.setText("");
-        racctf.setText("");
-        mungtf.setText("");
-        prodtf.setText("");
-        scadtf.setText("");
+        descta.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextArea.border"));
         glutcb.setSelected(false);
+    }
+
+    private boolean validateFields() {
+        boolean valid = true;
+        int firstError = -1;
+        // Campi obbligatori: nome, descrizione, provenienza, prezzo, scorta
+        JTextField[] obbligatori = {nometf, provtf, prezzotf, scortatf};
+        for (int i = 0; i < obbligatori.length; i++) {
+            JTextField tf = obbligatori[i];
+            String text = tf.getText().trim();
+            tf.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+            if (text.isEmpty()) {
+                tf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                valid = false;
+                if (firstError == -1) firstError = i;
+            }
+        }
+        descta.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextArea.border"));
+        if (descta.getText().trim().isEmpty()) {
+            descta.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+            valid = false;
+            if (firstError == -1) firstError = obbligatori.length;
+        }
+        // Prezzo numerico
+        String prezzo = prezzotf.getText().trim();
+        if (!prezzo.isEmpty()) {
+            try {
+                Double.parseDouble(prezzo);
+            } catch (NumberFormatException ex) {
+                prezzotf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                valid = false;
+                if (firstError == -1) firstError = 2;
+            }
+        }
+        // Scorta numerica
+        String scorta = scortatf.getText().trim();
+        if (!scorta.isEmpty() && !scorta.matches("^\\d+$")) {
+            scortatf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+            valid = false;
+            if (firstError == -1) firstError = 3;
+        }
+        // Date: formato yyyy-MM-dd se non vuote
+        JTextField[] dateFields = {racctf, mungtf, prodtf, scadtf};
+        for (int i = 0; i < dateFields.length; i++) {
+            JTextField tf = dateFields[i];
+            String text = tf.getText().trim();
+            if (!text.isEmpty() && !text.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
+                tf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                valid = false;
+                if (firstError == -1) firstError = obbligatori.length + 1 + i;
+            }
+        }
+        // Focus sul primo errore
+        if (!valid && firstError != -1) {
+            if (firstError < obbligatori.length) obbligatori[firstError].requestFocus();
+            else if (firstError == obbligatori.length) descta.requestFocus();
+            else dateFields[firstError - obbligatori.length - 1].requestFocus();
+        }
+        return valid;
     }
 
     private void azioni(Controller c) {
@@ -230,35 +286,25 @@ public class ModificaProdottiFrame extends JFrame {
 
         // Gestione del pulsante "Inserisci/Modifica"
         updatebutton.addActionListener(e -> {
+            if (!validateFields()) {
+                JOptionPane.showMessageDialog(this, "Compila correttamente tutti i campi obbligatori.\nControlla i valori numerici e le date.", "Errore di validazione", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             try {
-                // Verifica se i campi obbligatori sono compilati
-                List<JTextComponent> mandatoryFields = List.of(nometf, descta, prezzotf, provtf, scortatf);
-                if (mandatoryFields.stream().anyMatch(field -> field.getText().isEmpty())) {
-                    JOptionPane.showMessageDialog(this, "Inserisci tutti i campi obbligatori", "Errore", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
-                // Aggiorna il prodotto nel database utilizzando il metodo refactorizzato
                 String categoria = categoriacb.getSelectedItem().toString();
-                
-                // Gestione delle date in base alla categoria
                 java.sql.Date dataRaccolta = null;
                 java.sql.Date dataMungitura = null;
                 java.sql.Date dataScadenza = null;
-                
                 if ((FRUTTA.equals(categoria) || VERDURA.equals(categoria)) && !racctf.getText().trim().isEmpty()) {
                     dataRaccolta = new java.sql.Date(dateFormat.parse(racctf.getText()).getTime());
                 }
-                
                 if (LATTICINI.equals(categoria) && !mungtf.getText().trim().isEmpty()) {
                     dataMungitura = new java.sql.Date(dateFormat.parse(mungtf.getText()).getTime());
                 }
-                
                 if ((UOVA.equals(categoria) || CONFEZIONATI.equals(categoria) || LATTICINI.equals(categoria)) && !scadtf.getText().trim().isEmpty()) {
                     dataScadenza = new java.sql.Date(dateFormat.parse(scadtf.getText()).getTime());
                 }
-                
                 c.upprod(
                         cod,
                         nometf.getText(),
@@ -272,9 +318,7 @@ public class ModificaProdottiFrame extends JFrame {
                         categoria,
                         Integer.parseInt(scortatf.getText())
                 );
-
                 JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
-
                 clean();
                 c.visAndElem(4, 3);
             } catch (NumberFormatException | ParseException | java.sql.SQLException ex) {

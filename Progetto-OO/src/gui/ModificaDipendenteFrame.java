@@ -76,8 +76,44 @@ public class ModificaDipendenteFrame extends JFrame {
         return button;
     }
 
+
     public void clean() {
-        for (JTextField field : fields) field.setText("");
+        for (JTextField field : fields) {
+            field.setText("");
+            field.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+        }
+    }
+
+    private boolean validateFields() {
+        boolean valid = true;
+        int firstError = -1;
+        for (int i = 0; i < fields.length; i++) {
+            String text = fields[i].getText().trim();
+            fields[i].setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+            if (text.isEmpty()) {
+                fields[i].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                valid = false;
+                if (firstError == -1) firstError = i;
+            }
+        }
+        // Email semplice
+        String email = fields[3].getText().trim();
+        if (!email.isEmpty() && !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            fields[3].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+            valid = false;
+            if (firstError == -1) firstError = 3;
+        }
+        // Telefono numerico
+        String tel = fields[5].getText().trim();
+        if (!tel.isEmpty() && !tel.matches("^\\d{6,15}$")) {
+            fields[5].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+            valid = false;
+            if (firstError == -1) firstError = 5;
+        }
+        if (!valid && firstError != -1) {
+            fields[firstError].requestFocus();
+        }
+        return valid;
     }
 
     public void viewdip(String codDip, String nome, String cognome, String codFis, String indirizzo, String email, String telefono) {
@@ -93,6 +129,10 @@ public class ModificaDipendenteFrame extends JFrame {
     private void azioni(Controller c) {
         backbutton.addActionListener(e -> { clean(); c.visAndElem(2, 3); });
         addbutton.addActionListener(e -> {
+            if (!validateFields()) {
+                JOptionPane.showMessageDialog(this, "Compila correttamente tutti i campi obbligatori.\nControlla email e telefono.", "Errore di validazione", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             try {
                 c.updip(
                         cod,

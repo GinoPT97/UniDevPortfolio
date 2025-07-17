@@ -127,27 +127,92 @@ public class NuovoProdottoFrame extends JFrame {
         return button;
     }
 
+
     public void clean() {
         for (int i = 0; i < fields.length; i++) {
-            if (fields[i] instanceof JTextField tf) tf.setText("");
-            if (fields[i] instanceof JTextArea ta) ta.setText("");
+            if (fields[i] instanceof JTextField tf) {
+                tf.setText("");
+                tf.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+            }
+            if (fields[i] instanceof JTextArea ta) {
+                ta.setText("");
+                ta.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextArea.border"));
+            }
             if (fields[i] instanceof JCheckBox cb) cb.setSelected(false);
         }
+    }
+
+    private boolean validateFields() {
+        boolean valid = true;
+        int firstError = -1;
+        // Campi obbligatori: nome, descrizione, provenienza, prezzo, scorta
+        int[] obbligatori = {0, 1, 2, 3, 9};
+        for (int idx : obbligatori) {
+            if (fields[idx] instanceof JTextField tf) {
+                String text = tf.getText().trim();
+                tf.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+                if (text.isEmpty()) {
+                    tf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                    valid = false;
+                    if (firstError == -1) firstError = idx;
+                }
+            } else if (fields[idx] instanceof JTextArea ta) {
+                String text = ta.getText().trim();
+                ta.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextArea.border"));
+                if (text.isEmpty()) {
+                    ta.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                    valid = false;
+                    if (firstError == -1) firstError = idx;
+                }
+            }
+        }
+        // Prezzo numerico
+        String prezzo = ((JTextField)fields[3]).getText().trim();
+        if (!prezzo.isEmpty()) {
+            try {
+                Double.parseDouble(prezzo);
+            } catch (NumberFormatException ex) {
+                ((JTextField)fields[3]).setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                valid = false;
+                if (firstError == -1) firstError = 3;
+            }
+        }
+        // Scorta numerica
+        String scorta = ((JTextField)fields[9]).getText().trim();
+        if (!scorta.isEmpty() && !scorta.matches("^\\d+$")) {
+            ((JTextField)fields[9]).setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+            valid = false;
+            if (firstError == -1) firstError = 9;
+        }
+        // Date: formato yyyy-MM-dd se non vuote
+        int[] dateIdx = {4, 5, 6, 8};
+        for (int idx : dateIdx) {
+            if (fields[idx] instanceof JTextField tf) {
+                String text = tf.getText().trim();
+                if (!text.isEmpty() && !text.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
+                    tf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                    valid = false;
+                    if (firstError == -1) firstError = idx;
+                }
+            }
+        }
+        if (!valid && firstError != -1) {
+            if (fields[firstError] instanceof JTextField tf) tf.requestFocus();
+            if (fields[firstError] instanceof JTextArea ta) ta.requestFocus();
+        }
+        return valid;
     }
 
     private void azioni(Controller c) {
         clearbutton.addActionListener(e -> clean());
         backbutton.addActionListener(e -> { clean(); c.visAndElem(4, 3); });
         insertbutton.addActionListener(e -> {
+            if (!validateFields()) {
+                JOptionPane.showMessageDialog(null, "Compila correttamente tutti i campi obbligatori.\nControlla i valori numerici e le date.", "Errore di validazione", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
             try {
-                // Verifica che tutti i campi obbligatori siano compilati
-                if (((JTextField)fields[0]).getText().isEmpty() || ((JTextArea)fields[1]).getText().isEmpty() ||
-                        ((JTextField)fields[3]).getText().isEmpty() || ((JTextField)fields[2]).getText().isEmpty() ||
-                        ((JTextField)fields[9]).getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Inserisci tutti i componenti");
-                    return;
-                }
                 String categoria = categoriacb.getSelectedItem().toString();
                 c.newprod(
                         "",
