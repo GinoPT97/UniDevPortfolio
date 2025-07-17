@@ -51,16 +51,16 @@ public class NuovoProdottoFrame extends JFrame {
         contentPane.add(elempanel, BorderLayout.CENTER);
 
         // Inizializza i componenti e li inserisce nell'array
-        fields[0] = new JTextField(10); // Nome
-        fields[1] = new JTextArea(2, 10); // Descrizione
-        fields[2] = new JTextField(10); // Provenienza
-        fields[3] = new JTextField(10); // Prezzo
-        fields[4] = new JTextField(10); // Data Raccolta
-        fields[5] = new JTextField(10); // Data Mungitura
-        fields[6] = new JTextField(10); // Data Produzione
+        fields[0] = new JTextField(20); // Nome
+        fields[1] = new JTextArea(2, 20); // Descrizione
+        fields[2] = new JTextField(20); // Provenienza
+        fields[3] = new JTextField(20); // Prezzo
+        fields[4] = new JTextField(20); // Data Raccolta
+        fields[5] = new JTextField(20); // Data Mungitura
+        fields[6] = new JTextField(20); // Data Produzione
         fields[7] = new JCheckBox("Si"); // Glutine
-        fields[8] = new JTextField(10); // Data Scadenza
-        fields[9] = new JTextField(10); // Scorta
+        fields[8] = new JTextField(20); // Data Scadenza
+        fields[9] = new JTextField(20); // Scorta
 
         for (int i = 0; i < labels.length; i++) {
             if (i == 1) {

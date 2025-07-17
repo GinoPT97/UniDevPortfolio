@@ -48,24 +48,37 @@ public class ModificaClienteFrame extends JFrame {
         buttonpanel.add(backbutton);
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-        JPanel elempanel = new JPanel();
-        elempanel.setBorder(new EmptyBorder(20, 50, 20, 50));
-        elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
+        JPanel elempanel = new JPanel(new GridBagLayout());
+        elempanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createEmptyBorder(30, 60, 30, 60),
+            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
+                "Dati Cliente", 0, 0, new Font("Tahoma", Font.BOLD, 18), new Color(85, 107, 47))));
         contentPane.add(elempanel, BorderLayout.CENTER);
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+
+        int labelWidth = 120;
+        Font labelFont = new Font("Tahoma", Font.BOLD, 16);
+        Font fieldFont = new Font("Tahoma", Font.PLAIN, 16);
+
         for (int i = 0; i < labels.length; i++) {
-            fields[i] = new JTextField(10);
-            elempanel.add(createInputPanel(labels[i], fields[i]));
+            fields[i] = new JTextField(20);
+            fields[i].setFont(fieldFont);
+            JLabel label = new JLabel(labels[i]);
+            label.setPreferredSize(new Dimension(labelWidth, 30));
+            label.setFont(labelFont);
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            elempanel.add(label, gbc);
+            gbc.gridx = 1;
+            elempanel.add(fields[i], gbc);
         }
     }
 
-    private JPanel createInputPanel(String labelText, JTextField textField) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel label = new JLabel(labelText);
-        panel.add(label);
-        panel.add(textField);
-        return panel;
-    }
 
     private JButton creaButton(String text, Color color) {
         JButton button = new JButton(text, gui.IconUtils.getIconForText(text, color));

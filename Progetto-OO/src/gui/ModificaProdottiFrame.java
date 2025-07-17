@@ -58,16 +58,16 @@ public class ModificaProdottiFrame extends JFrame {
         elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
 
         // Inizializza i componenti prima di usarli
-        nometf = new JTextField(10);
-        descta = new JTextArea(1, 10);
-        provtf = new JTextField(10);
-        prezzotf = new JTextField(10);
-        racctf = new JTextField(10);
-        mungtf = new JTextField(10);
-        prodtf = new JTextField(10);
+        nometf = new JTextField(20);
+        descta = new JTextArea(1, 20);
+        provtf = new JTextField(20);
+        prezzotf = new JTextField(20);
+        racctf = new JTextField(20);
+        mungtf = new JTextField(20);
+        prodtf = new JTextField(20);
         glutcb = new JCheckBox("Si");
-        scadtf = new JTextField(10);
-        scortatf = new JTextField(10);
+        scadtf = new JTextField(20);
+        scortatf = new JTextField(20);
         
         // Crea i pannelli di input
         elempanel.add(createInputPanel("Nome :", nometf));

@@ -45,7 +45,7 @@ public class NuovoDipendenteFrame extends JFrame {
         contentPane.add(elempanel, BorderLayout.CENTER);
 
         for (int i = 0; i < labels.length; i++) {
-            fields[i] = new JTextField(10);
+            fields[i] = new JTextField(20);
             elempanel.add(createInputPanel(labels[i], fields[i]));
         }
 
