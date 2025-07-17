@@ -11,7 +11,8 @@ public class CarrelloFrame extends JFrame {
     private static final String ERROR_TITLE = "Errore";
     private static final String CATEGORIA_TUTTI = "Tutti";
     private static final String FONT_TAHOMA = "Tahoma";
-    private static final String[] CATEGORIE = {CATEGORIA_TUTTI, "Ortofrutticoli", "Inscatolati", "Latticini", "Farinacei"};
+    // Categorie allineate a NuovoProdottoFrame
+    private static final String[] CATEGORIE = {CATEGORIA_TUTTI, "Frutta", "Verdura", "Farinacei", "Latticini", "Uova", "Confezionati"};
     private static final String[] PROD_COLUMNS = {"Id", "Nome", "Prezzo", "Categoria", "Scorta"};
     private static final String[] ORDINE_COLUMNS = {"Id", "Nome", "Prezzo", "Categoria", "Quantita"};
     
@@ -207,13 +208,13 @@ public class CarrelloFrame extends JFrame {
     }
 
     private void filtraProdotti(Controller c) {
-        String categoria = (String) categoriacb.getSelectedItem();
+        String categoriaSelezionata = (String) categoriacb.getSelectedItem();
         DefaultTableModel filteredModel = new DefaultTableModel();
         filteredModel.setColumnIdentifiers(PROD_COLUMNS);
 
         for (int i = 0; i < c.prodModel.getRowCount(); i++) {
             String categoriaProdotto = c.prodModel.getValueAt(i, 10).toString();
-            if (CATEGORIA_TUTTI.equals(categoria) || categoriaProdotto.equals(categoria)) {
+            if (categoriaMatch(categoriaSelezionata, categoriaProdotto)) {
                 filteredModel.addRow(new Object[]{
                     c.prodModel.getValueAt(i, 0), c.prodModel.getValueAt(i, 1),
                     c.prodModel.getValueAt(i, 3), categoriaProdotto, c.prodModel.getValueAt(i, 11)
@@ -221,6 +222,20 @@ public class CarrelloFrame extends JFrame {
             }
         }
         prodottotable.setModel(filteredModel);
+    }
+
+    // Estrae la logica di confronto categoria per ridurre la complessità cognitiva
+    private boolean categoriaMatch(String categoriaSelezionata, String categoriaProdotto) {
+        String catProdNorm = categoriaProdotto.trim().toLowerCase();
+        String catSelNorm = categoriaSelezionata.trim().toLowerCase();
+        return catSelNorm.equals(CATEGORIA_TUTTI.toLowerCase())
+            || catProdNorm.equals(catSelNorm)
+            || (catSelNorm.equals("frutta") && catProdNorm.contains("frutta"))
+            || (catSelNorm.equals("verdura") && catProdNorm.contains("verdura"))
+            || (catSelNorm.equals("farinacei") && catProdNorm.contains("farinacei"))
+            || (catSelNorm.equals("latticini") && catProdNorm.contains("latticini"))
+            || (catSelNorm.equals("uova") && catProdNorm.contains("uova"))
+            || (catSelNorm.equals("confezionati") && (catProdNorm.contains("inscatolati") || catProdNorm.contains("confezionati")));
     }
 
     private void inserisciProdotto() {
