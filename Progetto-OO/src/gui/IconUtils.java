@@ -76,9 +76,45 @@ public class IconUtils {
                 g.drawLine(8, 10, 12, 10);
                 g.drawLine(8, 13, 12, 13);
             }
-            case "clienti", "cliente", "dipendenti", "dipendente" -> { // Utente
-                g.drawOval(7, 5, 6, 6);
-                g.drawArc(6, 10, 8, 4, 0, 180);
+            case "clienti", "cliente" -> { // Omino con borsa in mano, proporzioni armoniche
+                g.setStroke(new BasicStroke(2f));
+                g.drawOval(7, 4, 6, 6); // Testa più piccola
+                // Corpo
+                g.drawLine(10, 10, 10, 16);
+                // Braccio sinistro piegato con borsa
+                g.drawLine(10, 12, 6, 13); // Braccio piegato
+                g.setStroke(new BasicStroke(1.2f));
+                g.drawRect(4, 13, 3, 3); // Borsa
+                g.drawLine(5, 13, 5, 12); // Manico borsa
+                g.drawLine(6, 14, 7, 14); // Contenuto borsa
+                // Braccio destro
+                g.setStroke(new BasicStroke(2f));
+                g.drawLine(10, 12, 14, 14);
+                // Sorriso
+                g.setStroke(new BasicStroke(1f));
+                g.drawArc(8, 7, 4, 2, 0, -180);
+            }
+            case "dipendenti", "dipendente" -> { // Omino professionale con camicia a V, cravatta e badge
+                g.setStroke(new BasicStroke(2f));
+                g.drawOval(7, 4, 6, 6); // Testa
+                // Corpo
+                g.drawLine(10, 10, 10, 16);
+                // Braccia dritte
+                g.drawLine(10, 12, 6, 14);
+                g.drawLine(10, 12, 14, 14);
+                // Camicia a V
+                g.setStroke(new BasicStroke(1.2f));
+                g.drawLine(9, 11, 10, 13);
+                g.drawLine(11, 11, 10, 13);
+                // Cravatta più visibile
+                g.setStroke(new BasicStroke(1.7f));
+                g.drawLine(10, 13, 10, 16);
+                g.setStroke(new BasicStroke(1.2f));
+                g.drawLine(10, 16, 9, 18);
+                g.drawLine(10, 16, 11, 18);
+                // Badge più squadrato
+                g.setStroke(new BasicStroke(1.2f));
+                g.drawRect(12, 13, 3, 3);
             }
             case "clear", "rimuovi", "elimina", "annulla" -> { // X
                 g.drawLine(6, 6, 14, 14);

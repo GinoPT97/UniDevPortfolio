@@ -23,7 +23,7 @@ public class NuovoClienteFrame extends JFrame {
 
     private void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 700, 500);
+        setBounds(100, 100, 700, 520);
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
@@ -31,8 +31,45 @@ public class NuovoClienteFrame extends JFrame {
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
 
+        // Pannello del titolo
+        JPanel titlepanel = new JPanel();
+        titlepanel.setBackground(new Color(85, 107, 47));
+        contentPane.add(titlepanel, BorderLayout.NORTH);
+        JLabel titlelabel = new JLabel("Inserimento Nuovo Utente");
+        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 32));
+        titlelabel.setForeground(Color.WHITE);
+        titlepanel.setBorder(new EmptyBorder(18, 0, 18, 0));
+        titlepanel.add(titlelabel);
+
+        // Pannello principale per i campi di inserimento
+        JPanel elempanel = new JPanel();
+        elempanel.setBorder(new EmptyBorder(30, 80, 20, 80));
+        elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
+        contentPane.add(elempanel, BorderLayout.CENTER);
+
+        for (int i = 0; i < labels.length; i++) {
+            fields[i] = new JTextField(20);
+            fields[i].setFont(new Font("Tahoma", Font.PLAIN, 16));
+            fields[i].setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+            fields[i].setBackground(new Color(250, 250, 250));
+            fields[i].setMaximumSize(new Dimension(Integer.MAX_VALUE, 18));
+            JPanel fieldPanel = createInputPanel(labels[i], fields[i]);
+            fieldPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            elempanel.add(fieldPanel);
+            elempanel.add(Box.createVerticalStrut(10));
+        }
+        
+        JLabel tesseraLabel = new JLabel("La relativa tessera verrà creata in automatico");
+        tesseraLabel.setFont(new Font("Tahoma", Font.ITALIC, 14));
+        tesseraLabel.setForeground(new Color(85, 107, 47));
+        tesseraLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        elempanel.add(tesseraLabel);
+
         // Pannello per i pulsanti
-        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
+        buttonpanel.setBorder(new EmptyBorder(10, 0, 18, 0));
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
         addbutton = creaButton("Aggiungi", new Color(34, 139, 34));
         clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
@@ -40,33 +77,17 @@ public class NuovoClienteFrame extends JFrame {
         buttonpanel.add(addbutton);
         buttonpanel.add(clearbutton);
         buttonpanel.add(backbutton);
-
-        // Pannello principale per i campi di inserimento
-        JPanel elempanel = new JPanel();
-        elempanel.setBorder(new EmptyBorder(20, 40, 20, 40));
-        elempanel.setLayout(new GridLayout(labels.length + 1, 1, 10, 10));
-        contentPane.add(elempanel, BorderLayout.CENTER);
-
-        for (int i = 0; i < labels.length; i++) {
-            fields[i] = new JTextField(20);
-            elempanel.add(createInputPanel(labels[i], fields[i]));
-        }
-        elempanel.add(new JLabel("La relativa tessera verrà creata in automatico"));
-
-        // Pannello del titolo
-        JPanel titlepanel = new JPanel();
-        titlepanel.setBackground(new Color(85, 107, 47));
-        contentPane.add(titlepanel, BorderLayout.NORTH);
-        JLabel titlelabel = new JLabel("Inserimento Nuovo Utente");
-        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlepanel.add(titlelabel);
     }
 
     private JPanel createInputPanel(String labelText, JTextField textField) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel panel = new JPanel(new BorderLayout(8, 0));
+        panel.setOpaque(false);
         JLabel label = new JLabel(labelText);
-        panel.add(label);
-        panel.add(textField);
+        label.setFont(new Font("Tahoma", Font.BOLD, 16));
+        label.setPreferredSize(new Dimension(160, 32));
+        panel.add(label, BorderLayout.WEST);
+        panel.add(textField, BorderLayout.CENTER);
+        panel.setBorder(new EmptyBorder(0, 0, 0, 0));
         return panel;
     }
 
@@ -74,9 +95,21 @@ public class NuovoClienteFrame extends JFrame {
         JButton button = new JButton(text, IconUtils.getIconForText(text, color));
         button.setBackground(color);
         button.setForeground(Color.WHITE);
-        button.setFont(new Font("Tahoma", Font.BOLD, 14));
+        button.setFont(new Font("Tahoma", Font.BOLD, 16));
         button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(color.darker(), 2, true),
+                BorderFactory.createEmptyBorder(8, 28, 8, 28)));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // Effetto hover
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(color.brighter());
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(color);
+            }
+        });
         return button;
     }
 
