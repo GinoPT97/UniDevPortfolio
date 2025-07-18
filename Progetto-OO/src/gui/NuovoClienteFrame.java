@@ -49,16 +49,16 @@ public class NuovoClienteFrame extends JFrame {
 
         for (int i = 0; i < labels.length; i++) {
             fields[i] = new JTextField(20);
-            fields[i].setFont(new Font("Tahoma", Font.PLAIN, 16));
+            fields[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
             fields[i].setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+                BorderFactory.createEmptyBorder(4, 8, 4, 8)));
             fields[i].setBackground(new Color(250, 250, 250));
-            fields[i].setMaximumSize(new Dimension(Integer.MAX_VALUE, 18));
+            fields[i].setMaximumSize(new Dimension(Integer.MAX_VALUE, 14));
             JPanel fieldPanel = createInputPanel(labels[i], fields[i]);
             fieldPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
             elempanel.add(fieldPanel);
-            elempanel.add(Box.createVerticalStrut(10));
+            elempanel.add(Box.createVerticalStrut(8));
         }
         
         JLabel tesseraLabel = new JLabel("La relativa tessera verrà creata in automatico");
