@@ -40,6 +40,9 @@ install_deb "https://dl.google.com/linux/direct/google-chrome-stable_current_amd
 echo "Installazione di GitHub Desktop..."
 install_deb "https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb"
 
+git config --global user.email "g.pandozzitrani@studenti.unina.it"                                  
+git config --global user.name "kenobi1797"
+
 echo "Installazione applicazioni Snap..."
 sudo snap install --classic dbeaver-ce
 sudo snap install --classic openjdk
