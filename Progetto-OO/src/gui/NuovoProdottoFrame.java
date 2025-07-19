@@ -60,19 +60,21 @@ public class NuovoProdottoFrame extends JFrame {
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
         descArea.setForeground(Color.GRAY);
-        descArea.setText("Inserisci una descrizione dettagliata...");
+        descArea.setText("Inserisci la descrizione");
         // Placeholder: rimuovi al focus
         descArea.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
             public void focusGained(java.awt.event.FocusEvent e) {
-                if (descArea.getText().equals("Inserisci una descrizione dettagliata...")) {
+                if (descArea.getText().equals("Inserisci la descrizione")) {
                     descArea.setText("");
                     descArea.setForeground(Color.BLACK);
                 }
             }
+            @Override
             public void focusLost(java.awt.event.FocusEvent e) {
                 if (descArea.getText().isEmpty()) {
                     descArea.setForeground(Color.GRAY);
-                    descArea.setText("Inserisci una descrizione dettagliata...");
+                    descArea.setText("Inserisci la descrizione");
                 }
             }
         });
@@ -113,16 +115,18 @@ public class NuovoProdottoFrame extends JFrame {
         descPanel.add(charCountLabel, BorderLayout.SOUTH);
         // Listener per contatore caratteri e limite
         descArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
             public void keyTyped(java.awt.event.KeyEvent e) {
                 String text = descArea.getText();
-                if (text.equals("Inserisci una descrizione dettagliata...")) text = "";
+                if (text.equals("Inserisci la descrizione")) text = "";
                 if (text.length() >= 500 && descArea.getSelectedText() == null) {
                     e.consume();
                 }
             }
+            @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
                 String text = descArea.getText();
-                if (text.equals("Inserisci una descrizione dettagliata...")) text = "";
+                if (text.equals("Inserisci la descrizione")) text = "";
                 charCountLabel.setText(text.length() + "/500 caratteri");
             }
         });

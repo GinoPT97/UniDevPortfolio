@@ -68,18 +68,20 @@ public class ModificaProdottiFrame extends JFrame {
         descta.setLineWrap(true);
         descta.setWrapStyleWord(true);
         descta.setForeground(Color.GRAY);
-        descta.setText("Inserisci una descrizione dettagliata...");
+        descta.setText("Inserisci una descrizione");
         descta.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
             public void focusGained(java.awt.event.FocusEvent e) {
-                if (descta.getText().equals("Inserisci una descrizione dettagliata...")) {
+                if (descta.getText().equals("Inserisci una descrizione")) {
                     descta.setText("");
                     descta.setForeground(Color.BLACK);
                 }
             }
+            @Override
             public void focusLost(java.awt.event.FocusEvent e) {
                 if (descta.getText().isEmpty()) {
                     descta.setForeground(Color.GRAY);
-                    descta.setText("Inserisci una descrizione dettagliata...");
+                    descta.setText("Inserisci una descrizione");
                 }
             }
         });
@@ -119,16 +121,18 @@ public class ModificaProdottiFrame extends JFrame {
         charCountLabel.setForeground(Color.DARK_GRAY);
         descPanel.add(charCountLabel, BorderLayout.SOUTH);
         descta.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
             public void keyTyped(java.awt.event.KeyEvent e) {
                 String text = descta.getText();
-                if (text.equals("Inserisci una descrizione dettagliata...")) text = "";
+                if (text.equals("Inserisci una descrizione")) text = "";
                 if (text.length() >= 500 && descta.getSelectedText() == null) {
                     e.consume();
                 }
             }
+            @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
                 String text = descta.getText();
-                if (text.equals("Inserisci una descrizione dettagliata...")) text = "";
+                if (text.equals("Inserisci una descrizione")) text = "";
                 charCountLabel.setText(text.length() + "/500 caratteri");
             }
         });
