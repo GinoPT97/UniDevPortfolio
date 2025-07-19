@@ -17,26 +17,21 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Funzione per mostrare l'help
 show_help() {
     cat << EOF
 $SCRIPT_NAME v$VERSION
 
-UTILIZZO:
-    $0 [OPZIONI]
+USO: $0 [OPZIONI]
+  -h, --help          Mostra questo messaggio
+  -d, --dry-run       Simula senza modifiche
+  -v, --verbose       Output dettagliato
+  -f, --force         Nessuna conferma
+  -l, --log-file FILE Log personalizzato
 
-OPZIONI:
-    -h, --help          Mostra questo messaggio di aiuto
-    -d, --dry-run       Esegue una simulazione senza apportare modifiche
-    -v, --verbose       Output dettagliato
-    -f, --force         Forza l'esecuzione senza conferme
-    -l, --log-file FILE Specifica un file di log personalizzato
-
-ESEMPI:
-    $0                  Esegue la pulizia completa
-    $0 --dry-run        Simula la pulizia senza modifiche
-    $0 --verbose        Pulizia con output dettagliato
-
+Esempi:
+  $0                  Pulizia completa
+  $0 --dry-run        Simula la pulizia
+  $0 --verbose        Output dettagliato
 EOF
 }
 
@@ -154,17 +149,20 @@ confirm_action() {
     [[ $REPLY =~ ^[Ss]$ ]]
 }
 
-# Funzione per calcolare lo spazio recuperato
+# Calcola spazio usato su /
 calculate_space() {
-    local before_size=$(df / | awk 'NR==2 {print $3}')
-    echo "$before_size"
+    df --output=used / | tail -1
 }
 
 # Funzione per la pulizia di base del sistema
 basic_cleanup() {
     log "INFO" "=== PULIZIA DI BASE DEL SISTEMA ==="
-    
-    run_cmd "apt-get update" "Aggiornamento indici pacchetti"
+    # Check connessione internet prima di update
+    if ping -c 1 1.1.1.1 &>/dev/null; then
+        run_cmd "apt-get update" "Aggiornamento indici pacchetti"
+    else
+        log "WARN" "Nessuna connessione internet: salto apt-get update"
+    fi
     run_cmd "dpkg --configure -a" "Configurazione pacchetti non configurati"
     run_cmd "apt-get install -f -y" "Risoluzione dipendenze mancanti"
     run_cmd "apt-get clean" "Pulizia cache APT"
@@ -192,30 +190,17 @@ cleanup_temp_files() {
 # Funzione per la pulizia delle cache utente
 cleanup_user_cache() {
     log "INFO" "=== PULIZIA CACHE UTENTE ==="
-    
-    # Cache browser (eseguite come utenti specifici, SOLO UTENTE, NON SISTEMA)
-    local users=$(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 {print $1}')
-
+    # Escludi utenti di sistema (nobody, systemd-*)
+    local users=$(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 && $1!~/^(nobody|systemd-)/ {print $1}')
     for user in $users; do
         local home_dir=$(getent passwd "$user" | cut -d: -f6)
         if [[ -d "$home_dir" ]]; then
-            # Firefox
             run_cmd "sudo -u $user rm -rf $home_dir/.cache/mozilla/* 2>/dev/null || true" "Pulizia cache Mozilla per $user" true
-            # Chrome/Chromium
             run_cmd "sudo -u $user rm -rf $home_dir/.cache/google-chrome/* 2>/dev/null || true" "Pulizia cache Chrome per $user" true
             run_cmd "sudo -u $user rm -rf $home_dir/.cache/chromium/* 2>/dev/null || true" "Pulizia cache Chromium per $user" true
-            # Thumbnails
             run_cmd "sudo -u $user rm -rf $home_dir/.cache/thumbnails/* 2>/dev/null || true" "Pulizia cache thumbnails per $user" true
         fi
     done
-    
-}
-
-# Funzione per la pulizia avanzata
-advanced_cleanup() {
-    log "INFO" "=== PULIZIA AVANZATA ==="
-    
-    
 }
 
 # Funzione per ottimizzazioni sistema
