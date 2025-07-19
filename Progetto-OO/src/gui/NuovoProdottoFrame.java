@@ -22,7 +22,7 @@ public class NuovoProdottoFrame extends JFrame {
     private JButton backbutton;
     private JButton clearbutton;
     private JButton insertbutton;
-    private JButton selbutton;
+    // private JButton selbutton; // Rimosso, non più necessario
     private JComboBox<String> categoriacb;
 
     public NuovoProdottoFrame(String title, Controller c) {
@@ -218,8 +218,6 @@ public class NuovoProdottoFrame extends JFrame {
         categoriacb = new JComboBox<>(new String[]{FRUTTA, VERDURA, FARINACEI, LATTICINI, UOVA, CONFEZIONATI});
         categoriacb.setFont(fieldFont);
         categoriapanel.add(categoriacb);
-        selbutton = creaButton("Seleziona", new Color(46, 139, 87));
-        categoriapanel.add(selbutton);
         elempanel.add(categoriapanel, gbc);
 
         // Pannello per i pulsanti di azione
@@ -400,22 +398,29 @@ public class NuovoProdottoFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore : " + e1);
             }
         });
-        selbutton.addActionListener(event -> {
-            int type = categoriacb.getSelectedIndex();
-            ((JTextField)fields[4]).setEditable(false);
-            ((JTextField)fields[5]).setEditable(false);
-            ((JTextField)fields[6]).setEditable(false);
-            ((JTextField)fields[8]).setEditable(false);
-            ((JCheckBox)fields[7]).setEnabled(false);
-            switch (type) {
-                case 0, 1 -> ((JTextField)fields[4]).setEditable(true);
-                case 2 -> ((JCheckBox)fields[7]).setEnabled(true);
-                case 3 -> {
-                    ((JTextField)fields[5]).setEditable(true);
-                    ((JTextField)fields[6]).setEditable(true);
-                    ((JTextField)fields[8]).setEditable(true);
+        // Gestione dinamica della selezione categoria: blocco/sblocco campi
+        categoriacb.addItemListener(e -> {
+            if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+                String selectedCategory = (String) categoriacb.getSelectedItem();
+                // Disabilita tutti i campi relativi alle categorie
+                ((JTextField)fields[4]).setEnabled(false); // Data Raccolta
+                ((JTextField)fields[5]).setEnabled(false); // Data Mungitura
+                ((JTextField)fields[6]).setEnabled(false); // Data Produzione
+                ((JTextField)fields[8]).setEnabled(false); // Data Scadenza
+                ((JCheckBox)fields[7]).setEnabled(false); // Glutine
+
+                // Abilita solo i campi pertinenti
+                switch (selectedCategory) {
+                    case FRUTTA, VERDURA -> ((JTextField)fields[4]).setEnabled(true);
+                    case FARINACEI -> ((JCheckBox)fields[7]).setEnabled(true);
+                    case LATTICINI -> {
+                        ((JTextField)fields[5]).setEnabled(true);
+                        ((JTextField)fields[6]).setEnabled(true);
+                        ((JTextField)fields[8]).setEnabled(true);
+                    }
+                    case UOVA, CONFEZIONATI -> ((JTextField)fields[8]).setEnabled(true);
+                    default -> {}
                 }
-                case 4, 5 -> ((JTextField)fields[8]).setEditable(true);
             }
         });
         ((JTextArea)fields[1]).addKeyListener(new KeyAdapter() {

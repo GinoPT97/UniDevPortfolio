@@ -220,18 +220,29 @@ public class ModificaProdottiFrame extends JFrame {
         categoriacb = new JComboBox<>(new String[]{FRUTTA, VERDURA, FARINACEI, LATTICINI, UOVA, CONFEZIONATI});
         categoriacb.setFont(fieldFont);
         categoriapanel.add(categoriacb);
-        JButton selbutton = creaButton("Seleziona", new Color(46, 139, 87));
-        categoriapanel.add(selbutton);
-        elempanel.add(categoriapanel, gbc);
+        categoriacb.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                String selectedCategory = (String) categoriacb.getSelectedItem();
+                // Disabilita tutti i campi relativi alle categorie
+                racctf.setEnabled(false);
+                mungtf.setEnabled(false);
+                prodtf.setEnabled(false);
+                scadtf.setEnabled(false);
+                glutcb.setEnabled(false);
 
-        // Aggiungi l'azione per il bottone "Seleziona"
-        selbutton.addActionListener(event -> {
-            // Abilita o disabilita i campi in base alla categoria selezionata
-            int type = categoriacb.getSelectedIndex();
-            racctf.setEditable(type == 0);
-            mungtf.setEditable(type == 2);
-            scadtf.setEditable(type == 1);
-            glutcb.setEnabled(type == 3);
+                // Abilita solo i campi pertinenti
+                switch (selectedCategory) {
+                    case FRUTTA, VERDURA -> racctf.setEnabled(true);
+                    case FARINACEI -> glutcb.setEnabled(true);
+                    case LATTICINI -> {
+                        mungtf.setEnabled(true);
+                        prodtf.setEnabled(true);
+                        scadtf.setEnabled(true);
+                    }
+                    case UOVA, CONFEZIONATI -> scadtf.setEnabled(true);
+                    default -> {}
+                }
+            }
         });
 
         // Pannello dei bottoni separato e distanziato
