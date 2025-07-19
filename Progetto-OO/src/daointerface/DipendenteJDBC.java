@@ -1,10 +1,9 @@
 package daointerface;
 
-import model.Dipendente;
-
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
+import model.Dipendente;
 
 public interface DipendenteJDBC {
     public boolean setNewDip(Dipendente dipendente) throws SQLException;
@@ -15,7 +14,6 @@ public interface DipendenteJDBC {
 
     public List<Dipendente> getAllDip() throws SQLException;
 
-    public Dipendente getOneDip(String id) throws SQLException;
 
     public List<String> getDipVendite(Date di, Date df) throws SQLException;
 

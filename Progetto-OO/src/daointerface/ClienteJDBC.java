@@ -13,5 +13,4 @@ public interface ClienteJDBC {
 
     public String getIdCt(String codfisc) throws SQLException;
 
-    public Cliente getCtByid(String idct) throws SQLException;
 }

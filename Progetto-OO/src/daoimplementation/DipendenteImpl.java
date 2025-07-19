@@ -11,7 +11,6 @@ public class DipendenteImpl implements DipendenteJDBC {
     private final PreparedStatement setNewDip;
     private final PreparedStatement updateDip;
     private final PreparedStatement verifyId;
-    private final PreparedStatement getOneDip;
     private final PreparedStatement getDipVendite;
     private final PreparedStatement getDipIntroiti;
     private final Statement getAllDip;
@@ -25,7 +24,6 @@ public class DipendenteImpl implements DipendenteJDBC {
         updateDip = connection.prepareStatement(
                 "UPDATE dipendente SET nome = ?, cognome = ?, codicefiscale = ?, indirizzo = ?, telefono = ?, email = ? WHERE coddipendente = ?");
         verifyId = connection.prepareStatement("SELECT coddipendente FROM dipendente WHERE coddipendente = ?");
-        getOneDip = connection.prepareStatement("SELECT coddipendente, nome, cognome, codicefiscale, email, indirizzo, telefono FROM dipendente WHERE coddipendente = ?");
         getDipVendite = connection.prepareStatement(
                 "SELECT DISTINCT D.nome, D.cognome, COUNT(O) AS Tordini "
                         + "FROM dipendente AS D, ordine AS O "
@@ -112,24 +110,6 @@ public class DipendenteImpl implements DipendenteJDBC {
         return updateDip.executeUpdate() > 0;
     }
 
-    @Override
-    public Dipendente getOneDip(String id) throws SQLException {
-        getOneDip.setInt(1, Integer.parseInt(id));
-        try (ResultSet rs = getOneDip.executeQuery()) {
-            if (rs.next()) {
-                return new Dipendente(
-                        id,
-                        rs.getString("nome"),
-                        rs.getString(COGNOME),
-                        rs.getString("codicefiscale"),
-                        rs.getString("email"),
-                        rs.getString("indirizzo"),
-                        rs.getString("telefono")
-                );
-            }
-        }
-        return null;
-    }
 
     private void setPreparedStatement(PreparedStatement ps, Dipendente dipendente) throws SQLException {
         ps.setString(1, dipendente.getNome());

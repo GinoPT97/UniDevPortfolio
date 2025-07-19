@@ -13,5 +13,4 @@ public interface TesseraJDBC {
 
     public boolean updatepunti(String codcl, double d) throws SQLException;
     
-    public boolean hasTessera(String codCliente) throws SQLException;
 }

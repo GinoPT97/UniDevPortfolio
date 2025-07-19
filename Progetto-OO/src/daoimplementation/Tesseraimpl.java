@@ -96,23 +96,5 @@ public class Tesseraimpl implements TesseraJDBC {
         }
     }
 
-    @Override
-    public boolean hasTessera(String codCliente) throws SQLException {
-        String query = "SELECT COUNT(*) FROM tessera WHERE codcliente = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            try {
-                int clienteId = Integer.parseInt(codCliente);
-                stmt.setInt(1, clienteId);
-            } catch (NumberFormatException e) {
-                stmt.setString(1, codCliente);
-            }
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        }
-        return false;
-    }
 }
 

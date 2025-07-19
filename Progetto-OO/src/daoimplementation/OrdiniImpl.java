@@ -74,10 +74,4 @@ public class OrdiniImpl implements OrdiniJDBC {
         return null;
     }
 
-    // Metodo per chiudere le risorse
-    public void close() throws SQLException {
-        if (newOrdineStmt != null) newOrdineStmt.close();
-        if (getAllOrdiniStmt != null) getAllOrdiniStmt.close();
-        if (connection != null) connection.close(); // Chiudo la connessione
-    }
 }

@@ -87,15 +87,6 @@ public class Clienteimpl implements ClienteJDBC {
         return updateCl.executeUpdate() > 0;
     }
 
-    @Override
-    public Cliente getCtByid(String idCt) throws SQLException {
-        try (ResultSet rs = idCl.executeQuery("SELECT nome, cognome FROM cliente WHERE " + CODCLIENTE + " = '" + idCt + "'")) {
-            if (rs.next()) {
-                return new Cliente(null, rs.getString("nome"), rs.getString("cognome"), null, null, null, null, null, null);
-            }
-        }
-        return null;
-    }
 
     private void setPreparedStatement(PreparedStatement ps, Cliente cliente) throws SQLException {
         ps.setString(1, cliente.getNome());
