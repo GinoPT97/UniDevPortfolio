@@ -64,9 +64,25 @@ public class ModificaProdottiFrame extends JFrame {
 
         // Inizializza i componenti prima di usarli
         nometf = new JTextField(24);
-        descta = new JTextArea(6, 24);
+        descta = new JTextArea(10, 24); // più alta
         descta.setLineWrap(true);
         descta.setWrapStyleWord(true);
+        descta.setForeground(Color.GRAY);
+        descta.setText("Inserisci una descrizione dettagliata...");
+        descta.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (descta.getText().equals("Inserisci una descrizione dettagliata...")) {
+                    descta.setText("");
+                    descta.setForeground(Color.BLACK);
+                }
+            }
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (descta.getText().isEmpty()) {
+                    descta.setForeground(Color.GRAY);
+                    descta.setText("Inserisci una descrizione dettagliata...");
+                }
+            }
+        });
         provtf = new JTextField(24);
         prezzotf = new JTextField(14);
         racctf = new JTextField(16);
@@ -95,8 +111,28 @@ public class ModificaProdottiFrame extends JFrame {
         elempanel.add(descLabel, gbc);
         gbc.gridx = 1;
         JScrollPane descScroll = new JScrollPane(descta);
-        descScroll.setPreferredSize(new Dimension(400, 120));
-        elempanel.add(descScroll, gbc);
+        descScroll.setPreferredSize(new Dimension(400, 180)); // più alta
+        JPanel descPanel = new JPanel(new BorderLayout());
+        descPanel.add(descScroll, BorderLayout.CENTER);
+        JLabel charCountLabel = new JLabel("0/500 caratteri");
+        charCountLabel.setFont(new Font("Tahoma", Font.ITALIC, 12));
+        charCountLabel.setForeground(Color.DARK_GRAY);
+        descPanel.add(charCountLabel, BorderLayout.SOUTH);
+        descta.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent e) {
+                String text = descta.getText();
+                if (text.equals("Inserisci una descrizione dettagliata...")) text = "";
+                if (text.length() >= 500 && descta.getSelectedText() == null) {
+                    e.consume();
+                }
+            }
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                String text = descta.getText();
+                if (text.equals("Inserisci una descrizione dettagliata...")) text = "";
+                charCountLabel.setText(text.length() + "/500 caratteri");
+            }
+        });
+        elempanel.add(descPanel, gbc);
 
         row++;
         gbc.gridy = row; gbc.gridx = 0;
