@@ -532,7 +532,14 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
         dipModel.addRow(createRowData(codDipendente, nome, cognome, codFis, email, indirizzo, telefono));
     }
     private void updateClienteModelAfterInsert(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
-        clienteModel.addRow(createRowData(codCliente, nome, cognome, codFis, email, indirizzo, telefono, "", "", ""));
+        // Inserisce valori di default per la tessera: punti 0.0, stato "Attiva", data odierna
+        clienteModel.addRow(createRowData(
+            codCliente, nome, cognome, codFis, email, indirizzo, telefono,
+            "", // Id Tessera (da aggiornare se disponibile)
+            0.0,
+            "ATTIVA",
+            java.time.LocalDate.now().toString() // Data odierna
+        ));
     }
     private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
         prodModel.addRow(createRowData(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, formatGlutineStatus(glutine), dataScadenza, null, categoria, scorta));
