@@ -220,28 +220,10 @@ public class ModificaProdottiFrame extends JFrame {
         categoriacb = new JComboBox<>(new String[]{FRUTTA, VERDURA, FARINACEI, LATTICINI, UOVA, CONFEZIONATI});
         categoriacb.setFont(fieldFont);
         categoriapanel.add(categoriacb);
+        // Listener centralizzato solo qui
         categoriacb.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                String selectedCategory = (String) categoriacb.getSelectedItem();
-                // Disabilita tutti i campi relativi alle categorie
-                racctf.setEnabled(false);
-                mungtf.setEnabled(false);
-                prodtf.setEnabled(false);
-                scadtf.setEnabled(false);
-                glutcb.setEnabled(false);
-
-                // Abilita solo i campi pertinenti
-                switch (selectedCategory) {
-                    case FRUTTA, VERDURA -> racctf.setEnabled(true);
-                    case FARINACEI -> glutcb.setEnabled(true);
-                    case LATTICINI -> {
-                        mungtf.setEnabled(true);
-                        prodtf.setEnabled(true);
-                        scadtf.setEnabled(true);
-                    }
-                    case UOVA, CONFEZIONATI -> scadtf.setEnabled(true);
-                    default -> {}
-                }
+                aggiornaCampiCategoria((String) categoriacb.getSelectedItem());
             }
         });
 
@@ -336,9 +318,32 @@ public class ModificaProdottiFrame extends JFrame {
             tf.setText("");
             tf.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
         }
-        descta.setText("");
+        descta.setForeground(Color.GRAY);
+        descta.setText("Inserisci la descrizione");
         descta.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextArea.border"));
         glutcb.setSelected(false);
+        aggiornaCampiCategoria((String) categoriacb.getSelectedItem());
+    }
+    // Metodo per abilitare/disabilitare i campi in base alla categoria
+    private void aggiornaCampiCategoria(String categoria) {
+        racctf.setEnabled(false);
+        mungtf.setEnabled(false);
+        prodtf.setEnabled(false);
+        scadtf.setEnabled(false);
+        glutcb.setEnabled(false);
+
+        if (categoria == null) return;
+        if (categoria.equals(FRUTTA) || categoria.equals(VERDURA)) {
+            racctf.setEnabled(true);
+        } else if (categoria.equals(FARINACEI)) {
+            glutcb.setEnabled(true);
+        } else if (categoria.equals(LATTICINI)) {
+            mungtf.setEnabled(true);
+            prodtf.setEnabled(true);
+            scadtf.setEnabled(true);
+        } else if (categoria.equals(UOVA) || categoria.equals(CONFEZIONATI)) {
+            scadtf.setEnabled(true);
+        }
     }
 
     private boolean validateFields() {

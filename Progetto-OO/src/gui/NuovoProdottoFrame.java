@@ -2,8 +2,6 @@ package gui;
 
 import controller.Controller;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -278,16 +276,23 @@ public class NuovoProdottoFrame extends JFrame {
 
     public void clean() {
         for (int i = 0; i < fields.length; i++) {
-            if (fields[i] instanceof JTextField tf) {
+            if (fields[i] instanceof JTextField) {
+                JTextField tf = (JTextField) fields[i];
                 tf.setText("");
                 tf.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
             }
-            if (fields[i] instanceof JTextArea ta) {
-                ta.setText("");
+            if (fields[i] instanceof JTextArea) {
+                JTextArea ta = (JTextArea) fields[i];
+                ta.setForeground(Color.GRAY);
+                ta.setText("Inserisci la descrizione");
                 ta.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextArea.border"));
             }
-            if (fields[i] instanceof JCheckBox cb) cb.setSelected(false);
+            if (fields[i] instanceof JCheckBox) {
+                JCheckBox cb = (JCheckBox) fields[i];
+                cb.setSelected(false);
+            }
         }
+        aggiornaCampiCategoria((String) categoriacb.getSelectedItem());
     }
 
     private boolean validateFields() {
@@ -395,41 +400,36 @@ public class NuovoProdottoFrame extends JFrame {
                 clean();
                 JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
             } catch (NumberFormatException | SQLException | java.time.format.DateTimeParseException e1) {
-                JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore : " + e1);
+                JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore : " + e1.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });
         // Gestione dinamica della selezione categoria: blocco/sblocco campi
         categoriacb.addItemListener(e -> {
             if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-                String selectedCategory = (String) categoriacb.getSelectedItem();
-                // Disabilita tutti i campi relativi alle categorie
-                ((JTextField)fields[4]).setEnabled(false); // Data Raccolta
-                ((JTextField)fields[5]).setEnabled(false); // Data Mungitura
-                ((JTextField)fields[6]).setEnabled(false); // Data Produzione
-                ((JTextField)fields[8]).setEnabled(false); // Data Scadenza
-                ((JCheckBox)fields[7]).setEnabled(false); // Glutine
+                aggiornaCampiCategoria((String) categoriacb.getSelectedItem());
+            }
+        });
+    }
 
-                // Abilita solo i campi pertinenti
-                switch (selectedCategory) {
-                    case FRUTTA, VERDURA -> ((JTextField)fields[4]).setEnabled(true);
-                    case FARINACEI -> ((JCheckBox)fields[7]).setEnabled(true);
-                    case LATTICINI -> {
-                        ((JTextField)fields[5]).setEnabled(true);
-                        ((JTextField)fields[6]).setEnabled(true);
-                        ((JTextField)fields[8]).setEnabled(true);
-                    }
-                    case UOVA, CONFEZIONATI -> ((JTextField)fields[8]).setEnabled(true);
-                    default -> {}
-                }
-            }
-        });
-        ((JTextArea)fields[1]).addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if (((JTextArea)fields[1]).getText().length() >= 500) {
-                    e.consume();
-                }
-            }
-        });
+    // Metodo per abilitare/disabilitare i campi in base alla categoria
+    private void aggiornaCampiCategoria(String categoria) {
+        ((JTextField)fields[4]).setEnabled(false); // Data Raccolta
+        ((JTextField)fields[5]).setEnabled(false); // Data Mungitura
+        ((JTextField)fields[6]).setEnabled(false); // Data Produzione
+        ((JTextField)fields[8]).setEnabled(false); // Data Scadenza
+        ((JCheckBox)fields[7]).setEnabled(false); // Glutine
+
+        if (categoria == null) return;
+        if (categoria.equals(FRUTTA) || categoria.equals(VERDURA)) {
+            ((JTextField)fields[4]).setEnabled(true);
+        } else if (categoria.equals(FARINACEI)) {
+            ((JCheckBox)fields[7]).setEnabled(true);
+        } else if (categoria.equals(LATTICINI)) {
+            ((JTextField)fields[5]).setEnabled(true);
+            ((JTextField)fields[6]).setEnabled(true);
+            ((JTextField)fields[8]).setEnabled(true);
+        } else if (categoria.equals(UOVA) || categoria.equals(CONFEZIONATI)) {
+            ((JTextField)fields[8]).setEnabled(true);
+        }
     }
 }
