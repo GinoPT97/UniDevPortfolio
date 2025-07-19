@@ -1,17 +1,18 @@
+
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Tessera {
     private String codtessera;
     private double numeropunti;
-    private Date dataemissione;
-    private Date datascadenza;
+    private LocalDate dataemissione;
+    private LocalDate datascadenza;
     private String stato;
     private Cliente proprietario;
 
     // Costruttore unico
-    public Tessera(String codtessera, double numeropunti, Date dataemissione, Date datascadenza, String stato, Cliente proprietario) {
+    public Tessera(String codtessera, double numeropunti, LocalDate dataemissione, LocalDate datascadenza, String stato, Cliente proprietario) {
         this.codtessera = codtessera;
         this.numeropunti = numeropunti;
         this.dataemissione = dataemissione;
@@ -36,19 +37,19 @@ public class Tessera {
         this.numeropunti = numeropunti;
     }
 
-    public Date getDataEmissione() {
+    public LocalDate getDataEmissione() {
         return dataemissione;
     }
 
-    public void setDataEmissione(Date dataemissione) {
+    public void setDataEmissione(LocalDate dataemissione) {
         this.dataemissione = dataemissione;
     }
 
-    public Date getDataScadenza() {
+    public LocalDate getDataScadenza() {
         return datascadenza;
     }
 
-    public void setDataScadenza(Date datascadenza) {
+    public void setDataScadenza(LocalDate datascadenza) {
         this.datascadenza = datascadenza;
     }
 

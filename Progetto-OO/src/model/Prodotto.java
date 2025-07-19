@@ -1,6 +1,6 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Prodotto {
     private String codprodotto;
@@ -8,17 +8,17 @@ public class Prodotto {
     private String descrizione;
     private String luogoprov;
     private double prezzo;
-    private Date datamungitura;
-    private Date datascadenza;
-    private Date dataraccolta;
-    private Date dataproduzione;
+    private LocalDate datamungitura;
+    private LocalDate datascadenza;
+    private LocalDate dataraccolta;
+    private LocalDate dataproduzione;
     private boolean glutine;
     private String categoria;
     private int scorta;
 
     // Costruttore unico
     public Prodotto(String codprodotto, String nome, String descrizione, double prezzo, String luogoprov,
-                    Date dataraccolta, Date datamungitura, boolean glutine, Date datascadenza, String categoria, int scorta, Date dataproduzione) {
+                    LocalDate dataraccolta, LocalDate datamungitura, boolean glutine, LocalDate datascadenza, String categoria, int scorta, LocalDate dataproduzione) {
         this.codprodotto = codprodotto;
         this.nome = nome;
         this.descrizione = descrizione;
@@ -65,27 +65,27 @@ public class Prodotto {
         this.luogoprov = luogoprov;
     }
 
-    public Date getDatamungitura() {
+    public LocalDate getDatamungitura() {
         return datamungitura;
     }
 
-    public void setDatamungitura(Date datamungitura) {
+    public void setDatamungitura(LocalDate datamungitura) {
         this.datamungitura = datamungitura;
     }
 
-    public Date getDatascadenza() {
+    public LocalDate getDatascadenza() {
         return datascadenza;
     }
 
-    public void setDatascadenza(Date datascadenza) {
+    public void setDatascadenza(LocalDate datascadenza) {
         this.datascadenza = datascadenza;
     }
 
-    public Date getDataraccolta() {
+    public LocalDate getDataraccolta() {
         return dataraccolta;
     }
 
-    public void setDataraccolta(Date dataraccolta) {
+    public void setDataraccolta(LocalDate dataraccolta) {
         this.dataraccolta = dataraccolta;
     }
 
@@ -113,11 +113,11 @@ public class Prodotto {
         this.categoria = categoria;
     }
 
-    public Date getDataProduzione() {
+    public LocalDate getDataProduzione() {
         return dataproduzione;
     }
 
-    public void setDataProduzione(Date dataproduzione) {
+    public void setDataProduzione(LocalDate dataproduzione) {
         this.dataproduzione = dataproduzione;
     }
 

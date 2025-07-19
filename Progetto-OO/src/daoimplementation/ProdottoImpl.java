@@ -34,7 +34,7 @@ public class ProdottoImpl implements ProdottoJDBC {
         initStatements(); // Inizializza le query preparate
         setCommonProdottoFields(setNewProdottoStmt, prodotto);
         setNewProdottoStmt.setInt(10, prodotto.getScorta());
-        setNewProdottoStmt.setDate(11, prodotto.getDataProduzione() != null ? new java.sql.Date(prodotto.getDataProduzione().getTime()) : null);
+        setNewProdottoStmt.setDate(11, prodotto.getDataProduzione() != null ? java.sql.Date.valueOf(prodotto.getDataProduzione()) : null);
 
         boolean result = setNewProdottoStmt.executeUpdate() > 0;
         closeStatements();
@@ -46,7 +46,7 @@ public class ProdottoImpl implements ProdottoJDBC {
         initStatements(); // Inizializza le query preparate
         setCommonProdottoFields(updateProdottoStmt, prodotto);
         updateProdottoStmt.setInt(10, prodotto.getScorta());
-        updateProdottoStmt.setDate(11, prodotto.getDataProduzione() != null ? new java.sql.Date(prodotto.getDataProduzione().getTime()) : null);
+        updateProdottoStmt.setDate(11, prodotto.getDataProduzione() != null ? java.sql.Date.valueOf(prodotto.getDataProduzione()) : null);
         updateProdottoStmt.setString(12, prodotto.getCodProdotto());
 
         boolean result = updateProdottoStmt.executeUpdate() > 0;
@@ -102,7 +102,7 @@ public class ProdottoImpl implements ProdottoJDBC {
 
         switch (prodotto.getCategoria()) {
             case "FRUTTA", "VERDURA" -> {
-                stmt.setDate(5, new java.sql.Date(prodotto.getDataraccolta().getTime()));
+                stmt.setDate(5, prodotto.getDataraccolta() != null ? java.sql.Date.valueOf(prodotto.getDataraccolta()) : null);
                 stmt.setDate(6, null); // datamungitura deve essere NULL
                 stmt.setNull(7, java.sql.Types.BOOLEAN); // glutine deve essere NULL
                 stmt.setDate(8, null); // datascadenza deve essere NULL
@@ -112,15 +112,15 @@ public class ProdottoImpl implements ProdottoJDBC {
                 stmt.setDate(5, null); // dataraccolta deve essere NULL
                 stmt.setDate(6, null); // datamungitura deve essere NULL
                 stmt.setNull(7, java.sql.Types.BOOLEAN); // glutine deve essere NULL
-                stmt.setDate(8, new java.sql.Date(prodotto.getDatascadenza().getTime()));
+                stmt.setDate(8, prodotto.getDatascadenza() != null ? java.sql.Date.valueOf(prodotto.getDatascadenza()) : null);
                 stmt.setDate(11, null); // dataproduzione deve essere NULL
             }
             case "LATTICINI" -> {
                 stmt.setDate(5, null); // dataraccolta deve essere NULL
-                stmt.setDate(6, new java.sql.Date(prodotto.getDatamungitura().getTime()));
+                stmt.setDate(6, prodotto.getDatamungitura() != null ? java.sql.Date.valueOf(prodotto.getDatamungitura()) : null);
                 stmt.setNull(7, java.sql.Types.BOOLEAN); // glutine deve essere NULL
-                stmt.setDate(8, new java.sql.Date(prodotto.getDatascadenza().getTime()));
-                stmt.setDate(11, new java.sql.Date(prodotto.getDataProduzione().getTime()));
+                stmt.setDate(8, prodotto.getDatascadenza() != null ? java.sql.Date.valueOf(prodotto.getDatascadenza()) : null);
+                stmt.setDate(11, prodotto.getDataProduzione() != null ? java.sql.Date.valueOf(prodotto.getDataProduzione()) : null);
             }
             case "FARINACEI" -> {
                 stmt.setDate(5, null); // dataraccolta deve essere NULL
@@ -148,13 +148,13 @@ public class ProdottoImpl implements ProdottoJDBC {
                 rs.getString("descrizione"),
                 rs.getDouble("prezzo"),
                 rs.getString("luogoprovenienza"),
-                rs.getDate("dataraccolta"),
-                rs.getDate("datamungitura"),
+                rs.getDate("dataraccolta") != null ? rs.getDate("dataraccolta").toLocalDate() : null,
+                rs.getDate("datamungitura") != null ? rs.getDate("datamungitura").toLocalDate() : null,
                 rs.getBoolean("glutine"),
-                rs.getDate("datascadenza"),
+                rs.getDate("datascadenza") != null ? rs.getDate("datascadenza").toLocalDate() : null,
                 rs.getString("categoria"),
                 rs.getInt("scorta"),
-                rs.getDate("dataproduzione")
+                rs.getDate("dataproduzione") != null ? rs.getDate("dataproduzione").toLocalDate() : null
         );
     }
 

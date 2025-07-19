@@ -42,7 +42,8 @@ public class Clienteimpl implements ClienteJDBC {
                 Tessera tessera = null;
                 String codTessera = rs.getString("codtessera");
                 if (codTessera != null) {
-                    java.sql.Date dataScadenza = rs.getDate("datascadenza");
+                    java.sql.Date dataScadenzaSql = rs.getDate("datascadenza");
+                    java.time.LocalDate dataScadenza = dataScadenzaSql != null ? dataScadenzaSql.toLocalDate() : null;
                     String stato = rs.getString("stato");
                     tessera = new Tessera(
                         codTessera,

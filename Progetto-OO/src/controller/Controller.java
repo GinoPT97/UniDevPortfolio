@@ -323,21 +323,14 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
 
     // Aggiunge un nuovo prodotto al database
     public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
-                          Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, Date dataproduzione, String categoria, int scorta) throws SQLException {
-        // Conversione Date: se sono java.sql.Date, convertirle in java.util.Date
-        java.util.Date raccolta = (dataRaccolta instanceof java.sql.Date) ? new java.util.Date(dataRaccolta.getTime()) : dataRaccolta;
-        java.util.Date mungitura = (dataMungitura instanceof java.sql.Date) ? new java.util.Date(dataMungitura.getTime()) : dataMungitura;
-        java.util.Date scadenza = (dataScadenza instanceof java.sql.Date) ? new java.util.Date(dataScadenza.getTime()) : dataScadenza;
-        java.util.Date produzione = (dataproduzione instanceof java.sql.Date) ? new java.util.Date(dataproduzione.getTime()) : dataproduzione;
-        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, raccolta, mungitura, glutine, scadenza, categoria, scorta, produzione);
+                          java.time.LocalDate dataRaccolta, java.time.LocalDate dataMungitura, boolean glutine, java.time.LocalDate dataScadenza, java.time.LocalDate dataproduzione, String categoria, int scorta) throws SQLException {
+        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta, dataproduzione);
         boolean success = prdjdbc.setNewProdotto(pe);
-        
         // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
         if (success) {
             updateProdottoModelAfterInsert(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
                                          dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
         }
-        
         return success;
     }
 
@@ -357,13 +350,13 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
     }
     // Aggiorna le informazioni di un prodotto
     public boolean upprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
-                         Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) throws SQLException {
+                         java.time.LocalDate dataRaccolta, java.time.LocalDate dataMungitura, boolean glutine, java.time.LocalDate dataScadenza, String categoria, int scorta) throws SQLException {
         Prodotto pe = new Prodotto(
             codProdotto, nome, descrizione, prezzo, luogoProvenienza,
-            (dataRaccolta instanceof java.sql.Date) ? new java.util.Date(dataRaccolta.getTime()) : dataRaccolta,
-            (dataMungitura instanceof java.sql.Date) ? new java.util.Date(dataMungitura.getTime()) : dataMungitura,
+            dataRaccolta,
+            dataMungitura,
             glutine,
-            (dataScadenza instanceof java.sql.Date) ? new java.util.Date(dataScadenza.getTime()) : dataScadenza,
+            dataScadenza,
             categoria, scorta, null
         );
         boolean success = prdjdbc.updateProdotto(pe);
@@ -541,7 +534,7 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
             java.time.LocalDate.now().toString() // Data odierna
         ));
     }
-    private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
+    private void updateProdottoModelAfterInsert(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, java.time.LocalDate dataRaccolta, java.time.LocalDate dataMungitura, boolean glutine, java.time.LocalDate dataScadenza, String categoria, int scorta) {
         prodModel.addRow(createRowData(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, formatGlutineStatus(glutine), dataScadenza, null, categoria, scorta));
     }
     private void updateDipendenteModelAfterUpdate(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
@@ -550,7 +543,7 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
     private void updateClienteModelAfterUpdate(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) {
         updateTableRow(clienteModel, codCliente, new Object[]{codCliente, nome, cognome, codFis, email, indirizzo, telefono});
     }
-    private void updateProdottoModelAfterUpdate(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, Date dataRaccolta, Date dataMungitura, boolean glutine, Date dataScadenza, String categoria, int scorta) {
+    private void updateProdottoModelAfterUpdate(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, java.time.LocalDate dataRaccolta, java.time.LocalDate dataMungitura, boolean glutine, java.time.LocalDate dataScadenza, String categoria, int scorta) {
         updateTableRow(prodModel, codProdotto, new Object[]{codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, formatGlutineStatus(glutine), dataScadenza, null, categoria, scorta});
     }
     private void updateOrdineModelAfterInsert(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {

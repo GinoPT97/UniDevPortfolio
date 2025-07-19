@@ -55,8 +55,8 @@ public class Tesseraimpl implements TesseraJDBC {
                 tessere.add(new Tessera(
                         rs.getString("codtessera"),
                         rs.getDouble("numeropunti"),
-                        rs.getDate("dataemissione"),
-                        rs.getDate("datascadenza"),
+                        rs.getDate("dataemissione") != null ? rs.getDate("dataemissione").toLocalDate() : null,
+                        rs.getDate("datascadenza") != null ? rs.getDate("datascadenza").toLocalDate() : null,
                         rs.getString("stato"),
                         new Cliente(
                                 rs.getString("codcliente"),

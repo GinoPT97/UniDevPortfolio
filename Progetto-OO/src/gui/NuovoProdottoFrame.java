@@ -5,9 +5,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -364,26 +361,42 @@ public class NuovoProdottoFrame extends JFrame {
                 JOptionPane.showMessageDialog(null, "Compila correttamente tutti i campi obbligatori.\nControlla i valori numerici e le date.", "Errore di validazione", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            DateFormat data = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 String categoria = categoriacb.getSelectedItem().toString();
+                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                java.time.LocalDate dataRaccolta = null;
+                java.time.LocalDate dataMungitura = null;
+                java.time.LocalDate dataScadenza = null;
+                java.time.LocalDate dataProduzione = null;
+                if ((categoria.equals(FRUTTA) || categoria.equals(VERDURA)) && !((JTextField)fields[4]).getText().trim().isEmpty()) {
+                    dataRaccolta = java.time.LocalDate.parse(((JTextField)fields[4]).getText().trim(), formatter);
+                }
+                if (categoria.equals(LATTICINI) && !((JTextField)fields[5]).getText().trim().isEmpty()) {
+                    dataMungitura = java.time.LocalDate.parse(((JTextField)fields[5]).getText().trim(), formatter);
+                }
+                if ((categoria.equals(UOVA) || categoria.equals(CONFEZIONATI) || categoria.equals(LATTICINI)) && !((JTextField)fields[8]).getText().trim().isEmpty()) {
+                    dataScadenza = java.time.LocalDate.parse(((JTextField)fields[8]).getText().trim(), formatter);
+                }
+                if (categoria.equals(LATTICINI) && !((JTextField)fields[6]).getText().trim().isEmpty()) {
+                    dataProduzione = java.time.LocalDate.parse(((JTextField)fields[6]).getText().trim(), formatter);
+                }
                 c.newprod(
                         "",
                         ((JTextField)fields[0]).getText(),
                         ((JTextArea)fields[1]).getText(),
                         Double.parseDouble(((JTextField)fields[3]).getText()),
                         ((JTextField)fields[2]).getText(),
-                        (categoria.equals(FRUTTA) || categoria.equals(VERDURA)) ? new java.sql.Date(data.parse(((JTextField)fields[4]).getText()).getTime()) : null,
-                        categoria.equals(LATTICINI) ? new java.sql.Date(data.parse(((JTextField)fields[5]).getText()).getTime()) : null,
+                        dataRaccolta,
+                        dataMungitura,
                         ((JCheckBox)fields[7]).isSelected(),
-                        (categoria.equals(UOVA) || categoria.equals(CONFEZIONATI) || categoria.equals(LATTICINI)) ? new java.sql.Date(data.parse(((JTextField)fields[8]).getText()).getTime()) : null,
-                        categoria.equals(LATTICINI) ? new java.sql.Date(data.parse(((JTextField)fields[6]).getText()).getTime()) : null,
+                        dataScadenza,
+                        dataProduzione,
                         categoria,
                         Integer.parseInt(((JTextField)fields[9]).getText())
                 );
                 clean();
                 JOptionPane.showMessageDialog(null, "Aggiunta effettuata");
-            } catch (NumberFormatException | SQLException | ParseException e1) {
+            } catch (NumberFormatException | SQLException | java.time.format.DateTimeParseException e1) {
                 JOptionPane.showMessageDialog(null, "Errore!\nTipo di errore : " + e1);
             }
         });

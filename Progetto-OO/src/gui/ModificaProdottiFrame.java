@@ -3,9 +3,6 @@ package gui;
 import controller.Controller;
 import java.awt.*;
 import java.awt.event.ItemEvent;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -437,20 +434,20 @@ public class ModificaProdottiFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Compila correttamente tutti i campi obbligatori.\nControlla i valori numerici e le date.", "Errore di validazione", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 String categoria = categoriacb.getSelectedItem().toString();
-                java.sql.Date dataRaccolta = null;
-                java.sql.Date dataMungitura = null;
-                java.sql.Date dataScadenza = null;
+                java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                java.time.LocalDate dataRaccolta = null;
+                java.time.LocalDate dataMungitura = null;
+                java.time.LocalDate dataScadenza = null;
                 if ((FRUTTA.equals(categoria) || VERDURA.equals(categoria)) && !racctf.getText().trim().isEmpty()) {
-                    dataRaccolta = new java.sql.Date(dateFormat.parse(racctf.getText()).getTime());
+                    dataRaccolta = java.time.LocalDate.parse(racctf.getText().trim(), formatter);
                 }
                 if (LATTICINI.equals(categoria) && !mungtf.getText().trim().isEmpty()) {
-                    dataMungitura = new java.sql.Date(dateFormat.parse(mungtf.getText()).getTime());
+                    dataMungitura = java.time.LocalDate.parse(mungtf.getText().trim(), formatter);
                 }
                 if ((UOVA.equals(categoria) || CONFEZIONATI.equals(categoria) || LATTICINI.equals(categoria)) && !scadtf.getText().trim().isEmpty()) {
-                    dataScadenza = new java.sql.Date(dateFormat.parse(scadtf.getText()).getTime());
+                    dataScadenza = java.time.LocalDate.parse(scadtf.getText().trim(), formatter);
                 }
                 c.upprod(
                         cod,
@@ -468,7 +465,7 @@ public class ModificaProdottiFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Prodotto modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
                 clean();
                 c.visAndElem(4, 3);
-            } catch (NumberFormatException | ParseException | java.sql.SQLException ex) {
+            } catch (NumberFormatException | java.sql.SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
             }
         });
