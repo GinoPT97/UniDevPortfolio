@@ -1,12 +1,24 @@
 #!/bin/bash
-set -e
-set -o pipefail
+set -Eeuo pipefail
+
+# Variabile globale per tracciare l'uscita pulita
+SCRIPT_SUCCESS=false
+# Cleanup handler
+cleanup() {
+    if [[ "$SCRIPT_SUCCESS" == "true" ]]; then
+        # Uscita normale, nessun errore
+        return
+    fi
+    log "ERROR" "Script interrotto o errore. Pulizia in corso."
+}
+trap cleanup SIGINT ERR EXIT
 
 # Configurazione script
 SCRIPT_NAME="Sistema di Ottimizzazione Ubuntu"
 VERSION="2.0"
 LOGFILE="/var/log/ubuntu-cleaner.log"
-DRY_RUN=false
+DRY_RUN=true  # Modalità sicura di default
+BACKUP_BEFORE_DELETE=false  # Imposta a true per abilitare backup automatico dei file eliminati
 VERBOSE=false
 FORCE=false
 
@@ -46,6 +58,10 @@ while [[ $# -gt 0 ]]; do
             DRY_RUN=true
             shift
             ;;
+        --no-dry-run)
+            DRY_RUN=false
+            shift
+            ;;
         -v|--verbose)
             VERBOSE=true
             shift
@@ -83,19 +99,58 @@ log() {
     local message="$2"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     local color=""
-    
     case "$level" in
         "INFO")  color="$GREEN" ;;
         "WARN")  color="$YELLOW" ;;
         "ERROR") color="$RED" ;;
         "DEBUG") color="$BLUE" ;;
     esac
-    
-    # Output colorato su terminale
     echo -e "${color}[$level]${NC} $timestamp - $message"
-    
-    # Log senza colori nel file
     echo "[$level] $timestamp - $message" >> "$LOGFILE"
+}
+
+# Funzione per backup file prima di eliminare (opzionale)
+backup_file() {
+    local file="$1"
+    if [[ -f "$file" ]]; then
+        cp -- "$file" "${file}.bak_$(date +%s)"
+        log "INFO" "Backup creato: ${file}.bak_$(date +%s)"
+    fi
+}
+
+# Funzione per eliminazione sicura di file (non directory!) solo in percorsi consentiti
+safe_delete() {
+    local target="$1"
+    local allowed_root=("/home" "/tmp" "/var/log" "/var/tmp")
+    if [[ -z "$target" || ! -e "$target" ]]; then
+        log "WARN" "Percorso non valido: '$target'"
+        return 1
+    fi
+    if [[ -d "$target" ]]; then
+        log "WARN" "È una cartella, non la rimuovo: '$target'"
+        return 1
+    fi
+    local allowed=false
+    for dir in "${allowed_root[@]}"; do
+        if [[ "$target" == $dir* ]]; then
+            allowed=true
+            break
+        fi
+    done
+    if [[ "$allowed" != true ]]; then
+        log "ERROR" "Tentativo di eliminazione fuori da percorsi sicuri: $target"
+        return 1
+    fi
+    if [[ "$BACKUP_BEFORE_DELETE" == true ]]; then
+        backup_file "$target"
+    fi
+    if [[ "$FORCE" == "true" ]] || [[ "$DRY_RUN" == "true" ]]; then
+        run_cmd "rm -f -- \"$target\"" "Eliminazione sicura di $target"
+    else
+        if confirm_action "Eliminare il file $target? Percorso: $target"; then
+            run_cmd "rm -f -- \"$target\"" "Eliminazione sicura di $target"
+        fi
+    fi
 }
 
 # Funzione per eseguire comandi con controllo degli errori migliorato
@@ -138,12 +193,10 @@ run_cmd() {
 # Funzione per conferma utente
 confirm_action() {
     local message="$1"
-    
     if [[ "$FORCE" == "true" ]] || [[ "$DRY_RUN" == "true" ]]; then
         return 0
     fi
-    
-    echo -e "${YELLOW}$message${NC}"
+    echo -e "${YELLOW}CONFERMA RICHIESTA:${NC} $message"
     read -p "Continuare? [s/N]: " -n 1 -r
     echo
     [[ $REPLY =~ ^[Ss]$ ]]
@@ -183,22 +236,43 @@ cleanup_logs() {
 cleanup_temp_files() {
     log "INFO" "=== PULIZIA FILE TEMPORANEI ==="
 
-    # Pulizia cartelle temporanee utente (SAFE)
-    run_cmd "rm -rf /home/*/.cache/thumbnails/*" "Pulizia miniature utente" true
+    # Pulizia cartelle temporanee utente (SAFE, solo file, no directory)
+    for user in $(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 && $1!~/^(nobody|systemd-)/ {print $1}'); do
+        home_dir=$(getent passwd "$user" | cut -d: -f6)
+        thumb_dir="$home_dir/.cache/thumbnails"
+        if [[ -d "$thumb_dir" ]]; then
+            find "$thumb_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file"
+            done
+        fi
+    done
 }
 
 # Funzione per la pulizia delle cache utente
 cleanup_user_cache() {
     log "INFO" "=== PULIZIA CACHE UTENTE ==="
-    # Escludi utenti di sistema (nobody, systemd-*)
     local users=$(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 && $1!~/^(nobody|systemd-)/ {print $1}')
     for user in $users; do
         local home_dir=$(getent passwd "$user" | cut -d: -f6)
-        if [[ -d "$home_dir" ]]; then
-            run_cmd "sudo -u $user rm -rf $home_dir/.cache/mozilla/* 2>/dev/null || true" "Pulizia cache Mozilla per $user" true
-            run_cmd "sudo -u $user rm -rf $home_dir/.cache/google-chrome/* 2>/dev/null || true" "Pulizia cache Chrome per $user" true
-            run_cmd "sudo -u $user rm -rf $home_dir/.cache/chromium/* 2>/dev/null || true" "Pulizia cache Chromium per $user" true
-            run_cmd "sudo -u $user rm -rf $home_dir/.cache/thumbnails/* 2>/dev/null || true" "Pulizia cache thumbnails per $user" true
+        if [[ -d "$home_dir/.cache/mozilla" ]]; then
+            find "$home_dir/.cache/mozilla" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file"
+            done
+        fi
+        if [[ -d "$home_dir/.cache/google-chrome" ]]; then
+            find "$home_dir/.cache/google-chrome" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file"
+            done
+        fi
+        if [[ -d "$home_dir/.cache/chromium" ]]; then
+            find "$home_dir/.cache/chromium" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file"
+            done
+        fi
+        if [[ -d "$home_dir/.cache/thumbnails" ]]; then
+            find "$home_dir/.cache/thumbnails" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file"
+            done
         fi
     done
 }
@@ -207,29 +281,16 @@ cleanup_user_cache() {
 system_optimization() {
     log "INFO" "=== OTTIMIZZAZIONI SISTEMA ==="
     
-    # Ottimizzazione SSD (TRIM)
-    if command -v fstrim &>/dev/null; then
-        run_cmd "fstrim -av" "Ottimizzazione spazio libero (TRIM)" true
-    else
-        log "INFO" "fstrim non disponibile"
-    fi
-    
-    # Ottimizzazione swap
-    if [[ -f /proc/swaps ]] && [[ $(wc -l < /proc/swaps) -gt 1 ]]; then
-        if confirm_action "Ottimizzare la memoria swap?"; then
-            run_cmd "swapoff -a && swapon -a" "Ottimizzazione swap" true
-        fi
-    fi
+    # Ottimizzazione SSD (TRIM) DISABILITATA per sicurezza
+    log "INFO" "TRIM SSD disabilitato per sicurezza. Abilitalo solo se sei sicuro."
+    # Ottimizzazione swap DISABILITATA per sicurezza
+    log "INFO" "Ottimizzazione swap disabilitata per sicurezza."
     
     # Aggiornamento database locate
     if command -v updatedb &>/dev/null; then
         run_cmd "updatedb" "Aggiornamento database locate" true
     fi
-    
-    # Ricostruzione cache ldconfig
     run_cmd "ldconfig" "Ricostruzione cache librerie condivise" true
-    
-    # Sincronizzazione filesystem
     run_cmd "sync" "Sincronizzazione filesystem"
 }
 
@@ -267,7 +328,6 @@ main() {
     cleanup_logs
     cleanup_temp_files
     cleanup_user_cache
-    advanced_cleanup
     postgresql_maintenance
     system_optimization
     
@@ -300,3 +360,4 @@ fi
 
 # Esecuzione del main
 main "$@"
+SCRIPT_SUCCESS=true
