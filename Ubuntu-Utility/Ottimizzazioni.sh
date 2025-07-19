@@ -164,23 +164,12 @@ calculate_space() {
 basic_cleanup() {
     log "INFO" "=== PULIZIA DI BASE DEL SISTEMA ==="
     
-    # Aggiornamento indici pacchetti
     run_cmd "apt-get update" "Aggiornamento indici pacchetti"
-    
-    # Configurazione pacchetti interrotti
     run_cmd "dpkg --configure -a" "Configurazione pacchetti non configurati"
-    
-    # Risoluzione dipendenze mancanti
     run_cmd "apt-get install -f -y" "Risoluzione dipendenze mancanti"
-    
-    # Pulizia cache APT
     run_cmd "apt-get clean" "Pulizia cache APT"
     run_cmd "apt-get autoclean -y" "Pulizia pacchetti APT obsoleti"
-    
-    # Rimozione pacchetti non necessari
-    run_cmd "apt-get autoremove --purge -y" "Rimozione pacchetti obsoleti"
-    
-    # Aggiornamento cache font
+    run_cmd "apt-get autoremove -y" "Rimozione pacchetti obsoleti"
     run_cmd "fc-cache -f -v" "Aggiornamento cache font" true
 }
 
@@ -188,107 +177,45 @@ basic_cleanup() {
 cleanup_logs() {
     log "INFO" "=== PULIZIA LOG DI SISTEMA ==="
     
-    # Pulizia journal
     run_cmd "journalctl --vacuum-time=7d" "Rimozione log journal vecchi di 7 giorni"
-    run_cmd "journalctl --vacuum-size=100M" "Limitazione dimensione journal a 100MB"
-    run_cmd "journalctl --vacuum-files=3" "Mantenimento massimo 3 file journal"
-    
-    # Rotazione e compressione log
     run_cmd "logrotate -f /etc/logrotate.conf" "Rotazione forzata dei log" true
-    
-    # Troncamento file di log grandi
-    run_cmd "find /var/log -type f -name '*.log' -size +50M -exec truncate -s 10M {} \;" "Troncamento file di log di grandi dimensioni" true
-    
-    # Rimozione log vecchi
-    run_cmd "find /var/log -type f -name '*.log.*' -mtime +30 -delete" "Rimozione log vecchi di 30 giorni" true
 }
 
 # Funzione per la pulizia dei file temporanei
 cleanup_temp_files() {
     log "INFO" "=== PULIZIA FILE TEMPORANEI ==="
-    
-    # Pulizia directory temporanee di sistema
-    run_cmd "find /tmp -type f -atime +7 -delete" "Rimozione file temporanei vecchi"
-    run_cmd "find /var/tmp -type f -atime +7 -delete" "Rimozione file temporanei variabili vecchi"
-    
-    # Pulizia crash reports
-    run_cmd "rm -rf /var/crash/*" "Rimozione crash reports" true
-    
-    # Pulizia file lock orfani
-    run_cmd "find /var/lock -type f -delete" "Rimozione file lock orfani" true
-    run_cmd "find /var/run -name '*.pid' -delete" "Rimozione file PID orfani" true
+
+    # Pulizia cartelle temporanee utente (SAFE)
+    run_cmd "rm -rf /home/*/.cache/thumbnails/*" "Pulizia miniature utente" true
 }
 
 # Funzione per la pulizia delle cache utente
 cleanup_user_cache() {
     log "INFO" "=== PULIZIA CACHE UTENTE ==="
     
-    # Cache browser (eseguite come utenti specifici)
+    # Cache browser (eseguite come utenti specifici, SOLO UTENTE, NON SISTEMA)
     local users=$(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 {print $1}')
-    
+
     for user in $users; do
         local home_dir=$(getent passwd "$user" | cut -d: -f6)
         if [[ -d "$home_dir" ]]; then
             # Firefox
-            run_cmd "sudo -u $user find $home_dir/.mozilla/firefox -name 'cache2' -type d -exec rm -rf {} + 2>/dev/null || true" "Pulizia cache Firefox per $user" true
-            run_cmd "sudo -u $user find $home_dir/.cache/mozilla -type f -delete 2>/dev/null || true" "Pulizia cache Mozilla per $user" true
-            
+            run_cmd "sudo -u $user rm -rf $home_dir/.cache/mozilla/* 2>/dev/null || true" "Pulizia cache Mozilla per $user" true
             # Chrome/Chromium
             run_cmd "sudo -u $user rm -rf $home_dir/.cache/google-chrome/* 2>/dev/null || true" "Pulizia cache Chrome per $user" true
             run_cmd "sudo -u $user rm -rf $home_dir/.cache/chromium/* 2>/dev/null || true" "Pulizia cache Chromium per $user" true
-            
             # Thumbnails
-            run_cmd "sudo -u $user rm -rf $home_dir/.thumbnails/* 2>/dev/null || true" "Pulizia miniature per $user" true
             run_cmd "sudo -u $user rm -rf $home_dir/.cache/thumbnails/* 2>/dev/null || true" "Pulizia cache thumbnails per $user" true
-            
-            # Pulizia cache generiche
-            run_cmd "sudo -u $user find $home_dir/.cache -type f -atime +30 -delete 2>/dev/null || true" "Pulizia cache generiche vecchie per $user" true
         fi
     done
     
-    # Pulizia cache di sistema
-    run_cmd "rm -rf /var/cache/apt/archives/*.deb" "Rimozione archivi DEB scaricati" true
-    run_cmd "rm -rf /var/cache/debconf/*" "Pulizia cache debconf" true
 }
 
 # Funzione per la pulizia avanzata
 advanced_cleanup() {
     log "INFO" "=== PULIZIA AVANZATA ==="
     
-    # Rimozione localizzazioni non utilizzate
-    if command -v localepurge &>/dev/null; then
-        run_cmd "localepurge" "Rimozione localizzazioni non utilizzate" true
-    else
-        log "WARN" "localepurge non installato, installarlo con: apt-get install localepurge"
-    fi
     
-    # Rimozione pacchetti orfani
-    if command -v deborphan &>/dev/null; then
-        local orphans=$(deborphan 2>/dev/null || true)
-        if [[ -n "$orphans" ]]; then
-            run_cmd "deborphan | xargs -r apt-get remove --purge -y" "Rimozione pacchetti orfani"
-        else
-            log "INFO" "Nessun pacchetto orfano trovato"
-        fi
-    else
-        log "INFO" "deborphan non disponibile, installarlo con: apt-get install deborphan"
-    fi
-    
-    # Rimozione vecchie versioni del kernel
-    local current_kernel=$(uname -r | sed 's/-generic//')
-    local old_kernels=$(dpkg -l 'linux-image-*' 'linux-headers-*' | awk '/^ii/{ print $2 }' | grep -v "$current_kernel" | grep -E '^linux-(image|headers)-[0-9]' || true)
-    
-    if [[ -n "$old_kernels" ]]; then
-        if confirm_action "Trovate vecchie versioni del kernel. Rimuoverle?"; then
-            run_cmd "echo '$old_kernels' | xargs -r apt-get remove --purge -y" "Rimozione vecchie versioni del kernel"
-        fi
-    else
-        log "INFO" "Nessuna vecchia versione del kernel da rimuovere"
-    fi
-    
-    # Pulizia cache Python
-    run_cmd "find /root -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true" "Pulizia cache Python sistema" true
-    run_cmd "rm -rf /root/.cache/pip/* 2>/dev/null || true" "Pulizia cache pip root" true
 }
 
 # Funzione per ottimizzazioni sistema
