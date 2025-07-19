@@ -36,7 +36,7 @@ public class NuovoProdottoFrame extends JFrame {
 
     private void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 900, 700); // Finestra altezza 700
+        setBounds(100, 100, 1000, 765); // Finestra più compatta, textarea invariata
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoProdottoFrame.class.getResource("/Immagini/ImmIcon.png")));
 
@@ -55,12 +55,19 @@ public class NuovoProdottoFrame extends JFrame {
 
         // Inizializza i componenti e li inserisce nell'array
         fields[0] = new JTextField(24); // Nome
-        fields[1] = new JTextArea(10, 24); // Descrizione più alta
+        fields[1] = new JTextArea(); // Descrizione
         JTextArea descArea = (JTextArea)fields[1];
+        descArea.setRows(5);
+        descArea.setColumns(28);
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
         descArea.setForeground(Color.GRAY);
         descArea.setText("Inserisci la descrizione");
+        // Forza dimensioni minime/preferite/massime
+        Dimension areaDim = new Dimension(280, 80);
+        descArea.setMinimumSize(areaDim);
+        descArea.setPreferredSize(areaDim);
+        descArea.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         // Placeholder: rimuovi al focus
         descArea.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
@@ -106,7 +113,9 @@ public class NuovoProdottoFrame extends JFrame {
         elempanel.add(descLabel, gbc);
         gbc.gridx = 1;
         JScrollPane descScroll = new JScrollPane(fields[1]);
-        descScroll.setPreferredSize(new Dimension(400, 180)); // più alta
+        descScroll.setMinimumSize(areaDim);
+        descScroll.setPreferredSize(areaDim);
+        descScroll.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         JPanel descPanel = new JPanel(new BorderLayout());
         descPanel.add(descScroll, BorderLayout.CENTER);
         JLabel charCountLabel = new JLabel("0/500 caratteri");

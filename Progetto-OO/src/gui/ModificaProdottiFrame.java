@@ -43,11 +43,10 @@ public class ModificaProdottiFrame extends JFrame {
     private void elementi() {
         // Impostazioni base della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 900, 700); // Finestra altezza 700
-        JPanel contentPane = new JPanel();
+        setBounds(100, 100, 1000, 765); // Stesse dimensioni di NuovoProdottoFrame
+        JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
-        contentPane.setLayout(new BorderLayout(0, 0));
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
@@ -64,15 +63,18 @@ public class ModificaProdottiFrame extends JFrame {
 
         // Inizializza i componenti prima di usarli
         nometf = new JTextField(24);
-        descta = new JTextArea(10, 24); // più alta
+        descta = new JTextArea();
+        descta.setRows(5);
+        descta.setColumns(28);
         descta.setLineWrap(true);
         descta.setWrapStyleWord(true);
         descta.setForeground(Color.GRAY);
-        descta.setText("Inserisci una descrizione");
+        descta.setText("Inserisci la descrizione");
+        // Placeholder coerente con NuovoProdottoFrame
         descta.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
-                if (descta.getText().equals("Inserisci una descrizione")) {
+                if (descta.getText().equals("Inserisci la descrizione")) {
                     descta.setText("");
                     descta.setForeground(Color.BLACK);
                 }
@@ -81,7 +83,7 @@ public class ModificaProdottiFrame extends JFrame {
             public void focusLost(java.awt.event.FocusEvent e) {
                 if (descta.getText().isEmpty()) {
                     descta.setForeground(Color.GRAY);
-                    descta.setText("Inserisci una descrizione");
+                    descta.setText("Inserisci la descrizione");
                 }
             }
         });
@@ -112,8 +114,11 @@ public class ModificaProdottiFrame extends JFrame {
         descLabel.setFont(labelFont);
         elempanel.add(descLabel, gbc);
         gbc.gridx = 1;
+        Dimension areaDim = new Dimension(280, 80);
         JScrollPane descScroll = new JScrollPane(descta);
-        descScroll.setPreferredSize(new Dimension(400, 180)); // più alta
+        descScroll.setMinimumSize(areaDim);
+        descScroll.setPreferredSize(areaDim);
+        descScroll.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
         JPanel descPanel = new JPanel(new BorderLayout());
         descPanel.add(descScroll, BorderLayout.CENTER);
         JLabel charCountLabel = new JLabel("0/500 caratteri");
@@ -124,7 +129,7 @@ public class ModificaProdottiFrame extends JFrame {
             @Override
             public void keyTyped(java.awt.event.KeyEvent e) {
                 String text = descta.getText();
-                if (text.equals("Inserisci una descrizione")) text = "";
+                if (text.equals("Inserisci la descrizione")) text = "";
                 if (text.length() >= 500 && descta.getSelectedText() == null) {
                     e.consume();
                 }
@@ -132,7 +137,7 @@ public class ModificaProdottiFrame extends JFrame {
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
                 String text = descta.getText();
-                if (text.equals("Inserisci una descrizione")) text = "";
+                if (text.equals("Inserisci la descrizione")) text = "";
                 charCountLabel.setText(text.length() + "/500 caratteri");
             }
         });
