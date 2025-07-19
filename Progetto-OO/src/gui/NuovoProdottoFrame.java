@@ -36,69 +36,170 @@ public class NuovoProdottoFrame extends JFrame {
 
     private void elementi() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 650, 500);
+        setBounds(100, 100, 900, 700); // Finestra altezza 700
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoProdottoFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-        JPanel contentPane = new JPanel();
+        JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
 
-        JPanel elempanel = new JPanel();
-        elempanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-        elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
+        JPanel elempanel = new JPanel(new GridBagLayout());
+        elempanel.setBorder(BorderFactory.createEmptyBorder(30, 60, 30, 60));
+        elempanel.setBackground(new Color(245, 245, 250));
         contentPane.add(elempanel, BorderLayout.CENTER);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
 
         // Inizializza i componenti e li inserisce nell'array
-        fields[0] = new JTextField(20); // Nome
-        fields[1] = new JTextArea(2, 20); // Descrizione
-        fields[2] = new JTextField(20); // Provenienza
-        fields[3] = new JTextField(20); // Prezzo
-        fields[4] = new JTextField(20); // Data Raccolta
-        fields[5] = new JTextField(20); // Data Mungitura
-        fields[6] = new JTextField(20); // Data Produzione
-        fields[7] = new JCheckBox("Si"); // Glutine
-        fields[8] = new JTextField(20); // Data Scadenza
-        fields[9] = new JTextField(20); // Scorta
+        fields[0] = new JTextField(24); // Nome
+        fields[1] = new JTextArea(6, 24); // Descrizione
+        ((JTextArea)fields[1]).setLineWrap(true);
+        ((JTextArea)fields[1]).setWrapStyleWord(true);
+        fields[2] = new JTextField(24); // Provenienza
+        fields[3] = new JTextField(14); // Prezzo
+        fields[4] = new JTextField(16); // Data Raccolta
+        fields[5] = new JTextField(16); // Data Mungitura
+        fields[6] = new JTextField(16); // Data Produzione
+        fields[7] = new JCheckBox("Contiene glutine"); // Glutine
+        fields[8] = new JTextField(16); // Data Scadenza
+        fields[9] = new JTextField(12); // Scorta
 
-        for (int i = 0; i < labels.length; i++) {
-            if (i == 1) {
-                elempanel.add(createInputPanel(labels[i], fields[i]));
-            } else if (i == 7) {
-                elempanel.add(createInputPanel(labels[i], fields[i], false));
-            } else if (i >= 4 && i <= 6 || i == 8) {
-                elempanel.add(createInputPanel(labels[i], fields[i], false));
-            } else {
-                elempanel.add(createInputPanel(labels[i], fields[i]));
-            }
-        }
+        Font labelFont = new Font("Tahoma", Font.BOLD, 16);
+        Font fieldFont = new Font("Tahoma", Font.PLAIN, 15);
 
-        JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        int row = 0;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel nomeLabel = new JLabel("Nome prodotto:");
+        nomeLabel.setFont(labelFont);
+        elempanel.add(nomeLabel, gbc);
+        gbc.gridx = 1;
+        ((JTextField)fields[0]).setFont(fieldFont);
+        elempanel.add(fields[0], gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel descLabel = new JLabel("Descrizione:");
+        descLabel.setFont(labelFont);
+        elempanel.add(descLabel, gbc);
+        gbc.gridx = 1;
+        JScrollPane descScroll = new JScrollPane(fields[1]);
+        descScroll.setPreferredSize(new Dimension(400, 120));
+        elempanel.add(descScroll, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel provLabel = new JLabel("Provenienza:");
+        provLabel.setFont(labelFont);
+        elempanel.add(provLabel, gbc);
+        gbc.gridx = 1;
+        ((JTextField)fields[2]).setFont(fieldFont);
+        elempanel.add(fields[2], gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel prezzoLabel = new JLabel("Prezzo (€):");
+        prezzoLabel.setFont(labelFont);
+        elempanel.add(prezzoLabel, gbc);
+        gbc.gridx = 1;
+        ((JTextField)fields[3]).setFont(fieldFont);
+        elempanel.add(fields[3], gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel raccLabel = new JLabel("Data Raccolta:");
+        raccLabel.setFont(labelFont);
+        elempanel.add(raccLabel, gbc);
+        gbc.gridx = 1;
+        ((JTextField)fields[4]).setFont(fieldFont);
+        elempanel.add(fields[4], gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel mungLabel = new JLabel("Data Mungitura:");
+        mungLabel.setFont(labelFont);
+        elempanel.add(mungLabel, gbc);
+        gbc.gridx = 1;
+        ((JTextField)fields[5]).setFont(fieldFont);
+        elempanel.add(fields[5], gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel prodLabel = new JLabel("Data Produzione:");
+        prodLabel.setFont(labelFont);
+        elempanel.add(prodLabel, gbc);
+        gbc.gridx = 1;
+        ((JTextField)fields[6]).setFont(fieldFont);
+        elempanel.add(fields[6], gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel glutLabel = new JLabel("Glutine:");
+        glutLabel.setFont(labelFont);
+        elempanel.add(glutLabel, gbc);
+        gbc.gridx = 1;
+        ((JCheckBox)fields[7]).setFont(fieldFont);
+        elempanel.add(fields[7], gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel scadLabel = new JLabel("Data Scadenza:");
+        scadLabel.setFont(labelFont);
+        elempanel.add(scadLabel, gbc);
+        gbc.gridx = 1;
+        ((JTextField)fields[8]).setFont(fieldFont);
+        elempanel.add(fields[8], gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel scortaLabel = new JLabel("Scorta:");
+        scortaLabel.setFont(labelFont);
+        elempanel.add(scortaLabel, gbc);
+        gbc.gridx = 1;
+        ((JTextField)fields[9]).setFont(fieldFont);
+        elempanel.add(fields[9], gbc);
+
+        // Categoria e pulsanti
+        row++;
+        gbc.gridy = row; gbc.gridx = 0; gbc.gridwidth = 2;
+        JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
+        categoriapanel.setOpaque(false);
         categoriacb = new JComboBox<>(new String[]{FRUTTA, VERDURA, FARINACEI, LATTICINI, UOVA, CONFEZIONATI});
+        categoriacb.setFont(fieldFont);
         categoriapanel.add(categoriacb);
-        selbutton = creaButton("Selezione", new Color(46, 139, 87));
+        selbutton = creaButton("Seleziona", new Color(46, 139, 87));
         categoriapanel.add(selbutton);
-        elempanel.add(categoriapanel);
+        elempanel.add(categoriapanel, gbc);
 
         // Pannello per i pulsanti di azione
-        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 0));
+        buttonpanel.setBorder(new EmptyBorder(28, 0, 28, 0));
+        buttonpanel.setBackground(new Color(245, 245, 250));
         insertbutton = creaButton("Inserisci", new Color(34, 139, 34));
+        insertbutton.setFont(new Font("Tahoma", Font.BOLD, 18));
         buttonpanel.add(insertbutton);
         clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
+        clearbutton.setFont(new Font("Tahoma", Font.BOLD, 18));
         buttonpanel.add(clearbutton);
         backbutton = creaButton("Indietro", new Color(178, 34, 34));
+        backbutton.setFont(new Font("Tahoma", Font.BOLD, 18));
         buttonpanel.add(backbutton);
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
         // Pannello per il titolo
         JPanel titlepanel = new JPanel();
-        titlepanel.setBackground(new Color(139, 0, 0));
+        titlepanel.setBackground(new Color(178, 34, 34));
         JLabel titlelabel = new JLabel("Inserimento nuovo prodotto");
-        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 32));
         titlelabel.setForeground(Color.WHITE);
         titlepanel.add(titlelabel);
         contentPane.add(titlepanel, BorderLayout.NORTH);
+
+        // Migliora visibilità campi disabilitati
+        UIManager.put("TextField.inactiveBackground", new Color(230, 230, 230));
+        UIManager.put("TextArea.inactiveBackground", new Color(230, 230, 230));
     }
 
     private JPanel createInputPanel(String labelText, JComponent inputComponent) {

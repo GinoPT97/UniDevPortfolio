@@ -46,7 +46,16 @@ public class NuovoDipendenteFrame extends JFrame {
 
         for (int i = 0; i < labels.length; i++) {
             fields[i] = new JTextField(20);
-            elempanel.add(createInputPanel(labels[i], fields[i]));
+            fields[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
+            fields[i].setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
+                BorderFactory.createEmptyBorder(4, 8, 4, 8)));
+            fields[i].setBackground(new Color(250, 250, 250));
+            fields[i].setMaximumSize(new Dimension(Integer.MAX_VALUE, 14));
+            JPanel fieldPanel = createInputPanel(labels[i], fields[i]);
+            fieldPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            elempanel.add(fieldPanel);
+            elempanel.add(Box.createVerticalStrut(8));
         }
 
         JPanel titlepanel = new JPanel();
@@ -59,10 +68,14 @@ public class NuovoDipendenteFrame extends JFrame {
     }
 
     private JPanel createInputPanel(String labelText, JTextField textField) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel panel = new JPanel(new BorderLayout(8, 0));
+        panel.setOpaque(false);
         JLabel label = new JLabel(labelText);
-        panel.add(label);
-        panel.add(textField);
+        label.setFont(new Font("Tahoma", Font.BOLD, 16));
+        label.setPreferredSize(new Dimension(160, 32));
+        panel.add(label, BorderLayout.WEST);
+        panel.add(textField, BorderLayout.CENTER);
+        panel.setBorder(new EmptyBorder(0, 0, 0, 0));
         return panel;
     }
 

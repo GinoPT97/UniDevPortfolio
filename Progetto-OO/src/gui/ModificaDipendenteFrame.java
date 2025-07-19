@@ -55,7 +55,16 @@ public class ModificaDipendenteFrame extends JFrame {
 
         for (int i = 0; i < labels.length; i++) {
             fields[i] = new JTextField(20);
-            elempanel.add(createInputPanel(labels[i], fields[i]));
+            fields[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
+            fields[i].setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
+                BorderFactory.createEmptyBorder(4, 8, 4, 8)));
+            fields[i].setBackground(new Color(250, 250, 250));
+            fields[i].setMaximumSize(new Dimension(Integer.MAX_VALUE, 14));
+            JPanel fieldPanel = createInputPanel(labels[i], fields[i]);
+            fieldPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            elempanel.add(fieldPanel);
+            elempanel.add(Box.createVerticalStrut(8));
         }
     }
 

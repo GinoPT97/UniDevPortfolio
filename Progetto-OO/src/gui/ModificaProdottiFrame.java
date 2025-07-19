@@ -43,51 +43,144 @@ public class ModificaProdottiFrame extends JFrame {
     private void elementi() {
         // Impostazioni base della finestra
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 650, 500); // Aumenta l'altezza della finestra
+        setBounds(100, 100, 900, 700); // Finestra altezza 700
         JPanel contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
+        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(0, 0));
         setLocationRelativeTo(null);
         setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
-        // Pannello centrale con layout BoxLayout
+        // Pannello centrale migliorato
         JPanel elempanel = new JPanel();
-        elempanel.setBorder(new EmptyBorder(0, 0, 0, 0)); // Rimuovi margini
+        elempanel.setBorder(BorderFactory.createEmptyBorder(30, 60, 30, 60));
+        elempanel.setBackground(new Color(245, 245, 250));
         contentPane.add(elempanel, BorderLayout.CENTER);
-        elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
+        elempanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
 
         // Inizializza i componenti prima di usarli
-        nometf = new JTextField(20);
-        descta = new JTextArea(1, 20);
-        provtf = new JTextField(20);
-        prezzotf = new JTextField(20);
-        racctf = new JTextField(20);
-        mungtf = new JTextField(20);
-        prodtf = new JTextField(20);
-        glutcb = new JCheckBox("Si");
-        scadtf = new JTextField(20);
-        scortatf = new JTextField(20);
-        
-        // Crea i pannelli di input
-        elempanel.add(createInputPanel("Nome :", nometf));
-        elempanel.add(createInputPanel("Descrizione :", descta));
-        elempanel.add(createInputPanel("Provenienza :", provtf));
-        elempanel.add(createInputPanel("Prezzo :", prezzotf));
-        elempanel.add(createInputPanel("Data Raccolta (YYYY-MM-DD) :", racctf, false));
-        elempanel.add(createInputPanel("Data Mungitura (YYYY-MM-DD) :", mungtf, false));
-        elempanel.add(createInputPanel("Data Produzione (YYYY-MM-DD) :", prodtf, false));
-        elempanel.add(createInputPanel("Glutine :", glutcb, false));
-        elempanel.add(createInputPanel("Data Scadenza (YYYY-MM-DD) :", scadtf, false));
-        elempanel.add(createInputPanel("Scorta :", scortatf));
+        nometf = new JTextField(24);
+        descta = new JTextArea(6, 24);
+        descta.setLineWrap(true);
+        descta.setWrapStyleWord(true);
+        provtf = new JTextField(24);
+        prezzotf = new JTextField(14);
+        racctf = new JTextField(16);
+        mungtf = new JTextField(16);
+        prodtf = new JTextField(16);
+        glutcb = new JCheckBox("Contiene glutine");
+        scadtf = new JTextField(16);
+        scortatf = new JTextField(12);
 
-        // Pannello per categorie
-        JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        Font labelFont = new Font("Tahoma", Font.BOLD, 16);
+        Font fieldFont = new Font("Tahoma", Font.PLAIN, 15);
+
+        int row = 0;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel nomeLabel = new JLabel("Nome prodotto:");
+        nomeLabel.setFont(labelFont);
+        elempanel.add(nomeLabel, gbc);
+        gbc.gridx = 1;
+        nometf.setFont(fieldFont);
+        elempanel.add(nometf, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel descLabel = new JLabel("Descrizione:");
+        descLabel.setFont(labelFont);
+        elempanel.add(descLabel, gbc);
+        gbc.gridx = 1;
+        JScrollPane descScroll = new JScrollPane(descta);
+        descScroll.setPreferredSize(new Dimension(400, 120));
+        elempanel.add(descScroll, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel provLabel = new JLabel("Provenienza:");
+        provLabel.setFont(labelFont);
+        elempanel.add(provLabel, gbc);
+        gbc.gridx = 1;
+        provtf.setFont(fieldFont);
+        elempanel.add(provtf, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel prezzoLabel = new JLabel("Prezzo (€):");
+        prezzoLabel.setFont(labelFont);
+        elempanel.add(prezzoLabel, gbc);
+        gbc.gridx = 1;
+        prezzotf.setFont(fieldFont);
+        elempanel.add(prezzotf, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel raccLabel = new JLabel("Data Raccolta:");
+        raccLabel.setFont(labelFont);
+        elempanel.add(raccLabel, gbc);
+        gbc.gridx = 1;
+        racctf.setFont(fieldFont);
+        elempanel.add(racctf, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel mungLabel = new JLabel("Data Mungitura:");
+        mungLabel.setFont(labelFont);
+        elempanel.add(mungLabel, gbc);
+        gbc.gridx = 1;
+        mungtf.setFont(fieldFont);
+        elempanel.add(mungtf, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel prodLabel = new JLabel("Data Produzione:");
+        prodLabel.setFont(labelFont);
+        elempanel.add(prodLabel, gbc);
+        gbc.gridx = 1;
+        prodtf.setFont(fieldFont);
+        elempanel.add(prodtf, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel glutLabel = new JLabel("Glutine:");
+        glutLabel.setFont(labelFont);
+        elempanel.add(glutLabel, gbc);
+        gbc.gridx = 1;
+        glutcb.setFont(fieldFont);
+        elempanel.add(glutcb, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel scadLabel = new JLabel("Data Scadenza:");
+        scadLabel.setFont(labelFont);
+        elempanel.add(scadLabel, gbc);
+        gbc.gridx = 1;
+        scadtf.setFont(fieldFont);
+        elempanel.add(scadtf, gbc);
+
+        row++;
+        gbc.gridy = row; gbc.gridx = 0;
+        JLabel scortaLabel = new JLabel("Scorta:");
+        scortaLabel.setFont(labelFont);
+        elempanel.add(scortaLabel, gbc);
+        gbc.gridx = 1;
+        scortatf.setFont(fieldFont);
+        elempanel.add(scortatf, gbc);
+
+        // Categoria e pulsanti
+        row++;
+        gbc.gridy = row; gbc.gridx = 0; gbc.gridwidth = 2;
+        JPanel categoriapanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
+        categoriapanel.setOpaque(false);
         categoriacb = new JComboBox<>(new String[]{FRUTTA, VERDURA, FARINACEI, LATTICINI, UOVA, CONFEZIONATI});
+        categoriacb.setFont(fieldFont);
         categoriapanel.add(categoriacb);
         JButton selbutton = creaButton("Seleziona", new Color(46, 139, 87));
         categoriapanel.add(selbutton);
-        elempanel.add(categoriapanel);
+        elempanel.add(categoriapanel, gbc);
 
         // Aggiungi l'azione per il bottone "Seleziona"
         selbutton.addActionListener(event -> {
@@ -99,13 +192,18 @@ public class ModificaProdottiFrame extends JFrame {
             glutcb.setEnabled(type == 3);
         });
 
-        // Pannello dei bottoni
-        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        // Pannello dei bottoni separato e distanziato
+        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 0));
+        buttonpanel.setBorder(new EmptyBorder(28, 0, 28, 0));
+        buttonpanel.setBackground(new Color(245, 245, 250));
         updatebutton = creaButton("Inserisci", new Color(34, 139, 34));
+        updatebutton.setFont(new Font("Tahoma", Font.BOLD, 18));
         buttonpanel.add(updatebutton);
         clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
+        clearbutton.setFont(new Font("Tahoma", Font.BOLD, 18));
         buttonpanel.add(clearbutton);
         backbutton = creaButton("Indietro", new Color(178, 34, 34));
+        backbutton.setFont(new Font("Tahoma", Font.BOLD, 18));
         buttonpanel.add(backbutton);
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
@@ -114,9 +212,13 @@ public class ModificaProdottiFrame extends JFrame {
         panel.setBackground(new Color(178, 34, 34));
         contentPane.add(panel, BorderLayout.NORTH);
         JLabel titlelabel = new JLabel("Modifica Prodotto");
-        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 32));
         titlelabel.setForeground(Color.WHITE);
         panel.add(titlelabel);
+
+        // Migliora visibilità campi disabilitati
+        UIManager.put("TextField.inactiveBackground", new Color(230, 230, 230));
+        UIManager.put("TextArea.inactiveBackground", new Color(230, 230, 230));
     }
 
     private JPanel createInputPanel(String labelText, JComponent inputComponent) {

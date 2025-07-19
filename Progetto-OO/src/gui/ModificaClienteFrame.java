@@ -49,25 +49,25 @@ public class ModificaClienteFrame extends JFrame {
         contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
         JPanel elempanel = new JPanel(new GridBagLayout());
-        elempanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createEmptyBorder(30, 60, 30, 60),
-            BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
-                "Dati Cliente", 0, 0, new Font("Tahoma", Font.BOLD, 18), new Color(85, 107, 47))));
+        elempanel.setBorder(BorderFactory.createEmptyBorder(30, 60, 30, 60));
         contentPane.add(elempanel, BorderLayout.CENTER);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
         int labelWidth = 120;
         Font labelFont = new Font("Tahoma", Font.BOLD, 16);
-        Font fieldFont = new Font("Tahoma", Font.PLAIN, 16);
-
         for (int i = 0; i < labels.length; i++) {
             fields[i] = new JTextField(20);
-            fields[i].setFont(fieldFont);
+            fields[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
+            fields[i].setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
+                BorderFactory.createEmptyBorder(4, 8, 4, 8)));
+            fields[i].setBackground(new Color(250, 250, 250));
+            fields[i].setMaximumSize(new Dimension(Integer.MAX_VALUE, 14));
             JLabel label = new JLabel(labels[i]);
             label.setPreferredSize(new Dimension(labelWidth, 30));
             label.setFont(labelFont);
@@ -77,6 +77,9 @@ public class ModificaClienteFrame extends JFrame {
             gbc.gridx = 1;
             elempanel.add(fields[i], gbc);
         }
+        // Forza il ridisegno del layout dopo aver aggiunto tutti i componenti
+        contentPane.revalidate();
+        contentPane.repaint();
     }
 
 
@@ -137,6 +140,11 @@ public class ModificaClienteFrame extends JFrame {
         fields[3].setText(email);
         fields[4].setText(indirizzo);
         fields[5].setText(telefono);
+        // Forza il ridisegno del layout dopo il caricamento dati
+        if (contentPane != null) {
+            contentPane.revalidate();
+            contentPane.repaint();
+        }
     }
 
     private void azioni(Controller c) {
