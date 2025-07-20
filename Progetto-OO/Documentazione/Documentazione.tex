@@ -75,34 +75,46 @@ Il progetto adotta il pattern architetturale Model-View-Controller (MVC), separa
 \end{itemize}
 
 \section{Struttura del Codice}
-Il progetto è suddiviso nei seguenti package:
+
+Il progetto è suddiviso nei seguenti package, in linea con la struttura reale:
 \begin{itemize}
-\item \texttt{model} – Classi delle entità e DAO per la gestione dei dati
-\item \texttt{view} – Componenti Swing per l'interfaccia grafica
-\item \texttt{controller} – Logica applicativa e gestione degli eventi
-\item \texttt{db} – Connessione al database e query
+    \item \texttt{model} – Classi delle entità principali (Prodotto, Cliente, Dipendente, Ordine, Tessera, ecc.) e relativa logica di dominio.
+    \item \texttt{controller} – Logica applicativa, gestione degli eventi e coordinamento tra GUI e modello.
+    \item \texttt{daoimplementation} e \texttt{daointerface} – Interfacce e implementazioni per l'accesso ai dati tramite JDBC.
+    \item \texttt{dbconfiguration} – Gestione della connessione al database e configurazione.
+    \item \texttt{gui} – Componenti Swing per l'interfaccia grafica (schermate di inserimento, modifica, visualizzazione, ecc.).
 \end{itemize}
 
 \subsection*{Esempio di codice (classe Cliente)}
+
+\vspace{0.5em}
+\noindent\textbf{Esempio: classe Cliente e calcolo punti fedeltà}
+
+La classe \texttt{Cliente} rappresenta un cliente registrato, dotato di una tessera punti. Il metodo \texttt{calcolaPunti} restituisce i punti fedeltà maturati in base alla spesa effettuata (10\% del valore).
+
 \lstset{language=Java, breaklines=true, basicstyle=\ttfamily\small, frame=single, backgroundcolor=\color{gray!10}}
 \begin{lstlisting}
 public class Cliente {
-private String nome;
-private String cognome;
-private String tesseraPunti;
+    private String nome;
+    private String cognome;
+    private String tesseraPunti;
 
-public Cliente(String nome, String cognome, String tesseraPunti) {
-    this.nome = nome;
-    this.cognome = cognome;
-    this.tesseraPunti = tesseraPunti;
-}
+    public Cliente(String nome, String cognome, String tesseraPunti) {
+        this.nome = nome;
+        this.cognome = cognome;
+        this.tesseraPunti = tesseraPunti;
+    }
 
-public int calcolaPunti(double spesa) {
-    return (int)(spesa * 0.10);
-}
+    /**
+     * Calcola i punti fedelta maturati in base alla spesa.
+     * @param spesa importo della spesa effettuata
+     * @return punti maturati (10 percento della spesa)
+     */
+    public int calcolaPunti(double spesa) {
+        return (int)(spesa * 0.10);
+    }
 
-// Getter e Setter
-
+    // Getter e Setter
 }
 \end{lstlisting}
 
@@ -126,13 +138,6 @@ Il sistema si basa su un database relazionale in PostgreSQL. Di seguito si ripor
 \item Interfaccia grafica completa con Swing
 \end{itemize}
 
-\section{Modalità di Esecuzione}
-\begin{tcolorbox}[colback=green!5!white, colframe=green!40!black, title=Compilazione]
-\begin{verbatim}
-javac -d bin src/**/*.java
-java -cp bin Main
-\end{verbatim}
-\end{tcolorbox}
 
 \section{Conclusioni}
 Il progetto ha permesso di mettere in pratica i principi della programmazione orientata agli oggetti, la separazione delle responsabilità attraverso il pattern MVC, e la connessione tra Java e un database relazionale. Ulteriori sviluppi potrebbero includere la migrazione a JavaFX, l'integrazione di report PDF e funzionalità di esportazione dati.
