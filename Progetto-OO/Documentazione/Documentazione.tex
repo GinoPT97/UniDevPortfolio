@@ -14,16 +14,49 @@
 \usepackage{tcolorbox}
 \usepackage{lmodern}
 
+
 \geometry{margin=2.5cm}
 \pagestyle{fancy}
-\setlength{\headheight}{14.5pt}
+\setlength{\headheight}{16pt}
 \fancyhf{}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0.4pt}
 \rhead{\textit{Corso di Object Orientation}}
 \lhead{\textbf{Documentazione Progetto Java}}
 \cfoot{\thepage}
 
-\titleformat{\section}[block]{\Large\bfseries\color{blue!60!black}}{\thesection}{1em}{}
-\titleformat{\subsection}[block]{\large\bfseries\color{blue!40!black}}{\thesubsection}{1em}{}
+% Titoli colorati e separatori
+\definecolor{sectioncolor}{RGB}{0,70,140}
+\definecolor{subsectioncolor}{RGB}{0,120,200}
+\titleformat{\section}[block]{\Large\bfseries\color{sectioncolor}\titlerule[0.8pt]}{\thesection}{1em}{}
+\titleformat{\subsection}[block]{\large\bfseries\color{subsectioncolor}}{\thesubsection}{1em}{}
+
+% Tema listings moderno
+\lstset{
+  language=Java,
+  breaklines=true,
+  basicstyle=\ttfamily\small,
+  frame=single,
+  backgroundcolor=\color{gray!10},
+  keywordstyle=\color{blue!80!black}\bfseries,
+  commentstyle=\color{green!50!black}\itshape,
+  stringstyle=\color{orange!80!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  tabsize=2,
+  showstringspaces=false,
+  captionpos=b
+}
+
+% Box decorativi per sezioni chiave
+\newtcolorbox{keybox}[1][] {
+  colback=blue!5!white,
+  colframe=blue!60!black,
+  fonttitle=\bfseries,
+  coltitle=black,
+  left=1mm, right=1mm, top=1mm, bottom=1mm,
+  title=#1
+}
 
 \hypersetup{
 colorlinks=true,
@@ -37,8 +70,25 @@ pdfauthor={Gino Pandozzi-Trani}
 \author{\Large Gino Pandozzi-Trani\\\normalsize Matricola: N86003116}
 \date{}
 
+
 \begin{document}
-\maketitle
+
+% Frontespizio elegante
+\begin{titlepage}
+    \centering
+    {\Huge\bfseries Documentazione del Progetto Java\\[1.5ex]}
+    {\Large Corso di Object Orientation\\[2ex]}
+    \vspace{1.5cm}
+    {\large\textbf{Autore:} Gino Pandozzi-Trani}\\[0.5ex]
+    {\large\textbf{Matricola:} N86003116}\\[2ex]
+    \vspace{1.5cm}
+    \rule{0.8\textwidth}{0.8pt}\\[1.5cm]
+    {\large\today}
+    \vfill
+    \begin{flushright}
+    \end{flushright}
+\end{titlepage}
+
 \thispagestyle{empty}
 \newpage
 \tableofcontents
@@ -49,6 +99,19 @@ pdfauthor={Gino Pandozzi-Trani}
 Il progetto consiste nello sviluppo di un sistema informativo, composto da una base di dati relazionale e un applicativo Java dotato di GUI (Swing o JavaFX), per la gestione di un negozio di ortofrutta. Il sistema permette di gestire le vendite e la disponibilità dei prodotti, identificando le tipologie (frutta, verdura, farinacei, latticini, uova e confezionati), ognuna con caratteristiche specifiche (ad esempio, la frutta e la verdura hanno una data di raccolta, i latticini hanno sia una data di mungitura del latte che una data di produzione, ecc.).
 \end{tcolorbox}
 
+\section{Funzionalità Implementate}
+
+\begin{keybox}[Funzionalità principali]
+\begin{itemize}
+    \item Gestione prodotti (inserimento, modifica, cancellazione, ricerca)
+    \item Gestione clienti e punti fedeltà
+    \item Visualizzazione vendite e dipendenti
+    \item Classifica vendite per dipendente e per introito
+    \item Interfaccia grafica completa con Swing
+\end{itemize}
+\end{keybox}
+
+
 Ogni cliente è registrato e possiede una tessera punti che lo identifica presso il fruttivendolo: per ogni acquisto riceve il 10\% del valore della spesa in punti fedeltà. Il sistema consente la ricerca dei clienti, differenziandoli in base alle categorie di prodotti acquistati e alla quantità di punti ottenuti per ciascuna categoria.
 
 \textbf{Traccia d'esame: Sistema di gestione per un negozio di alimentari}
@@ -57,14 +120,6 @@ Ogni cliente è registrato e possiede una tessera punti che lo identifica presso
 Per gruppi da 3: il fruttivendolo ha un certo numero di dipendenti e ad ogni vendita è associato il dipendente che l’ha portata a termine. È quindi possibile ricercare quale dipendente ha effettuato il maggior numero di vendite in un determinato periodo, differenziandolo da quello che ha portato il maggior introito.
 \end{tcolorbox}
 
-\section{Requisiti Tecnici}
-\begin{itemize}
-\item Linguaggio: Java 17
-\item Ambiente di sviluppo: IntelliJ IDEA / Eclipse
-\item Interfaccia grafica: Swing
-\item Database: PostgreSQL
-\item Librerie aggiuntive: JDBC
-\end{itemize}
 
 \section{Architettura del Sistema}
 Il progetto adotta il pattern architetturale Model-View-Controller (MVC), separando chiaramente la logica dell'applicazione, l'interfaccia grafica e l'accesso ai dati.
@@ -119,28 +174,33 @@ public class Cliente {
 }
 \end{lstlisting}
 
-\section{Database}
-Il sistema si basa su un database relazionale in PostgreSQL. Di seguito si riporta uno schema semplificato delle tabelle principali:
 
-\begin{itemize}
-\item \textbf{Prodotto(id, nome, categoria, quantità, prezzo, data\_raccolta, data\_produzione, ...)}
-\item \textbf{Cliente(id, nome, cognome, tessera\_punti)}
-\item \textbf{Dipendente(id, nome, cognome)}
-\item \textbf{Vendita(id, data, cliente\_id, dipendente\_id, totale)}
-\item \textbf{DettaglioVendita(vendita\_id, prodotto\_id, quantità)}
-\end{itemize}
+\section{Diagrammi UML}
 
-\section{Funzionalità Implementate}
-\begin{itemize}
-\item Gestione prodotti (inserimento, modifica, cancellazione, ricerca)
-\item Gestione clienti e punti fedeltà
-\item Visualizzazione vendite e dipendenti
-\item Classifica vendite per dipendente e per introito
-\item Interfaccia grafica completa con Swing
-\end{itemize}
+\subsection{Class Diagram}
+Il seguente diagramma delle classi rappresenta la struttura principale del sistema e le relazioni tra le entità fondamentali.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../diagram/CD.png}
+    \caption{Diagramma delle classi (Class Diagram)}
+\end{figure}
+
+\subsection{Sequence Diagram}
+Di seguito sono riportati i principali diagrammi di sequenza che illustrano il flusso delle operazioni più rilevanti del sistema.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../diagram/CreaOrdine-SD.png}
+    \caption{Diagramma di sequenza: Creazione Ordine}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../diagram/NuovoCliente-SD.png}
+    \caption{Diagramma di sequenza: Nuovo Cliente}
+\end{figure}
 
 
-\section{Conclusioni}
-Il progetto ha permesso di mettere in pratica i principi della programmazione orientata agli oggetti, la separazione delle responsabilità attraverso il pattern MVC, e la connessione tra Java e un database relazionale. Ulteriori sviluppi potrebbero includere la migrazione a JavaFX, l'integrazione di report PDF e funzionalità di esportazione dati.
 
 \end{document}
