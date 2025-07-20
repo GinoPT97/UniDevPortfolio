@@ -704,36 +704,36 @@ Cliente                    "1" o-[#000000,plain]-> "ordini\n*" Ordine : effettua
 Dipendente                 "1" o-[#000000,plain]-> "ordini\n*" Ordine : gestisce
 Ordine                     "1" o-[#000000,plain]-> "articoli\n*" Articoli : contiene
 Clienteimpl                 -[#008200,dashed]-^  ClienteJDBC
-Controller                 "1" *-[#595959,plain]-> "adminf\n1" AdminFrame
+Controller                 "1" *-[#595959,plain]-> "adminf\n1" AdminFrame : gestisce
 Controller                 "1" *-[#595959,plain]-> "articoli\n1" Articoli
 Controller                 "1" *-[#595959,plain]-> "artjdbc\n1" ArticoliJDBC
-Controller                 "1" *-[#595959,plain]-> "carrf\n1" CarrelloFrame
+Controller                 "1" *-[#595959,plain]-> "carrf\n1" CarrelloFrame : gestisce
 Controller                 "1" *-[#595959,plain]-> "cliente\n1" Cliente
 Controller                 "1" *-[#595959,plain]-> "cljdbc\n1" ClienteJDBC
 Controller                 "1" *-[#595959,plain]-> "config\n1" DBConfiguration
 Controller                 "1" *-[#595959,plain]-> "dbconn\n1" DBConnection
 Controller                 "1" *-[#595959,plain]-> "dipendente\n1" Dipendente
-Controller                 "1" *-[#595959,plain]-> "dipf\n1" DipendenteFrame
+Controller                 "1" *-[#595959,plain]-> "dipf\n1" DipendenteFrame : gestisce
 Controller                 "1" *-[#595959,plain]-> "dpjdbc\n1" DipendenteJDBC
-Controller                 "1" *-[#595959,plain]-> "logf\n1" LoginFrame
-Controller                 "1" *-[#595959,plain]-> "upclf\n1" ModificaClienteFrame
-Controller                 "1" *-[#595959,plain]-> "updipf\n1" ModificaDipendenteFrame
-Controller                 "1" *-[#595959,plain]-> "modprodf\n1" ModificaProdottiFrame
-Controller                 "1" *-[#595959,plain]-> "nclf\n1" NuovoClienteFrame
-Controller                 "1" *-[#595959,plain]-> "ndipf\n1" NuovoDipendenteFrame
-Controller                 "1" *-[#595959,plain]-> "nprodf\n1" NuovoProdottoFrame
+Controller                 "1" *-[#595959,plain]-> "logf\n1" LoginFrame : gestisce
+Controller                 "1" *-[#595959,plain]-> "upclf\n1" ModificaClienteFrame : modifica
+Controller                 "1" *-[#595959,plain]-> "updipf\n1" ModificaDipendenteFrame : modifica
+Controller                 "1" *-[#595959,plain]-> "modprodf\n1" ModificaProdottiFrame : modifica
+Controller                 "1" *-[#595959,plain]-> "nclf\n1" NuovoClienteFrame : crea
+Controller                 "1" *-[#595959,plain]-> "ndipf\n1" NuovoDipendenteFrame : crea
+Controller                 "1" *-[#595959,plain]-> "nprodf\n1" NuovoProdottoFrame : crea
 Controller                 "1" *-[#595959,plain]-> "ordine\n1" Ordine
 Controller                 "1" *-[#595959,plain]-> "ordjdbc\n1" OrdiniJDBC
 Controller                 "1" *-[#595959,plain]-> "prodotto\n1" Prodotto
 Controller                 "1" *-[#595959,plain]-> "prdjdbc\n1" ProdottoJDBC
-Controller                 "1" *-[#595959,plain]-> "searchf\n1" RicercaFrame
-Controller                 "1" *-[#595959,plain]-> "statdipf\n1" StatisticheDipendentiFrame
+Controller                 "1" *-[#595959,plain]-> "searchf\n1" RicercaFrame : ricerca
+Controller                 "1" *-[#595959,plain]-> "statdipf\n1" StatisticheDipendentiFrame : statistica
 Controller                 "1" *-[#595959,plain]-> "tessera\n1" Tessera
 Controller                 "1" *-[#595959,plain]-> "tsjdbc\n1" TesseraJDBC
-Controller                 "1" *-[#595959,plain]-> "visctf\n1" VisioneClienteFrame
-Controller                 "1" *-[#595959,plain]-> "vdipf\n1" VisioneDipendentiFrame
-Controller                 "1" *-[#595959,plain]-> "visordf\n1" VisioneOrdineFrame
-Controller                 "1" *-[#595959,plain]-> "vprodf\n1" VisioneProdottiFrame
+Controller                 "1" *-[#595959,plain]-> "visctf\n1" VisioneClienteFrame : visualizza
+Controller                 "1" *-[#595959,plain]-> "vdipf\n1" VisioneDipendentiFrame : visualizza
+Controller                 "1" *-[#595959,plain]-> "visordf\n1" VisioneOrdineFrame : visualizza
+Controller                 "1" *-[#595959,plain]-> "vprodf\n1" VisioneProdottiFrame : visualizza
 DipendenteImpl              -[#008200,dashed]-^  DipendenteJDBC
 OrdiniImpl                  -[#008200,dashed]-^  OrdiniJDBC
 ProdottoImpl                -[#008200,dashed]-^  ProdottoJDBC
