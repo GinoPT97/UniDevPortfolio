@@ -18,8 +18,16 @@ import javax.swing.table.DefaultTableModel;
 import model.*;
 
 public class Controller {
+    
+    // Esempi di istanze modello per riferimento (non usati direttamente nei metodi)
+    private Cliente cliente;
+    private Dipendente dipendente;
+    private Prodotto prodotto;
+    private Ordine ordine;
+    private Tessera tessera;
+    private Articoli articoli;
     // Costanti per le colonne delle tabelle
-private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti", "Stato Tessera", "Data Scadenza Tessera"};
+    private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono", "Id Tessera", "Punti", "Stato Tessera", "Data Scadenza Tessera"};
     private static final String[] DIPENDENTE_COLUMNS = {"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"};
     private static final String[] PRODOTTO_COLUMNS = {"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Produzione", "Categoria", "Scorta"};
     private static final String[] ORDINE_COLUMNS = {"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"};
@@ -285,8 +293,8 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
 
     // Aggiunge un nuovo dipendente al database
     public boolean newdip(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
-        Dipendente dip = new Dipendente(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
-        boolean success = dpjdbc.setNewDip(dip);
+        dipendente = new Dipendente(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
+        boolean success = dpjdbc.setNewDip(dipendente);
         
         // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
         if (success) {
@@ -298,8 +306,8 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
 
     // Aggiunge un nuovo cliente al database e crea automaticamente la tessera
     public boolean newclt(String codCliente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
-        Cliente ct = new Cliente(codCliente, nome, cognome, codFis, email, indirizzo, telefono, null, null);
-        boolean clienteSuccess = cljdbc.setNewCt(ct);
+        cliente = new Cliente(codCliente, nome, cognome, codFis, email, indirizzo, telefono, null, null);
+        boolean clienteSuccess = cljdbc.setNewCt(cliente);
 
         if (clienteSuccess) {
             updateClienteModelAfterInsert(codCliente, nome, cognome, codFis, email, indirizzo, telefono);
@@ -317,6 +325,7 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
 
     // Aggiunge una nuova tessera associata a un cliente tramite codice fiscale
     public boolean nuovatessera(String codFisc) throws SQLException {
+        tessera = new Tessera("", 0.0, java.time.LocalDate.now(), java.time.LocalDate.now().plusYears(1), "ATTIVA", cliente);
         return tsjdbc.newtessera(cljdbc.getIdCt(codFisc));
     }
 
@@ -324,8 +333,8 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
     // Aggiunge un nuovo prodotto al database
     public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
                           java.time.LocalDate dataRaccolta, java.time.LocalDate dataMungitura, boolean glutine, java.time.LocalDate dataScadenza, java.time.LocalDate dataproduzione, String categoria, int scorta) throws SQLException {
-        Prodotto pe = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta, dataproduzione);
-        boolean success = prdjdbc.setNewProdotto(pe);
+        prodotto = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta, dataproduzione);
+        boolean success = prdjdbc.setNewProdotto(prodotto);
         // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
         if (success) {
             updateProdottoModelAfterInsert(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
@@ -395,14 +404,15 @@ private static final String[] CLIENTE_COLUMNS = {"Id Cliente", "Nome", "Cognome"
 
     // Aggiunge un nuovo ordine al database
     public boolean nuovoordine(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
-        boolean success = ordjdbc.newordine(new Ordine(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente));
+        ordine = new Ordine(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
+        boolean success = ordjdbc.newordine(ordine);
         if (success) updateOrdineModelAfterInsert(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
         return success;
     }
 
     // Aggiunge nuovi articoli a un ordine
     public boolean newarticoli(String codOrdine, String codProdotto, double prezzo, int numeroArticoli) throws SQLException {
-        Articoli articoli = new Articoli(codOrdine, codProdotto, prezzo, numeroArticoli, 0); // codCliente non necessario per articoliordine
+        articoli = new Articoli(codOrdine, codProdotto, prezzo, numeroArticoli, 0); // codCliente non necessario per articoliordine
         return artjdbc.newordine(articoli);
     }
 
