@@ -1,6 +1,5 @@
 @startuml CD
 !theme plain
-left to right direction
 skinparam linetype ortho
 skinparam dpi 96
 skinparam classFontSize 8
