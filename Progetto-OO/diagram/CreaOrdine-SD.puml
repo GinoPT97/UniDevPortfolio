@@ -1,129 +1,72 @@
 @startuml CreaOrdine-SD
+actor Utente
+participant CarrelloFrame
+participant Controller
+participant Ordine
+participant OrdiniJDBC
+participant ProdottoJDBC
+participant Articoli
+participant ArticoliJDBC
+participant TesseraJDBC
 
-participant Actor
-Actor -> CarrelloFrame : creaOrdine
+Utente -> CarrelloFrame : creaOrdine()
 activate CarrelloFrame
-CarrelloFrame -> CarrelloFrame : showError
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
+CarrelloFrame -> CarrelloFrame : verificaDatiCarrello()
+alt Errore dati
+    CarrelloFrame -> CarrelloFrame : mostraErrore()
+    deactivate CarrelloFrame
+else Dati ok
+    CarrelloFrame -> CarrelloFrame : calcolaTotale()
+    CarrelloFrame -> Controller : nuovoOrdine()
+    deactivate CarrelloFrame
+    activate Controller
+    create Ordine
+    Controller -> Ordine : crea()
+    activate Ordine
+    Ordine --> Controller
+    deactivate Ordine
+    Controller -> OrdiniJDBC : salvaOrdine()
+    activate OrdiniJDBC
+    OrdiniJDBC --> Controller
+    deactivate OrdiniJDBC
+    Controller -> Controller : aggiornaModelloOrdine()
+    Controller -> Controller : controlliInterni()
+    Controller -> Controller : creaRowData()
+    Controller --> CarrelloFrame : confermaCreazioneOrdine
+    deactivate Controller
+    activate CarrelloFrame
+    CarrelloFrame -> CarrelloFrame : mostraConfermaCreazione()
+    CarrelloFrame -> Controller : aggiornaScorte()
+    activate Controller
+    Controller -> ProdottoJDBC : updateScorte()
+    activate ProdottoJDBC
+    ProdottoJDBC --> Controller
+    deactivate ProdottoJDBC
+    Controller --> CarrelloFrame
+    deactivate Controller
+    CarrelloFrame -> Controller : aggiungiArticoli()
+    activate Controller
+    create Articoli
+    Controller -> Articoli : crea()
+    activate Articoli
+    Articoli --> Controller
+    deactivate Articoli
+    Controller -> ArticoliJDBC : salvaArticoliOrdine()
+    activate ArticoliJDBC
+    ArticoliJDBC --> Controller
+    deactivate ArticoliJDBC
+    Controller --> CarrelloFrame
+    deactivate Controller
+    CarrelloFrame -> Controller : aggiornaPunti()
+    activate Controller
+    Controller -> TesseraJDBC : updatePunti()
+    activate TesseraJDBC
+    TesseraJDBC --> Controller
+    deactivate TesseraJDBC
+    Controller --> CarrelloFrame
+    deactivate Controller
+    CarrelloFrame -> CarrelloFrame : pulisciCarrello()
+end
 deactivate CarrelloFrame
-CarrelloFrame -> CarrelloFrame : showError
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame -> CarrelloFrame : findClientId
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame -> CarrelloFrame : showError
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame -> CarrelloFrame : calcolaTotale
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame -> Controller : nuovoordine
-activate Controller
-create Ordine
-Controller -> Ordine : new
-activate Ordine
-Ordine --> Controller
-deactivate Ordine
-Controller -> OrdiniJDBC : newordine
-activate OrdiniJDBC
-OrdiniJDBC --> Controller
-deactivate OrdiniJDBC
-Controller -> Controller : updateOrdineModelAfterInsert
-activate Controller
-Controller -> Controller : x ->
-activate Controller
-Controller -> Controller : x ->
-activate Controller
-Controller --> Controller
-deactivate Controller
-Controller --> Controller
-deactivate Controller
-Controller -> Controller : checkNull
-activate Controller
-Controller --> Controller
-deactivate Controller
-Controller -> Controller : checkNull
-activate Controller
-Controller --> Controller
-deactivate Controller
-Controller -> Controller : createRowData
-activate Controller
-Controller -> Controller : checkNull
-activate Controller
-Controller --> Controller
-deactivate Controller
-Controller --> Controller
-deactivate Controller
-Controller --> Controller
-deactivate Controller
-Controller --> CarrelloFrame
-deactivate Controller
-CarrelloFrame -> CarrelloFrame : showError
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame -> Controller : CurrOrd
-activate Controller
-Controller --> CarrelloFrame
-deactivate Controller
-CarrelloFrame -> CarrelloFrame : processArticoli
-activate CarrelloFrame
-CarrelloFrame -> Controller : upscorte
-activate Controller
-Controller -> ProdottoJDBC : updateScorte
-activate ProdottoJDBC
-ProdottoJDBC --> Controller
-deactivate ProdottoJDBC
-Controller --> CarrelloFrame
-deactivate Controller
-CarrelloFrame -> Controller : newarticoli
-activate Controller
-create Articoli
-Controller -> Articoli : new
-activate Articoli
-Articoli --> Controller
-deactivate Articoli
-Controller -> ArticoliJDBC : newordine
-activate ArticoliJDBC
-ArticoliJDBC --> Controller
-deactivate ArticoliJDBC
-Controller --> CarrelloFrame
-deactivate Controller
-CarrelloFrame -> CarrelloFrame : showError
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame -> CarrelloFrame : showError
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame -> CarrelloFrame : assegnaPunti
-activate CarrelloFrame
-CarrelloFrame -> Controller : uppunti
-activate Controller
-Controller -> TesseraJDBC : updatepunti
-activate TesseraJDBC
-TesseraJDBC --> Controller
-deactivate TesseraJDBC
-Controller --> CarrelloFrame
-deactivate Controller
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame -> CarrelloFrame : clean
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-CarrelloFrame -> CarrelloFrame : showError
-activate CarrelloFrame
-CarrelloFrame --> CarrelloFrame
-deactivate CarrelloFrame
-return
+
 @enduml
