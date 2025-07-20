@@ -16,7 +16,6 @@ public class NuovoClienteFrame extends JFrame {
 
     public NuovoClienteFrame(String title, Controller c) {
         super(title);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(NuovoClienteFrame.class.getResource("/Immagini/ImmIcon.png")));
         this.elementi();
         this.azioni(c);
     }
@@ -25,7 +24,6 @@ public class NuovoClienteFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 700, 520);
         setLocationRelativeTo(null);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         contentPane = new JPanel(new BorderLayout(0, 0));
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
