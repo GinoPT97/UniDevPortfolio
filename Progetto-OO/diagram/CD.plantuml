@@ -734,11 +734,16 @@ Controller                 "1" *-[#595959,plain]-> "visctf\n1" VisioneClienteFra
 Controller                 "1" *-[#595959,plain]-> "vdipf\n1" VisioneDipendentiFrame : visualizza
 Controller                 "1" *-[#595959,plain]-> "visordf\n1" VisioneOrdineFrame : visualizza
 Controller                 "1" *-[#595959,plain]-> "vprodf\n1" VisioneProdottiFrame : visualizza
-DipendenteImpl              -[#008200,dashed]-^  DipendenteJDBC
-OrdiniImpl                  -[#008200,dashed]-^  OrdiniJDBC
-ProdottoImpl                -[#008200,dashed]-^  ProdottoJDBC
-Tessera                    "1" *-[#595959,plain]-> "proprietario\n1" Cliente
-Tesseraimpl                 -[#008200,dashed]-^  TesseraJDBC
+Controller                 "1" *-[#595959,plain]-> "artjdbc\n1" ArticoliJDBC : interroga
+Controller                 "1" *-[#595959,plain]-> "cljdbc\n1" ClienteJDBC : interroga
+Controller                 "1" *-[#595959,plain]-> "dpjdbc\n1" DipendenteJDBC : interroga
+Controller                 "1" *-[#595959,plain]-> "ordjdbc\n1" OrdiniJDBC : interroga
+Controller                 "1" *-[#595959,plain]-> "prdjdbc\n1" ProdottoJDBC : interroga
+Controller                 "1" *-[#595959,plain]-> "tsjdbc\n1" TesseraJDBC : interroga
+DipendenteImpl              -[#008200,dashed]-^  DipendenteJDBC : implementa
+OrdiniImpl                  -[#008200,dashed]-^  OrdiniJDBC : implementa
+ProdottoImpl                -[#008200,dashed]-^  ProdottoJDBC : implementa
+Tesseraimpl                 -[#008200,dashed]-^  TesseraJDBC : implementa
 
 ' Relazioni aggiuntive utility e gestione errori
 AdminFrame ..> ImagePanel : usa
