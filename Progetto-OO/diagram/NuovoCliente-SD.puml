@@ -1,0 +1,127 @@
+@startuml
+participant Actor
+Actor -> NuovoClienteFrame : azioni
+activate NuovoClienteFrame
+NuovoClienteFrame -> NuovoClienteFrame : e ->
+activate NuovoClienteFrame
+NuovoClienteFrame -> NuovoClienteFrame : clean
+activate NuovoClienteFrame
+NuovoClienteFrame --> NuovoClienteFrame
+deactivate NuovoClienteFrame
+NuovoClienteFrame -> Controller : visAndElem
+activate Controller
+Controller -> Controller : handleCarrelloContext
+activate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : handleDipendenteContext
+activate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : handleClienteContext
+activate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : handleProdottoContext
+activate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> Controller : setVisibleFrame
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller --> Controller
+deactivate Controller
+Controller --> NuovoClienteFrame
+deactivate Controller
+NuovoClienteFrame -> NuovoClienteFrame : e ->
+activate NuovoClienteFrame
+NuovoClienteFrame --> NuovoClienteFrame
+deactivate NuovoClienteFrame
+NuovoClienteFrame -> NuovoClienteFrame : validateFields
+activate NuovoClienteFrame
+NuovoClienteFrame --> NuovoClienteFrame
+deactivate NuovoClienteFrame
+NuovoClienteFrame -> Controller : newclt
+activate Controller
+create Cliente
+Controller -> Cliente : new
+activate Cliente
+Cliente --> Controller
+deactivate Cliente
+Controller -> ClienteJDBC : setNewCt
+activate ClienteJDBC
+ClienteJDBC --> Controller
+deactivate ClienteJDBC
+Controller -> Controller : updateClienteModelAfterInsert
+activate Controller
+Controller -> Controller : createRowData
+activate Controller
+Controller --> Controller
+deactivate Controller
+Controller --> Controller
+deactivate Controller
+Controller -> ClienteJDBC : getIdCt
+activate ClienteJDBC
+ClienteJDBC --> Controller
+deactivate ClienteJDBC
+Controller -> TesseraJDBC : newtessera
+activate TesseraJDBC
+TesseraJDBC --> Controller
+deactivate TesseraJDBC
+Controller --> NuovoClienteFrame
+deactivate Controller
+NuovoClienteFrame -> NuovoClienteFrame : clean
+activate NuovoClienteFrame
+NuovoClienteFrame --> NuovoClienteFrame
+deactivate NuovoClienteFrame
+NuovoClienteFrame -> NuovoClienteFrame : e ->
+activate NuovoClienteFrame
+NuovoClienteFrame --> NuovoClienteFrame
+deactivate NuovoClienteFrame
+NuovoClienteFrame -> NuovoClienteFrame : clean
+activate NuovoClienteFrame
+NuovoClienteFrame --> NuovoClienteFrame
+deactivate NuovoClienteFrame
+NuovoClienteFrame --> NuovoClienteFrame
+deactivate NuovoClienteFrame
+return
+@enduml
