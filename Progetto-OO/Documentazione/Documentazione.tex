@@ -27,6 +27,84 @@ Il progetto consiste nello sviluppo di un sistema informativo, composto da una b
 
 Per gruppi da 3: il fruttivendolo ha un certo numero di dipendenti e ad ogni vendita è associato il dipendente che l’ha portata a termine. È quindi possibile ricercare quale dipendente ha effettuato il maggior numero di vendite in un determinato periodo, differenziandolo da quello che ha portato il maggior introito.
 
-Questo progetto nasce come risposta alla traccia sopra riportata. L'obiettivo è realizzare un sistema informativo completo per la gestione di un negozio di ortofrutta, affrontando le problematiche di gestione prodotti, clienti, dipendenti e vendite, con particolare attenzione alla personalizzazione delle tipologie di prodotto e alla gestione della fidelizzazione dei clienti.
+
+\section{Requisiti Tecnici}
+\begin{itemize}
+  \item Linguaggio: Java 17
+  \item Ambiente di sviluppo: IntelliJ IDEA / Eclipse
+  \item Interfaccia grafica: Swing
+  \item Database: PostgreSQL
+  \item Librerie aggiuntive: JDBC
+\end{itemize}
+
+\section{Architettura del Sistema}
+Il progetto adotta il pattern architetturale Model-View-Controller (MVC), separando chiaramente la logica dell'applicazione, l'interfaccia grafica e l'accesso ai dati.
+
+\begin{itemize}
+  \item \textbf{Model}: gestisce le entità come Prodotto, Cliente, Dipendente, Vendita, ecc.
+  \item \textbf{View}: realizza la GUI in Swing, con schermate per l’inserimento, la modifica e la visualizzazione dei dati.
+  \item \textbf{Controller}: gestisce l’interazione tra vista e modello, e collega l'interfaccia grafica alle funzionalità.
+\end{itemize}
+
+\section{Struttura del Codice}
+Il progetto è suddiviso nei seguenti package:
+\begin{itemize}
+  \item \texttt{model} – Classi delle entità e DAO per la gestione dei dati
+  \item \texttt{view} – Componenti Swing per l'interfaccia grafica
+  \item \texttt{controller} – Logica applicativa e gestione degli eventi
+  \item \texttt{db} – Connessione al database e query
+\end{itemize}
+
+\subsection*{Esempio di codice (classe Cliente)}
+\lstset{language=Java, breaklines=true, basicstyle=\ttfamily\small, frame=single}
+\begin{lstlisting}
+public class Cliente {
+    private String nome;
+    private String cognome;
+    private String tesseraPunti;
+
+    public Cliente(String nome, String cognome, String tesseraPunti) {
+        this.nome = nome;
+        this.cognome = cognome;
+        this.tesseraPunti = tesseraPunti;
+    }
+
+    public int calcolaPunti(double spesa) {
+        return (int)(spesa * 0.10);
+    }
+
+    // Getter e Setter
+}
+\end{lstlisting}
+
+\section{Database}
+Il sistema si basa su un database relazionale in PostgreSQL. Di seguito si riporta uno schema semplificato delle tabelle principali:
+
+\begin{itemize}
+  \item \textbf{Prodotto(id, nome, categoria, quantità, prezzo, data\_raccolta, data\_produzione, ...)}
+  \item \textbf{Cliente(id, nome, cognome, tessera\_punti)}
+  \item \textbf{Dipendente(id, nome, cognome)}
+  \item \textbf{Vendita(id, data, cliente\_id, dipendente\_id, totale)}
+  \item \textbf{DettaglioVendita(vendita\_id, prodotto\_id, quantità)}
+\end{itemize}
+
+\section{Funzionalità Implementate}
+\begin{itemize}
+  \item Gestione prodotti (inserimento, modifica, cancellazione, ricerca)
+  \item Gestione clienti e punti fedeltà
+  \item Visualizzazione vendite e dipendenti
+  \item Classifica vendite per dipendente e per introito
+  \item Interfaccia grafica completa con Swing
+\end{itemize}
+
+\section{Modalità di Esecuzione}
+Per compilare ed eseguire l'applicativo:
+\begin{verbatim}
+javac -d bin src/**/*.java
+java -cp bin Main
+\end{verbatim}
+
+\section{Conclusioni}
+Il progetto ha permesso di mettere in pratica i principi della programmazione orientata agli oggetti, la separazione delle responsabilità attraverso il pattern MVC, e la connessione tra Java e un database relazionale. Ulteriori sviluppi potrebbero includere la migrazione a JavaFX, l'integrazione di report PDF e funzionalità di esportazione dati.
 
 \end{document}
