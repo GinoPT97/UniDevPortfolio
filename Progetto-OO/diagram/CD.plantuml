@@ -733,10 +733,21 @@ Controller                 "1" *-[#595959,plain]-> "tsjdbc\n1" TesseraJDBC
 Controller                 "1" *-[#595959,plain]-> "visctf\n1" VisioneClienteFrame        
 Controller                 "1" *-[#595959,plain]-> "vdipf\n1" VisioneDipendentiFrame     
 Controller                 "1" *-[#595959,plain]-> "visordf\n1" VisioneOrdineFrame         
-Controller                 "1" *-[#595959,plain]-> "vprodf\n1" VisioneProdottiFrame       
-DipendenteImpl              -[#008200,dashed]-^  DipendenteJDBC             
-OrdiniImpl                  -[#008200,dashed]-^  OrdiniJDBC                 
-ProdottoImpl                -[#008200,dashed]-^  ProdottoJDBC               
-Tessera                    "1" *-[#595959,plain]-> "proprietario\n1" Cliente                    
-Tesseraimpl                 -[#008200,dashed]-^  TesseraJDBC                
+Controller                 "1" *-[#595959,plain]-> "vprodf\n1" VisioneProdottiFrame
+DipendenteImpl              -[#008200,dashed]-^  DipendenteJDBC
+OrdiniImpl                  -[#008200,dashed]-^  OrdiniJDBC
+ProdottoImpl                -[#008200,dashed]-^  ProdottoJDBC
+Tessera                    "1" *-[#595959,plain]-> "proprietario\n1" Cliente
+Tesseraimpl                 -[#008200,dashed]-^  TesseraJDBC
+
+' Relazioni aggiuntive utility e gestione errori
+AdminFrame ..> ImagePanel : usa
+CarrelloFrame ..> ImagePanel : usa
+VisioneProdottiFrame ..> ImagePanel : usa
+AdminFrame ..> IconUtils : usa
+CarrelloFrame ..> IconUtils : usa
+VisioneProdottiFrame ..> IconUtils : usa
+DBConnection ..> ConnectionException : lancia
+DBConfiguration ..> ConnectionException : lancia
+Articoli "*" o-[#000000,plain]-> "1" Prodotto : contiene
 @enduml
