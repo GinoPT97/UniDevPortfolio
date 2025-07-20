@@ -1,0 +1,254 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class ArticoliImpl {
+  - connection: Connection
+  + searchClient(): ArrayList<Cliente>
+  + newordine(Articoli): boolean
+}
+interface ArticoliJDBC << interface >> {
+  + searchClient(): List<Cliente>
+  + newordine(Articoli): boolean
+}
+interface ClienteJDBC << interface >> {
+  + setNewCt(Cliente): boolean
+  + getAllCt(): List<Cliente>
+  + getIdCt(String): String
+  + updateCliente(Cliente): boolean
+}
+class Clienteimpl {
+  - setNewCt: PreparedStatement
+  - updateCl: PreparedStatement
+  - CODCLIENTE: String
+  - getAllCt: Statement
+  - idCl: Statement
+  + getIdCt(String): String
+  + setNewCt(Cliente): boolean
+  + getAllCt(): ArrayList<Cliente>
+  + updateCliente(Cliente): boolean
+  - setPreparedStatement(PreparedStatement, Cliente): void
+}
+class ConnectionException
+class Controller {
+  - visctf: VisioneClienteFrame
+  - tsjdbc: TesseraJDBC
+  - nprodf: NuovoProdottoFrame
+  - connection: Connection
+  - nclf: NuovoClienteFrame
+  - logf: LoginFrame
+  - ordjdbc: OrdiniJDBC
+  - lastFrame: Frame
+  - ORDINE_COLUMNS: String[]
+  - ordine: Ordine
+  - DIPENDENTE_COLUMNS: String[]
+  - dbconn: DBConnection
+  - ndipf: NuovoDipendenteFrame
+  - visordf: VisioneOrdineFrame
+  - articoli: Articoli
+  + updipf: ModificaDipendenteFrame
+  - cljdbc: ClienteJDBC
+  + dipModel: DefaultTableModel
+  - GLUTINE_SI: String
+  - tessera: Tessera
+  - adminf: AdminFrame
+  - NULL_VALUE: String
+  + prodModel: DefaultTableModel
+  - vdipf: VisioneDipendentiFrame
+  - carrf: CarrelloFrame
+  - CLIENTE_COLUMNS: String[]
+  - prdjdbc: ProdottoJDBC
+  - dipendente: Dipendente
+  - dipf: DipendenteFrame
+  - searchf: RicercaFrame
+  - prodotto: Prodotto
+  - GLUTINE_NO: String
+  - statdipf: StatisticheDipendentiFrame
+  - dpjdbc: DipendenteJDBC
+  + iddip: String
+  - artjdbc: ArticoliJDBC
+  + upclf: ModificaClienteFrame
+  + clienteModel: DefaultTableModel
+  - config: DBConfiguration
+  - cliente: Cliente
+  - PRODOTTO_COLUMNS: String[]
+  + ordModel: DefaultTableModel
+  + modprodf: ModificaProdottiFrame
+  - vprodf: VisioneProdottiFrame
+  + allDipendenti(): void
+  + allOrdini(): void
+  + nuovatessera(String): boolean
+  - updateOrdineModelAfterInsert(String, Date, double, int, int): void
+  + upprod(String, String, String, double, String, LocalDate, LocalDate, boolean, LocalDate, String, int): boolean
+  - updateDipendenteModelAfterUpdate(String, String, String, String, String, String, String): void
+  + introitidip(Date, Date): List<String>
+  - updateDipendenteModelAfterInsert(String, String, String, String, String, String, String): void
+  + clearCarrelloModel(): void
+  - handleProdottoContext(int): void
+  - updateProdottoModelAfterInsert(String, String, String, double, String, LocalDate, LocalDate, boolean, LocalDate, String, int): void
+  + logtoutente(int): void
+  - createRowData(Object[]): Object[]
+  + CurrOrd(): String
+  + updip(String, String, String, String, String, String, String): boolean
+  + adminAndElem(int): void
+  + getct(String): String
+  - checkNull(Object): String
+  + punti(String): String
+  - populateTable(List<T>, DefaultTableModel, Function<T, Object[]>): void
+  + newclt(String, String, String, String, String, String, String): boolean
+  + allCliente(): void
+  - formatGlutineStatus(boolean): String
+  + nuovoordine(String, Date, double, int, int): boolean
+  - setVisibleFrame(Frame, Frame[]): void
+  - updateClienteModelAfterUpdate(String, String, String, String, String, String, String): void
+  + OldDate(): String
+  - updateTableRow(DefaultTableModel, String, Object[]): void
+  + uppunti(String, double): boolean
+  + addToCarrelloModel(Object[]): void
+  - createClientSearchRowData(Object, Object, Object, Object, Object, Object, Object): Object[]
+  + main(String[]): void
+  - handleCarrelloContext(int): void
+  + newprod(String, String, String, double, String, LocalDate, LocalDate, boolean, LocalDate, LocalDate, String, int): boolean
+  + upcliente(String, String, String, String, String, String, String): boolean
+  + newdip(String, String, String, String, String, String, String): boolean
+  + categoriaprodotti(String, DefaultTableModel): void
+  + connect(): void
+  + dipAndElem(int): void
+  + venditedip(Date, Date): List<String>
+  - handleDipendenteContext(int): void
+  + ClientSearch(DefaultTableModel): void
+  + newarticoli(String, String, double, int): boolean
+  + returnToLastFrame(): void
+  + upscorte(int, String): boolean
+  + logout(int): void
+  - updateProdottoModelAfterUpdate(String, String, String, double, String, LocalDate, LocalDate, boolean, LocalDate, String, int): void
+  + allProdotti(): void
+  - updateClienteModelAfterInsert(String, String, String, String, String, String, String): void
+  - handleClienteContext(int): void
+  + verifyid(String): boolean
+  + visAndElem(int, int): void
+}
+class DBConfiguration {
+  - logger: Logger
+  - connection: Connection
+  + createTableTessera(): int
+  + createTipologie(): int
+  - connectionExists(): boolean
+  + createTableDipendente(): int
+  + createTableArticoliOrdine(): int
+  - tableExists(String): boolean
+  - isDatabasePopulated(): boolean
+  + initializeCompleteDatabase(): int
+  + createTableProdotto(): int
+  + createTableOrdine(): int
+  + formatTables(): int
+  + createTableCliente(): int
+  + populateDatabase(): int
+}
+class DBConnection {
+  - DB_USERNAME: String
+  - DB_PASSWORD: String
+  - connection: Connection
+  - DB_URL: String
+  - LOGGER: Logger
+  + getInstance(): DBConnection
+  + close(): void
+  + getConnection(): Connection
+}
+class DipendenteImpl {
+  - updateDip: PreparedStatement
+  - verifyId: PreparedStatement
+  - getAllDip: Statement
+  - getDipVendite: PreparedStatement
+  - setNewDip: PreparedStatement
+  - getDipIntroiti: PreparedStatement
+  - COGNOME: String
+  - ordven: List<String>
+  - ordint: List<String>
+  + updatedipendente(Dipendente): boolean
+  + getDipVendite(Date, Date): List<String>
+  + getAllDip(): ArrayList<Dipendente>
+  + getDipIntroiti(Date, Date): List<String>
+  - setPreparedStatement(PreparedStatement, Dipendente): void
+  + setNewDip(Dipendente): boolean
+  + verifyID(String): boolean
+}
+interface DipendenteJDBC << interface >> {
+  + updatedipendente(Dipendente): boolean
+  + verifyID(String): boolean
+  + getDipVendite(Date, Date): List<String>
+  + setNewDip(Dipendente): boolean
+  + getAllDip(): List<Dipendente>
+  + getDipIntroiti(Date, Date): List<String>
+}
+class OrdiniImpl {
+  - getAllOrdiniStmt: PreparedStatement
+  - connection: Connection
+  - newOrdineStmt: PreparedStatement
+  + newordine(Ordine): boolean
+  + getallordini(): ArrayList<Ordine>
+  + getOldDate(): String
+  + getCurrentCod(): String
+}
+interface OrdiniJDBC << interface >> {
+  + getOldDate(): String
+  + getCurrentCod(): String
+  + newordine(Ordine): boolean
+  + getallordini(): List<Ordine>
+}
+class ProdottoImpl {
+  - connection: Connection
+  - updateProdottoStmt: PreparedStatement
+  - getAllProdottiStmt: PreparedStatement
+  - setNewProdottoStmt: PreparedStatement
+  - setCommonProdottoFields(PreparedStatement, Prodotto): void
+  + setNewProdotto(Prodotto): boolean
+  + updateProdotto(Prodotto): boolean
+  - initStatements(): void
+  + getallprodotti(): ArrayList<Prodotto>
+  - createProdottoFromResultSet(ResultSet): Prodotto
+  + getbycategoria(String): ArrayList<Prodotto>
+  - closeStatements(): void
+  + updateScorte(int, String): boolean
+}
+interface ProdottoJDBC << interface >> {
+  + updateProdotto(Prodotto): boolean
+  + getallprodotti(): List<Prodotto>
+  + updateScorte(int, String): boolean
+  + getbycategoria(String): List<Prodotto>
+  + setNewProdotto(Prodotto): boolean
+}
+interface TesseraJDBC << interface >> {
+  + updatepunti(String, double): boolean
+  + newtessera(String): boolean
+  + alltessera(): List<Tessera>
+  + getpuntit(String): String
+}
+class Tesseraimpl {
+  - newtesseraStmt: PreparedStatement
+  - connection: Connection
+  - getpuntitStmt: PreparedStatement
+  - alltesseraStmt: PreparedStatement
+  + alltessera(): ArrayList<Tessera>
+  + newtessera(String): boolean
+  + updatepunti(String, double): boolean
+  + getpuntit(String): String
+}
+
+ArticoliImpl         -[#008200,dashed]-^  ArticoliJDBC        
+Clienteimpl          -[#008200,dashed]-^  ClienteJDBC         
+Controller          "1" *-[#595959,plain]-> "artjdbc\n1" ArticoliJDBC        
+Controller          "1" *-[#595959,plain]-> "cljdbc\n1" ClienteJDBC         
+Controller          "1" *-[#595959,plain]-> "config\n1" DBConfiguration     
+Controller          "1" *-[#595959,plain]-> "dbconn\n1" DBConnection        
+Controller          "1" *-[#595959,plain]-> "dpjdbc\n1" DipendenteJDBC      
+Controller          "1" *-[#595959,plain]-> "ordjdbc\n1" OrdiniJDBC          
+Controller          "1" *-[#595959,plain]-> "prdjdbc\n1" ProdottoJDBC        
+Controller          "1" *-[#595959,plain]-> "tsjdbc\n1" TesseraJDBC         
+DipendenteImpl       -[#008200,dashed]-^  DipendenteJDBC      
+OrdiniImpl           -[#008200,dashed]-^  OrdiniJDBC          
+ProdottoImpl         -[#008200,dashed]-^  ProdottoJDBC        
+Tesseraimpl          -[#008200,dashed]-^  TesseraJDBC         
+@enduml

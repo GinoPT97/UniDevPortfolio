@@ -1,0 +1,161 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Articoli {
+  - codCliente: int
+  - numeroArticoli: int
+  - codProdotto: String
+  - prezzo: double
+  - codOrdine: String
+  + setCodCliente(int): void
+  + getCodProdotto(): String
+  + setCodOrdine(String): void
+  + setPrezzo(double): void
+  + toString(): String
+  + setNumeroArticoli(int): void
+  + getCodOrdine(): String
+  + getPrezzo(): double
+  + setCodProdotto(String): void
+  + getCodCliente(): int
+  + getNumeroArticoli(): int
+}
+class Cliente {
+  - indirizzo: String
+  - tessera: Tessera
+  - codcliente: String
+  - cognome: String
+  - email: String
+  - articoliordini: Articoli
+  - codicefiscale: String
+  - telefono: String
+  - nome: String
+  + setNome(String): void
+  + getNome(): String
+  + getEmail(): String
+  + getArticoliOrdini(): Articoli
+  + getCognome(): String
+  + getIndirizzo(): String
+  + getCodiceFiscale(): String
+  + toString(): String
+  + setCodCliente(String): void
+  + setIndirizzo(String): void
+  + setArticoliOrdini(Articoli): void
+  + setTelefono(String): void
+  + setTessera(Tessera): void
+  + setEmail(String): void
+  + getTessera(): Tessera
+  + getCodCliente(): String
+  + setCognome(String): void
+  + getTelefono(): String
+  + setCodiceFiscale(String): void
+}
+class Dipendente {
+  - coddipendente: String
+  - nome: String
+  - telefono: String
+  - email: String
+  - indirizzo: String
+  - codicefiscale: String
+  - cognome: String
+  + getCognome(): String
+  + setCodDIP(String): void
+  + setCodFis(String): void
+  + toString(): String
+  + setCognome(String): void
+  + getInd(): String
+  + setInd(String): void
+  + getEmail(): String
+  + setNome(String): void
+  + setTel(String): void
+  + setEmail(String): void
+  + getCodDIP(): String
+  + getNome(): String
+  + getTel(): String
+  + getCodFis(): String
+}
+class Ordine {
+  - codordine: String
+  - datacquisto: Date
+  - idct: int
+  - prezzotot: double
+  - iddip: int
+  + getDataAcquisto(): Date
+  + getPrezzoTotale(): double
+  + setDataAcquisto(Date): void
+  + getIdCliente(): int
+  + toString(): String
+  + setCodOrdine(String): void
+  + setPrezzoTotale(double): void
+  + setIdDipendente(int): void
+  + setIdCliente(int): void
+  + getCodOrdine(): String
+  + getIdDipendente(): int
+}
+class Prodotto {
+  - datascadenza: LocalDate
+  - scorta: int
+  - descrizione: String
+  - datamungitura: LocalDate
+  - luogoprov: String
+  - codprodotto: String
+  - glutine: boolean
+  - prezzo: double
+  - categoria: String
+  - nome: String
+  - dataraccolta: LocalDate
+  - dataproduzione: LocalDate
+  + setDatamungitura(LocalDate): void
+  + setDataProduzione(LocalDate): void
+  + getPrezzo(): double
+  + setPrezzo(double): void
+  + getDatamungitura(): LocalDate
+  + getDataProduzione(): LocalDate
+  + setScorta(int): void
+  + setNome(String): void
+  + setDataraccolta(LocalDate): void
+  + getScorta(): int
+  + getNome(): String
+  + getLuogoProvenienza(): String
+  + getCodProdotto(): String
+  + getDescrizione(): String
+  + getDataraccolta(): LocalDate
+  + setDatascadenza(LocalDate): void
+  + toString(): String
+  + setDescrizione(String): void
+  + isGlutine(): boolean
+  + setCodProdotto(String): void
+  + setCategoria(String): void
+  + setGlutine(boolean): void
+  + getCategoria(): String
+  + getDatascadenza(): LocalDate
+  + setLuogoProvenienza(String): void
+}
+class Tessera {
+  - numeropunti: double
+  - codtessera: String
+  - stato: String
+  - proprietario: Cliente
+  - dataemissione: LocalDate
+  - datascadenza: LocalDate
+  + getDataEmissione(): LocalDate
+  + setStato(String): void
+  + setDataEmissione(LocalDate): void
+  + setProprietario(Cliente): void
+  + getCodTessera(): String
+  + getNumeroPunti(): double
+  + toString(): String
+  + setCodTessera(String): void
+  + setNumeroPunti(double): void
+  + getDataScadenza(): LocalDate
+  + setDataScadenza(LocalDate): void
+  + getStato(): String
+  + getProprietario(): Cliente
+}
+
+Cliente    "1" *-[#595959,plain]-> "articoliordini\n1" Articoli   
+Cliente    "1" *-[#595959,plain]-> "tessera\n1" Tessera    
+Tessera    "1" *-[#595959,plain]-> "proprietario\n1" Cliente    
+@enduml
