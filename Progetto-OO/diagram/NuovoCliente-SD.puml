@@ -7,26 +7,34 @@ participant TesseraJDBC
 
 Utente -> NuovoClienteFrame : inserisce dati cliente
 activate NuovoClienteFrame
-NuovoClienteFrame -> NuovoClienteFrame : validaCampi()
-alt Campi validi
-    NuovoClienteFrame -> Controller : creaCliente(dati)
+NuovoClienteFrame -> NuovoClienteFrame : validateFields()
+alt Campi non validi
+    NuovoClienteFrame -> NuovoClienteFrame : mostraErroreValidazione()
+    deactivate NuovoClienteFrame
+else Campi validi
+    NuovoClienteFrame -> Controller : newclt(...)
     deactivate NuovoClienteFrame
     activate Controller
-    Controller -> ClienteJDBC : salvaCliente(dati)
+    Controller -> ClienteJDBC : setNewCt(cliente)
     activate ClienteJDBC
-    ClienteJDBC --> Controller : idCliente
+    ClienteJDBC --> Controller : esito
     deactivate ClienteJDBC
-    Controller -> TesseraJDBC : creaTessera(idCliente)
-    activate TesseraJDBC
-    TesseraJDBC --> Controller
-    deactivate TesseraJDBC
+    alt Cliente creato
+        Controller -> Controller : updateClienteModelAfterInsert(...)
+        Controller -> ClienteJDBC : getIdCt(codFis)
+        activate ClienteJDBC
+        ClienteJDBC --> Controller : codClienteDb
+        deactivate ClienteJDBC
+        Controller -> TesseraJDBC : newtessera(codClienteDb)
+        activate TesseraJDBC
+        TesseraJDBC --> Controller : esito
+        deactivate TesseraJDBC
+    end
     Controller --> NuovoClienteFrame : conferma creazione
     deactivate Controller
     activate NuovoClienteFrame
-    NuovoClienteFrame -> NuovoClienteFrame : pulisciCampi()
-else Campi non validi
-    NuovoClienteFrame -> NuovoClienteFrame : mostraErroreValidazione()
+    NuovoClienteFrame -> NuovoClienteFrame : clean()
+    deactivate NuovoClienteFrame
 end
-deactivate NuovoClienteFrame
 
 @enduml
