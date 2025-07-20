@@ -33,7 +33,6 @@ public class RicercaFrame extends JFrame {
 
     private void elementi() {
         // Imposta l'icona del frame
-        setIconImage(Toolkit.getDefaultToolkit().getImage(RicercaFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Configura le impostazioni di base del frame
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

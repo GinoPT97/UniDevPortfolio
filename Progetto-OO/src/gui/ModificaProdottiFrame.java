@@ -45,7 +45,6 @@ public class ModificaProdottiFrame extends JFrame {
         contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
         setContentPane(contentPane);
         setLocationRelativeTo(null);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello centrale migliorato
         JPanel elempanel = new JPanel();

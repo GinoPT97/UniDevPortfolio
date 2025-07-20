@@ -25,7 +25,6 @@ public class VisioneOrdineFrame extends JFrame {
     private void elementi(Controller c) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 1000, 450);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(ModificaProdottiFrame.class.getResource("/Immagini/ImmIcon.png")));
         setLocationRelativeTo(null);
 
         JPanel contentPane = new JPanel(new BorderLayout());

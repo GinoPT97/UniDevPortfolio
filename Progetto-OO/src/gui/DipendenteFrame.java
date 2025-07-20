@@ -32,7 +32,6 @@ public class DipendenteFrame extends JFrame {
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(0, 0));
         setLocationRelativeTo(null);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(DipendenteFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello del titolo con sfondo arancione
         JLabel titlelab = new JLabel("Dipendenti Point", SwingConstants.CENTER); // Declared locally

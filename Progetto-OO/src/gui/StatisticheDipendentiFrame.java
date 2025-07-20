@@ -34,7 +34,6 @@ public class StatisticheDipendentiFrame extends JFrame {
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(10, 10));
         setLocationRelativeTo(null);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(StatisticheDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
 
         // Pannello del titolo
         titlePanel = new JPanel();

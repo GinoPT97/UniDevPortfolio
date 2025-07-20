@@ -25,7 +25,6 @@ public class VisioneDipendentiFrame extends JFrame {
 
     private void elementi(Controller c) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setIconImage(Toolkit.getDefaultToolkit().getImage(VisioneDipendentiFrame.class.getResource("/Immagini/ImmIcon.png")));
         setBounds(100, 100, 850, 500);
         setLocationRelativeTo(null);
 
