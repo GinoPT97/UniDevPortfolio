@@ -297,11 +297,6 @@ INPUT /usr/share/texmf/tex/latex/lm/ot1lmtt.fd
 INPUT /usr/share/texmf/tex/latex/lm/ot1lmtt.fd
 INPUT /usr/share/texmf/tex/latex/lm/ot1lmtt.fd
 INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmtt12.tfm
-INPUT ../DocImm/CD.png
-INPUT ../DocImm/CD.png
-INPUT ../DocImm/CD.png
-INPUT ../DocImm/CD.png
-INPUT ../DocImm/CD.png
 INPUT /usr/share/texmf/fonts/enc/dvips/lm/lm-rmtt.enc
 INPUT ../DocImm/CreaOrdine-SD.png
 INPUT ../DocImm/CreaOrdine-SD.png
