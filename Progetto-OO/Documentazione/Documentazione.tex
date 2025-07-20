@@ -140,67 +140,40 @@ L’organizzazione del codice riflette la suddivisione logica del sistema:
     \item \texttt{gui} – Componenti Swing per l’interfaccia grafica (schermate di inserimento, modifica, visualizzazione, ecc.)
 \end{itemize}
 
-
-
-
-
-\section{Funzionalità Applicative}
-Questa sezione descrive nel dettaglio tutte le principali funzionalità dell’applicativo.
-
-\subsection*{Gestione Prodotti}
-Descrizione dettagliata delle funzionalità di gestione, inserimento, modifica e visualizzazione dei prodotti. (Qui potrai aggiungere immagini delle schermate o diagrammi specifici.)
-
-\subsection*{Gestione Clienti}
-Descrizione delle funzionalità relative all’anagrafica clienti, tessere punti, ricerca e fidelizzazione. (Spazio per immagini e flussi.)
-
-\subsection*{Gestione Ordini e Carrello}
-Spiegazione delle procedure di creazione ordini, gestione del carrello, associazione prodotti-clienti e dipendenti. (Aggiungi qui eventuali diagrammi di sequenza o schermate.)
-
-\subsection*{Gestione Dipendenti}
-Dettaglio delle funzionalità per la gestione dei dipendenti, visualizzazione, inserimento e statistiche individuali. (Spazio per immagini e tabelle.)
-
-\subsection*{Statistiche e Report}
-Descrizione delle funzionalità di analisi, classifiche vendite, introiti e reportistica. (Qui potrai inserire grafici, tabelle e schermate.)
-
-
 \section{Gestione Utenti e Ruoli}
-Questa sezione descrive le funzionalità di autenticazione e i diversi ruoli previsti nell’applicativo.
+
+Questa sezione approfondisce le modalità di autenticazione e i permessi differenziati tra amministratori e dipendenti, illustrando i flussi di accesso e le funzionalità disponibili per ciascun ruolo.
 
 \subsection*{Login e Autenticazione}
-Descrizione della schermata di login, gestione delle credenziali e flusso di autenticazione per utenti e amministratori. (Spazio per immagini della schermata di login.)
+All’avvio, l’utente accede tramite una schermata di login che richiede credenziali personali. Il sistema verifica le credenziali e, in base al ruolo (amministratore o dipendente), abilita le relative funzionalità. Sono gestiti i casi di errore (credenziali errate, utente non trovato) e la sicurezza delle password. L’interfaccia è progettata per essere intuitiva e sicura.
 
 \subsection*{Funzionalità Admin}
-Dettaglio delle funzionalità riservate all’amministratore: gestione utenti, prodotti, statistiche avanzate, ecc. (Aggiungi qui schermate e flussi dedicati.)
+L’amministratore ha accesso a tutte le funzionalità del sistema: può gestire l’anagrafica di dipendenti e clienti, inserire, modificare o eliminare prodotti, consultare tutte le statistiche e i report, e visualizzare le classifiche di vendita. Può inoltre gestire i permessi degli utenti e monitorare l’attività del negozio tramite dashboard dedicate.
 
 \subsection*{Funzionalità Dipendente}
-Descrizione delle operazioni disponibili per i dipendenti: gestione ordini, clienti, consultazione dati, ecc. (Spazio per immagini e casi d’uso.)
+Il dipendente può gestire gli ordini, consultare e modificare i dati dei clienti, visualizzare i prodotti e il proprio storico vendite. Ha accesso a statistiche personali e può ricercare clienti o prodotti per facilitare le operazioni di vendita. Le sue azioni sono tracciate per garantire trasparenza e responsabilità.
 
 \section{Diagrammi UML}
 
-\subsection{Class Diagram}
-Il seguente diagramma delle classi rappresenta la struttura principale del sistema e le relazioni tra le entità fondamentali.
-
+\subsection*{Diagramma delle classi}
+Il seguente diagramma rappresenta la struttura principale del sistema e le relazioni tra le entità fondamentali.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.85\textwidth]{../DocImm/CD.png}
     \caption{Diagramma delle classi (Class Diagram)}
 \end{figure}
 
-\subsection{Sequence Diagram}
+\subsection*{Diagrammi di sequenza}
 Di seguito sono riportati i principali diagrammi di sequenza che illustrano il flusso delle operazioni più rilevanti del sistema.
-
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.85\textwidth]{../DocImm/CreaOrdine-SD.png}
     \caption{Diagramma di sequenza: Creazione Ordine}
 \end{figure}
-
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.85\textwidth]{../DocImm/NuovoCliente-SD.png}
     \caption{Diagramma di sequenza: Nuovo Cliente}
 \end{figure}
-
-
 
 \end{document}
