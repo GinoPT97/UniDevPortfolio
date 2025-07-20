@@ -1,8 +1,10 @@
 @startuml CD
-
 !theme plain
 top to bottom direction
 skinparam linetype ortho
+skinparam dpi 96
+skinparam classFontSize 10
+scale 0.6
 
 class AdminFrame {
   - logoutbutton: JButton
