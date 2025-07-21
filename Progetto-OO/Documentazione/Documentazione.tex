@@ -13,6 +13,7 @@
 \usepackage{geometry}
 \usepackage{tcolorbox}
 \usepackage{lmodern}
+\usepackage{float}
 
 
 \geometry{margin=2.5cm}
@@ -131,11 +132,30 @@ Il progetto adotta il pattern architetturale \textbf{Model-View-Controller (MVC)
 
 \section{Login: Admin e Dipendenti}
 All’avvio, l’applicativo mostra una schermata di login che consente l’accesso sia agli amministratori che ai dipendenti. L’utente deve inserire il proprio identificativo e la password. Il sistema verifica le credenziali tramite connessione al database e distingue il ruolo dell’utente:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../DocImm/Login.png}
+    \caption{Schermata di login: inserimento credenziali e selezione ruolo}
+\end{figure}
 \begin{itemize}
     \item \textbf{Admin}: accede a tutte le funzionalità di gestione, controllo e monitoraggio. Può visualizzare dashboard, gestire permessi, modificare dati e consultare statistiche globali.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.6\textwidth]{../DocImm/Admin.png}
+        \caption{Interfaccia amministratore: accesso alle funzioni di gestione e monitoraggio}
+    \end{figure}
     \item \textbf{Dipendente}: accede alle funzioni operative, come la gestione degli ordini, la consultazione dei dati dei clienti e la visualizzazione delle proprie statistiche di vendita. Le credenziali errate o non valide generano messaggi di errore chiari e la sicurezza delle password è garantita tramite hashing e controlli di validità.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.6\textwidth]{../DocImm/Dipendenti.png}
+        \caption{Interfaccia dipendente: funzioni operative e statistiche personali}
+    \end{figure}
 \end{itemize}
 La schermata di login è progettata per essere intuitiva e sicura, con feedback immediato all’utente.
+
 
 \section{Visione degli Elementi}
 L’applicativo offre schermate dedicate per la visualizzazione di tutte le entità gestite:
@@ -178,6 +198,16 @@ Di seguito sono riportati i principali diagrammi di sequenza che illustrano il f
     \includegraphics[width=0.95\textwidth,keepaspectratio]{../DocImm/CreaOrdine-SD.png}
     \\[1em]
     \includegraphics[width=0.95\textwidth]{../DocImm/NuovoCliente-SD.png}
+\end{center}
+
+% Immagini aggiuntive: Login, Admin, Dipendenti
+\vspace{1em}
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{../DocImm/Login.png}
+    \\[1em]
+    \includegraphics[width=0.7\textwidth]{../DocImm/Admin.png}
+    \\[1em]
+    \includegraphics[width=0.7\textwidth]{../DocImm/Dipendenti.png}
 \end{center}
 
 \end{document}
