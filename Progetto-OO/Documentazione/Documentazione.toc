@@ -5,3 +5,4 @@
 \contentsline {section}{\numberline {3}Visione degli Elementi}{5}{section.3}%
 \contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{5}{section.4}%
 \contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{6}{section.5}%
+\contentsline {section}{\numberline {6}Diagrammi UML}{8}{section.6}%
