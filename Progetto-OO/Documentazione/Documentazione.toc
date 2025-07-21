@@ -1,7 +1,7 @@
 \babel@toc {italian}{}\relax 
 \babel@toc {italian}{}\relax 
 \contentsline {section}{\numberline {1}Contesto e Introduzione}{2}{section.1}%
-\contentsline {section}{\numberline {2}Login: Admin e Dipendenti}{3}{section.2}%
-\contentsline {section}{\numberline {3}Visione degli Elementi}{4}{section.3}%
-\contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{4}{section.4}%
-\contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{5}{section.5}%
+\contentsline {section}{\numberline {2}Login: Admin e Dipendenti}{4}{section.2}%
+\contentsline {section}{\numberline {3}Visione degli Elementi}{5}{section.3}%
+\contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{5}{section.4}%
+\contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{6}{section.5}%

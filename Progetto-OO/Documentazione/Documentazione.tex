@@ -96,9 +96,30 @@ pdfauthor={Gino Pandozzi-Trani}
 \newpage
 
 \section{Contesto e Introduzione}
-\begin{tcolorbox}[colback=gray!10, colframe=black!40!black, title=Descrizione generale]
-Questo progetto consiste nello sviluppo di un sistema informativo completo per la gestione di un negozio di ortofrutta, realizzato in Java con interfaccia grafica (Swing). Il sistema integra una base di dati relazionale e consente la gestione efficiente di prodotti, clienti, dipendenti e vendite. Le tipologie di prodotto (frutta, verdura, farinacei, latticini, uova, confezionati) sono gestite con attributi specifici: ad esempio, frutta e verdura hanno la data di raccolta, i latticini sia la data di mungitura che quella di produzione, ecc.
+\begin{tcolorbox}[colback=gray!10, colframe=black!40!black, title=Presentazione della traccia]
+\textbf{SISTEMA DI GESTIONE PER UN NEGOZIO DI ALIMENTARI}
+
+Si sviluppi un sistema informativo, composto da una base di dati relazionale e un applicativo Java dotato di GUI (Swing o JavaFX), per la gestione di un sistema di un negozio di ortofrutta. Il sistema deve permettere di gestire le vendite e la disponibilità dei prodotti disponibili, identificando le tipologie (frutta, verdura, farinacei, latticini, uova e confezionati). Ogni tipologia di prodotto ha delle caratteristiche diverse (ad esempio, la frutta e la verdura hanno una data di raccolta, i latticini hanno sia una data di mungitura del latte che una data di produzione, ecc..). Ogni cliente è registrato e ha una tessera punti associata che lo identifica al fruttivendolo. Per ogni acquisto il cliente riceve il 10\% del valore della spesa in punti fedeltà. Il sistema deve premettere la ricerca dei clienti, differenziandoli sulla base delle categorie di prodotti acquistati e sulla quantità di punti che hanno ottenuto per ogni categoria.
+
+Per il gruppo da 3: il fruttivendolo ha un certo numero di dipendenti, e ad ogni vendita è associato il dipendente che l’ha portata a termine. Deve pertanto essere possibile ricercare quale dipendente ha effettuato il maggior numero di vendite in un determinato periodo differenziandolo dal dipendente che ha portato al fruttivendolo il maggior introito.
 \end{tcolorbox}
+
+\vspace{0.5em}
+\noindent\textbf{Panoramica dell'applicativo e aderenza alla traccia}
+
+L'applicativo realizzato risponde pienamente ai requisiti della traccia, implementando un sistema informativo completo per la gestione di un negozio di ortofrutta. La soluzione è composta da:
+\begin{itemize}
+    \item \textbf{Database relazionale}: gestisce tutte le entità richieste (prodotti, clienti, dipendenti, ordini, tessere punti) e le relazioni tra esse.
+    \item \textbf{Applicativo Java con GUI Swing}: offre un'interfaccia moderna e intuitiva per la gestione operativa, la visualizzazione e la modifica dei dati.
+    \item \textbf{Gestione delle tipologie di prodotto}: ogni categoria (frutta, verdura, farinacei, latticini, uova, confezionati) è modellata con attributi specifici, come richiesto dalla traccia (es. data di raccolta per frutta/verdura, date di mungitura e produzione per latticini).
+    \item \textbf{Clienti e tessera punti}: ogni cliente è registrato e identificato tramite tessera punti; il sistema assegna automaticamente il 10\% del valore della spesa in punti fedeltà ad ogni acquisto.
+    \item \textbf{Ricerca avanzata clienti}: è possibile filtrare i clienti in base alle categorie di prodotti acquistati e ai punti accumulati per ciascuna categoria, come previsto dalla traccia.
+    \item \textbf{Gestione dipendenti e vendite}: ogni vendita è associata a un dipendente; il sistema consente di visualizzare classifiche per numero di vendite e per introiti generati in un periodo selezionato, permettendo di distinguere tra produttività e valore economico apportato.
+\end{itemize}
+
+\noindent\textbf{Architettura e scelte progettuali}
+
+Il progetto adotta il pattern architetturale \textbf{Model-View-Controller (MVC)}, separando la logica applicativa, l’interfaccia grafica e l’accesso ai dati. Questa scelta garantisce modularità, manutenibilità e facilità di estensione. L’integrazione tra database e GUI consente una gestione efficiente e sicura di tutte le operazioni richieste dalla traccia, con funzionalità avanzate di ricerca, analisi e reportistica.
 
 \subsection*{Funzionalità Implementate}
 \begin{keybox}[Funzionalità principali]
@@ -131,7 +152,7 @@ Il progetto adotta il pattern architetturale \textbf{Model-View-Controller (MVC)
 \end{itemize}
 
 \section{Login: Admin e Dipendenti}
-All’avvio, l’applicativo mostra una schermata di login che consente l’accesso sia agli amministratori che ai dipendenti. L’utente deve inserire il proprio identificativo e la password. Il sistema verifica le credenziali tramite connessione al database e distingue il ruolo dell’utente:
+All’avvio, l’applicativo mostra una schermata di login che consente l’accesso sia agli amministratori che ai dipendenti. L’utente deve inserire il proprio identificativo. Il sistema verifica le credenziali tramite connessione al database e distingue il ruolo dell’utente:
 
 \begin{figure}[H]
     \centering
@@ -146,7 +167,7 @@ All’avvio, l’applicativo mostra una schermata di login che consente l’acce
         \includegraphics[width=0.6\textwidth]{../DocImm/Admin.png}
         \caption{Interfaccia amministratore: accesso alle funzioni di gestione e monitoraggio}
     \end{figure}
-    \item \textbf{Dipendente}: accede alle funzioni operative, come la gestione degli ordini, la consultazione dei dati dei clienti e la visualizzazione delle proprie statistiche di vendita. Le credenziali errate o non valide generano messaggi di errore chiari e la sicurezza delle password è garantita tramite hashing e controlli di validità.
+    \item \textbf{Dipendente}: accede alle funzioni operative, come la gestione degli ordini, la consultazione dei dati dei clienti e la visualizzazione delle proprie statistiche di vendita. Le credenziali errate o non valide generano messaggi di errore chiari.
 
     \begin{figure}[H]
         \centering
