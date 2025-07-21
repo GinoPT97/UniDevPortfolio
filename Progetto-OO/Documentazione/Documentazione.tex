@@ -183,7 +183,38 @@ L’applicativo integra moduli per l’analisi e la ricerca avanzata:
     \item \textbf{Ricerca clienti}: filtro avanzato per individuare clienti in base a punti accumulati, categorie di prodotti acquistati, frequenza degli ordini e altri parametri. È possibile esportare i risultati e visualizzare lo storico acquisti di ciascun cliente.
     \item \textbf{Report}: generazione di report personalizzati per analisi strategiche, utili all’amministratore per decisioni di marketing e gestione.
 \end{itemize}
-Le funzionalità statistiche e di ricerca sono pensate per offrire una panoramica completa e strumenti di supporto alle decisioni.
+Le funzionalità statistiche e di ricerca sono pensate per offrire una panoramica completa e strumenti di supporto alle decisioni. Di seguito vengono mostrate le principali interfacce e operazioni:
+
+\subsection*{Statistiche dipendenti}
+La schermata delle statistiche consente di visualizzare le classifiche dei dipendenti per vendite e introiti generati in un determinato periodo. L’interfaccia mostra i risultati delle operazioni eseguite, con i dipendenti che hanno ottenuto i migliori risultati.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../DocImm/StatisticheDipendenti.png}
+    \caption{Interfaccia delle statistiche dipendenti: operazioni eseguite e risultati per vendite e introiti}
+\end{figure}
+
+\subsection*{Ricerca clienti: elenco completo}
+La funzione di ricerca clienti permette di visualizzare l’elenco di tutti i clienti registrati, con i relativi dati e punti accumulati. L’immagine seguente mostra la schermata con la lista completa, senza filtri applicati.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/ricerca-1.png}{%
+        \includegraphics[width=0.8\textwidth]{../DocImm/ricerca-1.png}
+        \caption{Schermata di ricerca clienti: elenco completo di tutti gli elementi}
+    }{%
+        \fbox{\parbox{0.7\textwidth}{\centering Immagine non disponibile: elenco completo clienti}}
+    }
+\end{figure}
+
+\subsection*{Ricerca clienti: filtro per categoria e punti}
+È possibile applicare filtri avanzati, ad esempio selezionando la categoria “frutta” e impostando un intervallo di punti tra 0 e 500. I parametri di ricerca disponibili sono la categoria di prodotto e il range di punti accumulati. La ricerca restituisce per ogni cliente diverse informazioni, tra cui nome, cognome, punti accumulati, categoria selezionata e altri dati utili. In questo modo si ottiene una lista mirata di clienti che soddisfano i criteri scelti, come illustrato nell’immagine seguente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../DocImm/ricerca-2.png}
+    \caption{Schermata di ricerca clienti filtrata: categoria “frutta” e range punti 0-500}
+\end{figure}
 
 \section*{Appendice: Diagrammi UML}
 Il seguente diagramma rappresenta la struttura principale del sistema e le relazioni tra le entità fondamentali.
