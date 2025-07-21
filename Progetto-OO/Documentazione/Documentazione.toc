@@ -4,4 +4,4 @@
 \contentsline {section}{\numberline {2}Login: Admin e Dipendenti}{3}{section.2}%
 \contentsline {section}{\numberline {3}Visione degli Elementi}{3}{section.3}%
 \contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{3}{section.4}%
-\contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{3}{section.5}%
+\contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{4}{section.5}%
