@@ -77,22 +77,29 @@ pdfauthor={Gino Pandozzi-Trani}
 % Frontespizio elegante
 \begin{titlepage}
     \centering
-    {\Huge\bfseries Green Market\\[1.5ex]}
-    {\Large\textbf{SISTEMA DI GESTIONE PER UN NEGOZIO DI ALIMENTARI}\\[2ex]}
-    {\large Documentazione del Progetto Java\\[1ex]}
-    {\large Corso di Object Orientation\\[2ex]}
+    % Immagine protagonista con cornice decorativa
+    \vspace{0.5cm}
+    \IfFileExists{../DocImm/CD.png}{%
+        \begin{tcolorbox}[colback=white, colframe=sectioncolor, boxrule=1pt, arc=6pt, left=6pt, right=6pt, top=6pt, bottom=6pt]
+            \centering
+            \includegraphics[width=0.7\textwidth]{../DocImm/Frontespazio.png}
+        \end{tcolorbox}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine frontespizio non disponibile}}
+    }
     \vspace{1cm}
-    \begin{figure}[H]
+    % Titolo e traccia centrati, font grande e colorato
+    {\Huge\bfseries\color{sectioncolor} Green Market}\\[1ex]
+    {\Large\bfseries\color{subsectioncolor} SISTEMA DI GESTIONE PER UN NEGOZIO DI ALIMENTARI}\\[2ex]
+    {\large Documentazione del Progetto Java}\\[1ex]
+    {\large Corso di Object Orientation}\\[2ex]
+    % Box autore e corso
+    \vspace{1cm}
+    \begin{tcolorbox}[colback=gray!10, colframe=black!40!black, boxrule=0.5pt, arc=4pt, left=4pt, right=4pt, top=4pt, bottom=4pt]
         \centering
-        \IfFileExists{../DocImm/CD.png}{%
-            \includegraphics[width=1\textwidth]{../DocImm/Frontespazio.png}
-        }{% 
-            \fbox{\parbox{0.5\textwidth}{\centering Immagine frontespizio non disponibile}}
-        }
-    \end{figure}
-    \vspace{1cm}
-    {\large\textbf{Autore:} Gino Pandozzi-Trani}\\[0.5ex]
-    {\large\textbf{Matricola:} N86003116}\\[2ex]
+        {\large\textbf{Autore:} Gino Pandozzi-Trani}\\[0.5ex]
+        {\large\textbf{Matricola:} N86003116}
+    \end{tcolorbox}
     \vspace{1.5cm}
     \vfill
     \begin{flushright}
