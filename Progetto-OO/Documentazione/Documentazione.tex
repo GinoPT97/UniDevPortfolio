@@ -94,8 +94,6 @@ pdfauthor={Gino Pandozzi-Trani}
 \tableofcontents
 \newpage
 
-
-
 \section{Contesto e Introduzione}
 \begin{tcolorbox}[colback=gray!10, colframe=black!40!black, title=Descrizione generale]
 Questo progetto consiste nello sviluppo di un sistema informativo completo per la gestione di un negozio di ortofrutta, realizzato in Java con interfaccia grafica (Swing). Il sistema integra una base di dati relazionale e consente la gestione efficiente di prodotti, clienti, dipendenti e vendite. Le tipologie di prodotto (frutta, verdura, farinacei, latticini, uova, confezionati) sono gestite con attributi specifici: ad esempio, frutta e verdura hanno la data di raccolta, i latticini sia la data di mungitura che quella di produzione, ecc.
@@ -121,6 +119,7 @@ Ogni cliente è registrato e possiede una tessera punti che lo identifica presso
 Per gruppi da 3: il fruttivendolo ha un certo numero di dipendenti e ad ogni vendita è associato il dipendente che l’ha portata a termine. Il sistema permette di ricercare quale dipendente ha effettuato il maggior numero di vendite in un determinato periodo, distinguendolo da quello che ha portato il maggior introito.
 \end{tcolorbox}
 
+
 \subsection*{Architettura del Sistema}
 Il progetto adotta il pattern architetturale \textbf{Model-View-Controller (MVC)}, separando in modo chiaro la logica applicativa, l’interfaccia grafica e l’accesso ai dati. Questa scelta garantisce modularità, manutenibilità e facilità di estensione.
 
@@ -130,64 +129,16 @@ Il progetto adotta il pattern architetturale \textbf{Model-View-Controller (MVC)
     \item \textbf{Controller}: gestisce l’interazione tra vista e modello, collegando l’interfaccia grafica alle funzionalità applicative.
 \end{itemize}
 
-\subsection*{Struttura del Codice}
-L’organizzazione del codice riflette la suddivisione logica del sistema:
-\begin{itemize}
-    \item \texttt{model} – Classi delle entità principali e relativa logica di dominio
-    \item \texttt{controller} – Logica applicativa, gestione degli eventi e coordinamento tra GUI e modello
-    \item \texttt{daoimplementation} e \texttt{daointerface} – Interfacce e implementazioni per l’accesso ai dati tramite JDBC
-    \item \texttt{dbconfiguration} – Gestione della connessione al database e configurazione
-    \item \texttt{gui} – Componenti Swing per l’interfaccia grafica (schermate di inserimento, modifica, visualizzazione, ecc.)
-\end{itemize}
+\section{Login: Admin e Dipendenti}
+All’avvio, il sistema presenta una schermata di login dove l’utente inserisce le proprie credenziali. Se l’utente è un amministratore, accede a tutte le funzionalità di gestione e controllo. Se è un dipendente, accede alle funzioni operative e statistiche personali. La sicurezza delle password e la gestione degli errori di autenticazione sono garantite.
 
-\section{Gestione Utenti e Ruoli}
+\section{Visione degli Elementi}
+Il sistema permette la visualizzazione dettagliata di tutti gli elementi gestiti: prodotti, clienti, dipendenti e ordini. Ogni categoria ha una schermata dedicata che mostra le informazioni principali e consente la ricerca e il filtraggio dei dati. L’interfaccia è progettata per essere intuitiva e favorire la consultazione rapida.
 
-Questa sezione approfondisce le modalità di autenticazione e i permessi differenziati tra amministratori e dipendenti, illustrando i flussi di accesso e le funzionalità disponibili per ciascun ruolo.
+\section{Aggiunta e Modifica di Elementi}
+L’amministratore e i dipendenti abilitati possono aggiungere nuovi prodotti, clienti e dipendenti tramite apposite schermate di inserimento. È possibile modificare i dati esistenti, aggiornando le informazioni in modo semplice e sicuro. Tutte le operazioni sono tracciate per garantire la correttezza e la trasparenza delle modifiche.
 
-\subsection*{Login e Autenticazione}
-All’avvio, l’utente accede tramite una schermata di login che richiede credenziali personali. Il sistema verifica le credenziali e, in base al ruolo (amministratore o dipendente), abilita le relative funzionalità. Sono gestiti i casi di errore (credenziali errate, utente non trovato) e la sicurezza delle password. L’interfaccia è progettata per essere intuitiva e sicura.
-
-\subsection*{Funzionalità Admin}
-L’amministratore ha accesso a tutte le funzionalità del sistema: può gestire l’anagrafica di dipendenti e clienti, inserire, modificare o eliminare prodotti, consultare tutte le statistiche e i report, e visualizzare le classifiche di vendita. Può inoltre gestire i permessi degli utenti e monitorare l’attività del negozio tramite dashboard dedicate.
-
-\subsection*{Funzionalità Dipendente}
-Il dipendente può gestire gli ordini, consultare e modificare i dati dei clienti, visualizzare i prodotti e il proprio storico vendite. Ha accesso a statistiche personali e può ricercare clienti o prodotti per facilitare le operazioni di vendita. Le sue azioni sono tracciate per garantire trasparenza e responsabilità.
-
-\section{Diagrammi UML}
-
-\subsection*{Diagramma delle classi}
-Il seguente diagramma rappresenta la struttura principale del sistema e le relazioni tra le entità fondamentali.
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.35\textwidth,keepaspectratio]{../DocImm/CD.png}
-    \caption{Diagramma delle classi (Class Diagram)}
-\end{figure}
-\begin{center}
-    \small{\href{#fig:cd-zoom}{Clicca qui per ingrandire}}
-\end{center}
-
-% --- Appendice: versione ingrandita ---
-\clearpage
-\phantomsection
-\addcontentsline{toc}{subsection}{Diagramma delle classi (zoom)}
-\label{fig:cd-zoom}
-\begin{figure}[p]
-    \centering
-    \includegraphics[width=1.0\textwidth]{../DocImm/CD.png}
-    \caption{Diagramma delle classi (versione ingrandita)}
-\end{figure}
-
-\subsection*{Diagrammi di sequenza}
-Di seguito sono riportati i principali diagrammi di sequenza che illustrano il flusso delle operazioni più rilevanti del sistema.
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.6\textwidth,keepaspectratio]{../DocImm/CreaOrdine-SD.png}
-    \caption{Diagramma di sequenza: Creazione Ordine}
-\end{figure}
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.6\textwidth]{../DocImm/NuovoCliente-SD.png}
-    \caption{Diagramma di sequenza: Nuovo Cliente}
-\end{figure}
+\section{Statistiche e Ricerca Clienti}
+Il sistema offre strumenti avanzati per la consultazione delle statistiche di vendita, introiti e performance dei dipendenti. È possibile ricercare i clienti in base a criteri personalizzati, come la quantità di punti, le categorie di prodotti acquistati e la frequenza degli ordini. Le statistiche sono presentate in modo chiaro e sono utili per analisi e decisioni strategiche.
 
 \end{document}

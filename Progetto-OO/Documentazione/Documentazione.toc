@@ -1,6 +1,7 @@
 \babel@toc {italian}{}\relax 
 \babel@toc {italian}{}\relax 
 \contentsline {section}{\numberline {1}Contesto e Introduzione}{2}{section.1}%
-\contentsline {section}{\numberline {2}Gestione Utenti e Ruoli}{3}{section.2}%
-\contentsline {section}{\numberline {3}Diagrammi UML}{4}{section.3}%
-\contentsline {subsection}{Diagramma delle classi (zoom)}{5}{section*.2}%
+\contentsline {section}{\numberline {2}Login: Admin e Dipendenti}{3}{section.2}%
+\contentsline {section}{\numberline {3}Visione degli Elementi}{3}{section.3}%
+\contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{3}{section.4}%
+\contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{3}{section.5}%
