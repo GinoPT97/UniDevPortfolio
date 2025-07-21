@@ -6,3 +6,5 @@
 \contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{5}{section.4}%
 \contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{6}{section.5}%
 \contentsline {section}{\numberline {6}Diagrammi UML}{8}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Diagramma delle classi}{8}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Diagrammi di sequenza}{9}{subsection.6.2}%
