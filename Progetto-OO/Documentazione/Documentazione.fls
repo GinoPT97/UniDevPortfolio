@@ -281,6 +281,13 @@ INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmbx12.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmr17.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmbx12.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmr12.tfm
+INPUT ../DocImm/CD.png
+INPUT ../DocImm/CD.png
+INPUT ../DocImm/Frontespazio.png
+INPUT ../DocImm/Frontespazio.png
+INPUT ../DocImm/Frontespazio.png
+INPUT ../DocImm/Frontespazio.png
+INPUT ../DocImm/Frontespazio.png
 INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmbx12.tfm
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
 INPUT /usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc
