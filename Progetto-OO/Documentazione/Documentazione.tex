@@ -368,18 +368,16 @@ La gestione del carrello rappresenta una delle funzionalità più avanzate e cen
     }
 \end{figure}
 
-\section{Statistiche e Ricerca Clienti}
-L'applicativo integra moduli avanzati per analisi e ricerca, fondamentali per il monitoraggio delle performance e la pianificazione strategica:
-\begin{itemize}
-    \item \textbf{Statistiche}: dashboard interattiva con vendite totali, introiti, classifiche dipendenti per numero di vendite e introiti generati. Grafici e tabelle permettono confronti tra periodi, monitoraggio dell'andamento e identificazione di trend. L'amministratore può analizzare le performance dei dipendenti, individuare i prodotti più venduti e pianificare campagne promozionali mirate.
-    \item \textbf{Ricerca clienti}: filtri avanzati per punti accumulati, categorie di prodotti acquistati, frequenza ordini e altri parametri. I risultati sono esportabili e lo storico acquisti dettagliato consente di analizzare le abitudini dei clienti, segmentare l'utenza e proporre offerte personalizzate. L'interfaccia di ricerca è pensata per essere rapida, flessibile e facilmente utilizzabile anche da utenti non esperti.
-\end{itemize}
-Le funzionalità statistiche e di ricerca offrono una panoramica completa e strumenti di supporto alle decisioni, facilitando la gestione del negozio e l'ottimizzazione delle strategie di vendita. Le interfacce sono pensate per rapidità, chiarezza e possibilità di analisi approfondite, con esempi pratici di utilizzo e possibilità di esportazione dei dati per analisi esterne.
 
-\subsection*{Statistiche dipendenti}
+\section{Statistiche e Ricerca Clienti}
+L'applicativo integra moduli avanzati per analisi e ricerca, fondamentali per il monitoraggio delle performance e la pianificazione strategica. Le funzionalità statistiche e di ricerca offrono una panoramica completa e strumenti di supporto alle decisioni, facilitando la gestione del negozio e l'ottimizzazione delle strategie di vendita.
+
+
+\subsection{Statistiche Dipendenti}
+Dashboard interattiva con vendite totali, introiti, classifiche dipendenti per numero di vendite e introiti generati. Grafici e tabelle permettono confronti tra periodi, monitoraggio dell'andamento e identificazione di trend. L'amministratore può analizzare le performance dei dipendenti, individuare i prodotti più venduti e pianificare campagne promozionali mirate.
+
 La schermata delle statistiche dipendenti mostra classifiche per vendite e introiti in intervalli temporali selezionati. Ogni dipendente è identificato da nome, cognome e codice, con valori aggregati e possibilità di esportazione. Questi dati facilitano decisioni strategiche su premi, incentivi e formazione.
 
-\noindent\textbf{Modifica e gestione dipendente}
 La modifica dei dati dipendente avviene tramite schermata dedicata, con aggiornamento di informazioni personali, recapiti, ruolo e storico vendite. Tutte le modifiche sono validate e tracciate, garantendo la sicurezza e la trasparenza.
 
 \begin{figure}[H]
@@ -392,7 +390,8 @@ La modifica dei dati dipendente avviene tramite schermata dedicata, con aggiorna
     }
 \end{figure}
 
-\subsection*{Ricerca clienti: elenco completo}
+\subsection{Ricerca Clienti}
+\subsubsection{Elenco Completo}
 La funzione di ricerca clienti consente di accedere all’anagrafica completa dei clienti registrati nel sistema. La schermata mostra una tabella dettagliata in cui ogni riga rappresenta un cliente, con informazioni quali nome, cognome, codice tessera, recapiti, storico ordini e punti fedeltà accumulati. Questa vista è utile per consultare rapidamente i dati, verificare la situazione punti e accedere alle funzioni di modifica o visualizzazione dettagliata. L’elenco è ordinabile per ciascuna colonna e può essere esportato per analisi esterne. L’immagine seguente mostra la schermata con la lista completa, senza filtri applicati, evidenziando la struttura della tabella e la ricchezza delle informazioni disponibili.
 
 \begin{figure}[H]
@@ -400,12 +399,12 @@ La funzione di ricerca clienti consente di accedere all’anagrafica completa de
     \IfFileExists{../DocImm/ricerca-1.png}{%
         \includegraphics[width=0.8\textwidth]{../DocImm/ricerca-1.png}
         \caption{Schermata di ricerca clienti: elenco completo di tutti gli elementi}
-    }{%
+    }{% 
         \fbox{\parbox{0.7\textwidth}{\centering Immagine non disponibile: elenco completo clienti}}
     }
 \end{figure}
 
-\subsection*{Ricerca clienti: filtro per categoria e punti}
+\subsubsection{Filtri Avanzati: Categoria e Punti}
 La ricerca avanzata clienti permette di applicare filtri specifici per ottenere una lista mirata di utenti. È possibile selezionare la categoria di prodotto acquistata (ad esempio “frutta”, “verdura”, ecc.) e impostare un intervallo di punti fedeltà accumulati. Questi parametri consentono di individuare, ad esempio, i clienti più attivi in una determinata categoria o quelli che hanno raggiunto una soglia di punti utile per promozioni e premi. La schermata mostra per ogni cliente i dati rilevanti: nome, cognome, punti accumulati, categoria selezionata, recapiti e storico ordini. L’interfaccia offre strumenti per ordinare e esportare i risultati, facilitando campagne di marketing mirate o analisi statistiche. L’immagine seguente illustra una ricerca filtrata per categoria “frutta” e range punti 0-500, evidenziando la selezione dei criteri e la presentazione dei risultati.
 
 \begin{figure}[H]
