@@ -6,9 +6,9 @@
 \contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{5}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Aggiunta di Elementi}{5}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Modifica e Aggiornamento}{7}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Gestione Dipendenti}{9}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.3}Gestione Carrello}{8}{subsection.4.3}%
 \contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{9}{section.5}%
 \contentsline {section}{\numberline {6}Diagrammi UML}{11}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Diagramma delle classi}{12}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.1}Diagramma delle classi}{11}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}Diagrammi di sequenza}{12}{subsection.6.2}%
 \contentsline {subsection}{\numberline {6.3}CRC Card}{14}{subsection.6.3}%

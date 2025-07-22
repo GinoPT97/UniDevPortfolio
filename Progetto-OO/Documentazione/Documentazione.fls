@@ -355,10 +355,6 @@ INPUT ../DocImm/InserisciCliente.png
 INPUT ../DocImm/InserisciCliente.png
 INPUT ../DocImm/InserisciCliente.png
 INPUT ../DocImm/InserisciCliente.png
-INPUT ../DocImm/Carrello.png
-INPUT ../DocImm/Carrello.png
-INPUT ../DocImm/Carrello.png
-INPUT ../DocImm/Carrello.png
 INPUT ../DocImm/InserisciProdotto.png
 INPUT ../DocImm/InserisciProdotto.png
 INPUT ../DocImm/InserisciProdotto.png
@@ -379,6 +375,10 @@ INPUT ../DocImm/ModificaDipendente.png
 INPUT ../DocImm/ModificaDipendente.png
 INPUT ../DocImm/ModificaDipendente.png
 INPUT ../DocImm/ModificaDipendente.png
+INPUT ../DocImm/Carrello.png
+INPUT ../DocImm/Carrello.png
+INPUT ../DocImm/Carrello.png
+INPUT ../DocImm/Carrello.png
 INPUT ../DocImm/StatisticheDipendenti.png
 INPUT ../DocImm/StatisticheDipendenti.png
 INPUT ../DocImm/StatisticheDipendenti.png

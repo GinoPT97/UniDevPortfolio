@@ -230,18 +230,6 @@ L’inserimento di nuovi dati avviene tramite interfacce guidate, pensate per ri
     }
 \end{figure}
 
-% Schermata carrello
-\textbf{Carrello:} visualizzazione e gestione articoli selezionati, conferma ordine e punti fedeltà.
-\begin{figure}[H]
-    \centering
-    \IfFileExists{../DocImm/Carrello.png}{%
-        \includegraphics[width=0.7\textwidth]{../DocImm/Carrello.png}
-        \caption{Schermata del carrello: gestione articoli, conferma ordine e punti fedeltà}
-    }{% 
-        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: carrello}}
-    }
-\end{figure}
-
 \textbf{Nuovo Prodotto:} selezione categoria, inserimento dati specifici (date, provenienza, glutine, ecc.).
 \begin{figure}[H]
     \centering
@@ -301,8 +289,19 @@ La modifica dei dati avviene selezionando l’elemento desiderato dalla tabella.
     }
 \end{figure}
 
-\subsection{Gestione Dipendenti}
-La gestione dei dipendenti è centrale per il sistema: ogni dipendente può essere inserito, modificato e monitorato nelle sue performance. Tutte le operazioni sono tracciate e validate, garantendo una gestione puntuale e sicura del personale.
+\subsection{Gestione Carrello}
+La gestione del carrello è una funzionalità fondamentale dell’applicativo: consente di selezionare i prodotti desiderati, visualizzare gli articoli aggiunti, modificare le quantità e confermare l’ordine. Durante la conferma, il sistema calcola automaticamente i punti fedeltà da assegnare al cliente (pari al 10\% del valore della spesa) e aggiorna la tessera associata. Tutte le operazioni sono validate per garantire la correttezza dei dati e la disponibilità dei prodotti.
+
+\textbf{Carrello:} visualizzazione e gestione articoli selezionati, conferma ordine e punti fedeltà.
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/Carrello.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/Carrello.png}
+        \caption{Schermata del carrello: gestione articoli, conferma ordine e punti fedeltà}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: carrello}}
+    }
+\end{figure}
 
 
 \section{Statistiche e Ricerca Clienti}
