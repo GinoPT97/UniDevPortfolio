@@ -214,48 +214,80 @@ L’applicativo offre schermate dedicate per la visualizzazione di tutte le enti
 Ogni schermata consente la selezione di un elemento per visualizzare i dettagli completi e, dove previsto, accedere alle funzioni di modifica. L’interfaccia è pensata per garantire rapidità di consultazione e facilità di navigazione tra le diverse sezioni.
 
 \section{Aggiunta e Modifica di Elementi}
-L’applicativo consente l’inserimento e la modifica di dati tramite interfacce dedicate:
+
+\subsection{Aggiunta di Elementi}
+L’inserimento di nuovi dati avviene tramite interfacce guidate, pensate per ridurre gli errori e garantire la correttezza delle informazioni. I campi obbligatori sono evidenziati e la validazione è automatica.
 \begin{itemize}
-    \item \textbf{Aggiunta}: schermate di inserimento guidato per prodotti, clienti e dipendenti. I campi obbligatori sono evidenziati e la validazione dei dati è automatica. Ad esempio, per i prodotti vengono richieste tutte le informazioni specifiche della categoria (date, provenienza, glutine, ecc.).
-    \begin{figure}[H]
-        \centering
-        \IfFileExists{../DocImm/InserisciCliente.png}{%
-            \includegraphics[width=0.7\textwidth]{../DocImm/InserisciCliente.png}
-            \caption{Schermata di inserimento nuovo cliente: campi obbligatori e validazione automatica}
-        }{% 
-            \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: inserimento cliente}}
-        }
-    \end{figure}
-    \begin{figure}[H]
-        \centering
-        \IfFileExists{../DocImm/InserisciProdotto.png}{%
-            \includegraphics[width=0.7\textwidth]{../DocImm/InserisciProdotto.png}
-            \caption{Schermata di inserimento nuovo prodotto: selezione categoria e dati specifici}
-        }{% 
-            \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: inserimento prodotto}}
-        }
-    \end{figure}
-    \item \textbf{Modifica}: selezionando un elemento dalla tabella, si accede alla schermata di modifica dove è possibile aggiornare i dati. Le modifiche sono salvate nel database e tracciate per garantire la trasparenza.
-    \begin{figure}[H]
-        \centering
-        \IfFileExists{../DocImm/ModificaCliente.png}{%
-            \includegraphics[width=0.7\textwidth]{../DocImm/ModificaCliente.png}
-            \caption{Schermata di modifica cliente: aggiornamento dati e salvataggio sicuro}
-        }{% 
-            \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica cliente}}
-        }
-    \end{figure}
-    \begin{figure}[H]
-        \centering
-        \IfFileExists{../DocImm/ModificaProdotto.png}{%
-            \includegraphics[width=0.7\textwidth]{../DocImm/ModificaProdotto.png}
-            \caption{Schermata di modifica prodotto: gestione scorte e validazione modifiche}
-        }{% 
-            \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica prodotto}}
-        }
-    \end{figure}
+    \item \textbf{Nuovo Cliente}: inserimento anagrafica, recapiti e tessera punti.
+    \item \textbf{Nuovo Prodotto}: selezione categoria, inserimento dati specifici (date, provenienza, glutine, ecc.).
+    \item \textbf{Nuovo Dipendente}: inserimento dati personali e ruolo, con validazione automatica.
 \end{itemize}
-Le interfacce sono pensate per ridurre gli errori e facilitare l’aggiornamento delle informazioni.
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/InserisciCliente.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/InserisciCliente.png}
+        \caption{Schermata di inserimento nuovo cliente: campi obbligatori e validazione automatica}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: inserimento cliente}}
+    }
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/InserisciProdotto.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/InserisciProdotto.png}
+        \caption{Schermata di inserimento nuovo prodotto: selezione categoria e dati specifici}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: inserimento prodotto}}
+    }
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/NuovoDipendente.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/NuovoDipendente.png}
+        \caption{Schermata di inserimento nuovo dipendente: campi obbligatori e validazione automatica}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: nuovo dipendente}}
+    }
+\end{figure}
+
+\subsection{Modifica e Aggiornamento}
+La modifica dei dati avviene selezionando l’elemento desiderato dalla tabella. Le interfacce di aggiornamento sono pensate per garantire la trasparenza e la tracciabilità delle operazioni. Tutte le modifiche sono validate e salvate nel database.
+\begin{itemize}
+    \item \textbf{Cliente}: aggiornamento dati anagrafici, recapiti e tessera.
+    \item \textbf{Prodotto}: gestione scorte, aggiornamento dati e validazione modifiche.
+    \item \textbf{Dipendente}: aggiornamento dati personali, recapiti e ruolo.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/ModificaCliente.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/ModificaCliente.png}
+        \caption{Schermata di modifica cliente: aggiornamento dati e salvataggio sicuro}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica cliente}}
+    }
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/ModificaProdotto.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/ModificaProdotto.png}
+        \caption{Schermata di modifica prodotto: gestione scorte e validazione modifiche}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica prodotto}}
+    }
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/ModificaDipendente.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/ModificaDipendente.png}
+        \caption{Schermata di modifica dipendente: aggiornamento dati e salvataggio sicuro}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica dipendente}}
+    }
+\end{figure}
+
+\subsection{Gestione Dipendenti}
+La gestione dei dipendenti è centrale per il sistema: ogni dipendente può essere inserito, modificato e monitorato nelle sue performance. Tutte le operazioni sono tracciate e validate, garantendo una gestione puntuale e sicura del personale.
+
 
 \section{Statistiche e Ricerca Clienti}
 L’applicativo integra moduli per l’analisi e la ricerca avanzata:
@@ -267,6 +299,9 @@ Le funzionalità statistiche e di ricerca sono pensate per offrire una panoramic
 
 \subsection*{Statistiche dipendenti}
 La schermata delle statistiche dipendenti offre una panoramica dettagliata delle performance del personale. Vengono visualizzate due classifiche principali: una per il numero di vendite effettuate e una per l’ammontare degli introiti generati in un intervallo temporale selezionato. Ogni dipendente è identificato da nome, cognome e codice, e per ciascuno sono riportati i valori aggregati delle vendite e degli incassi. Questi dati permettono all’amministratore di individuare rapidamente i collaboratori più produttivi e di analizzare l’andamento del negozio, facilitando decisioni strategiche come premi, incentivi o formazione mirata. L’interfaccia consente inoltre di filtrare i risultati per periodo e di esportare le statistiche per ulteriori analisi.
+
+\noindent\textbf{Modifica e gestione dipendente}
+La modifica dei dati del dipendente avviene tramite una schermata dedicata, che consente di aggiornare informazioni personali, recapiti e ruolo. Tutte le modifiche sono validate e salvate nel database, garantendo la tracciabilità delle operazioni. Questo permette una gestione puntuale del personale e una rapida correzione di eventuali errori o cambiamenti organizzativi.
 
 \begin{figure}[H]
     \centering

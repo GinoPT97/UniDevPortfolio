@@ -359,6 +359,10 @@ INPUT ../DocImm/InserisciProdotto.png
 INPUT ../DocImm/InserisciProdotto.png
 INPUT ../DocImm/InserisciProdotto.png
 INPUT ../DocImm/InserisciProdotto.png
+INPUT ../DocImm/NuovoDipendente.png
+INPUT ../DocImm/NuovoDipendente.png
+INPUT ../DocImm/NuovoDipendente.png
+INPUT ../DocImm/NuovoDipendente.png
 INPUT ../DocImm/ModificaCliente.png
 INPUT ../DocImm/ModificaCliente.png
 INPUT ../DocImm/ModificaCliente.png
@@ -367,6 +371,10 @@ INPUT ../DocImm/ModificaProdotto.png
 INPUT ../DocImm/ModificaProdotto.png
 INPUT ../DocImm/ModificaProdotto.png
 INPUT ../DocImm/ModificaProdotto.png
+INPUT ../DocImm/ModificaDipendente.png
+INPUT ../DocImm/ModificaDipendente.png
+INPUT ../DocImm/ModificaDipendente.png
+INPUT ../DocImm/ModificaDipendente.png
 INPUT ../DocImm/StatisticheDipendenti.png
 INPUT ../DocImm/StatisticheDipendenti.png
 INPUT ../DocImm/StatisticheDipendenti.png
