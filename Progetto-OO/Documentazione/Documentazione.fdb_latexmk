@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1753204408.19302 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" "Documentazione.pdf" "Documentazione" 1753204410.08484 0
+["pdflatex"] 1753204692.90968 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" "Documentazione.pdf" "Documentazione" 1753204694.65431 0
   "../DocImm/Admin.png" 1753084971.15333 366022 caab8b48ee0b6602cc68774100097519 ""
   "../DocImm/CD.png" 1753030163.8497 136507 a008573ffd5b60426c89664428313020 ""
   "../DocImm/Carrello.png" 1753182201.42369 87808 5138de40a98f846238fa4246b13c893e ""
@@ -17,12 +17,12 @@
   "../DocImm/Ricerca-1.png" 1753092296.3788 68174 fe621e4659e8edbc6bcdf9c9066663d8 ""
   "../DocImm/Ricerca-2.png" 1753092302.24917 33285 7106e7c060cb3bf7a3989b24665916f4 ""
   "../DocImm/StatisticheDipendenti.png" 1753092273.30432 35648 fdc0212688bc6f4954853ce7da0d03ac ""
-  "../DocImm/VisioneClienti.png" 1753202284.40545 87447 d4b5926962008c22aab115c7724ba217 ""
-  "../DocImm/VisioneDipendenti.png" 1753202309.31598 70654 a085ce92f104552dea373d04d96543be ""
-  "../DocImm/VisioneOrdini.png" 1753202295.05929 77030 6a117820de7f6142def55c6410f761df ""
-  "../DocImm/VisioneProdotti.png" 1753202278.1195 126622 60b9027a7d28f8d609b6270146f32c20 ""
+  "../DocImm/VisioneClienti.png" 1753204573.14108 72117 8c944aea7ebe7db05f4c79a1cfb9ec4b ""
+  "../DocImm/VisioneDipendenti.png" 1753204637.10795 60661 df7cabd5d512d2ee72077a20f7a24e9a ""
+  "../DocImm/VisioneOrdini.png" 1753204591.25961 67800 a5484a3ffbf1ee1c067c0606901d724f ""
+  "../DocImm/VisioneProdotti.png" 1753204612.88324 101950 f3ff0249a2352da68e1e72e2f2cd7d64 ""
   "/etc/texmf/web2c/texmf.cnf" 1752838060.96153 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" 1753204405.96664 35627 f6f45f79038ff3e1efe447c8bc92b0cf ""
+  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" 1753204411.70191 35627 f6f45f79038ff3e1efe447c8bc92b0cf ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm" 1246382020 924 9904cf1d39e9767e7a3622f2a125a565 ""
@@ -207,9 +207,9 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1752838090 128227 ed67923a37f7748d267799454bc1f95b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1753010313 1929624 f93ffbe1384c00abd93b46cd694dbaf4 ""
-  "Documentazione.aux" 1753204409.97983 9261 944a8074fd41f5022c45c180e8e7ac36 "pdflatex"
-  "Documentazione.tex" 1753204405.96664 35627 f6f45f79038ff3e1efe447c8bc92b0cf ""
-  "Documentazione.toc" 1753204409.98183 1053 4f99d43253a8bc66722b14db3b9712bc "pdflatex"
+  "Documentazione.aux" 1753204694.48462 9261 944a8074fd41f5022c45c180e8e7ac36 "pdflatex"
+  "Documentazione.tex" 1753204411.70191 35627 f6f45f79038ff3e1efe447c8bc92b0cf ""
+  "Documentazione.toc" 1753204694.48762 1053 4f99d43253a8bc66722b14db3b9712bc "pdflatex"
   (generated)
   "Documentazione.aux"
   "Documentazione.log"
