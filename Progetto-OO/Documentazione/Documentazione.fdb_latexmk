@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1753205200.35388 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" "Documentazione.pdf" "Documentazione" 1753205202.09763 0
+["pdflatex"] 1753205396.49026 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" "Documentazione.pdf" "Documentazione" 1753205398.29169 0
   "../DocImm/Admin.png" 1753084971.15333 366022 caab8b48ee0b6602cc68774100097519 ""
   "../DocImm/CD.png" 1753030163.8497 136507 a008573ffd5b60426c89664428313020 ""
   "../DocImm/Carrello.png" 1753182201.42369 87808 5138de40a98f846238fa4246b13c893e ""
@@ -22,7 +22,7 @@
   "../DocImm/VisioneOrdini.png" 1753204591.25961 67800 a5484a3ffbf1ee1c067c0606901d724f ""
   "../DocImm/VisioneProdotti.png" 1753204612.88324 101950 f3ff0249a2352da68e1e72e2f2cd7d64 ""
   "/etc/texmf/web2c/texmf.cnf" 1752838060.96153 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" 1753205198.32503 38191 f14658506fee3fedd41491423a888720 ""
+  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" 1753205383.57671 38236 cfbef1727a3349d6c18cdfb6f176b22d ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm" 1246382020 924 9904cf1d39e9767e7a3622f2a125a565 ""
@@ -207,9 +207,9 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1752838090 128227 ed67923a37f7748d267799454bc1f95b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1753010313 1929624 f93ffbe1384c00abd93b46cd694dbaf4 ""
-  "Documentazione.aux" 1753205201.99598 10019 8b53b48ca1e25fa1cfa47097c0590a27 "pdflatex"
-  "Documentazione.tex" 1753205198.32503 38191 f14658506fee3fedd41491423a888720 ""
-  "Documentazione.toc" 1753205201.99998 1054 b408ab7dc4655c8bb462c11590b6a6ef "pdflatex"
+  "Documentazione.aux" 1753205398.16548 11509 6319978fbbedc439b0370bf0a768a3b9 "pdflatex"
+  "Documentazione.tex" 1753205383.57671 38236 cfbef1727a3349d6c18cdfb6f176b22d ""
+  "Documentazione.toc" 1753205398.16748 1381 e814338900446f12be7cb0d59a4f61a5 "pdflatex"
   (generated)
   "Documentazione.aux"
   "Documentazione.log"
