@@ -124,60 +124,39 @@ pdfauthor={Gino Pandozzi-Trani}
 \begin{tcolorbox}[colback=gray!10, colframe=black!40!black, title=Presentazione della traccia]
 \textbf{SISTEMA DI GESTIONE PER UN NEGOZIO DI ALIMENTARI}
 
-Si sviluppi un sistema informativo, composto da una base di dati relazionale e un applicativo Java dotato di GUI (Swing o JavaFX), per la gestione di un sistema di un negozio di ortofrutta. Il sistema deve permettere di gestire le vendite e la disponibilità dei prodotti disponibili, identificando le tipologie (frutta, verdura, farinacei, latticini, uova e confezionati). Ogni tipologia di prodotto ha delle caratteristiche diverse (ad esempio, la frutta e la verdura hanno una data di raccolta, i latticini hanno sia una data di mungitura del latte che una data di produzione, ecc..). Ogni cliente è registrato e ha una tessera punti associata che lo identifica al fruttivendolo. Per ogni acquisto il cliente riceve il 10\% del valore della spesa in punti fedeltà. Il sistema deve premettere la ricerca dei clienti, differenziandoli sulla base delle categorie di prodotti acquistati e sulla quantità di punti che hanno ottenuto per ogni categoria.
-
-Per il gruppo da 3: il fruttivendolo ha un certo numero di dipendenti, e ad ogni vendita è associato il dipendente che l’ha portata a termine. Deve pertanto essere possibile ricercare quale dipendente ha effettuato il maggior numero di vendite in un determinato periodo differenziandolo dal dipendente che ha portato al fruttivendolo il maggior introito.
+Il progetto nasce per rispondere alle esigenze di un moderno negozio di ortofrutta, integrando una base dati relazionale e un'applicazione Java con interfaccia grafica (Swing). Il sistema consente la gestione completa di vendite, prodotti, clienti, dipendenti e tessere punti, con particolare attenzione alle specificità di ogni tipologia di prodotto (frutta, verdura, farinacei, latticini, uova, confezionati). Ogni cliente è identificato tramite tessera punti e riceve il 10\% del valore della spesa in punti fedeltà. La ricerca avanzata permette di filtrare i clienti per categorie di prodotti acquistati e punti accumulati. Per i gruppi da 3, ogni vendita è associata a un dipendente, consentendo analisi su produttività e introiti.
 \end{tcolorbox}
 
 \vspace{0.5em}
 \noindent\textbf{Panoramica dell'applicativo e aderenza alla traccia}
 
-L'applicativo realizzato risponde pienamente ai requisiti della traccia, implementando un sistema informativo completo per la gestione di un negozio di ortofrutta. La soluzione è composta da:
+L'applicativo implementa tutte le funzionalità richieste dalla traccia, garantendo una gestione efficiente e sicura delle operazioni. La soluzione si compone di:
 \begin{itemize}
-    \item \textbf{Database relazionale}: gestisce tutte le entità richieste (prodotti, clienti, dipendenti, ordini, tessere punti) e le relazioni tra esse.
-    \item \textbf{Applicativo Java con GUI Swing}: offre un'interfaccia moderna e intuitiva per la gestione operativa, la visualizzazione e la modifica dei dati.
-    \item \textbf{Gestione delle tipologie di prodotto}: ogni categoria (frutta, verdura, farinacei, latticini, uova, confezionati) è modellata con attributi specifici, come richiesto dalla traccia (es. data di raccolta per frutta/verdura, date di mungitura e produzione per latticini).
-    \item \textbf{Clienti e tessera punti}: ogni cliente è registrato e identificato tramite tessera punti; il sistema assegna automaticamente il 10\% del valore della spesa in punti fedeltà ad ogni acquisto.
-    \item \textbf{Ricerca avanzata clienti}: è possibile filtrare i clienti in base alle categorie di prodotti acquistati e ai punti accumulati per ciascuna categoria, come previsto dalla traccia.
-    \item \textbf{Gestione dipendenti e vendite}: ogni vendita è associata a un dipendente; il sistema consente di visualizzare classifiche per numero di vendite e per introiti generati in un periodo selezionato, permettendo di distinguere tra produttività e valore economico apportato.
+    \item \textbf{Database relazionale}: struttura normalizzata, relazioni tra entità e integrità referenziale.
+    \item \textbf{Applicativo Java con GUI Swing}: interfaccia intuitiva, accesso rapido alle funzioni e validazione automatica dei dati.
+    \item \textbf{Gestione tipologie prodotto}: ogni categoria ha attributi specifici e controlli dedicati.
+    \item \textbf{Clienti e tessera punti}: fidelizzazione automatica, storico ordini e punti per categoria.
+    \item \textbf{Ricerca avanzata}: filtri per categoria, punti, frequenza ordini e esportazione risultati.
+    \item \textbf{Gestione dipendenti}: ogni vendita è tracciata e associata a un dipendente, con statistiche su vendite e introiti.
 \end{itemize}
 
 \noindent\textbf{Architettura e scelte progettuali}
 
-Il progetto adotta il pattern architetturale \textbf{Model-View-Controller (MVC)}, separando la logica applicativa, l’interfaccia grafica e l’accesso ai dati. Questa scelta garantisce modularità, manutenibilità e facilità di estensione. L’integrazione tra database e GUI consente una gestione efficiente e sicura di tutte le operazioni richieste dalla traccia, con funzionalità avanzate di ricerca, analisi e reportistica.
+Il sistema adotta il pattern \textbf{Model-View-Controller (MVC)}, separando logica, interfaccia e accesso ai dati. Questa scelta garantisce modularità, manutenibilità e facilità di estensione. L'integrazione tra database e GUI permette una gestione avanzata di tutte le operazioni, con funzionalità di ricerca, analisi e reportistica.
 
 \subsection*{Funzionalità Implementate}
 \begin{keybox}[Funzionalità principali]
 \begin{itemize}
-    \item Gestione completa dei prodotti e delle relative categorie
-    \item Anagrafica clienti con tessera punti e fidelizzazione
-    \item Monitoraggio e visualizzazione delle vendite e dei dipendenti
-    \item Classifiche dinamiche per vendite e introiti dei dipendenti
-    \item Interfaccia grafica intuitiva e moderna (Swing)
+    \item Gestione completa di prodotti, clienti, dipendenti, ordini e tessere punti
+    \item Fidelizzazione automatica e storico acquisti
+    \item Monitoraggio vendite, scorte e performance dipendenti
+    \item Classifiche dinamiche per vendite e introiti
+    \item Interfaccia grafica moderna e validazione automatica
 \end{itemize}
 \end{keybox}
 
-Ogni cliente è registrato e possiede una tessera punti che lo identifica presso il fruttivendolo: per ogni acquisto riceve automaticamente il 10\% del valore della spesa in punti fedeltà. Il sistema consente la ricerca avanzata dei clienti, differenziandoli in base alle categorie di prodotti acquistati e alla quantità di punti ottenuti per ciascuna categoria.
-
-\vspace{0.5em}
-\noindent\textbf{Traccia d'esame: Sistema di gestione per un negozio di alimentari}
-
-\begin{tcolorbox}[colback=yellow!10, colframe=orange!80!black, title=Obiettivo della traccia]
-Per gruppi da 3: il fruttivendolo ha un certo numero di dipendenti e ad ogni vendita è associato il dipendente che l’ha portata a termine. Il sistema permette di ricercare quale dipendente ha effettuato il maggior numero di vendite in un determinato periodo, distinguendolo da quello che ha portato il maggior introito.
-\end{tcolorbox}
-
-
-\subsection*{Architettura del Sistema}
-Il progetto adotta il pattern architetturale \textbf{Model-View-Controller (MVC)}, separando in modo chiaro la logica applicativa, l’interfaccia grafica e l’accesso ai dati. Questa scelta garantisce modularità, manutenibilità e facilità di estensione.
-
-\begin{itemize}
-    \item \textbf{Model}: gestisce le entità principali (Prodotto, Cliente, Dipendente, Ordine, Tessera, ecc.) e la logica di dominio.
-    \item \textbf{View}: realizza la GUI in Swing, con schermate dedicate all’inserimento, modifica e visualizzazione dei dati.
-    \item \textbf{Controller}: gestisce l’interazione tra vista e modello, collegando l’interfaccia grafica alle funzionalità applicative.
-\end{itemize}
-
 \section{Login: Admin e Dipendenti}
-All’avvio, l’applicativo mostra una schermata di login che consente l’accesso sia agli amministratori che ai dipendenti. L’utente deve inserire il proprio identificativo. Il sistema verifica le credenziali tramite connessione al database e distingue il ruolo dell’utente:
+All'avvio, l'applicativo presenta una schermata di login che distingue tra amministratori e dipendenti. L'utente inserisce le credenziali e il sistema verifica il ruolo tramite database. Gli admin accedono a tutte le funzioni di gestione e monitoraggio, mentre i dipendenti possono gestire ordini, consultare dati clienti e visualizzare le proprie statistiche. La sicurezza è garantita da controlli e feedback immediati.
 
 \begin{figure}[H]
     \centering
@@ -204,22 +183,21 @@ La schermata di login è progettata per essere intuitiva e sicura, con feedback 
 
 
 \section{Visione degli Elementi}
-L’applicativo offre schermate dedicate per la visualizzazione di tutte le entità gestite:
+L'applicativo offre schermate dedicate per la visualizzazione e gestione di tutte le entità:
 \begin{itemize}
-    \item \textbf{Prodotti}: tabella con elenco dei prodotti, dettagli su nome, categoria, prezzo, scorta, provenienza e date rilevanti. Possibilità di filtrare per categoria e cercare per nome.
-    \item \textbf{Clienti}: elenco clienti con dati anagrafici, tessera punti, storico ordini e possibilità di ricerca avanzata.
-    \item \textbf{Dipendenti}: tabella con dati personali, recapiti, storico vendite e performance.
-    \item \textbf{Ordini}: visualizzazione degli ordini effettuati, con dettaglio su prodotti acquistati, cliente, dipendente associato, data e importo.
+    \item \textbf{Prodotti}: elenco dettagliato, filtri per categoria, gestione scorte e date rilevanti.
+    \item \textbf{Clienti}: anagrafica, tessera punti, storico ordini, ricerca avanzata e modifica dati.
+    \item \textbf{Dipendenti}: dati personali, recapiti, storico vendite, performance e statistiche.
+    \item \textbf{Ordini}: dettaglio prodotti acquistati, cliente, dipendente associato, data e importo.
 \end{itemize}
-Ogni schermata consente la selezione di un elemento per visualizzare i dettagli completi e, dove previsto, accedere alle funzioni di modifica. L’interfaccia è pensata per garantire rapidità di consultazione e facilità di navigazione tra le diverse sezioni.
+Ogni schermata consente la selezione e modifica degli elementi, con interfaccia pensata per rapidità e facilità d'uso.
 
 \section{Aggiunta e Modifica di Elementi}
 
 \subsection{Aggiunta di Elementi}
+L'inserimento di nuovi dati avviene tramite interfacce guidate, con campi obbligatori evidenziati e validazione automatica. Per ogni entità (cliente, prodotto, dipendente) sono previsti controlli specifici e feedback immediato.
 
-L’inserimento di nuovi dati avviene tramite interfacce guidate, pensate per ridurre gli errori e garantire la correttezza delle informazioni. I campi obbligatori sono evidenziati e la validazione è automatica.
-
-\textbf{Nuovo Cliente:} inserimento anagrafica, recapiti e tessera punti.
+\textbf{Nuovo Cliente:} inserimento anagrafica, recapiti, tessera punti e associazione automatica allo storico ordini.
 \begin{figure}[H]
     \centering
     \IfFileExists{../DocImm/InserisciCliente.png}{%
@@ -230,7 +208,7 @@ L’inserimento di nuovi dati avviene tramite interfacce guidate, pensate per ri
     }
 \end{figure}
 
-\textbf{Nuovo Prodotto:} selezione categoria, inserimento dati specifici (date, provenienza, glutine, ecc.).
+\textbf{Nuovo Prodotto:} selezione categoria, inserimento dati specifici (date, provenienza, glutine, ecc.), gestione scorte e validazione.
 \begin{figure}[H]
     \centering
     \IfFileExists{../DocImm/InserisciProdotto.png}{%
@@ -241,7 +219,7 @@ L’inserimento di nuovi dati avviene tramite interfacce guidate, pensate per ri
     }
 \end{figure}
 
-\textbf{Nuovo Dipendente:} inserimento dati personali e ruolo, con validazione automatica.
+\textbf{Nuovo Dipendente:} inserimento dati personali, ruolo e validazione automatica.
 \begin{figure}[H]
     \centering
     \IfFileExists{../DocImm/NuovoDipendente.png}{%
@@ -253,10 +231,9 @@ L’inserimento di nuovi dati avviene tramite interfacce guidate, pensate per ri
 \end{figure}
 
 \subsection{Modifica e Aggiornamento}
+La modifica dei dati avviene selezionando l'elemento desiderato dalla tabella. Le interfacce di aggiornamento garantiscono trasparenza, tracciabilità e sicurezza. Tutte le modifiche sono validate e salvate nel database, con feedback immediato.
 
-La modifica dei dati avviene selezionando l’elemento desiderato dalla tabella. Le interfacce di aggiornamento sono pensate per garantire la trasparenza e la tracciabilità delle operazioni. Tutte le modifiche sono validate e salvate nel database.
-
-\textbf{Cliente:} aggiornamento dati anagrafici, recapiti e tessera.
+\textbf{Cliente:} aggiornamento dati anagrafici, recapiti, tessera e storico ordini.
 \begin{figure}[H]
     \centering
     \IfFileExists{../DocImm/ModificaCliente.png}{%
@@ -267,7 +244,7 @@ La modifica dei dati avviene selezionando l’elemento desiderato dalla tabella.
     }
 \end{figure}
 
-\textbf{Prodotto:} gestione scorte, aggiornamento dati e validazione modifiche.
+\textbf{Prodotto:} gestione scorte, aggiornamento dati, validazione modifiche e controllo disponibilità.
 \begin{figure}[H]
     \centering
     \IfFileExists{../DocImm/ModificaProdotto.png}{%
@@ -278,7 +255,7 @@ La modifica dei dati avviene selezionando l’elemento desiderato dalla tabella.
     }
 \end{figure}
 
-\textbf{Dipendente:} aggiornamento dati personali, recapiti e ruolo.
+\textbf{Dipendente:} aggiornamento dati personali, recapiti, ruolo e storico vendite.
 \begin{figure}[H]
     \centering
     \IfFileExists{../DocImm/ModificaDipendente.png}{%
@@ -290,11 +267,7 @@ La modifica dei dati avviene selezionando l’elemento desiderato dalla tabella.
 \end{figure}
 
 \subsection{Gestione Carrello}
-La gestione del carrello è una funzionalità centrale e avanzata dell’applicativo, perfettamente aderente ai requisiti della traccia. Il carrello consente di selezionare i prodotti desiderati tra tutte le tipologie disponibili (frutta, verdura, farinacei, latticini, uova, confezionati), visualizzare gli articoli aggiunti, modificarne le quantità e confermare l’ordine. Durante la conferma, il sistema calcola automaticamente i punti fedeltà da assegnare al cliente (pari al 10\% del valore della spesa) e aggiorna la tessera associata, garantendo la fidelizzazione.
-
-La logica del carrello integra la verifica della disponibilità dei prodotti, la gestione delle scorte e la validazione dei dati inseriti. Ogni operazione è tracciata e sicura: il cliente può visualizzare il totale della spesa, i punti accumulati e lo storico degli ordini. Il sistema collega ogni vendita a un dipendente, permettendo la successiva analisi delle performance e degli introiti generati, come richiesto dalla traccia per i gruppi da 3.
-
-In sintesi, il carrello rappresenta il fulcro dell’esperienza d’acquisto, integrando tutte le funzionalità di selezione, conferma, calcolo punti e gestione delle scorte, con un’interfaccia intuitiva e moderna.
+La gestione del carrello è una funzionalità centrale e avanzata: permette di selezionare prodotti di ogni tipologia, visualizzare e modificare gli articoli, confermare l'ordine e calcolare automaticamente i punti fedeltà (10\% del valore della spesa). Il sistema aggiorna la tessera del cliente, verifica la disponibilità dei prodotti e gestisce le scorte. Ogni vendita è associata a un dipendente, consentendo analisi su performance e introiti. L'interfaccia è intuitiva e favorisce la rapidità delle operazioni.
 
 \textbf{Carrello:} visualizzazione e gestione articoli selezionati, conferma ordine e punti fedeltà.
 \begin{figure}[H]
@@ -307,20 +280,19 @@ In sintesi, il carrello rappresenta il fulcro dell’esperienza d’acquisto, in
     }
 \end{figure}
 
-
 \section{Statistiche e Ricerca Clienti}
-L’applicativo integra moduli per l’analisi e la ricerca avanzata:
+L'applicativo integra moduli avanzati per analisi e ricerca:
 \begin{itemize}
-    \item \textbf{Statistiche}: dashboard dedicate per visualizzare vendite totali, introiti, classifiche dei dipendenti per numero di vendite e per introiti generati. Grafici e tabelle permettono di confrontare periodi diversi e monitorare l’andamento del negozio.
-    \item \textbf{Ricerca clienti}: filtro avanzato per individuare clienti in base a punti accumulati, categorie di prodotti acquistati, frequenza degli ordini e altri parametri. È possibile esportare i risultati e visualizzare lo storico acquisti di ciascun cliente.
+    \item \textbf{Statistiche}: dashboard con vendite totali, introiti, classifiche dipendenti per numero di vendite e introiti generati. Grafici e tabelle permettono confronti tra periodi e monitoraggio dell'andamento.
+    \item \textbf{Ricerca clienti}: filtri avanzati per punti accumulati, categorie di prodotti acquistati, frequenza ordini e altri parametri. Risultati esportabili e storico acquisti dettagliato.
 \end{itemize}
-Le funzionalità statistiche e di ricerca sono pensate per offrire una panoramica completa e strumenti di supporto alle decisioni. Di seguito vengono mostrate le principali interfacce e operazioni:
+Le funzionalità statistiche e di ricerca offrono una panoramica completa e strumenti di supporto alle decisioni. Le interfacce sono pensate per rapidità, chiarezza e possibilità di analisi approfondite.
 
 \subsection*{Statistiche dipendenti}
-La schermata delle statistiche dipendenti offre una panoramica dettagliata delle performance del personale. Vengono visualizzate due classifiche principali: una per il numero di vendite effettuate e una per l’ammontare degli introiti generati in un intervallo temporale selezionato. Ogni dipendente è identificato da nome, cognome e codice, e per ciascuno sono riportati i valori aggregati delle vendite e degli incassi. Questi dati permettono all’amministratore di individuare rapidamente i collaboratori più produttivi e di analizzare l’andamento del negozio, facilitando decisioni strategiche come premi, incentivi o formazione mirata. L’interfaccia consente inoltre di filtrare i risultati per periodo e di esportare le statistiche per ulteriori analisi.
+La schermata delle statistiche dipendenti mostra classifiche per vendite e introiti in intervalli temporali selezionati. Ogni dipendente è identificato da nome, cognome e codice, con valori aggregati e possibilità di esportazione. Questi dati facilitano decisioni strategiche su premi, incentivi e formazione.
 
 \noindent\textbf{Modifica e gestione dipendente}
-La modifica dei dati del dipendente avviene tramite una schermata dedicata, che consente di aggiornare informazioni personali, recapiti e ruolo. Tutte le modifiche sono validate e salvate nel database, garantendo la tracciabilità delle operazioni. Questo permette una gestione puntuale del personale e una rapida correzione di eventuali errori o cambiamenti organizzativi.
+La modifica dei dati dipendente avviene tramite schermata dedicata, con aggiornamento di informazioni personali, recapiti, ruolo e storico vendite. Tutte le modifiche sono validate e tracciate, garantendo la sicurezza e la trasparenza.
 
 \begin{figure}[H]
     \centering
