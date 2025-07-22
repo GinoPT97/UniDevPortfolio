@@ -399,7 +399,18 @@ public class Controller {
 
     // Aggiorna i punti associati a un cliente
     public boolean uppunti(String codcl, double d) throws SQLException {
-        return tsjdbc.updatepunti(codcl, d);
+        boolean success = tsjdbc.updatepunti(codcl, d);
+        if (success) {
+            for (int i = 0; i < clienteModel.getRowCount(); i++) {
+                if (clienteModel.getValueAt(i, 0).equals(codcl)) {
+                    double punti = 0.0;
+                    try { punti = Double.parseDouble(clienteModel.getValueAt(i, 8).toString()); } catch (Exception ignored) {}
+                    clienteModel.setValueAt(punti + d, i, 8);
+                    break;
+                }
+            }
+        }
+        return success;
     }
 
     // Aggiunge un nuovo ordine al database
