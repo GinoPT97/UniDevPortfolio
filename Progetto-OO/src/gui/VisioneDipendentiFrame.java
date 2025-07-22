@@ -57,6 +57,12 @@ public class VisioneDipendentiFrame extends JFrame {
             }
         });
         table.getTableHeader().setToolTipText("Clicca per ordinare la colonna");
+        // Nascondi sempre la prima colonna (identificativo)
+        if (table.getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setMinWidth(0);
+            table.getColumnModel().getColumn(0).setMaxWidth(0);
+            table.getColumnModel().getColumn(0).setWidth(0);
+        }
         scrollPane.setViewportView(table);
 
         JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
