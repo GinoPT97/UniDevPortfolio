@@ -217,8 +217,43 @@ Ogni schermata consente la selezione di un elemento per visualizzare i dettagli 
 L’applicativo consente l’inserimento e la modifica di dati tramite interfacce dedicate:
 \begin{itemize}
     \item \textbf{Aggiunta}: schermate di inserimento guidato per prodotti, clienti e dipendenti. I campi obbligatori sono evidenziati e la validazione dei dati è automatica. Ad esempio, per i prodotti vengono richieste tutte le informazioni specifiche della categoria (date, provenienza, glutine, ecc.).
+    \begin{figure}[H]
+        \centering
+        \IfFileExists{../DocImm/InserisciCliente.png}{%
+            \includegraphics[width=0.7\textwidth]{../DocImm/InserisciCliente.png}
+            \caption{Schermata di inserimento nuovo cliente: campi obbligatori e validazione automatica}
+        }{% 
+            \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: inserimento cliente}}
+        }
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \IfFileExists{../DocImm/InserisciProdotto.png}{%
+            \includegraphics[width=0.7\textwidth]{../DocImm/InserisciProdotto.png}
+            \caption{Schermata di inserimento nuovo prodotto: selezione categoria e dati specifici}
+        }{% 
+            \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: inserimento prodotto}}
+        }
+    \end{figure}
     \item \textbf{Modifica}: selezionando un elemento dalla tabella, si accede alla schermata di modifica dove è possibile aggiornare i dati. Le modifiche sono salvate nel database e tracciate per garantire la trasparenza.
-    \item \textbf{Sicurezza}: solo gli utenti autorizzati possono effettuare modifiche. Tutte le operazioni sono registrate per audit e controllo.
+    \begin{figure}[H]
+        \centering
+        \IfFileExists{../DocImm/ModificaCliente.png}{%
+            \includegraphics[width=0.7\textwidth]{../DocImm/ModificaCliente.png}
+            \caption{Schermata di modifica cliente: aggiornamento dati e salvataggio sicuro}
+        }{% 
+            \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica cliente}}
+        }
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+        \IfFileExists{../DocImm/ModificaProdotto.png}{%
+            \includegraphics[width=0.7\textwidth]{../DocImm/ModificaProdotto.png}
+            \caption{Schermata di modifica prodotto: gestione scorte e validazione modifiche}
+        }{% 
+            \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica prodotto}}
+        }
+    \end{figure}
 \end{itemize}
 Le interfacce sono pensate per ridurre gli errori e facilitare l’aggiornamento delle informazioni.
 
@@ -227,7 +262,6 @@ L’applicativo integra moduli per l’analisi e la ricerca avanzata:
 \begin{itemize}
     \item \textbf{Statistiche}: dashboard dedicate per visualizzare vendite totali, introiti, classifiche dei dipendenti per numero di vendite e per introiti generati. Grafici e tabelle permettono di confrontare periodi diversi e monitorare l’andamento del negozio.
     \item \textbf{Ricerca clienti}: filtro avanzato per individuare clienti in base a punti accumulati, categorie di prodotti acquistati, frequenza degli ordini e altri parametri. È possibile esportare i risultati e visualizzare lo storico acquisti di ciascun cliente.
-    \item \textbf{Report}: generazione di report personalizzati per analisi strategiche, utili all’amministratore per decisioni di marketing e gestione.
 \end{itemize}
 Le funzionalità statistiche e di ricerca sono pensate per offrire una panoramica completa e strumenti di supporto alle decisioni. Di seguito vengono mostrate le principali interfacce e operazioni:
 
