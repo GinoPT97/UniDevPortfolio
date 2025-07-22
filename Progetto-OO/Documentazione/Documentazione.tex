@@ -311,73 +311,7 @@ I diagrammi di sequenza illustrano il flusso delle operazioni più rilevanti, co
 \subsection{CRC Card}
 Le CRC Card (Class-Responsibility-Collaborator) sono uno strumento utile per la progettazione orientata agli oggetti. Ogni carta rappresenta una classe, ne descrive le responsabilità principali e le collaborazioni con altre classi. Questo metodo favorisce la comprensione del sistema e la suddivisione delle responsabilità tra le varie componenti.
 
-Di seguito vengono riportati alcuni esempi di CRC Card per le principali classi del sistema:
-
-% CRC Card Prodotto
-\noindent
-\rowcolors{1}{gray!10}{white}
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
-\hline
-\rowcolor{gray!30}
-\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
-\hline
-Prodotto & \begin{tabular}{@{}l@{}}Gestione dati prodotto\\Calcolo prezzo\\Gestione disponibilità\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\\Cliente\end{tabular} \\
-\hline
-\end{tabular}
-
-\vspace{1.5em}
-
-% CRC Card Cliente
-\noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
-\hline
-\rowcolor{gray!30}
-\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
-\hline
-Cliente & \begin{tabular}{@{}l@{}}Gestione dati anagrafici\\Gestione tessera fedeltà\\Effettuazione ordini\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\\Tessera\end{tabular} \\
-\hline
-\end{tabular}
-
-\vspace{1.5em}
-
-% CRC Card Ordine
-\noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
-\hline
-\rowcolor{gray!30}
-\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
-\hline
-Ordine & \begin{tabular}{@{}l@{}}Creazione/modifica ordine\\Calcolo totale\end{tabular} & \begin{tabular}{@{}l@{}}Prodotto\\Cliente\\Dipendente\end{tabular} \\
-\hline
-\end{tabular}
-
-\vspace{1.5em}
-
-% CRC Card Dipendente
-\noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
-\hline
-\rowcolor{gray!30}
-\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
-\hline
-Dipendente & \begin{tabular}{@{}l@{}}Operazioni amministrative\\Gestione dati personali\\Visualizzazione statistiche\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\\Cliente\end{tabular} \\
-\hline
-\end{tabular}
-
-\vspace{1.5em}
-
-% CRC Card Tessera
-\noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
-\hline
-\rowcolor{gray!30}
-\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
-\hline
-Tessera & \begin{tabular}{@{}l@{}}Gestione punti fedeltà\\Aggiornamento stato tessera\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\end{tabular} \\
-\hline
-\end{tabular}
-
-Le CRC Card aiutano a mantenere il progetto modulare e facilmente estendibile, facilitando la comunicazione tra i membri del team e la documentazione del sistema.
+% (Le CRC Card delle classi del package model sono ora incluse solo nella sezione per package)
 
 % --- CRC Card per package ---
 \subsection{CRC Card per package}
