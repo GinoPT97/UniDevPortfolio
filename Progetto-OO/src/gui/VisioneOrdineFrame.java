@@ -14,6 +14,7 @@ public class VisioneOrdineFrame extends JFrame {
     private JButton backbutton;
     private JButton ordinebutton;
     private JButton searchbutton;
+    private JButton aggiornaButton;
     private JTextField searchtf;
 
     public VisioneOrdineFrame(String title, Controller c) throws SQLException {
@@ -77,6 +78,9 @@ public class VisioneOrdineFrame extends JFrame {
         ordinebutton = creaButton("Nuovo Ordine", new Color(34, 139, 34));
         buttonpanel.add(ordinebutton);
 
+        aggiornaButton = creaButton("Aggiorna", new Color(70, 130, 180));
+        buttonpanel.add(aggiornaButton);
+
         backbutton = creaButton("Indietro", new Color(178, 34, 34));
         buttonpanel.add(backbutton);
     }
@@ -95,6 +99,13 @@ public class VisioneOrdineFrame extends JFrame {
 
         searchbutton.addActionListener(e -> filtraTabella(c));
         ordinebutton.addActionListener(e -> c.visAndElem(1, 1));
+        aggiornaButton.addActionListener(e -> {
+            try {
+                c.allOrdini();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Errore durante l'aggiornamento degli ordini.", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         backbutton.addActionListener(e -> c.returnToLastFrame());
     }
 

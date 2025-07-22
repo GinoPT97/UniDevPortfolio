@@ -23,6 +23,7 @@ public class RicercaFrame extends JFrame {
     private static final Object[] searchcolonne = {"Cod Cliente", "Nome", "Cognome", "Categoria", "Punti Categoria", "Spesa Totale", "Ordini Categoria"};
     private JButton backbutton;
     private JButton searchbutton;
+    private JButton aggiornaButton;
     private JComboBox<String> punticb;
 
     public RicercaFrame(String title, Controller c) throws SQLException {
@@ -102,6 +103,10 @@ public class RicercaFrame extends JFrame {
         searchbutton.setBackground(new Color(30, 144, 255));
         buttonPanel.add(searchbutton);
 
+        aggiornaButton = new JButton("Aggiorna", gui.IconUtils.getIconForText("Aggiorna", new Color(70, 130, 180)));
+        aggiornaButton.setBackground(new Color(70, 130, 180));
+        buttonPanel.add(aggiornaButton);
+
         backbutton = new JButton("Indietro", gui.IconUtils.getIconForText("Indietro", Color.RED));
         backbutton.setBackground(Color.RED);
         buttonPanel.add(backbutton);
@@ -116,6 +121,15 @@ public class RicercaFrame extends JFrame {
 
         // Gestione del click sul pulsante di ricerca
         searchbutton.addActionListener(e -> applicaFiltri());
+
+        // Gestione del click sul pulsante "Aggiorna"
+        aggiornaButton.addActionListener(e -> {
+            try {
+                c.ClientSearch(searchmodel);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Errore durante l'aggiornamento dei clienti.", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
         // Gestione del click sul pulsante "Indietro"
         backbutton.addActionListener(e -> c.returnToLastFrame());
