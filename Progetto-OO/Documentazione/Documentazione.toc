@@ -3,12 +3,12 @@
 \contentsline {section}{\numberline {1}Contesto e Introduzione}{2}{section.1}%
 \contentsline {section}{\numberline {2}Login: Admin e Dipendenti}{3}{section.2}%
 \contentsline {section}{\numberline {3}Visione degli Elementi}{4}{section.3}%
-\contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{5}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Aggiunta di Elementi}{5}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Modifica e Aggiornamento}{6}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Gestione Carrello}{8}{subsection.4.3}%
-\contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{9}{section.5}%
-\contentsline {section}{\numberline {6}Diagrammi UML}{11}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Diagramma delle classi}{11}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Diagrammi di sequenza}{12}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}CRC Card}{13}{subsection.6.3}%
+\contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{6}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Aggiunta di Elementi}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Modifica e Aggiornamento}{8}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Gestione Carrello}{10}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{11}{section.5}%
+\contentsline {section}{\numberline {6}Diagrammi UML}{13}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Diagramma delle classi}{13}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Diagrammi di sequenza}{14}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}CRC Card}{15}{subsection.6.3}%
