@@ -323,7 +323,7 @@ Le CRC Card (Class-Responsibility-Collaborator) sono uno strumento utile per la 
 \rowcolor{gray!30}
 \textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
 \hline
-Controller & \begin{tabular}{@{}l@{}}Gestisce la logica applicativa\\Coordina i modelli e le viste\\Gestisce le operazioni tra GUI e database\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\\Prodotto\\Ordine\\Tessera\\Articoli\\Frame GUI\\DAO\end{tabular} \\
+Controller & \begin{tabular}{@{}l@{}}Gestisce la logica applicativa\\Coordina GUI e Model\\Gestisce operazioni tra GUI e database\\Valida dati e input\\Gestisce tabelle e costanti\\Interagisce con DAO e DB\\Gestisce visibilità e navigazione tra frame\\Gestisce inserimento, modifica, ricerca e statistiche\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\\Prodotto\\Ordine\\Tessera\\Articoli\\Frame GUI\\DAO\\DBConfiguration\\DBConnection\end{tabular} \\
 \hline
 \end{tabular}
 % =====================
@@ -337,9 +337,9 @@ Controller & \begin{tabular}{@{}l@{}}Gestisce la logica applicativa\\Coordina i 
 \rowcolor{gray!30}
 \textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
 \hline
-AdminFrame & \begin{tabular}{@{}l@{}}Interfaccia amministratore\\Gestione funzioni admin\\Visualizza dashboard e statistiche\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Prodotto\\Ordine\end{tabular} \\
+AdminFrame & \begin{tabular}{@{}l@{}}Interfaccia amministratore\\Gestione bottoni e pannelli\\Visualizza dashboard e statistiche\\Gestisce azioni e navigazione\\Interagisce con Controller\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Prodotto\\Ordine\\ImagePanel\end{tabular} \\
 \hline
-CarrelloFrame & \begin{tabular}{@{}l@{}}Gestione carrello acquisti\\Visualizza e modifica articoli\\Conferma ordine\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Articoli\\Ordine\\Prodotto\end{tabular} \\
+CarrelloFrame & \begin{tabular}{@{}l@{}}Gestione carrello acquisti\\Visualizza e modifica articoli\\Conferma ordine\\Gestione tabelle e modelli\\Gestione categorie\\Interazione con Controller\\Gestione punti fedeltà\\Gestione filtri e selezione cliente\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Articoli\\Ordine\\Prodotto\\Cliente\end{tabular} \\
 \hline
 DipendenteFrame & \begin{tabular}{@{}l@{}}Interfaccia dipendente\\Visualizza ordini e statistiche\\Gestione operazioni dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Ordine\end{tabular} \\
 \hline
@@ -467,13 +467,13 @@ DBConnection & \begin{tabular}{@{}l@{}}Gestisce connessione al database\\Fornisc
 \hline
 Articoli & \begin{tabular}{@{}l@{}}Gestisce dati articoli ordine\\Collega ordine, prodotto e cliente\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\\Prodotto\\Cliente\end{tabular} \\
 \hline
-Cliente & \begin{tabular}{@{}l@{}}Gestisce dati cliente\\Gestisce tessera\\Gestisce ordini\end{tabular} & \begin{tabular}{@{}l@{}}Tessera\\Articoli\end{tabular} \\
+Cliente & \begin{tabular}{@{}l@{}}Gestisce dati anagrafici\\Gestisce tessera punti\\Gestisce ordini e storico acquisti\\Gestisce recapiti\\Interagisce con Articoli\\Gestisce punti fedeltà\\Gestisce categorie di acquisto\end{tabular} & \begin{tabular}{@{}l@{}}Tessera\\Articoli\\Ordine\\Prodotto\end{tabular} \\
 \hline
 Dipendente & \begin{tabular}{@{}l@{}}Gestisce dati dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\end{tabular} \\
 \hline
-Ordine & \begin{tabular}{@{}l@{}}Gestisce dati ordine\\Collega cliente e dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\end{tabular} \\
+Ordine & \begin{tabular}{@{}l@{}}Gestisce dati ordine (id, data, prezzo totale)\\Collega cliente e dipendente\\Gestisce relazioni con prodotti acquistati\\Gestisce data acquisto\\Interagisce con Controller\\Gestisce storico ordini\\Gestisce punti e introiti\\Gestisce relazioni con dipendenti\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\\Prodotto\\Controller\end{tabular} \\
 \hline
-Prodotto & \begin{tabular}{@{}l@{}}Gestisce dati prodotto\\Gestisce disponibilità e scorte\end{tabular} & \begin{tabular}{@{}l@{}}Articoli\end{tabular} \\
+Prodotto & \begin{tabular}{@{}l@{}}Gestisce dati prodotto (nome, descrizione, prezzo, provenienza)\\Gestisce date (raccolta, mungitura, produzione, scadenza)\\Gestisce categoria e scorta\\Gestisce presenza glutine\\Interagisce con Articoli\\Gestisce disponibilità\\Gestisce relazioni con ordini\end{tabular} & \begin{tabular}{@{}l@{}}Articoli\\Ordine\\Cliente\end{tabular} \\
 \hline
 Tessera & \begin{tabular}{@{}l@{}}Gestisce dati tessera\\Gestisce punti fedeltà\\Collega cliente\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\end{tabular} \\
 \hline
