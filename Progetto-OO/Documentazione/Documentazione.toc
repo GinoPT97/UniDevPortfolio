@@ -1,7 +1,7 @@
 \babel@toc {italian}{}\relax 
 \babel@toc {italian}{}\relax 
 \contentsline {section}{\numberline {1}Contesto e Introduzione}{2}{section.1}%
-\contentsline {section}{\numberline {2}Login: Admin e Dipendenti}{3}{section.2}%
+\contentsline {section}{\numberline {2}Login, Amministratore e Dipendente}{3}{section.2}%
 \contentsline {section}{\numberline {3}Visione degli Elementi}{4}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Visione Prodotti}{4}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Visione Clienti}{5}{subsection.3.2}%
