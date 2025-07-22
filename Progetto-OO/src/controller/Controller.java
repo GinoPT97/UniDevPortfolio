@@ -417,6 +417,7 @@ public class Controller {
     public boolean nuovoordine(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
         ordine = new Ordine(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
         boolean success = ordjdbc.newordine(ordine);
+        if (success) allOrdini();
         return success;
     }
 
