@@ -29,6 +29,13 @@ public class IconUtils {
                 g.drawLine(12, 15, 15, 17);
                 g.drawLine(11, 14, 13, 18);
             }
+            case "aggiorna", "refresh" -> { // Freccia circolare (icona aggiorna)
+                g.setStroke(new BasicStroke(2.2f));
+                g.drawArc(4, 4, 12, 12, 40, 270);
+                g.setStroke(new BasicStroke(2.8f));
+                g.drawLine(14, 7, 16, 4); // Punta della freccia
+                g.drawLine(14, 7, 12, 4); // Punta della freccia
+            }
             case "nuovo ordine" -> { // Documento + freccia
                 g.setStroke(new BasicStroke(2f));
                 g.drawRect(4, 3, 10, 14);
