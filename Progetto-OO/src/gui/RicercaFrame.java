@@ -75,6 +75,12 @@ public class RicercaFrame extends JFrame {
             }
         });
         searchtable.getTableHeader().setToolTipText("Clicca per ordinare la colonna");
+        // Nascondi sempre la prima colonna (identificativo)
+        if (searchtable.getColumnCount() > 0) {
+            searchtable.getColumnModel().getColumn(0).setMinWidth(0);
+            searchtable.getColumnModel().getColumn(0).setMaxWidth(0);
+            searchtable.getColumnModel().getColumn(0).setWidth(0);
+        }
         scrollPane.setViewportView(searchtable);
 
         // Pannello dei pulsanti
