@@ -379,4 +379,116 @@ Tessera & \begin{tabular}{@{}l@{}}Gestione punti fedeltà\\Aggiornamento stato t
 
 Le CRC Card aiutano a mantenere il progetto modulare e facilmente estendibile, facilitando la comunicazione tra i membri del team e la documentazione del sistema.
 
+% --- CRC Card per package ---
+\section{CRC Card per package}
+
+% =====================
+% Package: controller
+% =====================
+
+\subsection*{controller}
+\noindent
+\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+Controller & \begin{tabular}{@{}l@{}}Gestisce la logica applicativa\\Coordina i modelli e le viste\\Gestisce le operazioni tra GUI e database\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\\Prodotto\\Ordine\\Tessera\\Articoli\\Frame GUI\\DAO\end{tabular} \\
+\hline
+\end{tabular}
+
+% =====================
+% Package: daoimplementation
+% =====================
+
+\subsection*{daoimplementation}
+\noindent
+\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+ArticoliImpl & \begin{tabular}{@{}l@{}}Gestisce inserimento articoli ordine\\Ricerca clienti per articoli\end{tabular} & \begin{tabular}{@{}l@{}}Articoli\\Cliente\\DB\end{tabular} \\
+\hline
+Clienteimpl & \begin{tabular}{@{}l@{}}Gestisce inserimento e aggiornamento clienti\\Recupera lista clienti\\Gestisce tessera associata\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Tessera\\DB\end{tabular} \\
+\hline
+DipendenteImpl & \begin{tabular}{@{}l@{}}Gestisce inserimento e aggiornamento dipendenti\\Verifica ID\\Recupera vendite e introiti dipendenti\end{tabular} & \begin{tabular}{@{}l@{}}Dipendente\\Ordine\\DB\end{tabular} \\
+\hline
+OrdiniImpl & \begin{tabular}{@{}l@{}}Gestisce inserimento ordini\\Recupera lista ordini\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\\Cliente\\Dipendente\\DB\end{tabular} \\
+\hline
+ProdottoImpl & \begin{tabular}{@{}l@{}}Gestisce inserimento e aggiornamento prodotti\\Gestisce scorte\\Recupera lista prodotti\end{tabular} & \begin{tabular}{@{}l@{}}Prodotto\\DB\end{tabular} \\
+\hline
+Tesseraimpl & \begin{tabular}{@{}l@{}}Gestisce inserimento tessera\\Recupera punti tessera\\Aggiorna punti tessera\end{tabular} & \begin{tabular}{@{}l@{}}Tessera\\Cliente\\DB\end{tabular} \\
+\hline
+\end{tabular}
+
+% =====================
+% Package: daointerface
+% =====================
+
+\subsection*{daointerface}
+\noindent
+\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+ArticoliJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su articoli ordine\end{tabular} & \begin{tabular}{@{}l@{}}Articoli\end{tabular} \\
+\hline
+ClienteJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su clienti\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\end{tabular} \\
+\hline
+DipendenteJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su dipendenti\end{tabular} & \begin{tabular}{@{}l@{}}Dipendente\end{tabular} \\
+\hline
+OrdiniJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su ordini\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\end{tabular} \\
+\hline
+ProdottoJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su prodotti\end{tabular} & \begin{tabular}{@{}l@{}}Prodotto\end{tabular} \\
+\hline
+TesseraJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su tessere\end{tabular} & \begin{tabular}{@{}l@{}}Tessera\end{tabular} \\
+\hline
+\end{tabular}
+
+% =====================
+% Package: dbconfiguration
+% =====================
+
+\subsection*{dbconfiguration}
+\noindent
+\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+ConnectionException & \begin{tabular}{@{}l@{}}Gestisce eccezioni di connessione al DB\end{tabular} & \begin{tabular}{@{}l@{}}DBConfiguration\end{tabular} \\
+\hline
+DBConfiguration & \begin{tabular}{@{}l@{}}Gestisce configurazione e creazione tabelle\\Verifica connessione e struttura DB\end{tabular} & \begin{tabular}{@{}l@{}}DBConnection\end{tabular} \\
+\hline
+DBConnection & \begin{tabular}{@{}l@{}}Gestisce connessione al database\\Fornisce istanza di connessione\end{tabular} & \begin{tabular}{@{}l@{}}DBConfiguration\end{tabular} \\
+\hline
+\end{tabular}
+
+% =====================
+% Package: model
+% =====================
+
+\subsection*{model}
+\noindent
+\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+Articoli & \begin{tabular}{@{}l@{}}Gestisce dati articoli ordine\\Collega ordine, prodotto e cliente\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\\Prodotto\\Cliente\end{tabular} \\
+\hline
+Cliente & \begin{tabular}{@{}l@{}}Gestisce dati cliente\\Gestisce tessera\\Gestisce ordini\end{tabular} & \begin{tabular}{@{}l@{}}Tessera\\Articoli\end{tabular} \\
+\hline
+Dipendente & \begin{tabular}{@{}l@{}}Gestisce dati dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\end{tabular} \\
+\hline
+Ordine & \begin{tabular}{@{}l@{}}Gestisce dati ordine\\Collega cliente e dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\end{tabular} \\
+\hline
+Prodotto & \begin{tabular}{@{}l@{}}Gestisce dati prodotto\\Gestisce disponibilità e scorte\end{tabular} & \begin{tabular}{@{}l@{}}Articoli\end{tabular} \\
+\hline
+Tessera & \begin{tabular}{@{}l@{}}Gestisce dati tessera\\Gestisce punti fedeltà\\Collega cliente\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\end{tabular} \\
+\hline
+\end{tabular}
+
 \end{document}
