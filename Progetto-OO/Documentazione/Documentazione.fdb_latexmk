@@ -1,7 +1,8 @@
 # Fdb version 4
-["pdflatex"] 1753191976.19457 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" "Documentazione.pdf" "Documentazione" 1753191977.57485 0
+["pdflatex"] 1753192135.51323 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" "Documentazione.pdf" "Documentazione" 1753192136.86671 0
   "../DocImm/Admin.png" 1753084971.15333 366022 caab8b48ee0b6602cc68774100097519 ""
   "../DocImm/CD.png" 1753030163.8497 136507 a008573ffd5b60426c89664428313020 ""
+  "../DocImm/Carrello.png" 1753182201.42369 87808 5138de40a98f846238fa4246b13c893e ""
   "../DocImm/CreaOrdine-SD.png" 1753018982.23786 63001 040b55e971eae451bcb26c9af5f3c97c ""
   "../DocImm/Dipendenti.png" 1753084989.78513 227255 2d8d97c3096fafbea2aa632a5fc42ca8 ""
   "../DocImm/Frontespazio.png" 1753094963.54306 2406519 938c1e6ca4fadb490877b2b71af949b3 ""
@@ -17,7 +18,7 @@
   "../DocImm/Ricerca-2.png" 1753092302.24917 33285 7106e7c060cb3bf7a3989b24665916f4 ""
   "../DocImm/StatisticheDipendenti.png" 1753092273.30432 35648 fdc0212688bc6f4954853ce7da0d03ac ""
   "/etc/texmf/web2c/texmf.cnf" 1752838060.96153 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" 1753191974.35795 32852 6cd1968dbeabe079ca6b62251827f9af ""
+  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-OO/Documentazione/Documentazione.tex" 1753192133.81154 33330 f1e703c6dee87b0d1b1515b7b5b3ee37 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm" 1246382020 924 9904cf1d39e9767e7a3622f2a125a565 ""
@@ -202,9 +203,9 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1752838090 128227 ed67923a37f7748d267799454bc1f95b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1753010313 1929624 f93ffbe1384c00abd93b46cd694dbaf4 ""
-  "Documentazione.aux" 1753191977.47664 8329 27e6386b3ffc5a6e001c306acd2c62cd "pdflatex"
-  "Documentazione.tex" 1753191974.35795 32852 6cd1968dbeabe079ca6b62251827f9af ""
-  "Documentazione.toc" 1753191977.48064 1053 4f99007bb5a6e5fead8d1c8af92d9e42 "pdflatex"
+  "Documentazione.aux" 1753192136.76208 8526 f5e7805f66d77a4a5d9631ac1433287e "pdflatex"
+  "Documentazione.tex" 1753192133.81154 33330 f1e703c6dee87b0d1b1515b7b5b3ee37 ""
+  "Documentazione.toc" 1753192136.76508 1053 b239132fb124917b270a4208d1e1eef9 "pdflatex"
   (generated)
   "Documentazione.aux"
   "Documentazione.log"
