@@ -56,7 +56,7 @@ public class CarrelloFrame extends JFrame {
         JPanel panel = new JPanel();
         panel.setBackground(new Color(0, 0, 139));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        JLabel label = new JLabel("Nuovo Ordine");
+        JLabel label = new JLabel("Carrello - Nuovo Ordine");
         label.setFont(new Font(FONT_TAHOMA, Font.BOLD, 30));
         label.setForeground(Color.WHITE);
         panel.add(label);
