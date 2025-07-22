@@ -417,7 +417,6 @@ public class Controller {
     public boolean nuovoordine(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
         ordine = new Ordine(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
         boolean success = ordjdbc.newordine(ordine);
-        if (success) updateOrdineModelAfterInsert(codOrdine, dataAcquisto, prezzoTotale, idCliente, idDipendente);
         return success;
     }
 
@@ -566,11 +565,5 @@ public class Controller {
     }
     private void updateProdottoModelAfterUpdate(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, java.time.LocalDate dataRaccolta, java.time.LocalDate dataMungitura, boolean glutine, java.time.LocalDate dataScadenza, String categoria, int scorta) {
         updateTableRow(prodModel, codProdotto, new Object[]{codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, formatGlutineStatus(glutine), dataScadenza, null, categoria, scorta});
-    }
-    private void updateOrdineModelAfterInsert(String codOrdine, Date dataAcquisto, double prezzoTotale, int idCliente, int idDipendente) throws SQLException {
-        if (cljdbc == null || dpjdbc == null) return;
-        Cliente c = cljdbc.getAllCt().stream().filter(x -> String.valueOf(x.getCodCliente()).equals(String.valueOf(idCliente))).findFirst().orElse(null);
-        Dipendente d = dpjdbc.getAllDip().stream().filter(x -> String.valueOf(x.getCodDIP()).equals(String.valueOf(idDipendente))).findFirst().orElse(null);
-        ordModel.addRow(createRowData(codOrdine, dataAcquisto, prezzoTotale, checkNull(c != null ? c.getCognome() + " " + c.getNome() : null), checkNull(d != null ? d.getCognome() + " " + d.getNome() : null)));
     }
 }
