@@ -62,7 +62,10 @@
   fonttitle=\bfseries,
   coltitle=black,
   left=1mm, right=1mm, top=1mm, bottom=1mm,
-  title=#1
+  title=#1,
+  sharp corners,
+  halign=justify,
+  width=\linewidth
 }
 
 \hypersetup{
@@ -317,13 +320,14 @@ Le CRC Card (Class-Responsibility-Collaborator) sono uno strumento utile per la 
 
 \subsubsection*{controller}
 \noindent
-{\small
-\begin{tabular}{|L{4cm}|L{7cm}|L{3.5cm}|}
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
 \hline
 \rowcolor{gray!30}
 \textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
 \hline
-Controller & \begin{tabular}{@{}l@{}}Gestisce la logica applicativa\\Coordina GUI e Model\\Gestisce operazioni tra GUI e database\\Valida dati e input\\Gestisce tabelle e costanti\\Interagisce con DAO e DB\\Gestisce visibilità e navigazione tra frame\\Gestisce inserimento, modifica, ricerca e statistiche\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\\Prodotto\\Ordine\\Tessera\\Articoli\\Frame GUI\\DAO\\DBConfiguration\\DBConnection\end{tabular} \\
+Controller & \begin{tabular}{@{}l@{}}Gestisce la logica applicativa\\Coordina GUI e Model\\Gestisce operazioni tra GUI e database\\Valida dati e input\\Gestisce tabelle e costanti\\Interagisce con DAO e DB\\Gestisce visibilità e navigazione tra frame\\Inserimento, modifica, ricerca e statistiche\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\\Prodotto\\Ordine\\Tessera\\Articoli\\Frame GUI\\DAO\\DBConfiguration\\DBConnection\end{tabular} \\
 \hline
 \end{tabular}
 % =====================
@@ -332,7 +336,9 @@ Controller & \begin{tabular}{@{}l@{}}Gestisce la logica applicativa\\Coordina GU
 
 \subsubsection*{gui}
 \noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
 \hline
 \rowcolor{gray!30}
 \textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
@@ -374,7 +380,9 @@ VisioneProdottiFrame & \begin{tabular}{@{}l@{}}Visualizza elenco prodotti\\Detta
 
 % --- Classi di utilità GUI ---
 \noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
 \hline
 \rowcolor{gray!30}
 \textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
@@ -391,7 +399,9 @@ ImagePanel & \begin{tabular}{@{}l@{}}Visualizza immagini personalizzate\\Gestion
 
 \subsubsection*{daoimplementation}
 \noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
 \hline
 \rowcolor{gray!30}
 \textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
@@ -416,7 +426,9 @@ Tesseraimpl & \begin{tabular}{@{}l@{}}Gestisce inserimento tessera\\Recupera pun
 
 \subsubsection*{daointerface}
 \noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
 \hline
 \rowcolor{gray!30}
 \textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
@@ -441,7 +453,9 @@ TesseraJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su tessere\end{tabula
 
 \subsubsection*{dbconfiguration}
 \noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
 \hline
 \rowcolor{gray!30}
 \textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
@@ -460,7 +474,9 @@ DBConnection & \begin{tabular}{@{}l@{}}Gestisce connessione al database\\Fornisc
 
 \subsubsection*{model}
 \noindent
-\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
 \hline
 \rowcolor{gray!30}
 \textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
