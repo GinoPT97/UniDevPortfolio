@@ -8,5 +8,5 @@
 \contentsline {section}{\numberline {6}Diagrammi UML}{8}{section.6}%
 \contentsline {subsection}{\numberline {6.1}Diagramma delle classi}{8}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}Diagrammi di sequenza}{9}{subsection.6.2}%
-\contentsline {section}{\numberline {7}CRC Card}{11}{section.7}%
-\contentsline {section}{\numberline {8}CRC Card per package}{12}{section.8}%
+\contentsline {subsection}{\numberline {6.3}CRC Card}{11}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}CRC Card per package}{12}{subsection.6.4}%
