@@ -325,6 +325,50 @@ Le CRC Card (Class-Responsibility-Collaborator) sono uno strumento utile per la 
 Controller & \begin{tabular}{@{}l@{}}Gestisce la logica applicativa\\Coordina i modelli e le viste\\Gestisce le operazioni tra GUI e database\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\\Prodotto\\Ordine\\Tessera\\Articoli\\Frame GUI\\DAO\end{tabular} \\
 \hline
 \end{tabular}
+% =====================
+% Package: gui
+% =====================
+
+\subsubsection*{gui}
+\noindent
+\begin{tabular}{|L{4cm}|L{6cm}|L{4cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+AdminFrame & \begin{tabular}{@{}l@{}}Interfaccia amministratore\\Gestione funzioni admin\\Visualizza dashboard e statistiche\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Prodotto\\Ordine\end{tabular} \\
+\hline
+CarrelloFrame & \begin{tabular}{@{}l@{}}Gestione carrello acquisti\\Visualizza e modifica articoli\\Conferma ordine\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Articoli\\Ordine\\Prodotto\end{tabular} \\
+\hline
+DipendenteFrame & \begin{tabular}{@{}l@{}}Interfaccia dipendente\\Visualizza ordini e statistiche\\Gestione operazioni dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Ordine\end{tabular} \\
+\hline
+LoginFrame & \begin{tabular}{@{}l@{}}Schermata di login\\Gestione autenticazione\\Selezione ruolo utente\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Admin\end{tabular} \\
+\hline
+ModificaClienteFrame & \begin{tabular}{@{}l@{}}Modifica dati cliente\\Validazione e salvataggio modifiche\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Cliente\end{tabular} \\
+\hline
+ModificaDipendenteFrame & \begin{tabular}{@{}l@{}}Modifica dati dipendente\\Validazione e salvataggio modifiche\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\end{tabular} \\
+\hline
+ModificaProdottiFrame & \begin{tabular}{@{}l@{}}Modifica dati prodotto\\Gestione scorte\\Validazione modifiche\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Prodotto\end{tabular} \\
+\hline
+NuovoClienteFrame & \begin{tabular}{@{}l@{}}Inserimento nuovo cliente\\Validazione dati\\Associazione tessera\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Cliente\\Tessera\end{tabular} \\
+\hline
+NuovoDipendenteFrame & \begin{tabular}{@{}l@{}}Inserimento nuovo dipendente\\Validazione dati\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\end{tabular} \\
+\hline
+NuovoProdottoFrame & \begin{tabular}{@{}l@{}}Inserimento nuovo prodotto\\Validazione dati\\Gestione categorie\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Prodotto\end{tabular} \\
+\hline
+RicercaFrame & \begin{tabular}{@{}l@{}}Ricerca avanzata clienti\\Filtri per categoria e punti\\Visualizza risultati\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Cliente\\Prodotto\end{tabular} \\
+\hline
+StatisticheDipendentiFrame & \begin{tabular}{@{}l@{}}Visualizza statistiche dipendenti\\Classifiche vendite e introiti\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Ordine\end{tabular} \\
+\hline
+VisioneClienteFrame & \begin{tabular}{@{}l@{}}Visualizza dettagli cliente\\Storico ordini e punti\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Cliente\\Ordine\end{tabular} \\
+\hline
+VisioneDipendentiFrame & \begin{tabular}{@{}l@{}}Visualizza elenco dipendenti\\Dettagli e performance\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\end{tabular} \\
+\hline
+VisioneOrdineFrame & \begin{tabular}{@{}l@{}}Visualizza dettagli ordine\\Prodotti, cliente, dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Ordine\\Prodotto\\Cliente\\Dipendente\end{tabular} \\
+\hline
+VisioneProdottiFrame & \begin{tabular}{@{}l@{}}Visualizza elenco prodotti\\Dettagli e disponibilità\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Prodotto\end{tabular} \\
+\hline
+\end{tabular}
 
 % =====================
 % Package: daoimplementation
