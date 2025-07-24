@@ -59,4 +59,3 @@ SELECT
     END AS LivelloScorta
 FROM prodotto p
 ORDER BY p.categoria, p.nome;
-
