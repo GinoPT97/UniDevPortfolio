@@ -70,3 +70,28 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Funzione trigger per verificare la scorta del prodotto prima dell'inserimento dell'articolo
+CREATE OR REPLACE FUNCTION VerificaScortaProdotto()
+RETURNS TRIGGER AS $$
+DECLARE
+    scorta_corrente INT;
+BEGIN
+    SELECT scorta INTO scorta_corrente FROM prodotto WHERE codprodotto = NEW.codprodotto;
+    IF scorta_corrente < NEW.numeroarticoli THEN
+        RAISE EXCEPTION 'Scorta insufficiente per il prodotto %: richiesta % - disponibile %', NEW.codprodotto, NEW.numeroarticoli, scorta_corrente;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Funzione trigger per aggiornare lo stato della tessera in base alla data di scadenza
+CREATE OR REPLACE FUNCTION AggiornaStatoTessera()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.datascadenza < CURRENT_DATE THEN
+        NEW.stato := 'SCADUTA';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
