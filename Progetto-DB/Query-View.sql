@@ -1,9 +1,9 @@
 -- ESEMPI DI QUERY SU COME USARE LE VIEW DEL PROGETTO --
 
--- 1. Filtrare i punti per categoria per un cliente specifico
+-- 1. Filtrare i punti per categoria per unA CATEGORIA SPECIFICA
 SELECT *
 FROM PuntiPerCategoria
-WHERE CodCliente = 1;
+WHERE Categoria = 'FRUTTA';
 
 -- 2. Filtrare i punti per categoria in un intervallo di date
 SELECT c.*, o.dataacquisto

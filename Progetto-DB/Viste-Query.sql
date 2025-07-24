@@ -1,6 +1,6 @@
 -- Viste e query conformi alla traccia accademica del negozio di alimentari
 
--- VIEW per calcolare i punti fedeltà per categoria (10% del valore della spesa)
+-- VIEW per calcolare i punti fedeltà per categoria 
 CREATE OR REPLACE VIEW PuntiPerCategoria AS
 SELECT 
     c.codcliente AS CodCliente,
