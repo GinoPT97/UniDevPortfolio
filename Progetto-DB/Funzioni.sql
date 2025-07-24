@@ -2,7 +2,7 @@
 
 -- FUNZIONE per ricercare clienti per categoria di prodotti acquistati
 -- Richiesta dalla traccia: "permettere la ricerca dei clienti, differenziandoli sulla base delle categorie di prodotti acquistati"
-CREATE OR REPLACE FUNCTION ricerca_clienti_per_categoria(categoria_ricerca TIPOLOGIA)
+CREATE OR REPLACE FUNCTION RicercaClientiPerCategoria(categoriaRicerca TIPOLOGIA)
 RETURNS TABLE(
     codcliente INTEGER,
     nome VARCHAR(255),
@@ -24,7 +24,7 @@ BEGIN
     JOIN ordine o ON c.codcliente = o.codcliente
     JOIN articoliordine ao ON o.codordine = ao.codordine
     JOIN prodotto p ON ao.codprodotto = p.codprodotto
-    WHERE p.categoria = categoria_ricerca
+    WHERE p.categoria = categoriaRicerca
     GROUP BY c.codcliente, c.nome, c.cognome
     HAVING COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) > 0
     ORDER BY punti_categoria DESC;
@@ -33,7 +33,7 @@ $$ LANGUAGE plpgsql;
 
 -- FUNZIONE per trovare il dipendente con maggior numero di vendite in un periodo
 -- Richiesta dalla traccia: "ricercare quale dipendente ha effettuato il maggior numero di vendite in un determinato periodo"
-CREATE OR REPLACE FUNCTION dipendente_maggiori_vendite(data_inizio DATE, data_fine DATE)
+CREATE OR REPLACE FUNCTION DipendenteMaggioriVendite(dataInizio DATE, dataFine DATE)
 RETURNS TABLE(
     coddipendente INTEGER,
     nome VARCHAR(255),
@@ -51,7 +51,7 @@ BEGIN
         COALESCE(SUM(o.prezzototale), 0) as introito_totale
     FROM dipendente d
     JOIN ordine o ON d.coddipendente = o.coddipendente
-    WHERE o.dataacquisto BETWEEN data_inizio AND data_fine
+    WHERE o.dataacquisto BETWEEN dataInizio AND dataFine
     GROUP BY d.coddipendente, d.nome, d.cognome
     ORDER BY numero_vendite DESC, introito_totale DESC
     LIMIT 1;
@@ -60,7 +60,7 @@ $$ LANGUAGE plpgsql;
 
 -- FUNZIONE per trovare il dipendente con maggior introito in un periodo
 -- Richiesta dalla traccia: "differenziandolo dal dipendente che ha portato al fruttivendolo il maggior introito"
-CREATE OR REPLACE FUNCTION dipendente_maggior_introito(data_inizio DATE, data_fine DATE)
+CREATE OR REPLACE FUNCTION DipendenteMaggiorIntroito(dataInizio DATE, dataFine DATE)
 RETURNS TABLE(
     coddipendente INTEGER,
     nome VARCHAR(255),
@@ -78,7 +78,7 @@ BEGIN
         COALESCE(SUM(o.prezzototale), 0) as introito_totale
     FROM dipendente d
     JOIN ordine o ON d.coddipendente = o.coddipendente
-    WHERE o.dataacquisto BETWEEN data_inizio AND data_fine
+    WHERE o.dataacquisto BETWEEN dataInizio AND dataFine
     GROUP BY d.coddipendente, d.nome, d.cognome
     ORDER BY introito_totale DESC, numero_vendite DESC
     LIMIT 1;
@@ -87,55 +87,55 @@ $$ LANGUAGE plpgsql;
 
 -- FUNZIONE per aggiornare automaticamente i punti nella tessera (10% del valore della spesa)
 -- Richiesta dalla traccia: "Per ogni acquisto il cliente riceve il 10% del valore della spesa in punti fedeltà"
-CREATE OR REPLACE FUNCTION aggiorna_punti_tessera()
+CREATE OR REPLACE FUNCTION AggiornaPuntiTessera()
 RETURNS TRIGGER AS $$
 DECLARE
-    punti_da_aggiungere NUMERIC;
-    cliente_id INTEGER;
+    puntiDaAggiungere NUMERIC;
+    clienteId INTEGER;
 BEGIN
     -- Calcola i punti da aggiungere (10% del valore)
-    punti_da_aggiungere := NEW.prezzo * NEW.numeroarticoli * 0.10;
+    puntiDaAggiungere := NEW.prezzo * NEW.numeroarticoli * 0.10;
     
     -- Ottieni il codice cliente dall'ordine
-    SELECT codcliente INTO cliente_id 
+    SELECT codcliente INTO clienteId 
     FROM ordine 
     WHERE codordine = NEW.codordine;
     
     -- Aggiorna i punti nella tessera
     UPDATE tessera 
-    SET numeropunti = numeropunti + punti_da_aggiungere 
-    WHERE codcliente = cliente_id;
+    SET numeropunti = numeropunti + puntiDaAggiungere 
+    WHERE codcliente = clienteId;
     
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- FUNZIONE per rimuovere punti quando un articolo viene eliminato dall'ordine
-CREATE OR REPLACE FUNCTION rimuovi_punti_tessera()
+CREATE OR REPLACE FUNCTION RimuoviPuntiTessera()
 RETURNS TRIGGER AS $$
 DECLARE
-    punti_da_rimuovere NUMERIC;
-    cliente_id INTEGER;
+    puntiDaRimuovere NUMERIC;
+    clienteId INTEGER;
 BEGIN
     -- Calcola i punti da rimuovere (10% del valore)
-    punti_da_rimuovere := OLD.prezzo * OLD.numeroarticoli * 0.10;
+    puntiDaRimuovere := OLD.prezzo * OLD.numeroarticoli * 0.10;
     
     -- Ottieni il codice cliente dall'ordine
-    SELECT codcliente INTO cliente_id 
+    SELECT codcliente INTO clienteId 
     FROM ordine 
     WHERE codordine = OLD.codordine;
     
     -- Rimuovi i punti dalla tessera
     UPDATE tessera 
-    SET numeropunti = GREATEST(numeropunti - punti_da_rimuovere, 0)
-    WHERE codcliente = cliente_id;
+    SET numeropunti = GREATEST(numeropunti - puntiDaRimuovere, 0) 
+    WHERE codcliente = clienteId;
     
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
 -- FUNZIONE per aggiornare il prezzo totale dell'ordine
-CREATE OR REPLACE FUNCTION aggiorna_prezzo_totale_ordine()
+CREATE OR REPLACE FUNCTION AggiornaPrezzoTotaleOrdine()
 RETURNS TRIGGER AS $$
 BEGIN
     UPDATE ordine 
@@ -151,7 +151,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- FUNZIONE per controllare la disponibilità del prodotto prima dell'inserimento
-CREATE OR REPLACE FUNCTION controlla_disponibilita_prodotto()
+CREATE OR REPLACE FUNCTION ControllaDisponibilitaProdotto()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Controlla se c'è abbastanza scorta
@@ -167,7 +167,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- FUNZIONE per aggiornare la scorta del prodotto
-CREATE OR REPLACE FUNCTION aggiorna_scorta_prodotto()
+CREATE OR REPLACE FUNCTION AggiornaScortaProdotto()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Se è un inserimento, sottrai la quantità
@@ -197,63 +197,27 @@ BEGIN
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
-DECLARE
-    punti_da_aggiungere NUMERIC;
-    cod_cliente INTEGER;
-BEGIN
-    -- Ottiene il codice cliente dall'ordine
-    SELECT codcliente INTO cod_cliente
-    FROM ordine
-    WHERE codordine = NEW.codordine;
-    
-    -- Calcola i punti (10% del valore della spesa per questo articolo)
-    punti_da_aggiungere := (NEW.prezzo * NEW.numeroarticoli) * 0.10;
-    
-    -- Aggiorna i punti nella tessera del cliente
-    UPDATE tessera
-    SET numeropunti = numeropunti + punti_da_aggiungere
-    WHERE codcliente = cod_cliente;
-    
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
 
--- Funzione per rimuovere punti fedeltà quando un articolo viene rimosso dall'ordine
-CREATE OR REPLACE FUNCTION rimuovi_punti_fedelta()
+-- FUNZIONE per rimuovere punti fedeltà quando un articolo viene rimosso dall'ordine
+CREATE OR REPLACE FUNCTION RimuoviPuntiFedelta()
 RETURNS TRIGGER AS $$
 DECLARE
-    punti_da_rimuovere NUMERIC;
-    cod_cliente INTEGER;
+    puntiDaRimuovere NUMERIC;
+    codCliente INTEGER;
 BEGIN
     -- Ottiene il codice cliente dall'ordine
-    SELECT codcliente INTO cod_cliente
+    SELECT codcliente INTO codCliente
     FROM ordine
     WHERE codordine = OLD.codordine;
     
     -- Calcola i punti da rimuovere (10% del valore della spesa per questo articolo)
-    punti_da_rimuovere := (OLD.prezzo * OLD.numeroarticoli) * 0.10;
+    puntiDaRimuovere := (OLD.prezzo * OLD.numeroarticoli) * 0.10;
     
     -- Rimuove i punti dalla tessera del cliente
     UPDATE tessera
-    SET numeropunti = GREATEST(0, numeropunti - punti_da_rimuovere)
-    WHERE codcliente = cod_cliente;
+    SET numeropunti = GREATEST(0, numeropunti - puntiDaRimuovere)
+    WHERE codcliente = codCliente;
     
     RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
--- Funzione per controllare la disponibilità del prodotto prima dell'inserimento
-CREATE OR REPLACE FUNCTION controlla_disponibilita_prodotto()
-RETURNS TRIGGER AS $$
-BEGIN
-    -- Controlla se la scorta è sufficiente
-    IF NEW.numeroarticoli > (SELECT scorta FROM prodotto WHERE codprodotto = NEW.codprodotto) THEN
-        RAISE EXCEPTION 'Scorta insufficiente per il prodotto %. Disponibili: %, Richiesti: %', 
-            NEW.codprodotto, 
-            (SELECT scorta FROM prodotto WHERE codprodotto = NEW.codprodotto),
-            NEW.numeroarticoli;
-    END IF;
-    
-    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
