@@ -1,0 +1,22 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
+\contentsline {section}{\numberline {1}Contesto e Introduzione}{2}{section.1}%
+\contentsline {section}{\numberline {2}Login, Amministratore e Dipendente}{3}{section.2}%
+\contentsline {section}{\numberline {3}Visione degli Elementi}{4}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Visione Prodotti}{4}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Visione Clienti}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Visione Dipendenti}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Visione Ordini}{6}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Aggiunta e Modifica di Elementi}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Aggiunta di Elementi}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Modifica e Aggiornamento}{8}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Gestione Carrello}{10}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Statistiche e Ricerca Clienti}{11}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Statistiche Dipendenti}{11}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Ricerca Clienti}{11}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Elenco Completo}{11}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Filtri Avanzati: Categoria e Punti}{12}{subsubsection.5.2.2}%
+\contentsline {section}{\numberline {6}Diagrammi UML}{12}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Diagramma delle classi}{12}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Diagrammi di sequenza}{13}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}CRC Card}{15}{subsection.6.3}%

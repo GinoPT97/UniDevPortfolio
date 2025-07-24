@@ -1,0 +1,604 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{geometry}
+\usepackage{tcolorbox}
+\usepackage{lmodern}
+\usepackage{float}
+
+% Pacchetti per CRC Card
+\usepackage[table]{xcolor}
+\usepackage{array}
+% Nuovo tipo di colonna allineata a sinistra per CRC Card
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+
+\geometry{margin=2.5cm}
+\pagestyle{fancy}
+\setlength{\headheight}{16pt}
+\fancyhf{}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\rhead{\textit{Corso di Object Orientation}}
+\lhead{\textbf{Documentazione Progetto Java}}
+\cfoot{\thepage}
+
+% Titoli colorati e separatori
+\definecolor{sectioncolor}{RGB}{0,70,140}
+\definecolor{subsectioncolor}{RGB}{0,120,200}
+\titleformat{\section}[block]{\Large\bfseries\color{sectioncolor}\titlerule[0.8pt]}{\thesection}{1em}{}
+\titleformat{\subsection}[block]{\large\bfseries\color{subsectioncolor}}{\thesubsection}{1em}{}
+
+% Tema listings moderno
+\lstset{
+  language=Java,
+  breaklines=true,
+  basicstyle=\ttfamily\small,
+  frame=single,
+  backgroundcolor=\color{gray!10},
+  keywordstyle=\color{blue!80!black}\bfseries,
+  commentstyle=\color{green!50!black}\itshape,
+  stringstyle=\color{orange!80!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  tabsize=2,
+  showstringspaces=false,
+  captionpos=b
+}
+
+% Box decorativi per sezioni chiave
+\newtcolorbox{keybox}[1][] {
+  colback=blue!5!white,
+  colframe=blue!60!black,
+  fonttitle=\bfseries,
+  coltitle=black,
+  left=1mm, right=1mm, top=1mm, bottom=1mm,
+  title=#1,
+  sharp corners,
+  halign=justify,
+  width=\linewidth
+}
+
+\hypersetup{
+colorlinks=true,
+linkcolor=blue,
+urlcolor=blue,
+pdftitle={Documentazione Progetto Java},
+pdfauthor={Gino Pandozzi-Trani}
+}
+
+\title{\Huge\textbf{Documentazione del Progetto Java}\\\Large Corso di Object Orientation}
+\author{\Large Gino Pandozzi-Trani\\\normalsize Matricola: N86003116}
+\date{}
+
+
+\begin{document}
+
+% Frontespizio elegante
+\begin{titlepage}
+    \centering
+    % Immagine protagonista con cornice decorativa
+    \vspace{0.5cm}
+    \IfFileExists{../DocImm/CD.png}{%
+        \begin{tcolorbox}[colback=white, colframe=sectioncolor, boxrule=1pt, arc=6pt, left=6pt, right=6pt, top=6pt, bottom=6pt]
+            \centering
+            \includegraphics[width=0.7\textwidth]{../DocImm/Frontespazio.png}
+        \end{tcolorbox}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine frontespizio non disponibile}}
+    }
+    \vspace{1cm}
+    % Titolo e traccia centrati, font grande e colorato
+    {\Huge\bfseries\color{sectioncolor} Green Market}\\[1ex]
+    {\Large\bfseries\color{subsectioncolor} SISTEMA DI GESTIONE PER UN NEGOZIO DI ALIMENTARI}\\[2ex]
+    {\large Documentazione del Progetto Java}\\[1ex]
+    {\large Corso di Object Orientation}\\[2ex]
+    % Box autore e corso
+    \vspace{1cm}
+    \begin{tcolorbox}[colback=gray!10, colframe=black!40!black, boxrule=0.5pt, arc=4pt, left=4pt, right=4pt, top=4pt, bottom=4pt]
+        \centering
+        {\large\textbf{Autore:} Gino Pandozzi-Trani}\\[0.5ex]
+        {\large\textbf{Matricola:} N86003116}
+    \end{tcolorbox}
+    \vspace{1.5cm}
+    \vfill
+    \begin{flushright}
+    \end{flushright}
+\end{titlepage}
+
+\thispagestyle{empty}
+\newpage
+\tableofcontents
+\newpage
+
+\section{Contesto e Introduzione}
+\begin{tcolorbox}[colback=gray!10, colframe=black!40!black, title=Presentazione della traccia]
+\textbf{SISTEMA DI GESTIONE PER UN NEGOZIO DI ALIMENTARI}
+
+Si sviluppi un sistema informativo, composto da una base di dati relazionale e un applicativo Java dotato di
+GUI (Swing o JavaFX), per la gestione di un sistema di un negozio di ortofrutta. Il sistema deve permettere di
+gestire le vendite e la disponibilità dei prodotti disponibili, identificando le tipologie (frutta, verdura,
+farinacei, latticini, uova e confezionati). Ogni tipologia di prodotto ha delle caratteristiche diverse (ad
+esempio, la frutta e la verdura hanno una data di raccolta, i latticini hanno sia una data di mungitura del latte
+che una data di produzione, ecc..). Ogni cliente è registrato e ha una tessera punti associata che lo identifica
+al fruttivendolo. Per ogni acquisto il cliente riceve il 10 per cento del valore della spesa in punti fedeltà. Il sistema
+deve premettere la ricerca dei clienti, differenziandoli sulla base delle categorie di prodotti acquistati e sulla
+quantità di punti che hanno ottenuto per ogni categoria.
+Per il gruppo da 3: il fruttivendolo ha un certo numero di dipendenti, e ad ogni vendita è associato il
+dipendente che l’ha portata a termine. Deve pertanto essere possibile ricercare quale dipendente ha
+effettuato il maggior numero di vendite in un determinato periodo differenziandolo dal dipendente che ha
+portato al fruttivendolo il maggior introito.
+
+\end{tcolorbox}
+
+\vspace{0.5em}
+\noindent\textbf{Panoramica dell'applicativo e aderenza alla traccia}
+
+L'applicativo implementa tutte le funzionalità richieste dalla traccia, garantendo una gestione efficiente e sicura delle operazioni. La soluzione si compone di:
+\begin{itemize}
+    \item \textbf{Database relazionale}: struttura normalizzata, relazioni tra entità e integrità referenziale.
+    \item \textbf{Applicativo Java con GUI Swing}: interfaccia intuitiva, accesso rapido alle funzioni e validazione automatica dei dati.
+    \item \textbf{Gestione tipologie prodotto}: ogni categoria ha attributi specifici e controlli dedicati.
+    \item \textbf{Clienti e tessera punti}: fidelizzazione automatica, storico ordini e punti per categoria.
+    \item \textbf{Ricerca avanzata}: filtri per categoria, punti, frequenza ordini e esportazione risultati.
+    \item \textbf{Gestione dipendenti}: ogni vendita è tracciata e associata a un dipendente, con statistiche su vendite e introiti.
+\end{itemize}
+
+\noindent\textbf{Architettura e scelte progettuali}
+
+Il sistema adotta il pattern \textbf{Model-View-Controller (MVC)}, separando logica, interfaccia e accesso ai dati. Questa scelta garantisce modularità, manutenibilità e facilità di estensione. L'integrazione tra database e GUI permette una gestione avanzata di tutte le operazioni, con funzionalità di ricerca, analisi e reportistica. L'architettura favorisce la suddivisione delle responsabilità tra i vari moduli, semplificando la manutenzione e l'aggiunta di nuove funzionalità. La validazione automatica dei dati e i controlli di sicurezza assicurano l'affidabilità del sistema anche in caso di input errati o tentativi di accesso non autorizzato.
+
+\subsection*{Funzionalità Implementate}
+\begin{keybox}[Funzionalità principali]
+\begin{itemize}
+    \item Gestione completa di prodotti, clienti, dipendenti, ordini e tessere punti
+    \item Fidelizzazione automatica e storico acquisti
+    \item Monitoraggio vendite, scorte e performance dipendenti
+    \item Classifiche dinamiche per vendite e introiti
+    \item Interfaccia grafica moderna e validazione automatica
+\end{itemize}
+\end{keybox}
+
+\section{Login, Amministratore e Dipendente}
+All'avvio, l'applicativo presenta una schermata di login che distingue tra amministratori e dipendenti. L'utente inserisce le credenziali e il sistema verifica il ruolo tramite database, garantendo un accesso sicuro e personalizzato. Gli amministratori accedono a tutte le funzioni di gestione, monitoraggio e configurazione del sistema, potendo visualizzare dashboard, gestire permessi, modificare dati e consultare statistiche globali. I dipendenti, invece, hanno accesso alle funzioni operative, come la gestione degli ordini, la consultazione dei dati dei clienti e la visualizzazione delle proprie statistiche di vendita. La sicurezza è garantita da controlli sulle credenziali, feedback immediati in caso di errori e tracciamento delle operazioni, riducendo il rischio di accessi non autorizzati e facilitando la gestione delle responsabilità.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../DocImm/Login.png}
+    \caption{Schermata di login: inserimento credenziali e selezione ruolo}
+\end{figure}
+\begin{itemize}
+    \item \textbf{Admin}: accede a tutte le funzionalità di gestione, controllo e monitoraggio. Può visualizzare dashboard, gestire permessi, modificare dati e consultare statistiche globali.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.6\textwidth]{../DocImm/Admin.png}
+        \caption{Interfaccia amministratore: accesso alle funzioni di gestione e monitoraggio}
+    \end{figure}
+    \item \textbf{Dipendente}: accede alle funzioni operative, come la gestione degli ordini, la consultazione dei dati dei clienti e la visualizzazione delle proprie statistiche di vendita. Le credenziali errate o non valide generano messaggi di errore chiari.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.6\textwidth]{../DocImm/Dipendenti.png}
+        \caption{Interfaccia dipendente: funzioni operative e statistiche personali}
+    \end{figure}
+\end{itemize}
+La schermata di login è progettata per essere intuitiva e sicura, con feedback immediato all’utente.
+
+
+\section{Visione degli Elementi}
+
+Le schermate di visione sono progettate per guidare l’utente nella consultazione e gestione di tutte le entità principali del sistema. Ogni interfaccia offre strumenti di selezione, filtro, analisi e modifica, con feedback immediati e messaggi chiari che accompagnano l’utente in ogni operazione.
+
+\subsection{Visione Prodotti}
+La schermata di visione prodotti presenta un elenco dettagliato, con filtri per categoria, gestione delle scorte, visualizzazione delle date di raccolta, produzione e scadenza, e controllo della disponibilità. L’utente può individuare rapidamente prodotti critici, visualizzare attributi specifici e intervenire tempestivamente sulle scorte. I messaggi di feedback segnalano eventuali prodotti in esaurimento o scaduti, facilitando la gestione operativa.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/VisioneProdotti.png}{%
+        \includegraphics[width=0.95\textwidth]{../DocImm/VisioneProdotti.png}
+        \caption{Schermata di visione prodotti: elenco dettagliato e gestione scorte}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: visione prodotti}}
+    }
+\end{figure}
+
+\subsection{Visione Clienti}
+La schermata di visione clienti consente di consultare l’anagrafica completa e la tessera punti. L’utente può visualizzare il profilo di ogni cliente, monitorare la fedeltà, analizzare le abitudini di acquisto. I feedback visivi e i messaggi di conferma accompagnano ogni operazione, riducendo il rischio di errori e favorendo strategie di marketing personalizzate.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/VisioneClienti.png}{%
+        \includegraphics[width=0.95\textwidth]{../DocImm/VisioneClienti.png}
+        \caption{Schermata di visione clienti: anagrafica, tessera punti e storico ordini}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: visione clienti}}
+    }
+\end{figure}
+
+\subsection{Visione Dipendenti}
+La schermata di visione dipendenti mostra i dati personali, i recapiti. L’utente può accedere alle funzioni di modifica. I feedback e le conferme visive garantiscono trasparenza e tracciabilità delle operazioni.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/VisioneDipendenti.png}{%
+        \includegraphics[width=0.95\textwidth]{../DocImm/VisioneDipendenti.png}
+        \caption{Schermata di visione dipendenti: dati personali e statistiche}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: visione dipendenti}}
+    }
+\end{figure}
+
+\subsection{Visione Ordini}
+La schermata di visione ordini permette di consultare il dettaglio dei prodotti acquistati, il cliente, il dipendente associato, la data e l’importo. Ogni ordine è tracciato e consultabile, con possibilità di analisi temporale e verifica delle transazioni. I messaggi di feedback e le conferme visive accompagnano la consultazione e la modifica, assicurando la coerenza e la sicurezza dei dati.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/VisioneOrdini.png}{%
+        \includegraphics[width=0.95\textwidth]{../DocImm/VisioneOrdini.png}
+        \caption{Schermata di visione ordini: dettaglio prodotti, cliente e dipendente}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: visione ordini}}
+    }
+\end{figure}
+
+Ogni schermata consente la selezione, modifica e analisi degli elementi, con un’interfaccia pensata per rapidità, chiarezza e facilità d’uso. I flussi operativi sono guidati e supportati da messaggi di feedback, riducendo gli errori e migliorando l’esperienza utente.
+
+\section{Aggiunta e Modifica di Elementi}
+
+\subsection{Aggiunta di Elementi}
+L'inserimento di nuovi dati avviene tramite interfacce guidate, con campi obbligatori evidenziati e validazione automatica. Per ogni entità (cliente, prodotto, dipendente) sono previsti controlli specifici e feedback immediato. L'utente è accompagnato passo-passo nella compilazione dei dati, con suggerimenti e controlli che prevengono errori di inserimento. Ad esempio, la tessera punti viene generata e associata automaticamente al cliente, mentre per i prodotti vengono richiesti attributi specifici in base alla categoria selezionata (ad esempio, presenza di glutine, provenienza, date di scadenza). L'inserimento di un nuovo dipendente prevede la verifica dei dati personali, garantendo la correttezza delle informazioni e la sicurezza del sistema.
+
+\textbf{Nuovo Cliente:} inserimento anagrafica, recapiti e tessera punti.
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/InserisciCliente.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/InserisciCliente.png}
+        \caption{Schermata di inserimento nuovo cliente: campi obbligatori e validazione automatica}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: inserimento cliente}}
+    }
+\end{figure}
+
+\textbf{Nuovo Prodotto:} selezione categoria, inserimento dati specifici (date, provenienza, glutine, ecc.), gestione scorte e validazione.
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/InserisciProdotto.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/InserisciProdotto.png}
+        \caption{Schermata di inserimento nuovo prodotto: selezione categoria e dati specifici}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: inserimento prodotto}}
+    }
+\end{figure}
+
+\textbf{Nuovo Dipendente:} inserimento dati personali.
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/NuovoDipendente.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/NuovoDipendente.png}
+        \caption{Schermata di inserimento nuovo dipendente: campi obbligatori e validazione automatica}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: nuovo dipendente}}
+    }
+\end{figure}
+
+\subsection{Modifica e Aggiornamento}
+La modifica dei dati avviene selezionando l'elemento desiderato dalla tabella. Le interfacce di aggiornamento garantiscono trasparenza, tracciabilità e sicurezza. Tutte le modifiche sono validate e salvate nel database, con feedback immediato. L'utente può aggiornare i dati anagrafici, recapiti, tessera e storico ordini del cliente, gestire le scorte e le informazioni dei prodotti, e modificare i dati personali, il ruolo e lo storico vendite dei dipendenti. Ogni operazione è accompagnata da conferme visive e messaggi di successo o errore, assicurando che le modifiche siano effettivamente registrate e che la base dati rimanga coerente. La tracciabilità delle modifiche consente di risalire alle operazioni effettuate, migliorando la sicurezza e la trasparenza gestionale.
+
+\textbf{Cliente:} aggiornamento dati anagrafici e recapiti.
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/ModificaCliente.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/ModificaCliente.png}
+        \caption{Schermata di modifica cliente: aggiornamento dati e salvataggio sicuro}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica cliente}}
+    }
+\end{figure}
+
+\textbf{Prodotto:} gestione scorte, aggiornamento dati, validazione modifiche e controllo disponibilità.
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/ModificaProdotto.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/ModificaProdotto.png}
+        \caption{Schermata di modifica prodotto: gestione scorte e validazione modifiche}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica prodotto}}
+    }
+\end{figure}
+
+\textbf{Dipendente:} aggiornamento dati personali e recapiti.
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/ModificaDipendente.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/ModificaDipendente.png}
+        \caption{Schermata di modifica dipendente: aggiornamento dati e salvataggio sicuro}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: modifica dipendente}}
+    }
+\end{figure}
+
+\subsection{Gestione Carrello}
+La gestione del carrello rappresenta una delle funzionalità più avanzate e centrali dell'applicativo. L'utente può selezionare prodotti di ogni tipologia, visualizzare e modificare gli articoli inseriti, confermare l'ordine e calcolare automaticamente i punti fedeltà (pari al 10\% del valore della spesa). Il sistema aggiorna in tempo reale la tessera del cliente, verifica la disponibilità dei prodotti e gestisce le scorte, evitando sovrapposizioni e garantendo la correttezza delle transazioni. Ogni vendita è associata a un dipendente, consentendo analisi dettagliate su performance, introiti e produttività. L'interfaccia del carrello è progettata per essere intuitiva, con pulsanti chiari, riepiloghi visivi e messaggi di conferma, favorendo la rapidità delle operazioni e riducendo il rischio di errori. Esempio d'uso: un dipendente seleziona i prodotti richiesti dal cliente, verifica la disponibilità, conferma l'ordine e il sistema aggiorna automaticamente i punti fedeltà e le scorte, registrando la vendita e associandola al proprio profilo.
+
+\textbf{Carrello:} visualizzazione e gestione articoli selezionati, conferma ordine e punti fedeltà.
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/Carrello.png}{%
+        \includegraphics[width=0.7\textwidth]{../DocImm/Carrello.png}
+        \caption{Schermata del carrello: gestione articoli, conferma ordine e punti fedeltà}
+    }{% 
+        \fbox{\parbox{0.5\textwidth}{\centering Immagine non disponibile: carrello}}
+    }
+\end{figure}
+
+
+\section{Statistiche e Ricerca Clienti}
+L'applicativo integra moduli avanzati per analisi e ricerca, fondamentali per il monitoraggio delle performance e la pianificazione strategica. Le funzionalità statistiche e di ricerca offrono una panoramica completa e strumenti di supporto alle decisioni, facilitando la gestione del negozio e l'ottimizzazione delle strategie di vendita.
+
+
+\subsection{Statistiche Dipendenti}
+
+I dipendenti vengono differenziati per numero di introiti e vendite effettuate in un certo lasso di tempo. Nella schermata vengono mostrati nome, cognome, numero di introiti e vendite effettuate da ciascun dipendente nel periodo selezionato.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/StatisticheDipendenti.png}{%
+        \includegraphics[width=0.8\textwidth]{../DocImm/StatisticheDipendenti.png}
+        \caption{Interfaccia delle statistiche dipendenti: operazioni eseguite e risultati per vendite e introiti}
+    }{% 
+        \fbox{\parbox{0.7\textwidth}{\centering Immagine non disponibile: statistiche dipendenti}}
+    }
+\end{figure}
+
+\subsection{Ricerca Clienti}
+\subsubsection{Elenco Completo}
+La funzione di ricerca clienti consente di accedere all’anagrafica completa dei clienti registrati nel sistema. La schermata mostra una tabella dettagliata in cui ogni riga rappresenta un cliente, con informazioni quali nome, cognome, codice tessera, recapiti, storico ordini e punti fedeltà accumulati. Questa vista è utile per consultare rapidamente i dati, verificare la situazione punti. L’elenco è ordinabile per ciascuna colonna e può essere esportato per analisi esterne. L’immagine seguente mostra la schermata con la lista completa, senza filtri applicati, evidenziando la struttura della tabella e la ricchezza delle informazioni disponibili.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/ricerca-1.png}{%
+        \includegraphics[width=0.8\textwidth]{../DocImm/ricerca-1.png}
+        \caption{Schermata di ricerca clienti: elenco completo di tutti gli elementi}
+    }{% 
+        \fbox{\parbox{0.7\textwidth}{\centering Immagine non disponibile: elenco completo clienti}}
+    }
+\end{figure}
+
+\subsubsection{Filtri Avanzati: Categoria e Punti}
+La ricerca avanzata clienti permette di applicare filtri specifici per ottenere una lista mirata di utenti. La schermata mostra per ogni cliente i dati rilevanti: nome, cognome, punti accumulati, categoria selezionata. L’interfaccia offre strumenti per ordinare e esportare i risultati, facilitando campagne di marketing mirate o analisi statistiche. L’immagine seguente illustra una ricerca filtrata per categoria “frutta” e range punti 0-500, evidenziando la selezione dei criteri e la presentazione dei risultati.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/ricerca-2.png}{%
+        \includegraphics[width=0.8\textwidth]{../DocImm/ricerca-2.png}
+        \caption{Schermata di ricerca clienti filtrata: categoria “frutta” e range punti 0-500}
+    }{% 
+        \fbox{\parbox{0.7\textwidth}{\centering Immagine non disponibile: ricerca clienti filtrata}}
+    }
+\end{figure}
+
+
+\section{Diagrammi UML}
+I principali diagrammi UML e di sequenza descrivono l’architettura e il funzionamento del sistema. Di seguito sono riportati i sottocapitoli dedicati:
+
+\subsection{Diagramma delle classi}
+Il diagramma delle classi mostra la struttura delle entità fondamentali (Prodotto, Cliente, Dipendente, Ordine, Tessera, ecc.) e le relazioni tra di esse, evidenziando attributi e metodi principali. Questo strumento è essenziale per la documentazione tecnica e facilita la manutenzione e l’estensione futura del progetto.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/CD.png}{%
+        \includegraphics[width=1\textwidth,keepaspectratio]{../DocImm/CD.png}
+        \caption{Diagramma delle classi principale del sistema}
+    }{% 
+        \fbox{\parbox{0.7\textwidth}{\centering Immagine non disponibile: diagramma delle classi}}
+    }
+\end{figure}
+
+\subsection{Diagrammi di sequenza}
+I diagrammi di sequenza illustrano il flusso delle operazioni più rilevanti, come la creazione di un ordine e la registrazione di un nuovo cliente, permettendo di comprendere l’interazione tra i diversi componenti software.
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/CreaOrdine-SD.png}{%
+        \includegraphics[width=0.95\textwidth,keepaspectratio]{../DocImm/CreaOrdine-SD.png}
+        \caption{Diagramma di sequenza: creazione ordine}
+    }{% 
+        \fbox{\parbox{0.7\textwidth}{\centering Immagine non disponibile: sequenza creazione ordine}}
+    }
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \IfFileExists{../DocImm/NuovoCliente-SD.png}{%
+        \includegraphics[width=0.95\textwidth]{../DocImm/NuovoCliente-SD.png}
+        \caption{Diagramma di sequenza: nuovo cliente}
+    }{% 
+        \fbox{\parbox{0.7\textwidth}{\centering Immagine non disponibile: sequenza nuovo cliente}}
+    }
+\end{figure}
+
+% --- CRC Card Section ---
+\subsection{CRC Card}
+Le CRC Card (Class-Responsibility-Collaborator) sono uno strumento utile per la progettazione orientata agli oggetti. Ogni carta rappresenta una classe, ne descrive le responsabilità principali e le collaborazioni con altre classi. Questo metodo favorisce la comprensione del sistema e la suddivisione delle responsabilità tra le varie componenti.
+
+% =====================
+% Package: controller
+% =====================
+
+\subsubsection*{controller}
+\noindent
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+Controller & \begin{tabular}{@{}l@{}}Gestisce la logica applicativa\\Coordina GUI e Model\\Gestisce operazioni tra GUI e database\\Valida dati e input\\Gestisce tabelle e costanti\\Interagisce con DAO e DB\\Gestisce visibilità e navigazione tra frame\\Inserimento, modifica, ricerca e statistiche\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\\Prodotto\\Ordine\\Tessera\\Articoli\\Frame GUI\\DAO\\DBConfiguration\\DBConnection\end{tabular} \\
+\hline
+\end{tabular}
+% =====================
+% Package: gui
+% =====================
+
+\subsubsection*{gui}
+\noindent
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+AdminFrame & \begin{tabular}{@{}l@{}}Interfaccia amministratore\\Gestione bottoni e pannelli\\Visualizza dashboard e statistiche\\Gestisce azioni e navigazione\\Interagisce con Controller\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Prodotto\\Ordine\\ImagePanel\end{tabular} \\
+\hline
+CarrelloFrame & \begin{tabular}{@{}l@{}}Gestione carrello acquisti\\Visualizza e modifica articoli\\Conferma ordine\\Gestione tabelle e modelli\\Gestione categorie\\Interazione con Controller\\Gestione punti fedeltà\\Gestione filtri e selezione cliente\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Articoli\\Ordine\\Prodotto\\Cliente\end{tabular} \\
+\hline
+DipendenteFrame & \begin{tabular}{@{}l@{}}Interfaccia dipendente\\Visualizza ordini e statistiche\\Gestione operazioni dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Ordine\end{tabular} \\
+\hline
+LoginFrame & \begin{tabular}{@{}l@{}}Schermata di login\\Gestione autenticazione\\Selezione ruolo utente\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Admin\end{tabular} \\
+\hline
+ModificaClienteFrame & \begin{tabular}{@{}l@{}}Modifica dati cliente\\Validazione e salvataggio modifiche\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Cliente\end{tabular} \\
+\hline
+ModificaDipendenteFrame & \begin{tabular}{@{}l@{}}Modifica dati dipendente\\Validazione e salvataggio modifiche\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\end{tabular} \\
+\hline
+ModificaProdottiFrame & \begin{tabular}{@{}l@{}}Modifica dati prodotto\\Gestione scorte\\Validazione modifiche\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Prodotto\end{tabular} \\
+\hline
+NuovoClienteFrame & \begin{tabular}{@{}l@{}}Inserimento nuovo cliente\\Validazione dati\\Associazione tessera\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Cliente\\Tessera\end{tabular} \\
+\hline
+NuovoDipendenteFrame & \begin{tabular}{@{}l@{}}Inserimento nuovo dipendente\\Validazione dati\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\end{tabular} \\
+\hline
+NuovoProdottoFrame & \begin{tabular}{@{}l@{}}Inserimento nuovo prodotto\\Validazione dati\\Gestione categorie\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Prodotto\end{tabular} \\
+\hline
+RicercaFrame & \begin{tabular}{@{}l@{}}Ricerca avanzata clienti\\Filtri per categoria e punti\\Visualizza risultati\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Cliente\\Prodotto\end{tabular} \\
+\hline
+StatisticheDipendentiFrame & \begin{tabular}{@{}l@{}}Visualizza statistiche dipendenti\\Classifiche vendite e introiti\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\\Ordine\end{tabular} \\
+\hline
+VisioneClienteFrame & \begin{tabular}{@{}l@{}}Visualizza dettagli cliente\\Storico ordini e punti\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Cliente\\Ordine\end{tabular} \\
+\hline
+VisioneDipendentiFrame & \begin{tabular}{@{}l@{}}Visualizza elenco dipendenti\\Dettagli e performance\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Dipendente\end{tabular} \\
+\hline
+VisioneOrdineFrame & \begin{tabular}{@{}l@{}}Visualizza dettagli ordine\\Prodotti, cliente, dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Ordine\\Prodotto\\Cliente\\Dipendente\end{tabular} \\
+\hline
+ \newpage
+VisioneProdottiFrame & \begin{tabular}{@{}l@{}}Visualizza elenco prodotti\\Dettagli e disponibilità\end{tabular} & \begin{tabular}{@{}l@{}}Controller\\Prodotto\end{tabular} \\
+\hline
+IconUtils & \begin{tabular}{@{}l@{}}Gestisce icone e immagini\\Supporto grafico alle interfacce GUI\end{tabular} & \begin{tabular}{@{}l@{}}Frame GUI\end{tabular} \\
+\hline
+ImagePanel & \begin{tabular}{@{}l@{}}Visualizza immagini personalizzate\\Gestione pannelli grafici\end{tabular} & \begin{tabular}{@{}l@{}}Frame GUI\end{tabular} \\
+\hline
+\end{tabular}
+
+% =====================
+% Package: daoimplementation
+% =====================
+
+\subsubsection*{daoimplementation}
+\noindent
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+ArticoliImpl & \begin{tabular}{@{}l@{}}Gestisce inserimento articoli ordine\\Ricerca clienti per articoli\end{tabular} & \begin{tabular}{@{}l@{}}Articoli\\Cliente\\DB\end{tabular} \\
+\hline
+Clienteimpl & \begin{tabular}{@{}l@{}}Gestisce inserimento e aggiornamento clienti\\Recupera lista clienti\\Gestisce tessera associata\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Tessera\\DB\end{tabular} \\
+\hline
+DipendenteImpl & \begin{tabular}{@{}l@{}}Gestisce inserimento e aggiornamento dipendenti\\Verifica ID\\Recupera vendite e introiti dipendenti\end{tabular} & \begin{tabular}{@{}l@{}}Dipendente\\Ordine\\DB\end{tabular} \\
+\hline
+OrdiniImpl & \begin{tabular}{@{}l@{}}Gestisce inserimento ordini\\Recupera lista ordini\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\\Cliente\\Dipendente\\DB\end{tabular} \\
+\hline
+ProdottoImpl & \begin{tabular}{@{}l@{}}Gestisce inserimento e aggiornamento prodotti\\Gestisce scorte\\Recupera lista prodotti\end{tabular} & \begin{tabular}{@{}l@{}}Prodotto\\DB\end{tabular} \\
+\hline
+Tesseraimpl & \begin{tabular}{@{}l@{}}Gestisce inserimento tessera\\Recupera punti tessera\\Aggiorna punti tessera\end{tabular} & \begin{tabular}{@{}l@{}}Tessera\\Cliente\\DB\end{tabular} \\
+\hline
+\end{tabular}
+
+% =====================
+% Package: daointerface
+% =====================
+
+\subsubsection*{daointerface}
+\noindent
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+ArticoliJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su articoli ordine\end{tabular} & \begin{tabular}{@{}l@{}}Articoli\end{tabular} \\
+\hline
+ClienteJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su clienti\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\end{tabular} \\
+\hline
+DipendenteJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su dipendenti\end{tabular} & \begin{tabular}{@{}l@{}}Dipendente\end{tabular} \\
+\hline
+OrdiniJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su ordini\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\end{tabular} \\
+\hline
+ProdottoJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su prodotti\end{tabular} & \begin{tabular}{@{}l@{}}Prodotto\end{tabular} \\
+\hline
+TesseraJDBC & \begin{tabular}{@{}l@{}}Definisce operazioni su tessere\end{tabular} & \begin{tabular}{@{}l@{}}Tessera\end{tabular} \\
+\hline
+\end{tabular}
+
+% =====================
+% Package: dbconfiguration
+% =====================
+
+\subsubsection*{dbconfiguration}
+\noindent
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+ConnectionException & \begin{tabular}{@{}l@{}}Gestisce eccezioni di connessione al DB\end{tabular} & \begin{tabular}{@{}l@{}}DBConfiguration\end{tabular} \\
+\hline
+DBConfiguration & \begin{tabular}{@{}l@{}}Gestisce configurazione e creazione tabelle\\Verifica connessione e struttura DB\end{tabular} & \begin{tabular}{@{}l@{}}DBConnection\end{tabular} \\
+\hline
+DBConnection & \begin{tabular}{@{}l@{}}Gestisce connessione al database\\Fornisce istanza di connessione\end{tabular} & \begin{tabular}{@{}l@{}}DBConfiguration\end{tabular} \\
+\hline
+\end{tabular}
+
+% =====================
+% Package: model
+% =====================
+
+\subsubsection*{model}
+\noindent
+\sloppy
+\scriptsize
+\begin{tabular}{|L{3.2cm}|L{8cm}|L{2.8cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Classe} & \textbf{Responsabilità} & \textbf{Collaboratori} \\
+\hline
+Articoli & \begin{tabular}{@{}l@{}}Gestisce dati articoli ordine\\Collega ordine, prodotto e cliente\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\\Prodotto\\Cliente\end{tabular} \\
+\hline
+Cliente & \begin{tabular}{@{}l@{}}Gestisce dati anagrafici\\Gestisce tessera punti\\Gestisce ordini e storico acquisti\\Gestisce recapiti\\Interagisce con Articoli\\Gestisce punti fedeltà\\Gestisce categorie di acquisto\end{tabular} & \begin{tabular}{@{}l@{}}Tessera\\Articoli\\Ordine\\Prodotto\end{tabular} \\
+\hline
+Dipendente & \begin{tabular}{@{}l@{}}Gestisce dati dipendente\end{tabular} & \begin{tabular}{@{}l@{}}Ordine\end{tabular} \\
+\hline
+Ordine & \begin{tabular}{@{}l@{}}Gestisce dati ordine (id, data, prezzo totale)\\Collega cliente e dipendente\\Gestisce relazioni con prodotti acquistati\\Gestisce data acquisto\\Interagisce con Controller\\Gestisce storico ordini\\Gestisce punti e introiti\\Gestisce relazioni con dipendenti\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\\Dipendente\\Prodotto\\Controller\end{tabular} \\
+\hline
+Prodotto & \begin{tabular}{@{}l@{}}Gestisce dati prodotto (nome, descrizione, prezzo, provenienza)\\Gestisce date (raccolta, mungitura, produzione, scadenza)\\Gestisce categoria e scorta\\Gestisce presenza glutine\\Interagisce con Articoli\\Gestisce disponibilità\\Gestisce relazioni con ordini\end{tabular} & \begin{tabular}{@{}l@{}}Articoli\\Ordine\\Cliente\end{tabular} \\
+\hline
+Tessera & \begin{tabular}{@{}l@{}}Gestisce dati tessera\\Gestisce punti fedeltà\\Collega cliente\end{tabular} & \begin{tabular}{@{}l@{}}Cliente\end{tabular} \\
+\hline
+\end{tabular}
+
+\end{document}
