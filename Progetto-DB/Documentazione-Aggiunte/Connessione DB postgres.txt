@@ -1,4 +1,0 @@
-host: progetto-oo.cn13irvnm5sg.us-west-1.rds.amazonaws.com
-port: 5432
-user: postgres
-pwd: SuperSecret
