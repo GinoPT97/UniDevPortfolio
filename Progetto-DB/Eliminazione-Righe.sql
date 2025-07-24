@@ -24,3 +24,39 @@ BEGIN
         EXECUTE format('ALTER SEQUENCE public.%I RESTART WITH 1', rec.sequence_name);
     END LOOP;
 END $$;
+
+-- Elimina tutte le tabelle
+DO $$ DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+        EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.tablename) || ' CASCADE;';
+    END LOOP;
+END $$;
+
+-- Elimina tutte le viste
+DO $$ DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT viewname FROM pg_views WHERE schemaname = 'public') LOOP
+        EXECUTE 'DROP VIEW IF EXISTS public.' || quote_ident(r.viewname) || ' CASCADE;';
+    END LOOP;
+END $$;
+
+-- Elimina tutte le funzioni
+DO $$ DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT proname, oidvectortypes(proargtypes) AS args FROM pg_proc WHERE pronamespace = 'public'::regnamespace) LOOP
+        EXECUTE 'DROP FUNCTION IF EXISTS public.' || quote_ident(r.proname) || '(' || r.args || ') CASCADE;';
+    END LOOP;
+END $$;
+
+-- Elimina tutti i trigger
+DO $$ DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT tgname, relname FROM pg_trigger JOIN pg_class ON pg_trigger.tgrelid = pg_class.oid WHERE NOT tgisinternal) LOOP
+        EXECUTE 'DROP TRIGGER IF EXISTS ' || quote_ident(r.tgname) || ' ON public.' || quote_ident(r.relname) || ' CASCADE;';
+    END LOOP;
+END $$;
