@@ -40,8 +40,8 @@ SELECT
     d.nome AS Nome,
     d.cognome AS Cognome,
     COUNT(DISTINCT o.codordine) AS NumeroVendite,
-    COALESCE(SUM(o.prezzototale), 0) AS IntroitoTotale,
-    COALESCE(AVG(o.prezzototale), 0) AS IntroitoMedio,
+    COALESCE(ROUND(SUM(o.prezzototale)::numeric, 2), 0) AS IntroitoTotale,
+    COALESCE(ROUND(AVG(o.prezzototale)::numeric, 2), 0) AS IntroitoMedio,
     MIN(o.dataacquisto) AS PrimaVendita,
     MAX(o.dataacquisto) AS UltimaVendita
 FROM dipendente d
