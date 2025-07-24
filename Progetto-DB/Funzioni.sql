@@ -59,3 +59,14 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Funzione trigger per aggiornare il prezzo totale dell'ordine dopo inserimento articolo
+CREATE OR REPLACE FUNCTION AggiornaPrezzoOrdine()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE ordine
+    SET prezzototale = prezzototale + (NEW.prezzo * NEW.numeroarticoli)
+    WHERE codordine = NEW.codordine;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
