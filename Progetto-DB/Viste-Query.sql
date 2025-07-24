@@ -1,7 +1,6 @@
 -- Viste e query conformi alla traccia accademica del negozio di alimentari
 
 -- VIEW per calcolare i punti fedeltà per categoria (10% del valore della spesa)
--- Richiesta dalla traccia: "differenziare i clienti sulla base delle categorie di prodotti acquistati e sulla quantità di punti"
 CREATE OR REPLACE VIEW PuntiPerCategoria AS
 SELECT 
     c.codcliente AS CodCliente,
@@ -33,22 +32,7 @@ LEFT JOIN ordine o ON c.codcliente = o.codcliente
 LEFT JOIN articoliordine ao ON o.codordine = ao.codordine
 GROUP BY c.codcliente, c.nome, c.cognome, t.numeropunti, t.stato;
 
--- VIEW per le statistiche dei dipendenti 
-CREATE OR REPLACE VIEW StatisticheDipendenti AS
-SELECT 
-    d.coddipendente AS CodDipendente,
-    d.nome AS Nome,
-    d.cognome AS Cognome,
-    COUNT(DISTINCT o.codordine) AS NumeroVendite,
-    COALESCE(ROUND(SUM(o.prezzototale)::numeric, 2), 0) AS IntroitoTotale,
-    COALESCE(ROUND(AVG(o.prezzototale)::numeric, 2), 0) AS IntroitoMedio,
-    MIN(o.dataacquisto) AS PrimaVendita,
-    MAX(o.dataacquisto) AS UltimaVendita
-FROM dipendente d
-LEFT JOIN ordine o ON d.coddipendente = o.coddipendente
-GROUP BY d.coddipendente, d.nome, d.cognome
-ORDER BY NumeroVendite DESC, IntroitoTotale DESC;
-
+-- VIEW per prodotti con livello scorta
 CREATE OR REPLACE VIEW ProdottiCompleti AS
 SELECT 
     p.*,
@@ -59,3 +43,21 @@ SELECT
     END AS LivelloScorta
 FROM prodotto p
 ORDER BY p.categoria, p.nome;
+
+-- VIEW: Dipendente con più vendite tra due date
+CREATE OR REPLACE VIEW DipendenteTopOrdini AS
+SELECT D.nome, D.cognome, COUNT(O.*) AS Tordini
+FROM dipendente AS D
+JOIN ordine AS O ON O.coddipendente = D.coddipendente
+GROUP BY D.nome, D.cognome
+ORDER BY Tordini DESC
+LIMIT 1;
+
+-- VIEW: Dipendente con maggior introito tra due date
+CREATE OR REPLACE VIEW DipendenteTopIntroito AS
+SELECT D.nome, D.cognome, SUM(O.prezzototale) AS Sordine
+FROM dipendente AS D
+JOIN ordine AS O ON O.coddipendente = D.coddipendente
+GROUP BY D.nome, D.cognome
+ORDER BY Sordine DESC
+LIMIT 1;
