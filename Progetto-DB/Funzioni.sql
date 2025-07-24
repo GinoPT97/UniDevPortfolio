@@ -30,3 +30,32 @@ BEGIN
     ORDER BY punti_categoria DESC;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Funzione per aggiornare scorta prodotto e punti tessera
+CREATE OR REPLACE FUNCTION AggiornaScortaEPunti()
+RETURNS TRIGGER AS $$
+DECLARE
+    punti_da_aggiungere NUMERIC;
+    cod_cliente INTEGER;
+BEGIN
+    -- Aggiorna la scorta del prodotto
+    UPDATE prodotto
+    SET scorta = scorta - NEW.numeroarticoli
+    WHERE codprodotto = NEW.codprodotto;
+
+    -- Calcola i punti da aggiungere (10% del valore speso)
+    punti_da_aggiungere := NEW.prezzo * NEW.numeroarticoli * 0.10;
+
+    -- Recupera il cliente associato all'ordine
+    SELECT codcliente INTO cod_cliente
+    FROM ordine
+    WHERE codordine = NEW.codordine;
+
+    -- Aggiorna i punti della tessera del cliente
+    UPDATE tessera
+    SET numeropunti = numeropunti + punti_da_aggiungere
+    WHERE codcliente = cod_cliente;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
