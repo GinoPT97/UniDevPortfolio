@@ -33,7 +33,7 @@ LEFT JOIN ordine o ON c.codcliente = o.codcliente
 LEFT JOIN articoliordine ao ON o.codordine = ao.codordine
 GROUP BY c.codcliente, c.nome, c.cognome, t.numeropunti, t.stato;
 
--- VIEW per le statistiche dei dipendenti (richiesto dalla traccia per gruppi da 3)
+-- VIEW per le statistiche dei dipendenti 
 CREATE OR REPLACE VIEW StatisticheDipendenti AS
 SELECT 
     d.coddipendente AS CodDipendente,
