@@ -58,21 +58,22 @@ $$ LANGUAGE sql;
 
 -- ESEMPI DI QUERY SU COME USARE LE VIEW E FUNZIONI DI RICERCA DEL PROGETTO --
 
--- 1. Filtrare i punti per categoria per una categoria specifica
+-- 1. Filtrare i punti per una categoria specifica
 SELECT *
 FROM PuntiPerCategoria
 WHERE Categoria = 'FRUTTA';
 
--- 2. Filtrare i punti per categoria in un intervallo di date
+-- 2. Filtrare i clienti che hanno ottenuto più di 50 punti in una categoria
+SELECT *
+FROM PuntiPerCategoria
+WHERE Categoria = 'FRUTTA' AND PuntiCategoria > 50;
+
+-- 3. Filtrare i punti per categoria in un intervallo di date
 SELECT c.*, o.dataacquisto
 FROM PuntiPerCategoria c
 JOIN ordine o ON c.CodCliente = o.codcliente
-WHERE o.dataacquisto BETWEEN '2025-01-01' AND '2025-07-24';
-
--- 3. Statistiche dipendenti in un intervallo di tempo
-SELECT *
-FROM StatisticheDipendenti
-WHERE PrimaVendita >= '2025-01-01' AND UltimaVendita <= '2025-07-24';
+WHERE c.Categoria = 'FRUTTA'
+  AND o.dataacquisto BETWEEN '2025-01-01' AND '2025-07-24';
 
 -- 4. Prodotti con scorta scarsa
 SELECT *
