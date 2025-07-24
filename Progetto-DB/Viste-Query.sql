@@ -44,20 +44,23 @@ SELECT
 FROM prodotto p
 ORDER BY p.categoria, p.nome;
 
--- VIEW: Dipendente con più vendite tra due date
-CREATE OR REPLACE VIEW DipendenteTopOrdini AS
-SELECT D.nome, D.cognome, COUNT(O.*) AS NumeroOrdini
-FROM dipendente AS D
-JOIN ordine AS O ON O.coddipendente = D.coddipendente
-GROUP BY D.nome, D.cognome
-ORDER BY NumeroOrdini DESC
-LIMIT 1;
-
--- VIEW: Dipendente con maggior introito tra due date
-CREATE OR REPLACE VIEW DipendenteTopIntroito AS
-SELECT D.nome, D.cognome, SUM(O.prezzototale) AS Introiti
-FROM dipendente AS D
-JOIN ordine AS O ON O.coddipendente = D.coddipendente
-GROUP BY D.nome, D.cognome
-ORDER BY Introiti DESC
-LIMIT 1;
+CREATE OR REPLACE VIEW DipendenteStatistiche AS
+SELECT nome, cognome, NumeroOrdini, NULL AS Introiti
+FROM (
+    SELECT D.nome, D.cognome, COUNT(O.*) AS NumeroOrdini
+    FROM dipendente AS D
+    JOIN ordine AS O ON O.coddipendente = D.coddipendente
+    GROUP BY D.nome, D.cognome
+    ORDER BY NumeroOrdini DESC
+    LIMIT 1
+) AS TopVendite
+UNION ALL
+SELECT nome, cognome, NULL AS NumeroOrdini, Introiti
+FROM (
+    SELECT D.nome, D.cognome, SUM(O.prezzototale) AS Introiti
+    FROM dipendente AS D
+    JOIN ordine AS O ON O.coddipendente = D.coddipendente
+    GROUP BY D.nome, D.cognome
+    ORDER BY Introiti DESC
+    LIMIT 1
+) AS TopIntroito;
