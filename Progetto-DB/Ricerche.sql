@@ -1,12 +1,11 @@
 -- Viste e query conformi alla traccia accademica del negozio di alimentari
 
--- FUNZIONE per ricercare clienti per categoria di prodotti acquistati
--- Richiesta dalla traccia: "permettere la ricerca dei clienti, differenziandoli sulla base delle categorie di prodotti acquistati"
-CREATE OR REPLACE FUNCTION RicercaClientiPerCategoria(categoriaRicerca TIPOLOGIA)
+CREATE OR REPLACE FUNCTION RicercaClientiPerCategoria(categoriaRicerca TIPOLOGIA DEFAULT NULL)
 RETURNS TABLE(
     codcliente INTEGER,
     nome VARCHAR(255),
     cognome VARCHAR(255),
+    categoria TIPOLOGIA,
     punti_categoria NUMERIC,
     spesa_categoria NUMERIC,
     ordini_categoria BIGINT
@@ -17,6 +16,7 @@ BEGIN
         c.codcliente,
         c.nome,
         c.cognome,
+        p.categoria,
         COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) as punti_categoria,
         COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0) as spesa_categoria,
         COUNT(DISTINCT o.codordine)::BIGINT as ordini_categoria
@@ -24,10 +24,10 @@ BEGIN
     JOIN ordine o ON c.codcliente = o.codcliente
     JOIN articoliordine ao ON o.codordine = ao.codordine
     JOIN prodotto p ON ao.codprodotto = p.codprodotto
-    WHERE p.categoria = categoriaRicerca
-    GROUP BY c.codcliente, c.nome, c.cognome
+    WHERE (categoriaRicerca IS NULL OR p.categoria = categoriaRicerca)
+    GROUP BY c.codcliente, c.nome, c.cognome, p.categoria
     HAVING COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) > 0
-    ORDER BY punti_categoria DESC;
+    ORDER BY c.codcliente, punti_categoria DESC;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -60,6 +60,13 @@ $$ LANGUAGE sql;
 
 -- ESEMPI DI QUERY SU COME USARE LE VIEW E FUNZIONI DI RICERCA DEL PROGETTO --
 
+
+-- Esempio: clienti e punti per TUTTE le categorie acquistate
+SELECT *
+FROM RicercaClientiPerCategoria()
+ORDER BY codcliente, categoria;
+
+-- Esempio: clienti e punti SOLO per la categoria 'FRUTTA'
 SELECT *
 FROM RicercaClientiPerCategoria('FRUTTA')
 WHERE punti_categoria BETWEEN 0 AND 100;
