@@ -95,10 +95,10 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 Lo schema relazionale è stato progettato per rappresentare tutte le entità e le relazioni individuate nell’analisi. Comprende tabelle per prodotti, clienti, dipendenti, vendite, movimenti punti e categorie di prodotto. Sono stati definiti tipi ENUM per le tipologie di prodotto e vincoli di integrità referenziale per garantire la coerenza dei dati.
 
 \subsection{Dizionario delle Classi, delle Associazioni e dei Vincoli}
-\begin{table}[ht]
+\begin{table}[htbp]
 \centering
 \rowcolors{2}{mygray}{white}
-\begin{tabular}{|l|p{10cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{9.5cm}|}
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Classe (Tabella)}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
@@ -113,10 +113,10 @@ articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \caption{Classi principali del database}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[htbp]
 \centering
 \rowcolors{2}{mygray}{white}
-\begin{tabular}{|l|p{10cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{9.5cm}|}
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Associazione}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
@@ -129,10 +129,10 @@ Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M
 \caption{Associazioni tra le entità}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[htbp]
 \centering
 \rowcolors{2}{mygray}{white}
-\begin{tabular}{|l|p{10cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{9.5cm}|}
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
@@ -145,10 +145,10 @@ Vincoli CHECK & Su formati (email, codice fiscale), valori (scorta, prezzo), e c
 \end{table}
 
 \subsection{Schema Logico: Trigger e Procedure}
-\begin{table}[h!]
+\begin{table}[htbp]
 \centering
 \rowcolors{2}{mygray}{white}
-\begin{tabular}{|l|p{10cm}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{9.5cm}|}
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Trigger/Procedura}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
