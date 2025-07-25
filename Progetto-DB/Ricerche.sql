@@ -30,7 +30,7 @@ FROM prodotto p
 ORDER BY p.categoria, p.nome;
 
 -- Funzione parametrica per intervallo temporale
-CREATE OR REPLACE FUNCTION DipendenteStatistichePeriodo(data_inizio DATE, data_fine DATE)
+CREATE OR REPLACE FUNCTION DipendenteStatistiche(data_inizio DATE, data_fine DATE)
 RETURNS TABLE(nome TEXT, cognome TEXT, NumeroOrdini INTEGER, Introiti NUMERIC)
 AS $$
     SELECT nome, cognome, NumeroOrdini, NULL AS Introiti
