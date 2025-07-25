@@ -1,4 +1,11 @@
 \documentclass[a4paper,12pt]{article}
+% --- Miglioramento grafica ---
+\usepackage{titlesec} % Per personalizzare titoli
+\usepackage{fancyhdr} % Per intestazioni e piè di pagina
+\usepackage{xcolor}   % Per colori
+\usepackage{tcolorbox} % Per riquadri e box
+\usepackage{lmodern}  % Font più moderno
+\usepackage{enumitem} % Migliore gestione elenchi
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath, amssymb}
 \usepackage{geometry}
@@ -6,23 +13,40 @@
 \usepackage{hyperref}
 \geometry{margin=2.5cm}
 
+% Colori personalizzati
+\definecolor{myblue}{RGB}{0, 102, 204}
+\definecolor{mygray}{RGB}{240, 240, 240}
+
+% Titoli sezioni colorati e moderni
+\titleformat{\section}{\normalfont\Large\bfseries\color{myblue}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{myblue}}{\thesubsection}{1em}{}
+
+% Intestazione e piè di pagina
+\pagestyle{fancy}
+\setlength{\headheight}{14.5pt}
+\fancyhf{}
+\fancyhead[L]{\color{myblue}Relazione Database}
+\fancyhead[R]{\color{myblue}Gino Pandozzi-Trani}
+\fancyfoot[C]{\thepage}
+
+% Elenchi con pallini blu
+\setlist[itemize]{label=\textcolor{myblue}{\textbullet}}
+
 
 \begin{document}
 
-% Inserimento frontespizio
-\begin{figure}[!htb]
-    \centering
-    \includegraphics[width=0.8\textwidth]{../Immagini/Frontespazio.png}
-    %\caption{Frontespizio}
-    %\label{fig:frontespizio}
-\end{figure}
-\begin{center}
-    {\LARGE Sistema di Gestione per un Negozio di Alimentari} \\
-    \vspace{1cm}
-    {\large Autore : Gino Pandozzi-Trani} \\
-    \vspace{0.5cm}
-    {\large Luglio 2025}
-\end{center}
+% --- Frontespizio migliorato ---
+\begin{tcolorbox}[colback=mygray,colframe=myblue,width=\textwidth,arc=6mm,boxrule=1.2pt]
+    \begin{center}
+        \includegraphics[width=0.6\textwidth]{../Immagini/Frontespazio.png} \\
+        \vspace{1cm}
+        {\Huge\bfseries\color{myblue} Sistema di Gestione per un Negozio di Alimentari} \\
+        \vspace{1cm}
+        {\Large\color{black} Autore: Gino Pandozzi-Trani} \\
+        \vspace{0.5cm}
+        {\large\color{black} Luglio 2025}
+    \end{center}
+\end{tcolorbox}
 
 
 \newpage
