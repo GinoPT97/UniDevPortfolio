@@ -104,7 +104,17 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 
 \newpage
 \section{Popolamento e Dati di Esempio}
-% Descrizione del popolamento e riferimenti ai dati inseriti
+
+Il popolamento del database è stato effettuato tramite lo script \texttt{Popolazione.sql}, che inserisce dati di esempio per tutte le principali entità del sistema:
+\begin{itemize}
+    \item Prodotti di tutte le tipologie (frutta, verdura, farinacei, latticini, uova, confezionati), con relative caratteristiche specifiche.
+    \item Clienti con tessere punti associate e saldo iniziale.
+    \item Dipendenti e dati anagrafici.
+    \item Vendite, ciascuna associata a cliente, dipendente e prodotti acquistati.
+    \item Movimenti punti fedeltà generati dalle vendite.
+\end{itemize}
+
+I dati inseriti permettono di testare tutte le funzionalità implementate, comprese le query di ricerca, le statistiche e la gestione dei punti fedeltà. Lo script può essere eseguito dopo la creazione delle tabelle per ottenere un database pronto all'uso con dati realistici.
 
 \newpage
 \section{Query e Funzionalità Implementate}
