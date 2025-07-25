@@ -58,8 +58,40 @@ AS $$
     ) AS TopIntroito;
 $$ LANGUAGE sql;
 
--- ESEMPI DI QUERY SU COME USARE LE VIEW E FUNZIONI DI RICERCA DEL PROGETTO --
+-- Esempio: dipendente con più ordini e con più introiti negli ultimi 3 mesi
+SELECT * 
+FROM DipendenteStatistiche(
+    (CURRENT_DATE - INTERVAL '3 months')::date, 
+    CURRENT_DATE
+);
 
+-- Esempio: dipendente con più ordini e con più introiti negli ultimi 6 mesi
+SELECT * 
+FROM DipendenteStatistiche(
+    (CURRENT_DATE - INTERVAL '6 months')::date, 
+    CURRENT_DATE
+);
+
+-- Esempio: dipendente con più ordini e con più introiti negli ultimi 9 mesi
+SELECT * 
+FROM DipendenteStatistiche(
+    (CURRENT_DATE - INTERVAL '9 months')::date, 
+    CURRENT_DATE
+);
+
+-- Esempio: dipendente con più ordini e con più introiti negli ultimi 12 mesi
+SELECT * 
+FROM DipendenteStatistiche(
+    (CURRENT_DATE - INTERVAL '12 months')::date, 
+    CURRENT_DATE
+);
+
+-- Esempio: dipendente con più ordini e con più introiti su tutti i dati disponibili
+SELECT * 
+FROM DipendenteStatistiche(
+    (SELECT MIN(dataacquisto) FROM ordine), 
+    (SELECT MAX(dataacquisto) FROM ordine)
+);
 
 -- Esempio: clienti e punti per TUTTE le categorie acquistate
 SELECT *
