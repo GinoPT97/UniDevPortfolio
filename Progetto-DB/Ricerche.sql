@@ -1,33 +1,35 @@
 -- Viste e query conformi alla traccia accademica del negozio di alimentari
 
--- VIEW per calcolare i punti fedeltà per categoria 
-CREATE OR REPLACE VIEW PuntiPerCategoria AS
-SELECT 
-    c.codcliente AS CodCliente,
-    c.nome AS Nome,
-    c.cognome AS Cognome,
-    p.categoria AS Categoria,
-    COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) AS PuntiCategoria,
-    COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0) AS SpesaTotaleCategoria,
-    COUNT(DISTINCT o.codordine) AS OrdiniCategoria
-FROM cliente c
-LEFT JOIN ordine o ON c.codcliente = o.codcliente
-LEFT JOIN articoliordine ao ON o.codordine = ao.codordine
-LEFT JOIN prodotto p ON ao.codprodotto = p.codprodotto
-GROUP BY c.codcliente, c.nome, c.cognome, p.categoria
-ORDER BY c.codcliente, p.categoria;
-
--- VIEW per prodotti con livello scorta
-CREATE OR REPLACE VIEW ProdottiCompleti AS
-SELECT 
-    p.*,
-    CASE 
-        WHEN p.scorta <= 5 THEN 'SCARSO'
-        WHEN p.scorta <= 20 THEN 'MEDIO'
-        ELSE 'BUONO'
-    END AS LivelloScorta
-FROM prodotto p
-ORDER BY p.categoria, p.nome;
+-- FUNZIONE per ricercare clienti per categoria di prodotti acquistati
+-- Richiesta dalla traccia: "permettere la ricerca dei clienti, differenziandoli sulla base delle categorie di prodotti acquistati"
+CREATE OR REPLACE FUNCTION RicercaClientiPerCategoria(categoriaRicerca TIPOLOGIA)
+RETURNS TABLE(
+    codcliente INTEGER,
+    nome VARCHAR(255),
+    cognome VARCHAR(255),
+    punti_categoria NUMERIC,
+    spesa_categoria NUMERIC,
+    ordini_categoria BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        c.codcliente,
+        c.nome,
+        c.cognome,
+        COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) as punti_categoria,
+        COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0) as spesa_categoria,
+        COUNT(DISTINCT o.codordine)::BIGINT as ordini_categoria
+    FROM cliente c
+    JOIN ordine o ON c.codcliente = o.codcliente
+    JOIN articoliordine ao ON o.codordine = ao.codordine
+    JOIN prodotto p ON ao.codprodotto = p.codprodotto
+    WHERE p.categoria = categoriaRicerca
+    GROUP BY c.codcliente, c.nome, c.cognome
+    HAVING COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) > 0
+    ORDER BY punti_categoria DESC;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Funzione parametrica per intervallo temporale
 CREATE OR REPLACE FUNCTION DipendenteStatistiche(data_inizio DATE, data_fine DATE)
@@ -58,29 +60,14 @@ $$ LANGUAGE sql;
 
 -- ESEMPI DI QUERY SU COME USARE LE VIEW E FUNZIONI DI RICERCA DEL PROGETTO --
 
--- 1. Filtrare i punti per una categoria specifica
 SELECT *
-FROM PuntiPerCategoria
-WHERE Categoria = 'FRUTTA';
+FROM RicercaClientiPerCategoria('FRUTTA')
+WHERE punti_categoria BETWEEN 0 AND 100;
 
--- 2. Filtrare i clienti che hanno ottenuto più di 50 punti in una categoria
-SELECT *
-FROM PuntiPerCategoria
-WHERE Categoria = 'FRUTTA' AND PuntiCategoria > 50;
-
--- 3. Filtrare i punti per categoria in un intervallo di date
-SELECT c.*, o.dataacquisto
-FROM PuntiPerCategoria c
-JOIN ordine o ON c.CodCliente = o.codcliente
-WHERE c.Categoria = 'FRUTTA'
-  AND o.dataacquisto BETWEEN '2025-01-01' AND '2025-07-24';
-
--- 4. Prodotti con scorta scarsa
 SELECT *
 FROM ProdottiCompleti
 WHERE LivelloScorta = 'SCARSO';
 
--- 5. Visualizzare i punti totali di tutti i clienti con tessera attiva
 SELECT *
 FROM PuntiTotaliClienti
 WHERE StatoTessera = 'ATTIVA';
