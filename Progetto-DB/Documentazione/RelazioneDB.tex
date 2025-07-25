@@ -91,8 +91,50 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 
 \newpage
 \section{Progettazione Logica}
+
 \subsection{Schema relazionale}
-Lo schema relazionale è stato progettato per rappresentare tutte le entità e le relazioni individuate nell’analisi. Comprende tabelle per prodotti, clienti, dipendenti, vendite, movimenti punti e categorie di prodotto. Sono stati definiti tipi ENUM per le tipologie di prodotto e vincoli di integrità referenziale per garantire la coerenza dei dati.
+\arrayrulecolor{myblue}
+\begin{table}[ht]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|p{12cm}|}
+\hline
+\rowcolor{myblue}\textcolor{white}{\textbf{Tabella}} & \textcolor{white}{\textbf{Attributi}} \\
+\hline
+cliente & \underline{codcliente} (PK), nome, cognome, codicefiscale, indirizzo, telefono, email \\
+\hline
+tessera & \underline{codtessera} (PK), \underline{\underline{codcliente}} (FK, UNIQUE), numeropunti, dataemissione, datascadenza, stato \\
+\hline
+dipendente & \underline{coddipendente} (PK), nome, cognome, codicefiscale, indirizzo, telefono, email \\
+\hline
+prodotto & \underline{codprodotto} (PK), nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, dataproduzione, categoria, scorta \\
+\hline
+ordine & \underline{codordine} (PK), prezzototale, dataacquisto, \underline{\underline{codcliente}} (FK), \underline{\underline{coddipendente}} (FK) \\
+\hline
+articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK), prezzo, numeroarticoli \\
+\hline
+\end{tabular}
+\caption{Schema relazionale: le chiavi primarie sono sottolineate, le chiavi esterne sono doppiamente sottolineate.}
+\end{table}
+\arrayrulecolor{black}
+
+\subsection{Dizionario dei vincoli}
+\begin{table}[ht]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|p{12cm}|}
+\hline
+\rowcolor{myblue}\textcolor{white}{\textbf{Nome Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
+\hline
+Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma legittima: almeno un carattere prima della @, almeno un carattere tra questa ed il punto, almeno un carattere dopo il punto. \\
+Codice Fiscale Regex & Il codice fiscale deve rispettare il formato italiano standard. \\
+Chiavi Primarie & Ogni tabella ha una chiave primaria. \\
+Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra le tabelle (es. Tessera-CodCliente, Ordine-CodCliente, CompOrdine-CodOrdine, ecc.). \\
+Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), presenza di dati obbligatori, coerenza attributi per categoria prodotto. \\
+\hline
+\end{tabular}
+\caption{Principali vincoli implementati nel database}
+\end{table}
 
 \subsection{Dizionario delle Classi, delle Associazioni e dei Vincoli}
 \begin{table}[htbp]

@@ -1,8 +1,8 @@
 # Fdb version 4
-["pdflatex"] 1753439226.81507 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/RelazioneDB.tex" "RelazioneDB.pdf" "RelazioneDB" 1753439227.21067 0
+["pdflatex"] 1753439559.17706 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/RelazioneDB.tex" "RelazioneDB.pdf" "RelazioneDB" 1753439559.63093 0
   "../Immagini/Frontespazio.png" 1753094963 2406519 938c1e6ca4fadb490877b2b71af949b3 ""
   "/etc/texmf/web2c/texmf.cnf" 1752838060.96153 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/RelazioneDB.tex" 1753439226.63592 9888 cfc0e270ff101ec753fa4789bb0e3790 ""
+  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/RelazioneDB.tex" 1753439558.99243 11756 5ff0548ce543be8dfba0a364e881a643 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm" 1246382020 928 2dc8d444221b7a635bb58038579b861a ""
@@ -137,6 +137,7 @@
   "/usr/share/texlive/texmf-dist/tex/latex/url/url.sty" 1388531844 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty" 1727642399 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
+  "/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc" 1202520719 2840 216e6e45ad352e2456e1149f28885bee ""
   "/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc" 1202520719 2327 9d6df24f9c4f7368395224341a95523a ""
   "/usr/share/texmf/fonts/enc/dvips/lm/lm-rmtt.enc" 1254269338 2359 de53213020575850c8f8debc35095765 ""
   "/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc" 1254269338 3031 6c4d3515bf7115d8518af1c9ab97ca44 ""
@@ -157,6 +158,7 @@
   "/usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb" 1255129361 116908 1fca96723793882c2e0160350c192fc8 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr12.pfb" 1255129361 113634 f99c44d58bae0863375faf0e1d74d612 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr17.pfb" 1255129361 119752 1bd8d06e4079df624bf59ce3ad7c9aa6 ""
+  "/usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb" 1254269338 27863 09ce3735688ffde955e72da27c95b61a ""
   "/usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb" 1255129361 110323 92daea7ca7b4120bd2b54b047c93be27 ""
   "/usr/share/texmf/tex/latex/lm/lmodern.sty" 1616454256 1608 b00724785a9e9c599e5181bb8729160b ""
   "/usr/share/texmf/tex/latex/lm/omllmm.fd" 1616454256 890 57f5adccd504fb5c98bdf99ed7e7f195 ""
@@ -168,10 +170,10 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1752838090 128227 ed67923a37f7748d267799454bc1f95b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1753010313 1929624 f93ffbe1384c00abd93b46cd694dbaf4 ""
-  "RelazioneDB.aux" 1753439227.15892 2485 1cc1544923700783bba31af214e95bb2 "pdflatex"
-  "RelazioneDB.out" 1753439227.15992 2499 16b2d5e444ca5e372ec6ccad6ac332a4 "pdflatex"
-  "RelazioneDB.tex" 1753439226.63592 9888 cfc0e270ff101ec753fa4789bb0e3790 ""
-  "RelazioneDB.toc" 1753439227.1613 1195 6f676db2357a728d5efee1c988b08e0a "pdflatex"
+  "RelazioneDB.aux" 1753439559.57578 2984 921eb2f99322e6e45c7cdcbfb19cc0c2 "pdflatex"
+  "RelazioneDB.out" 1753439559.57678 2673 a9fef37fd57203e7004b5056c246146a "pdflatex"
+  "RelazioneDB.tex" 1753439558.99243 11756 5ff0548ce543be8dfba0a364e881a643 ""
+  "RelazioneDB.toc" 1753439559.57678 1284 59bebc53cae130bed66a655ed5bae9b4 "pdflatex"
   (generated)
   "RelazioneDB.aux"
   "RelazioneDB.log"
