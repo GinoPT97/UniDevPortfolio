@@ -92,15 +92,22 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \newpage
 \section{Progettazione Logica}
 \subsection{Schema relazionale}
-% Descrizione delle tabelle, tipi ENUM, vincoli
+Lo schema relazionale è stato progettato per rappresentare tutte le entità e le relazioni individuate nell’analisi. Comprende tabelle per prodotti, clienti, dipendenti, vendite, movimenti punti e categorie di prodotto. Sono stati definiti tipi ENUM per le tipologie di prodotto e vincoli di integrità referenziale per garantire la coerenza dei dati.
 
 \newpage
 \section{Progettazione Fisica}
 \subsection{Script SQL}
-% Breve spiegazione della struttura degli script e delle principali scelte implementative
+Gli script SQL sono suddivisi per facilitare la gestione e la manutenzione del database. In particolare:
+\begin{itemize}
+    \item \texttt{Tabelle.sql}: definizione delle tabelle e dei vincoli.
+    \item \texttt{Funzioni.sql}: implementazione di funzioni e procedure per operazioni ricorrenti.
+    \item \texttt{Trigger.sql}: automazione di controlli e aggiornamenti tramite trigger.
+    \item \texttt{Ricerche.sql}: query avanzate e viste per le principali funzionalità applicative.
+\end{itemize}
+Le scelte implementative privilegiano la chiarezza e la modularità.
 
 \subsection{Trigger, Funzioni e View}
-% Elenco e spiegazione dei principali trigger, funzioni e viste
+Sono stati implementati diversi trigger per automatizzare aggiornamenti (ad esempio, l’assegnazione automatica dei punti fedeltà dopo una vendita) e garantire la coerenza dei dati. Le funzioni SQL supportano operazioni come il calcolo dei punti, la ricerca dei migliori dipendenti e la gestione delle statistiche. Le view facilitano l’accesso ai dati aggregati e alle informazioni più richieste dall’applicativo.
 
 \newpage
 \section{Popolamento e Dati di Esempio}
@@ -118,6 +125,13 @@ I dati inseriti permettono di testare tutte le funzionalità implementate, compr
 
 \newpage
 \section{Query e Funzionalità Implementate}
-% Esempi di query e spiegazione delle funzionalità offerte
+Le query implementate permettono di soddisfare tutte le richieste funzionali del sistema, tra cui:
+\begin{itemize}
+    \item Ricerca clienti per categoria di prodotti acquistati e punti accumulati.
+    \item Statistiche sulle vendite e sui dipendenti (numero vendite, introiti, ecc.).
+    \item Gestione e consultazione dei punti fedeltà.
+    \item Analisi delle disponibilità dei prodotti per tipologia.
+\end{itemize}
+Ogni query è stata progettata per essere efficiente e facilmente integrabile nell’applicativo Java.
 
 \end{document}
