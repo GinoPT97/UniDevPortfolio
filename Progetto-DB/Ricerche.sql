@@ -17,8 +17,8 @@ BEGIN
         c.nome,
         c.cognome,
         p.categoria,
-        COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) as punti_categoria,
-        COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0) as spesa_categoria,
+        ROUND(COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0), 2) as punti_categoria,
+        ROUND(COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0), 2) as spesa_categoria,
         COUNT(DISTINCT o.codordine)::BIGINT as ordini_categoria
     FROM cliente c
     JOIN ordine o ON c.codcliente = o.codcliente
