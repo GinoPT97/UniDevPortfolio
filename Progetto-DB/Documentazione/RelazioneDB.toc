@@ -5,9 +5,9 @@
 \contentsline {subsection}{\numberline {3.2}Descrizione delle entità}{5}{subsection.3.2}%
 \contentsline {section}{\numberline {4}Progettazione Logica}{6}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Schema relazionale}{6}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Dizionario dei vincoli}{6}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Dizionario delle Classi, delle Associazioni e dei Vincoli}{6}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Schema Logico: Trigger e Procedure}{6}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.2}Dizionario delle Classi, delle Associazioni e dei Vincoli}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Dizionario dei vincoli}{6}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Schema logico: trigger e procedure}{6}{subsection.4.4}%
 \contentsline {section}{\numberline {5}Progettazione Fisica}{8}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Script SQL}{8}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Trigger, Funzioni e View}{8}{subsection.5.2}%
