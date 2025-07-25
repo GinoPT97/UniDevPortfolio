@@ -2,7 +2,7 @@
 % --- Miglioramento grafica ---
 \usepackage{titlesec} % Per personalizzare titoli
 \usepackage{fancyhdr} % Per intestazioni e piè di pagina
-\usepackage{xcolor}   % Per colori
+\usepackage[table]{xcolor}   % Per colori e tabelle colorate
 \usepackage{tcolorbox} % Per riquadri e box
 \usepackage{lmodern}  % Font più moderno
 \usepackage{enumitem} % Migliore gestione elenchi
@@ -93,6 +93,75 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \section{Progettazione Logica}
 \subsection{Schema relazionale}
 Lo schema relazionale è stato progettato per rappresentare tutte le entità e le relazioni individuate nell’analisi. Comprende tabelle per prodotti, clienti, dipendenti, vendite, movimenti punti e categorie di prodotto. Sono stati definiti tipi ENUM per le tipologie di prodotto e vincoli di integrità referenziale per garantire la coerenza dei dati.
+
+\subsection{Dizionario delle Classi, delle Associazioni e dei Vincoli}
+\begin{table}[ht]
+\centering
+\rowcolors{2}{mygray}{white}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{myblue}\textcolor{white}{\textbf{Classe (Tabella)}} & \textcolor{white}{\textbf{Descrizione}} \\
+\hline
+cliente & Dati anagrafici dei clienti. \\
+tessera & Tessera punti associata a ciascun cliente, saldo punti e stato. \\
+dipendente & Dati anagrafici dei dipendenti. \\
+prodotto & Prodotti in vendita, tipologia, caratteristiche e scorta. \\
+ordine & Vendita, associata a cliente e dipendente. \\
+articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
+\hline
+\end{tabular}
+\caption{Classi principali del database}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\rowcolors{2}{mygray}{white}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{myblue}\textcolor{white}{\textbf{Associazione}} & \textcolor{white}{\textbf{Descrizione}} \\
+\hline
+Cliente-Tessera & Ogni cliente ha una tessera (1:1). \\
+Ordine-Cliente & Ogni ordine è associato a un cliente (N:1). \\
+Ordine-Dipendente & Ogni ordine è associato a un dipendente (N:1). \\
+Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M). \\
+\hline
+\end{tabular}
+\caption{Associazioni tra le entità}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\rowcolors{2}{mygray}{white}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{myblue}\textcolor{white}{\textbf{Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
+\hline
+Chiavi primarie & Ogni tabella ha una chiave primaria. \\
+Chiavi esterne & Vincoli tra tessera-cliente, ordine-cliente, ordine-dipendente, articoliordine-prodotto, articoliordine-ordine. \\
+Vincoli CHECK & Su formati (email, codice fiscale), valori (scorta, prezzo), e coerenza campi prodotto per categoria. \\
+\hline
+\end{tabular}
+\caption{Vincoli principali}
+\end{table}
+
+\subsection{Schema Logico: Trigger e Procedure}
+\begin{table}[h!]
+\centering
+\rowcolors{2}{mygray}{white}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\rowcolor{myblue}\textcolor{white}{\textbf{Trigger/Procedura}} & \textcolor{white}{\textbf{Descrizione}} \\
+\hline
+VerificaScortaProdotto & Blocca l’inserimento di articoli in ordine se la scorta è insufficiente. \\
+AggiornaScortaEPunti & Aggiorna la scorta del prodotto e accredita i punti fedeltà al cliente dopo l’inserimento di un articolo. \\
+AggiornaPrezzoOrdine & Aggiorna il prezzo totale dell’ordine dopo l’inserimento di un articolo. \\
+AggiornaStatoTessera & Aggiorna automaticamente lo stato della tessera in base alla data di scadenza. \\
+RipristinaScortaProdotto & Ripristina la scorta e ricalcola i punti dopo la cancellazione di un articolo da un ordine. \\
+AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la cancellazione di un articolo. \\
+\hline
+\end{tabular}
+\caption{Trigger e procedure principali implementate}
+\end{table}
 
 \newpage
 \section{Progettazione Fisica}
