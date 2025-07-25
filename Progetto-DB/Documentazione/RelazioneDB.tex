@@ -119,6 +119,7 @@ articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK
 \arrayrulecolor{black}
 
 \subsection{Dizionario dei vincoli}
+\arrayrulecolor{myblue}
 \begin{table}[ht]
 \centering
 \renewcommand{\arraystretch}{1.2}
@@ -127,16 +128,22 @@ articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK
 \rowcolor{myblue}\textcolor{white}{\textbf{Nome Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
 Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma legittima: almeno un carattere prima della @, almeno un carattere tra questa ed il punto, almeno un carattere dopo il punto. \\
+\hline
 Codice Fiscale Regex & Il codice fiscale deve rispettare il formato italiano standard. \\
+\hline
 Chiavi Primarie & Ogni tabella ha una chiave primaria. \\
+\hline
 Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra le tabelle (es. Tessera-CodCliente, Ordine-CodCliente, CompOrdine-CodOrdine, ecc.). \\
+\hline
 Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), presenza di dati obbligatori, coerenza attributi per categoria prodotto. \\
 \hline
 \end{tabular}
 \caption{Principali vincoli implementati nel database}
 \end{table}
+\arrayrulecolor{black}
 
 \subsection{Dizionario delle Classi, delle Associazioni e dei Vincoli}
+\arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
 \rowcolors{2}{mygray}{white}
@@ -145,16 +152,23 @@ Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), prese
 \rowcolor{myblue}\textcolor{white}{\textbf{Classe (Tabella)}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
 cliente & Dati anagrafici dei clienti. \\
+\hline
 tessera & Tessera punti associata a ciascun cliente, saldo punti e stato. \\
+\hline
 dipendente & Dati anagrafici dei dipendenti. \\
+\hline
 prodotto & Prodotti in vendita, tipologia, caratteristiche e scorta. \\
+\hline
 ordine & Vendita, associata a cliente e dipendente. \\
+\hline
 articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \hline
 \end{tabular}
 \caption{Classi principali del database}
 \end{table}
+\arrayrulecolor{black}
 
+\arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
 \rowcolors{2}{mygray}{white}
@@ -163,14 +177,19 @@ articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \rowcolor{myblue}\textcolor{white}{\textbf{Associazione}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
 Cliente-Tessera & Ogni cliente ha una tessera (1:1). \\
+\hline
 Ordine-Cliente & Ogni ordine è associato a un cliente (N:1). \\
+\hline
 Ordine-Dipendente & Ogni ordine è associato a un dipendente (N:1). \\
+\hline
 Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M). \\
 \hline
 \end{tabular}
 \caption{Associazioni tra le entità}
 \end{table}
+\arrayrulecolor{black}
 
+\arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
 \rowcolors{2}{mygray}{white}
@@ -179,14 +198,18 @@ Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M
 \rowcolor{myblue}\textcolor{white}{\textbf{Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
 Chiavi primarie & Ogni tabella ha una chiave primaria. \\
+\hline
 Chiavi esterne & Vincoli tra tessera-cliente, ordine-cliente, ordine-dipendente, articoliordine-prodotto, articoliordine-ordine. \\
+\hline
 Vincoli CHECK & Su formati (email, codice fiscale), valori (scorta, prezzo), e coerenza campi prodotto per categoria. \\
 \hline
 \end{tabular}
 \caption{Vincoli principali}
 \end{table}
+\arrayrulecolor{black}
 
 \subsection{Schema Logico: Trigger e Procedure}
+\arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
 \rowcolors{2}{mygray}{white}
@@ -195,15 +218,21 @@ Vincoli CHECK & Su formati (email, codice fiscale), valori (scorta, prezzo), e c
 \rowcolor{myblue}\textcolor{white}{\textbf{Trigger/Procedura}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
 VerificaScortaProdotto & Blocca l’inserimento di articoli in ordine se la scorta è insufficiente. \\
+\hline
 AggiornaScortaEPunti & Aggiorna la scorta del prodotto e accredita i punti fedeltà al cliente dopo l’inserimento di un articolo. \\
+\hline
 AggiornaPrezzoOrdine & Aggiorna il prezzo totale dell’ordine dopo l’inserimento di un articolo. \\
+\hline
 AggiornaStatoTessera & Aggiorna automaticamente lo stato della tessera in base alla data di scadenza. \\
+\hline
 RipristinaScortaProdotto & Ripristina la scorta e ricalcola i punti dopo la cancellazione di un articolo da un ordine. \\
+\hline
 AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la cancellazione di un articolo. \\
 \hline
 \end{tabular}
 \caption{Trigger e procedure principali implementate}
 \end{table}
+\arrayrulecolor{black}
 
 \newpage
 \section{Progettazione Fisica}
