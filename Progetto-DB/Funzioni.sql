@@ -1,6 +1,5 @@
 -- Funzioni conformi alla traccia accademica del negozio di alimentari
 
--- Funzione per aggiornare scorta prodotto e punti tessera
 CREATE OR REPLACE FUNCTION AggiornaScortaEPunti()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -62,5 +61,45 @@ BEGIN
         NEW.stato := 'SCADUTA';
     END IF;
     RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Funzione trigger per ripristinare la scorta prodotto dopo DELETE da articoliordine
+CREATE OR REPLACE FUNCTION RipristinaScortaProdotto()
+RETURNS TRIGGER AS $$
+DECLARE
+    cod_cliente INTEGER;
+    punti_da_togliere NUMERIC;
+BEGIN
+    -- Ripristina la scorta del prodotto
+    UPDATE prodotto
+    SET scorta = scorta + OLD.numeroarticoli
+    WHERE codprodotto = OLD.codprodotto;
+
+    -- Recupera il cliente associato all'ordine
+    SELECT codcliente INTO cod_cliente
+    FROM ordine
+    WHERE codordine = OLD.codordine;
+
+    -- Calcola i punti da togliere (10% del valore speso)
+    punti_da_togliere := OLD.prezzo * OLD.numeroarticoli * 0.10;
+
+    -- Aggiorna i punti della tessera del cliente
+    UPDATE tessera
+    SET numeropunti = GREATEST(numeropunti - punti_da_togliere, 0)
+    WHERE codcliente = cod_cliente;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Funzione trigger per aggiornare il prezzo totale dell'ordine dopo DELETE da articoliordine
+CREATE OR REPLACE FUNCTION AggiornaPrezzoOrdineDelete()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE ordine
+    SET prezzototale = GREATEST(prezzototale - (OLD.prezzo * OLD.numeroarticoli), 0)
+    WHERE codordine = OLD.codordine;
+    RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;

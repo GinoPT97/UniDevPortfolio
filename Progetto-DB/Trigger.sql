@@ -18,9 +18,20 @@ BEFORE INSERT ON articoliordine
 FOR EACH ROW
 EXECUTE FUNCTION VerificaScortaProdotto();
 
--- Trigger per aggiornare lo stato della tessera in base alla data di scadenza
 CREATE TRIGGER TrgAggiornaStatoTessera
 BEFORE INSERT OR UPDATE ON tessera
 FOR EACH ROW
 EXECUTE FUNCTION AggiornaStatoTessera();
+
+-- Trigger per ripristinare scorta e punti tessera dopo DELETE da articoliordine
+CREATE TRIGGER TrgRipristinaScortaPunti
+AFTER DELETE ON articoliordine
+FOR EACH ROW
+EXECUTE FUNCTION RipristinaScortaProdotto();
+
+-- Trigger per aggiornare il prezzo totale dell'ordine dopo DELETE da articoliordine
+CREATE TRIGGER TrgAggiornaPrezzoOrdineDelete
+AFTER DELETE ON articoliordine
+FOR EACH ROW
+EXECUTE FUNCTION AggiornaPrezzoOrdineDelete();
 

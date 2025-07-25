@@ -1,4 +1,4 @@
--- Viste e query conformi alla traccia accademica del negozio di alimentari
+-- Query conformi alla traccia accademica del negozio di alimentari
 
 CREATE OR REPLACE FUNCTION RicercaClientiPerCategoria(categoriaRicerca TIPOLOGIA DEFAULT NULL)
 RETURNS TABLE(
@@ -70,7 +70,6 @@ SELECT *
 FROM RicercaClientiPerCategoria()
 ORDER BY codcliente, categoria;
 
--- Esempio: clienti e punti SOLO per la categoria 'FRUTTA'
 SELECT *
 FROM RicercaClientiPerCategoria('FRUTTA')
 WHERE punti_categoria BETWEEN 0 AND 100;
@@ -82,3 +81,26 @@ WHERE LivelloScorta = 'SCARSO';
 SELECT *
 FROM PuntiTotaliClienti
 WHERE StatoTessera = 'ATTIVA';
+
+-- VIEW 1: Riepilogo punti e stato tessera dei clienti
+CREATE OR REPLACE VIEW VwClientiTessere AS
+SELECT c.codcliente, c.nome, c.cognome, t.numeropunti, t.stato, t.datascadenza
+FROM cliente c
+JOIN tessera t ON c.codcliente = t.codcliente;
+
+-- VIEW 2: Prodotti con scorta bassa (< 20)
+CREATE OR REPLACE VIEW VwProdottiScortaBassa AS
+SELECT codprodotto, nome, categoria, scorta
+FROM prodotto
+WHERE scorta < 20;
+
+-- VIEW 3: Ordini dettagliati
+CREATE OR REPLACE VIEW VwOrdiniDettagliati AS
+SELECT o.codordine, o.dataacquisto, o.prezzototale, c.nome AS nome_cliente, c.cognome AS cognome_cliente,
+       d.nome AS nome_dipendente, d.cognome AS cognome_dipendente,
+       p.nome AS nome_prodotto, p.categoria, ao.numeroarticoli, ao.prezzo
+FROM ordine o
+JOIN cliente c ON o.codcliente = c.codcliente
+JOIN dipendente d ON o.coddipendente = d.coddipendente
+JOIN articoliordine ao ON o.codordine = ao.codordine
+JOIN prodotto p ON ao.codprodotto = p.codprodotto;
