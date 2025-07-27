@@ -91,7 +91,12 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 
 \newpage
 \section{Progettazione Logica}
-\subsection{Schema relazionale}
+
+% --- Riorganizzazione capitolo 4 ---
+\textbf{Schema relazionale}
+\newline
+Di seguito si riporta lo schema relazionale del database, con evidenza delle chiavi primarie (sottolineate) e delle chiavi esterne (doppia sottolineatura).
+\vspace{0.5em}
 \arrayrulecolor{myblue}
 \begin{table}[ht]
 \centering
@@ -117,31 +122,11 @@ articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK
 \end{table}
 \arrayrulecolor{black}
 
-\subsection{Dizionario delle Classi, delle Associazioni e dei Vincoli}
-\arrayrulecolor{myblue}
-\begin{table}[ht]
-\centering
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{|l|p{12cm}|}
-\hline
-\rowcolor{myblue}\textcolor{white}{\textbf{Nome Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
-\hline
-Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma legittima: almeno un carattere prima della @, almeno un carattere tra questa ed il punto, almeno un carattere dopo il punto. \\
-\hline
-Codice Fiscale Regex & Il codice fiscale deve rispettare il formato italiano standard. \\
-\hline
-Chiavi Primarie & Ogni tabella ha una chiave primaria. \\
-\hline
-Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra le tabelle (es. Tessera-CodCliente, Ordine-CodCliente, CompOrdine-CodOrdine, ecc.). \\
-\hline
-Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), presenza di dati obbligatori, coerenza attributi per categoria prodotto. \\
-\hline
-\end{tabular}
-\caption{Principali vincoli implementati nel database}
-\end{table}
-\arrayrulecolor{black}
-
-\subsection{Dizionario dei vincoli}
+\vspace{1em}
+\textbf{Dizionario delle classi}
+\newline
+Le principali entità del database sono descritte nella tabella seguente.
+\vspace{0.5em}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
@@ -167,6 +152,11 @@ articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \end{table}
 \arrayrulecolor{black}
 
+\vspace{1em}
+\textbf{Associazioni tra le entità}
+\newline
+Le principali associazioni tra le entità sono riportate di seguito.
+\vspace{0.5em}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
@@ -188,26 +178,39 @@ Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M
 \end{table}
 \arrayrulecolor{black}
 
+\vspace{1em}
+\textbf{Vincoli e regole di integrità}
+\newline
+Di seguito sono elencati i principali vincoli e regole di integrità implementati nel database.
+\vspace{0.5em}
 \arrayrulecolor{myblue}
-\begin{table}[htbp]
+\begin{table}[ht]
 \centering
-\rowcolors{2}{mygray}{white}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{9.5cm}|}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|p{12cm}|}
 \hline
-\rowcolor{myblue}\textcolor{white}{\textbf{Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
+\rowcolor{myblue}\textcolor{white}{\textbf{Nome Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
-Chiavi primarie & Ogni tabella ha una chiave primaria. \\
+Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma legittima: almeno un carattere prima della @, almeno un carattere tra questa ed il punto, almeno un carattere dopo il punto. \\
 \hline
-Chiavi esterne & Vincoli tra tessera-cliente, ordine-cliente, ordine-dipendente, articoliordine-prodotto, articoliordine-ordine. \\
+Codice Fiscale Regex & Il codice fiscale deve rispettare il formato italiano standard. \\
 \hline
-Vincoli CHECK & Su formati (email, codice fiscale), valori (scorta, prezzo), e coerenza campi prodotto per categoria. \\
+Chiavi Primarie & Ogni tabella ha una chiave primaria. \\
+\hline
+Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra le tabelle (es. Tessera-CodCliente, Ordine-CodCliente, CompOrdine-CodOrdine, ecc.). \\
+\hline
+Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), presenza di dati obbligatori, coerenza attributi per categoria prodotto. \\
 \hline
 \end{tabular}
-\caption{Vincoli principali}
+\caption{Principali vincoli implementati nel database}
 \end{table}
 \arrayrulecolor{black}
 
-\subsection{Schema logico: trigger e procedure}
+\vspace{1em}
+\textbf{Schema logico: trigger e procedure}
+\newline
+Segue una sintesi dei principali trigger e procedure implementate per la gestione automatica e la coerenza dei dati.
+\vspace{0.5em}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
