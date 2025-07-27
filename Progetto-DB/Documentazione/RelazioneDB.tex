@@ -92,10 +92,11 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \newpage
 \section{Progettazione Logica}
 
-% --- Riorganizzazione capitolo 4 ---
-\textbf{Schema relazionale}
+
+% --- Miglioramento presentazione capitolo 4 ---
+\noindent\textbf{Schema relazionale}
 \newline
-Di seguito si riporta lo schema relazionale del database, con evidenza delle chiavi primarie (sottolineate) e delle chiavi esterne (doppia sottolineatura).
+Lo schema relazionale rappresenta la struttura del database, evidenziando le relazioni tra le tabelle e i vincoli di integrità. Nella tabella seguente sono indicate le chiavi primarie (sottolineate) e le chiavi esterne (doppia sottolineatura), secondo la convenzione accademica.
 \vspace{0.5em}
 \arrayrulecolor{myblue}
 \begin{table}[ht]
@@ -118,14 +119,14 @@ ordine & \underline{codordine} (PK), prezzototale, dataacquisto, \underline{\und
 articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK), prezzo, numeroarticoli \\
 \hline
 \end{tabular}
-\caption{Schema relazionale: le chiavi primarie sono sottolineate, le chiavi esterne sono doppiamente sottolineate.}
+\caption{Schema relazionale: chiavi primarie sottolineate, chiavi esterne doppiamente sottolineate.}
 \end{table}
 \arrayrulecolor{black}
 
-\vspace{1em}
-\textbf{Dizionario delle classi}
+\vspace{1.5em}
+\noindent\textbf{Dizionario delle classi}
 \newline
-Le principali entità del database sono descritte nella tabella seguente.
+Il dizionario delle classi descrive le principali entità del database, specificando il ruolo di ciascuna tabella nel sistema informativo.
 \vspace{0.5em}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -135,27 +136,27 @@ Le principali entità del database sono descritte nella tabella seguente.
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Classe (Tabella)}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
-cliente & Dati anagrafici dei clienti. \\
+cliente & Dati anagrafici dei clienti registrati nel sistema. \\
 \hline
 tessera & Tessera punti associata a ciascun cliente, saldo punti e stato. \\
 \hline
-dipendente & Dati anagrafici dei dipendenti. \\
+dipendente & Dati anagrafici dei dipendenti del negozio. \\
 \hline
-prodotto & Prodotti in vendita, tipologia, caratteristiche e scorta. \\
+prodotto & Prodotti in vendita, con tipologia, caratteristiche e scorta. \\
 \hline
 ordine & Vendita, associata a cliente e dipendente. \\
 \hline
 articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \hline
 \end{tabular}
-\caption{Classi principali del database}
+\caption{Classi principali del database e loro funzione.}
 \end{table}
 \arrayrulecolor{black}
 
-\vspace{1em}
-\textbf{Associazioni tra le entità}
+\vspace{1.5em}
+\noindent\textbf{Associazioni tra le entità}
 \newline
-Le principali associazioni tra le entità sono riportate di seguito.
+Le associazioni rappresentano i legami logici tra le entità del database, utili per comprendere la struttura delle relazioni.
 \vspace{0.5em}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -174,14 +175,14 @@ Ordine-Dipendente & Ogni ordine è associato a un dipendente (N:1). \\
 Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M). \\
 \hline
 \end{tabular}
-\caption{Associazioni tra le entità}
+\caption{Principali associazioni tra le entità del database.}
 \end{table}
 \arrayrulecolor{black}
 
-\vspace{1em}
-\textbf{Vincoli e regole di integrità}
+\vspace{1.5em}
+\noindent\textbf{Vincoli e regole di integrità}
 \newline
-Di seguito sono elencati i principali vincoli e regole di integrità implementati nel database.
+Questa sezione riassume i vincoli e le regole di integrità che garantiscono la coerenza e la correttezza dei dati nel database.
 \vspace{0.5em}
 \arrayrulecolor{myblue}
 \begin{table}[ht]
@@ -195,21 +196,21 @@ Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma
 \hline
 Codice Fiscale Regex & Il codice fiscale deve rispettare il formato italiano standard. \\
 \hline
-Chiavi Primarie & Ogni tabella ha una chiave primaria. \\
+Chiavi Primarie & Ogni tabella ha una chiave primaria che garantisce l’unicità dei record. \\
 \hline
 Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra le tabelle (es. Tessera-CodCliente, Ordine-CodCliente, CompOrdine-CodOrdine, ecc.). \\
 \hline
 Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), presenza di dati obbligatori, coerenza attributi per categoria prodotto. \\
 \hline
 \end{tabular}
-\caption{Principali vincoli implementati nel database}
+\caption{Vincoli e regole di integrità implementati nel database.}
 \end{table}
 \arrayrulecolor{black}
 
-\vspace{1em}
-\textbf{Schema logico: trigger e procedure}
+\vspace{1.5em}
+\noindent\textbf{Schema logico: trigger e procedure}
 \newline
-Segue una sintesi dei principali trigger e procedure implementate per la gestione automatica e la coerenza dei dati.
+Infine, vengono presentati i principali trigger e procedure che automatizzano la gestione e il controllo dei dati, migliorando la robustezza del sistema.
 \vspace{0.5em}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -232,7 +233,7 @@ RipristinaScortaProdotto & Ripristina la scorta e ricalcola i punti dopo la canc
 AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la cancellazione di un articolo. \\
 \hline
 \end{tabular}
-\caption{Trigger e procedure principali implementate}
+\caption{Trigger e procedure principali implementate per la gestione automatica dei dati.}
 \end{table}
 \arrayrulecolor{black}
 
