@@ -259,26 +259,15 @@ AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la can
 \section{Progettazione Fisica}
 
 \subsection{Script SQL}
-Gli script SQL sono suddivisi per facilitare la gestione e la manutenzione del database. Di seguito vengono elencati i file principali utilizzati nel progetto:
 
-\begin{table}[htbp]
-\centering
-\setlength{\tabcolsep}{8pt}
-\begin{tabular}{|>{\centering\arraybackslash}m{4cm}|>{\raggedright\arraybackslash}m{10cm}|}
-\hline
-\rowcolor{myblue}\textcolor{white}{\textbf{File SQL}} & \textcolor{white}{\textbf{Descrizione}} \\
-\hline
-\rowcolor{mygray} Tabelle.sql & Definizione delle tabelle e dei vincoli di integrità. \\
-Funzioni.sql & Implementazione di funzioni e procedure per operazioni ricorrenti. \\
-\rowcolor{mygray} Trigger.sql & Automazione di controlli e aggiornamenti tramite trigger. \\
-Ricerche.sql & Query avanzate e viste per le principali funzionalità applicative. \\
-\rowcolor{mygray} Popolazione.sql & Inserimento di dati di esempio per tutte le entità del sistema. \\
-\hline
-\end{tabular}
-\arrayrulecolor{black}
-\caption{File SQL utilizzati nel progetto e loro funzione.}
-\end{table}
-\arrayrulecolor{black}
+Gli script SQL sono suddivisi per facilitare la gestione e la manutenzione del database. I principali file utilizzati nel progetto sono:
+\begin{itemize}
+    \item \textbf{Tabelle.sql}: definizione delle tabelle e dei vincoli di integrità.
+    \item \textbf{Funzioni.sql}: implementazione di funzioni e procedure per operazioni ricorrenti.
+    \item \textbf{Trigger.sql}: automazione di controlli e aggiornamenti tramite trigger.
+    \item \textbf{Ricerche.sql}: query avanzate e viste per le principali funzionalità applicative.
+    \item \textbf{Popolazione.sql}: inserimento di dati di esempio per tutte le entità del sistema.
+\end{itemize}
 
 \vspace{1em}
 \noindent\textbf{Visualizzazione dei file SQL come nell'editor}
