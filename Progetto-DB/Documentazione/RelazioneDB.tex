@@ -261,9 +261,9 @@ AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la can
 \subsection{Script SQL}
 
 
-Di seguito è riportato per intero il contenuto del file \texttt{Tabelle.sql}, che definisce la struttura delle tabelle e i vincoli principali del database:
 
-\begin{lstlisting}[style=sqlstyle,caption={Contenuto completo di Tabelle.sql}]
+\subsubsection*{Enumerazioni}
+\begin{lstlisting}[style=sqlstyle]
 -- Creare il nuovo tipo ENUM con le categorie corrette e migliorato
 CREATE TYPE TIPOLOGIA AS ENUM (
     'FRUTTA',
@@ -280,8 +280,12 @@ CREATE TYPE STATOTESSERA AS ENUM (
     'SOSPESA',
     'SCADUTA'
 );
+\end{lstlisting}
 
--- Tabella cliente (modificata per riferimento alla tessera)
+
+\subsubsection*{Tabella cliente}
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS cliente (
     codcliente SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
@@ -291,8 +295,12 @@ CREATE TABLE IF NOT EXISTS cliente (
     telefono VARCHAR(20) CHECK (telefono ~* '^[0-9+ ]+$'),
     email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$')
 );
+\end{lstlisting}
+\vspace{1.5em}
+\subsubsection*{Tabella tessera}
 
--- Tabella tessera (separata come richiesto)
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS tessera (
     codtessera SERIAL PRIMARY KEY,
     codcliente INTEGER NOT NULL UNIQUE,
@@ -304,8 +312,12 @@ CREATE TABLE IF NOT EXISTS tessera (
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );
+\end{lstlisting}
+\vspace{1.5em}
+\subsubsection*{Tabella dipendente}
 
--- Tabella dipendente
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS dipendente (
     coddipendente SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
@@ -315,9 +327,12 @@ CREATE TABLE IF NOT EXISTS dipendente (
     telefono VARCHAR(20) CHECK (telefono ~* '^[0-9+ ]+$'),
     email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$')
 );
+\end{lstlisting}
+\vspace{1.5em}
+\subsubsection*{Tabella prodotto}
 
-
--- Tabella prodotto
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS prodotto (
     codprodotto SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
@@ -332,8 +347,12 @@ CREATE TABLE IF NOT EXISTS prodotto (
     categoria TIPOLOGIA,
     scorta INT CHECK (scorta >= 0)
 );
+\end{lstlisting}
+\vspace{1.5em}
+\subsubsection*{Vincolo CHECK su prodotto}
 
--- Vincolo CHECK per validare i campi specifici di ogni categoria secondo la traccia accademica
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
 ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
   -- FRUTTA: deve avere data di raccolta
   (categoria = 'FRUTTA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
@@ -353,8 +372,12 @@ ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
   -- CONFEZIONATI: solo data di scadenza
   (categoria = 'CONFEZIONATI' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)
 );
+\end{lstlisting}
+\vspace{1.5em}
+\subsubsection*{Tabella ordine}
 
--- Tabella ordine
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS ordine (
     codordine SERIAL PRIMARY KEY,
     prezzototale REAL NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0),
@@ -368,8 +391,12 @@ CREATE TABLE IF NOT EXISTS ordine (
         ON UPDATE CASCADE
         ON DELETE NO ACTION
 );
+\end{lstlisting}
+\vspace{1.5em}
+\subsubsection*{Tabella articoliordine}
 
--- Tabella articoliordine 
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS articoliordine (
     codordine INTEGER NOT NULL,
     codprodotto INTEGER NOT NULL,
@@ -384,6 +411,7 @@ CREATE TABLE IF NOT EXISTS articoliordine (
         ON DELETE CASCADE
 );
 \end{lstlisting}
+\vspace{1.5em}
 
 \subsection{Trigger, Funzioni e View}
 Sono stati implementati diversi trigger per automatizzare aggiornamenti (ad esempio, l’assegnazione automatica dei punti fedeltà dopo una vendita) e garantire la coerenza dei dati. Le funzioni SQL supportano operazioni come il calcolo dei punti, la ricerca dei migliori dipendenti e la gestione delle statistiche. Le view facilitano l’accesso ai dati aggregati e alle informazioni più richieste dall’applicativo.
