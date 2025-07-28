@@ -1,0 +1,135 @@
+@startuml DiagramNonRistrutturato
+' Definizione delle enumerazioni
+enum TIPOLOGIA {
+  FRUTTA
+  VERDURA
+  FARINACEI
+  LATTICINI
+  UOVA
+  CONFEZIONATI
+}
+
+enum STATOTESSERA {
+  ATTIVA
+  SOSPESA
+  SCADUTA
+}
+
+' Classe astratta Utente
+abstract class Utente {
+  +codicefiscale: CHAR(16)
+  nome: VARCHAR(255)
+  cognome: VARCHAR(255)
+  indirizzo: VARCHAR(255)
+  telefono: VARCHAR(20)
+  email: VARCHAR(255)
+}
+
+' Classi concrete per le specializzazioni
+class Cliente {
+  +codcliente: SERIAL
+}
+
+class Dipendente {
+  +coddipendente: SERIAL
+}
+
+' Relazione di generalizzazione
+Utente <|-- Cliente
+Utente <|-- Dipendente
+
+' Classe Tessera
+class Tessera {
+  +codtessera: SERIAL
+  codcliente: INTEGER <<UNIQUE>>
+  numeropunti: NUMERIC
+  dataemissione: DATE
+  datascadenza: DATE
+  stato: STATOTESSERA
+}
+
+' Classe Ordine
+class Ordine {
+  +codordine: SERIAL
+  prezzototale: REAL
+  dataacquisto: DATE
+  codcliente: INTEGER
+  coddipendente: INTEGER
+}
+
+' Classe ArticoliOrdine
+class ArticoliOrdine {
+  codordine: INTEGER
+  codprodotto: INTEGER
+  prezzo: NUMERIC
+  numeroarticoli: INT
+}
+
+' Classe astratta Prodotto
+abstract class Prodotto {
+  +codprodotto: SERIAL
+  nome: VARCHAR(255)
+  descrizione: VARCHAR(500)
+  prezzo: NUMERIC
+  luogoprovenienza: VARCHAR(255)
+  dataraccolta: DATE
+  datamungitura: DATE
+  dataproduzione: DATE
+  datascadenza: DATE
+  glutine: BOOLEAN
+  categoria: TIPOLOGIA
+  scorta: INT
+}
+
+' Classi concrete per ogni categoria di prodotto
+class Frutta {
+  +codprodotto: SERIAL
+  dataraccolta: DATE
+}
+
+class Verdura {
+  +codprodotto: SERIAL
+  dataraccolta: DATE
+}
+
+class Farinacei {
+  +codprodotto: SERIAL
+  glutine: BOOLEAN
+}
+
+class Latticini {
+  +codprodotto: SERIAL
+  datamungitura: DATE
+  dataproduzione: DATE
+  datascadenza: DATE
+}
+
+class Uova {
+  +codprodotto: SERIAL
+  datascadenza: DATE
+}
+
+class Confezionati {
+  +codprodotto: SERIAL
+  datascadenza: DATE
+}
+
+' Relazione di generalizzazione
+Prodotto <|-- Frutta
+Prodotto <|-- Verdura
+Prodotto <|-- Farinacei
+Prodotto <|-- Latticini
+Prodotto <|-- Uova
+Prodotto <|-- Confezionati
+
+' Relazioni tra le classi
+Cliente "1" -- "1" Tessera : possiede >
+Cliente "1" -- "*" Ordine : effettua >
+Dipendente "1" -- "*" Ordine : gestisce >
+Ordine "1" -- "*" ArticoliOrdine : contiene >
+Prodotto "1" -- "*" ArticoliOrdine : incluso in >
+ArticoliOrdine "*" -- "1" Ordine : appartiene a >
+ArticoliOrdine "*" -- "1" Prodotto : si riferisce a >
+Tessera "1" -- "1" Cliente : intestata a >
+
+@enduml

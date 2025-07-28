@@ -1,0 +1,71 @@
+@startuml DiagrammaRistrutturato
+' Diagramma delle classi ristrutturato: corrisponde alle tabelle fisiche
+
+class Cliente {
+  +codcliente: SERIAL
+  nome: VARCHAR(255)
+  cognome: VARCHAR(255)
+  codicefiscale: CHAR(16)
+  indirizzo: VARCHAR(255)
+  telefono: VARCHAR(20)
+  email: VARCHAR(255)
+}
+
+class Tessera {
+  +codtessera: SERIAL
+  codcliente: INTEGER <<UNIQUE>>
+  numeropunti: NUMERIC
+  dataemissione: DATE
+  datascadenza: DATE
+  stato: STATOTESSERA
+}
+
+class Dipendente {
+  +coddipendente: SERIAL
+  nome: VARCHAR(255)
+  cognome: VARCHAR(255)
+  codicefiscale: CHAR(16)
+  indirizzo: VARCHAR(255)
+  telefono: VARCHAR(20)
+  email: VARCHAR(255)
+}
+
+class Prodotto {
+  +codprodotto: SERIAL
+  nome: VARCHAR(255)
+  descrizione: VARCHAR(500)
+  prezzo: NUMERIC
+  luogoprovenienza: VARCHAR(255)
+  dataraccolta: DATE
+  datamungitura: DATE
+  glutine: BOOLEAN
+  datascadenza: DATE
+  dataproduzione: DATE
+  categoria: TIPOLOGIA
+  scorta: INT
+}
+
+class Ordine {
+  +codordine: SERIAL
+  prezzototale: REAL
+  dataacquisto: DATE
+  codcliente: INTEGER
+  coddipendente: INTEGER
+}
+
+class ArticoliOrdine {
+  codordine: INTEGER
+  codprodotto: INTEGER
+  prezzo: NUMERIC
+  numeroarticoli: INT
+}
+
+Cliente "1" -- "1" Tessera : possiede
+Cliente "1" -- "*" Ordine : effettua
+Dipendente "1" -- "*" Ordine : gestisce
+Ordine "1" -- "*" ArticoliOrdine : contiene
+Prodotto "1" -- "*" ArticoliOrdine : incluso in
+ArticoliOrdine "*" -- "1" Ordine : appartiene a
+ArticoliOrdine "*" -- "1" Prodotto : si riferisce a
+
+@enduml
