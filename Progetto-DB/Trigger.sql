@@ -34,4 +34,3 @@ CREATE TRIGGER TrgAggiornaPrezzoOrdineDelete
 AFTER DELETE ON articoliordine
 FOR EACH ROW
 EXECUTE FUNCTION AggiornaPrezzoOrdineDelete();
-

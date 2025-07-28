@@ -260,8 +260,6 @@ AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la can
 
 \subsection{Script SQL}
 
-
-
 \subsubsection*{Enumerazioni}
 \begin{lstlisting}[style=sqlstyle]
 -- Creare il nuovo tipo ENUM con le categorie corrette e migliorato
@@ -414,7 +412,177 @@ CREATE TABLE IF NOT EXISTS articoliordine (
 \vspace{1.5em}
 
 \subsection{Trigger, Funzioni e View}
-Sono stati implementati diversi trigger per automatizzare aggiornamenti (ad esempio, l’assegnazione automatica dei punti fedeltà dopo una vendita) e garantire la coerenza dei dati. Le funzioni SQL supportano operazioni come il calcolo dei punti, la ricerca dei migliori dipendenti e la gestione delle statistiche. Le view facilitano l’accesso ai dati aggregati e alle informazioni più richieste dall’applicativo.
+
+
+\subsubsection*{Trigger principali}
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
+-- Trigger per aggiornare scorta e punti tessera dopo inserimento articolo
+CREATE TRIGGER TrgAggiornaScortaPunti
+AFTER INSERT ON articoliordine
+FOR EACH ROW
+EXECUTE FUNCTION AggiornaScortaEPunti();
+
+-- Trigger per aggiornare il prezzo totale dell'ordine dopo inserimento articolo
+CREATE TRIGGER TrgAggiornaPrezzoOrdine
+AFTER INSERT ON articoliordine
+FOR EACH ROW
+EXECUTE FUNCTION AggiornaPrezzoOrdine();
+
+CREATE TRIGGER TrgVerificaScortaProdotto
+BEFORE INSERT ON articoliordine
+FOR EACH ROW
+EXECUTE FUNCTION VerificaScortaProdotto();
+
+-- Trigger per aggiornare la scorta e i punti tessera dopo inserimento articolo
+
+CREATE TRIGGER TrgAggiornaStatoTessera
+BEFORE INSERT OR UPDATE ON tessera
+FOR EACH ROW
+EXECUTE FUNCTION AggiornaStatoTessera();
+
+-- Trigger per ripristinare scorta e punti tessera dopo DELETE da articoliordine
+CREATE TRIGGER TrgRipristinaScortaPunti
+AFTER DELETE ON articoliordine
+FOR EACH ROW
+EXECUTE FUNCTION RipristinaScortaProdotto();
+
+-- Trigger per aggiornare il prezzo totale dell'ordine dopo DELETE da articoliordine
+CREATE TRIGGER TrgAggiornaPrezzoOrdineDelete
+AFTER DELETE ON articoliordine
+FOR EACH ROW
+EXECUTE FUNCTION AggiornaPrezzoOrdineDelete();
+\end{lstlisting}
+\vspace{1.5em}
+
+\subsubsection*{Funzione AggiornaScortaEPunti}
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE FUNCTION AggiornaScortaEPunti()
+RETURNS TRIGGER AS $$
+DECLARE
+    punti_da_aggiungere NUMERIC;
+    cod_cliente INTEGER;
+BEGIN
+    -- Aggiorna la scorta del prodotto
+    UPDATE prodotto
+    SET scorta = scorta - NEW.numeroarticoli
+    WHERE codprodotto = NEW.codprodotto;
+
+    -- Calcola i punti da aggiungere (10% del valore speso)
+    punti_da_aggiungere := NEW.prezzo * NEW.numeroarticoli * 0.10;
+
+    -- Recupera il cliente associato all'ordine
+    SELECT codcliente INTO cod_cliente
+    FROM ordine
+    WHERE codordine = NEW.codordine;
+
+    -- Aggiorna i punti della tessera del cliente
+    UPDATE tessera
+    SET numeropunti = numeropunti + punti_da_aggiungere
+    WHERE codcliente = cod_cliente;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+\end{lstlisting}
+\vspace{1.5em}
+
+\subsubsection*{Funzione AggiornaPrezzoOrdine}
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE FUNCTION AggiornaPrezzoOrdine()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE ordine
+    SET prezzototale = prezzototale + (NEW.prezzo * NEW.numeroarticoli)
+    WHERE codordine = NEW.codordine;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+\end{lstlisting}
+\vspace{1.5em}
+
+\subsubsection*{Funzione VerificaScortaProdotto}
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE FUNCTION VerificaScortaProdotto()
+RETURNS TRIGGER AS $$
+DECLARE
+    scorta_corrente INT;
+BEGIN
+    SELECT scorta INTO scorta_corrente FROM prodotto WHERE codprodotto = NEW.codprodotto;
+    IF scorta_corrente < NEW.numeroarticoli THEN
+        RAISE EXCEPTION 'Scorta insufficiente per il prodotto %: richiesta % - disponibile %', NEW.codprodotto, NEW.numeroarticoli, scorta_corrente;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+\end{lstlisting}
+\vspace{1.5em}
+
+\subsubsection*{Funzione AggiornaStatoTessera}
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE FUNCTION AggiornaStatoTessera()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.datascadenza < CURRENT_DATE THEN
+        NEW.stato := 'SCADUTA';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+\end{lstlisting}
+\vspace{1.5em}
+
+\subsubsection*{Funzione RipristinaScortaProdotto}
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE FUNCTION RipristinaScortaProdotto()
+RETURNS TRIGGER AS $$
+DECLARE
+    cod_cliente INTEGER;
+    punti_da_togliere NUMERIC;
+BEGIN
+    -- Ripristina la scorta del prodotto
+    UPDATE prodotto
+    SET scorta = scorta + OLD.numeroarticoli
+    WHERE codprodotto = OLD.codprodotto;
+
+    -- Recupera il cliente associato all'ordine
+    SELECT codcliente INTO cod_cliente
+    FROM ordine
+    WHERE codordine = OLD.codordine;
+
+    -- Calcola i punti da togliere (10% del valore speso)
+    punti_da_togliere := OLD.prezzo * OLD.numeroarticoli * 0.10;
+
+    -- Aggiorna i punti della tessera del cliente
+    UPDATE tessera
+    SET numeropunti = GREATEST(numeropunti - punti_da_togliere, 0)
+    WHERE codcliente = cod_cliente;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+\end{lstlisting}
+\vspace{1.5em}
+
+\subsubsection*{Funzione AggiornaPrezzoOrdineDelete}
+\vspace{1.5em}
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE FUNCTION AggiornaPrezzoOrdineDelete()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE ordine
+    SET prezzototale = GREATEST(prezzototale - (OLD.prezzo * OLD.numeroarticoli), 0)
+    WHERE codordine = OLD.codordine;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+\end{lstlisting}
+\vspace{1.5em}
 
 \newpage
 \section{Popolamento e Dati di Esempio}
