@@ -97,28 +97,27 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \noindent\textbf{Schema relazionale}
 \newline
 Lo schema relazionale rappresenta la struttura del database, evidenziando le relazioni tra le tabelle e i vincoli di integrità. Nella tabella seguente sono indicate le chiavi primarie (sottolineate) e le chiavi esterne (doppia sottolineatura), secondo la convenzione accademica.
+
+% Tabella schema relazionale migliorata
 \vspace{0.5em}
+\renewcommand{\arraystretch}{1.35}
 \arrayrulecolor{myblue}
 \begin{table}[ht]
 \centering
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{|l|p{12cm}|}
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{|>{\centering\arraybackslash}m{3.5cm}|>{\raggedright\arraybackslash}m{10.5cm}|}
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Tabella}} & \textcolor{white}{\textbf{Attributi}} \\
 \hline
-cliente & \underline{codcliente} (PK), nome, cognome, codicefiscale, indirizzo, telefono, email \\
-\hline
+\rowcolor{mygray} cliente & \underline{codcliente} (PK), nome, cognome, codicefiscale, indirizzo, telefono, email \\
 tessera & \underline{codtessera} (PK), \underline{\underline{codcliente}} (FK, UNIQUE), numeropunti, dataemissione, datascadenza, stato \\
-\hline
-dipendente & \underline{coddipendente} (PK), nome, cognome, codicefiscale, indirizzo, telefono, email \\
-\hline
+\rowcolor{mygray} dipendente & \underline{coddipendente} (PK), nome, cognome, codicefiscale, indirizzo, telefono, email \\
 prodotto & \underline{codprodotto} (PK), nome, descrizione, prezzo, luogoprovenienza, dataraccolta, datamungitura, glutine, datascadenza, dataproduzione, categoria, scorta \\
-\hline
-ordine & \underline{codordine} (PK), prezzototale, dataacquisto, \underline{\underline{codcliente}} (FK), \underline{\underline{coddipendente}} (FK) \\
-\hline
+\rowcolor{mygray} ordine & \underline{codordine} (PK), prezzototale, dataacquisto, \underline{\underline{codcliente}} (FK), \underline{\underline{coddipendente}} (FK) \\
 articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK), prezzo, numeroarticoli \\
 \hline
 \end{tabular}
+\arrayrulecolor{black}
 \caption{Schema relazionale: chiavi primarie sottolineate, chiavi esterne doppiamente sottolineate.}
 \end{table}
 \arrayrulecolor{black}
@@ -127,28 +126,27 @@ articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK
 \noindent\textbf{Dizionario delle classi}
 \newline
 Il dizionario delle classi descrive le principali entità del database, specificando il ruolo di ciascuna tabella nel sistema informativo.
+
+% Tabella dizionario delle classi migliorata
 \vspace{0.5em}
+\renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
-\rowcolors{2}{mygray}{white}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{9.5cm}|}
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{|>{\centering\arraybackslash}m{3.5cm}|>{\raggedright\arraybackslash}m{9.5cm}|}
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Classe (Tabella)}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
-cliente & Dati anagrafici dei clienti registrati nel sistema. \\
-\hline
+\rowcolor{mygray} cliente & Dati anagrafici dei clienti registrati nel sistema. \\
 tessera & Tessera punti associata a ciascun cliente, saldo punti e stato. \\
-\hline
-dipendente & Dati anagrafici dei dipendenti del negozio. \\
-\hline
+\rowcolor{mygray} dipendente & Dati anagrafici dei dipendenti del negozio. \\
 prodotto & Prodotti in vendita, con tipologia, caratteristiche e scorta. \\
-\hline
-ordine & Vendita, associata a cliente e dipendente. \\
-\hline
+\rowcolor{mygray} ordine & Vendita, associata a cliente e dipendente. \\
 articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \hline
 \end{tabular}
+\arrayrulecolor{black}
 \caption{Classi principali del database e loro funzione.}
 \end{table}
 \arrayrulecolor{black}
@@ -157,24 +155,25 @@ articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \noindent\textbf{Associazioni tra le entità}
 \newline
 Le associazioni rappresentano i legami logici tra le entità del database, utili per comprendere la struttura delle relazioni.
+
+% Tabella associazioni migliorata
 \vspace{0.5em}
+\renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
-\rowcolors{2}{mygray}{white}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{9.5cm}|}
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{|>{\centering\arraybackslash}m{3.5cm}|>{\raggedright\arraybackslash}m{9.5cm}|}
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Associazione}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
-Cliente-Tessera & Ogni cliente ha una tessera (1:1). \\
-\hline
+\rowcolor{mygray} Cliente-Tessera & Ogni cliente ha una tessera (1:1). \\
 Ordine-Cliente & Ogni ordine è associato a un cliente (N:1). \\
-\hline
-Ordine-Dipendente & Ogni ordine è associato a un dipendente (N:1). \\
-\hline
+\rowcolor{mygray} Ordine-Dipendente & Ogni ordine è associato a un dipendente (N:1). \\
 Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M). \\
 \hline
 \end{tabular}
+\arrayrulecolor{black}
 \caption{Principali associazioni tra le entità del database.}
 \end{table}
 \arrayrulecolor{black}
@@ -183,26 +182,26 @@ Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M
 \noindent\textbf{Vincoli e regole di integrità}
 \newline
 Questa sezione riassume i vincoli e le regole di integrità che garantiscono la coerenza e la correttezza dei dati nel database.
+
+% Tabella vincoli migliorata
 \vspace{0.5em}
+\renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[ht]
 \centering
-\renewcommand{\arraystretch}{1.2}
-\begin{tabular}{|l|p{12cm}|}
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{|>{\centering\arraybackslash}m{4cm}|>{\raggedright\arraybackslash}m{10cm}|}
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Nome Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
-Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma legittima: almeno un carattere prima della @, almeno un carattere tra questa ed il punto, almeno un carattere dopo il punto. \\
-\hline
+\rowcolor{mygray} Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma legittima: almeno un carattere prima della @, almeno un carattere tra questa ed il punto, almeno un carattere dopo il punto. \\
 Codice Fiscale Regex & Il codice fiscale deve rispettare il formato italiano standard. \\
-\hline
-Chiavi Primarie & Ogni tabella ha una chiave primaria che garantisce l’unicità dei record. \\
-\hline
+\rowcolor{mygray} Chiavi Primarie & Ogni tabella ha una chiave primaria che garantisce l’unicità dei record. \\
 Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra le tabelle (es. Tessera-CodCliente, Ordine-CodCliente, CompOrdine-CodOrdine, ecc.). \\
-\hline
-Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), presenza di dati obbligatori, coerenza attributi per categoria prodotto. \\
+\rowcolor{mygray} Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), presenza di dati obbligatori, coerenza attributi per categoria prodotto. \\
 \hline
 \end{tabular}
+\arrayrulecolor{black}
 \caption{Vincoli e regole di integrità implementati nel database.}
 \end{table}
 \arrayrulecolor{black}
@@ -211,28 +210,27 @@ Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), prese
 \noindent\textbf{Schema logico: trigger e procedure}
 \newline
 Infine, vengono presentati i principali trigger e procedure che automatizzano la gestione e il controllo dei dati, migliorando la robustezza del sistema.
+
+% Tabella trigger/procedure migliorata
 \vspace{0.5em}
+\renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
 \centering
-\rowcolors{2}{mygray}{white}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{3.5cm}|>{\raggedright\arraybackslash}p{9.5cm}|}
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{|>{\centering\arraybackslash}m{4cm}|>{\raggedright\arraybackslash}m{9cm}|}
 \hline
 \rowcolor{myblue}\textcolor{white}{\textbf{Trigger/Procedura}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
-VerificaScortaProdotto & Blocca l’inserimento di articoli in ordine se la scorta è insufficiente. \\
-\hline
+\rowcolor{mygray} VerificaScortaProdotto & Blocca l’inserimento di articoli in ordine se la scorta è insufficiente. \\
 AggiornaScortaEPunti & Aggiorna la scorta del prodotto e accredita i punti fedeltà al cliente dopo l’inserimento di un articolo. \\
-\hline
-AggiornaPrezzoOrdine & Aggiorna il prezzo totale dell’ordine dopo l’inserimento di un articolo. \\
-\hline
+\rowcolor{mygray} AggiornaPrezzoOrdine & Aggiorna il prezzo totale dell’ordine dopo l’inserimento di un articolo. \\
 AggiornaStatoTessera & Aggiorna automaticamente lo stato della tessera in base alla data di scadenza. \\
-\hline
-RipristinaScortaProdotto & Ripristina la scorta e ricalcola i punti dopo la cancellazione di un articolo da un ordine. \\
-\hline
+\rowcolor{mygray} RipristinaScortaProdotto & Ripristina la scorta e ricalcola i punti dopo la cancellazione di un articolo da un ordine. \\
 AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la cancellazione di un articolo. \\
 \hline
 \end{tabular}
+\arrayrulecolor{black}
 \caption{Trigger e procedure principali implementate per la gestione automatica dei dati.}
 \end{table}
 \arrayrulecolor{black}
