@@ -260,32 +260,130 @@ AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la can
 
 \subsection{Script SQL}
 
-Gli script SQL sono suddivisi per facilitare la gestione e la manutenzione del database. I principali file utilizzati nel progetto sono:
-\begin{itemize}
-    \item \textbf{Tabelle.sql}: definizione delle tabelle e dei vincoli di integrità.
-    \item \textbf{Funzioni.sql}: implementazione di funzioni e procedure per operazioni ricorrenti.
-    \item \textbf{Trigger.sql}: automazione di controlli e aggiornamenti tramite trigger.
-    \item \textbf{Ricerche.sql}: query avanzate e viste per le principali funzionalità applicative.
-    \item \textbf{Popolazione.sql}: inserimento di dati di esempio per tutte le entità del sistema.
-\end{itemize}
 
-\vspace{1em}
-\noindent\textbf{Visualizzazione dei file SQL come nell'editor}
-\newline
-Per una presentazione simile a uno screenshot editor, i file SQL vengono mostrati con colorazione sintattica e bordo, come nell'esempio seguente:
-\begin{lstlisting}[style=sqlstyle,caption={Esempio da Tabelle.sql}]
-CREATE TABLE cliente (
-    codcliente INT PRIMARY KEY,
-    nome VARCHAR(50) NOT NULL,
-    cognome VARCHAR(50) NOT NULL,
-    codicefiscale CHAR(16) UNIQUE NOT NULL,
-    indirizzo VARCHAR(100),
-    telefono VARCHAR(20),
-    email VARCHAR(100)
+Di seguito è riportato per intero il contenuto del file \texttt{Tabelle.sql}, che definisce la struttura delle tabelle e i vincoli principali del database:
+
+\begin{lstlisting}[style=sqlstyle,caption={Contenuto completo di Tabelle.sql}]
+-- Creare il nuovo tipo ENUM con le categorie corrette e migliorato
+CREATE TYPE TIPOLOGIA AS ENUM (
+    'FRUTTA',
+    'VERDURA', 
+    'FARINACEI',
+    'LATTICINI',
+    'UOVA',
+    'CONFEZIONATI'
+);
+
+-- Creare tipo ENUM per lo stato della tessera
+CREATE TYPE STATOTESSERA AS ENUM (
+    'ATTIVA',
+    'SOSPESA',
+    'SCADUTA'
+);
+
+-- Tabella cliente (modificata per riferimento alla tessera)
+CREATE TABLE IF NOT EXISTS cliente (
+    codcliente SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
+    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z ]+$'),
+    codicefiscale CHAR(16) NOT NULL UNIQUE CHECK (codicefiscale ~* '^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$'),
+    indirizzo VARCHAR(255) NOT NULL,
+    telefono VARCHAR(20) CHECK (telefono ~* '^[0-9+ ]+$'),
+    email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$')
+);
+
+-- Tabella tessera (separata come richiesto)
+CREATE TABLE IF NOT EXISTS tessera (
+    codtessera SERIAL PRIMARY KEY,
+    codcliente INTEGER NOT NULL UNIQUE,
+    numeropunti NUMERIC NOT NULL DEFAULT 0.00 CHECK (numeropunti >= 0.00),
+    dataemissione DATE NOT NULL DEFAULT CURRENT_DATE,
+    datascadenza DATE NOT NULL DEFAULT (CURRENT_DATE + INTERVAL '2 years'),
+    stato STATOTESSERA NOT NULL DEFAULT 'ATTIVA',
+    CONSTRAINT tessera_cliente_fk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
+-- Tabella dipendente
+CREATE TABLE IF NOT EXISTS dipendente (
+    coddipendente SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
+    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z ]+$'),
+    codicefiscale CHAR(16) NOT NULL UNIQUE CHECK (codicefiscale ~* '^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$'),
+    indirizzo VARCHAR(255) NOT NULL,
+    telefono VARCHAR(20) CHECK (telefono ~* '^[0-9+ ]+$'),
+    email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$')
+);
+
+
+-- Tabella prodotto
+CREATE TABLE IF NOT EXISTS prodotto (
+    codprodotto SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
+    descrizione VARCHAR(500),
+    prezzo NUMERIC DEFAULT 0.00 CHECK (prezzo >= 0.00),
+    luogoprovenienza VARCHAR(255),
+    dataraccolta DATE,
+    datamungitura DATE,
+    glutine BOOLEAN,
+    datascadenza DATE,
+    dataproduzione DATE,
+    categoria TIPOLOGIA,
+    scorta INT CHECK (scorta >= 0)
+);
+
+-- Vincolo CHECK per validare i campi specifici di ogni categoria secondo la traccia accademica
+ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
+  -- FRUTTA: deve avere data di raccolta
+  (categoria = 'FRUTTA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
+  
+  -- VERDURA: deve avere data di raccolta  
+  (categoria = 'VERDURA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
+  
+  -- LATTICINI: devono avere data di mungitura del latte e data di produzione
+  (categoria = 'LATTICINI' AND dataraccolta IS NULL AND datamungitura IS NOT NULL AND dataproduzione IS NOT NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
+  
+  -- FARINACEI: informazioni sul glutine
+  (categoria = 'FARINACEI' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NOT NULL) OR
+  
+  -- UOVA: solo data di scadenza
+  (categoria = 'UOVA' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
+  
+  -- CONFEZIONATI: solo data di scadenza
+  (categoria = 'CONFEZIONATI' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)
+);
+
+-- Tabella ordine
+CREATE TABLE IF NOT EXISTS ordine (
+    codordine SERIAL PRIMARY KEY,
+    prezzototale REAL NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0),
+    dataacquisto DATE NOT NULL,
+    codcliente INTEGER NOT NULL,
+    coddipendente INTEGER NOT NULL,
+    CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente)
+        ON UPDATE CASCADE
+        ON DELETE NO ACTION,
+    CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente)
+        ON UPDATE CASCADE
+        ON DELETE NO ACTION
+);
+
+-- Tabella articoliordine 
+CREATE TABLE IF NOT EXISTS articoliordine (
+    codordine INTEGER NOT NULL,
+    codprodotto INTEGER NOT NULL,
+    prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK (prezzo >= 0.00),
+    numeroarticoli INT NOT NULL CHECK (numeroarticoli > 0),
+    CONSTRAINT PK_ArticoliOrdine PRIMARY KEY (codordine, codprodotto),
+    CONSTRAINT articoliordineprodottofk FOREIGN KEY (codprodotto) REFERENCES prodotto (codprodotto)
+        ON UPDATE CASCADE
+        ON DELETE NO ACTION,
+    CONSTRAINT articoliordineordinek FOREIGN KEY (codordine) REFERENCES ordine (codordine)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 \end{lstlisting}
-\vspace{0.5em}
-Per ulteriori dettagli si rimanda ai file allegati nella repository.
 
 \subsection{Trigger, Funzioni e View}
 Sono stati implementati diversi trigger per automatizzare aggiornamenti (ad esempio, l’assegnazione automatica dei punti fedeltà dopo una vendita) e garantire la coerenza dei dati. Le funzioni SQL supportano operazioni come il calcolo dei punti, la ricerca dei migliori dipendenti e la gestione delle statistiche. Le view facilitano l’accesso ai dati aggregati e alle informazioni più richieste dall’applicativo.
