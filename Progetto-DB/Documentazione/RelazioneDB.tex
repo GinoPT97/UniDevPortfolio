@@ -13,6 +13,27 @@
 \usepackage{hyperref}
 \geometry{margin=2.5cm}
 
+% --- Evidenziazione codice SQL stile editor ---
+\usepackage{listings}
+\usepackage{color}
+\definecolor{editorbg}{RGB}{245,245,250}
+\definecolor{sqlblue}{RGB}{0,102,204}
+\definecolor{sqlgray}{RGB}{120,120,120}
+\definecolor{sqlstring}{RGB}{0,150,0}
+\lstdefinestyle{sqlstyle}{
+    backgroundcolor=\color{editorbg},
+    frame=single,
+    rulecolor=\color{myblue},
+    language=SQL,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{sqlblue}\bfseries,
+    commentstyle=\color{sqlgray}\itshape,
+    stringstyle=\color{sqlstring},
+    showstringspaces=false,
+    breaklines=true,
+    tabsize=2
+}
+
 % Colori personalizzati
 \definecolor{myblue}{RGB}{0, 102, 204}
 \definecolor{mygray}{RGB}{240, 240, 240}
@@ -237,15 +258,46 @@ AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la can
 
 \newpage
 \section{Progettazione Fisica}
+
 \subsection{Script SQL}
-Gli script SQL sono suddivisi per facilitare la gestione e la manutenzione del database. In particolare:
-\begin{itemize}
-    \item \texttt{Tabelle.sql}: definizione delle tabelle e dei vincoli.
-    \item \texttt{Funzioni.sql}: implementazione di funzioni e procedure per operazioni ricorrenti.
-    \item \texttt{Trigger.sql}: automazione di controlli e aggiornamenti tramite trigger.
-    \item \texttt{Ricerche.sql}: query avanzate e viste per le principali funzionalità applicative.
-\end{itemize}
-Le scelte implementative privilegiano la chiarezza e la modularità.
+Gli script SQL sono suddivisi per facilitare la gestione e la manutenzione del database. Di seguito vengono elencati i file principali utilizzati nel progetto:
+
+\begin{table}[htbp]
+\centering
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{|>{\centering\arraybackslash}m{4cm}|>{\raggedright\arraybackslash}m{10cm}|}
+\hline
+\rowcolor{myblue}\textcolor{white}{\textbf{File SQL}} & \textcolor{white}{\textbf{Descrizione}} \\
+\hline
+\rowcolor{mygray} Tabelle.sql & Definizione delle tabelle e dei vincoli di integrità. \\
+Funzioni.sql & Implementazione di funzioni e procedure per operazioni ricorrenti. \\
+\rowcolor{mygray} Trigger.sql & Automazione di controlli e aggiornamenti tramite trigger. \\
+Ricerche.sql & Query avanzate e viste per le principali funzionalità applicative. \\
+\rowcolor{mygray} Popolazione.sql & Inserimento di dati di esempio per tutte le entità del sistema. \\
+\hline
+\end{tabular}
+\arrayrulecolor{black}
+\caption{File SQL utilizzati nel progetto e loro funzione.}
+\end{table}
+\arrayrulecolor{black}
+
+\vspace{1em}
+\noindent\textbf{Visualizzazione dei file SQL come nell'editor}
+\newline
+Per una presentazione simile a uno screenshot editor, i file SQL vengono mostrati con colorazione sintattica e bordo, come nell'esempio seguente:
+\begin{lstlisting}[style=sqlstyle,caption={Esempio da Tabelle.sql}]
+CREATE TABLE cliente (
+    codcliente INT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    cognome VARCHAR(50) NOT NULL,
+    codicefiscale CHAR(16) UNIQUE NOT NULL,
+    indirizzo VARCHAR(100),
+    telefono VARCHAR(20),
+    email VARCHAR(100)
+);
+\end{lstlisting}
+\vspace{0.5em}
+Per ulteriori dettagli si rimanda ai file allegati nella repository.
 
 \subsection{Trigger, Funzioni e View}
 Sono stati implementati diversi trigger per automatizzare aggiornamenti (ad esempio, l’assegnazione automatica dei punti fedeltà dopo una vendita) e garantire la coerenza dei dati. Le funzioni SQL supportano operazioni come il calcolo dei punti, la ricerca dei migliori dipendenti e la gestione delle statistiche. Le view facilitano l’accesso ai dati aggregati e alle informazioni più richieste dall’applicativo.
