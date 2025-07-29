@@ -112,13 +112,10 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \newpage
 \section{Progettazione Logica}
 
-
-% --- Miglioramento presentazione capitolo 4 ---
-\noindent\textbf{Schema relazionale}
-\newline
+\subsection{Schema relazionale}
+\noindent
 Lo schema relazionale rappresenta la struttura del database, evidenziando le relazioni tra le tabelle e i vincoli di integrità. Nella tabella seguente sono indicate le chiavi primarie (sottolineate) e le chiavi esterne (doppia sottolineatura), secondo la convenzione accademica.
 
-% Tabella schema relazionale migliorata
 \vspace{0.5em}
 \renewcommand{\arraystretch}{1.35}
 \arrayrulecolor{myblue}
@@ -137,18 +134,11 @@ prodotto & \underline{codprodotto} (PK), nome, descrizione, prezzo, luogoproveni
 articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK), prezzo, numeroarticoli \\
 \hline
 \end{tabular}
-\arrayrulecolor{black}
 \caption{Schema relazionale: chiavi primarie sottolineate, chiavi esterne doppiamente sottolineate.}
 \end{table}
 \arrayrulecolor{black}
 
 \vspace{1.5em}
-\noindent\textbf{Dizionario delle classi}
-\newline
-Il dizionario delle classi descrive le principali entità del database, specificando il ruolo di ciascuna tabella nel sistema informativo.
-
-% Tabella dizionario delle classi migliorata
-\vspace{0.5em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -156,7 +146,7 @@ Il dizionario delle classi descrive le principali entità del database, specific
 \setlength{\tabcolsep}{8pt}
 \begin{tabular}{|>{\centering\arraybackslash}m{3.5cm}|>{\raggedright\arraybackslash}m{9.5cm}|}
 \hline
-\rowcolor{myblue}\textcolor{white}{\textbf{Classe (Tabella)}} & \textcolor{white}{\textbf{Descrizione}} \\
+\rowcolor{myblue}\textcolor{white}{\textbf{Entità (Tabella)}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
 \rowcolor{mygray} cliente & Dati anagrafici dei clienti registrati nel sistema. \\
 tessera & Tessera punti associata a ciascun cliente, saldo punti e stato. \\
@@ -166,18 +156,21 @@ prodotto & Prodotti in vendita, con tipologia, caratteristiche e scorta. \\
 articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \hline
 \end{tabular}
-\arrayrulecolor{black}
-\caption{Classi principali del database e loro funzione.}
+\caption{Entità principali del database e loro funzione.}
 \end{table}
 \arrayrulecolor{black}
 
 \vspace{1.5em}
-\noindent\textbf{Associazioni tra le entità}
-\newline
+\subsection{Dizionario delle entità}
+\noindent
+Il dizionario delle entità descrive le principali tabelle del database, specificando il ruolo di ciascuna nel sistema informativo.
+
+
+\vspace{1.5em}
+\subsection{Associazioni e relazioni}
+\noindent
 Le associazioni rappresentano i legami logici tra le entità del database, utili per comprendere la struttura delle relazioni.
 
-% Tabella associazioni migliorata
-\vspace{0.5em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -193,18 +186,15 @@ Ordine-Cliente & Ogni ordine è associato a un cliente (N:1). \\
 Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M). \\
 \hline
 \end{tabular}
-\arrayrulecolor{black}
 \caption{Principali associazioni tra le entità del database.}
 \end{table}
 \arrayrulecolor{black}
 
 \vspace{1.5em}
-\noindent\textbf{Vincoli e regole di integrità}
-\newline
+\subsection{Vincoli di integrità}
+\noindent
 Questa sezione riassume i vincoli e le regole di integrità che garantiscono la coerenza e la correttezza dei dati nel database.
 
-% Tabella vincoli migliorata
-\vspace{0.5em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[ht]
@@ -212,27 +202,24 @@ Questa sezione riassume i vincoli e le regole di integrità che garantiscono la 
 \setlength{\tabcolsep}{8pt}
 \begin{tabular}{|>{\centering\arraybackslash}m{4cm}|>{\raggedright\arraybackslash}m{10cm}|}
 \hline
-\rowcolor{myblue}\textcolor{white}{\textbf{Nome Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
+\rowcolor{myblue}\textcolor{white}{\textbf{Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
-\rowcolor{mygray} Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma legittima: almeno un carattere prima della @, almeno un carattere tra questa ed il punto, almeno un carattere dopo il punto. \\
+\rowcolor{mygray} Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma legittima. \\
 Codice Fiscale Regex & Il codice fiscale deve rispettare il formato italiano standard. \\
 \rowcolor{mygray} Chiavi Primarie & Ogni tabella ha una chiave primaria che garantisce l’unicità dei record. \\
-Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra le tabelle (es. Tessera-CodCliente, Ordine-CodCliente, CompOrdine-CodOrdine, ecc.). \\
+Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra le tabelle. \\
 \rowcolor{mygray} Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), presenza di dati obbligatori, coerenza attributi per categoria prodotto. \\
 \hline
 \end{tabular}
-\arrayrulecolor{black}
 \caption{Vincoli e regole di integrità implementati nel database.}
 \end{table}
 \arrayrulecolor{black}
 
 \vspace{1.5em}
-\noindent\textbf{Schema logico: trigger e procedure}
-\newline
-Infine, vengono presentati i principali trigger e procedure che automatizzano la gestione e il controllo dei dati, migliorando la robustezza del sistema.
+\subsection{Trigger e procedure}
+\noindent
+I trigger e le procedure automatizzano la gestione e il controllo dei dati, migliorando la robustezza del sistema.
 
-% Tabella trigger/procedure migliorata
-\vspace{0.5em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -250,7 +237,6 @@ AggiornaStatoTessera & Aggiorna automaticamente lo stato della tessera in base a
 AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la cancellazione di un articolo. \\
 \hline
 \end{tabular}
-\arrayrulecolor{black}
 \caption{Trigger e procedure principali implementate per la gestione automatica dei dati.}
 \end{table}
 \arrayrulecolor{black}
@@ -261,9 +247,9 @@ AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la can
 \noindent
 La progettazione fisica rappresenta la fase in cui il modello logico viene tradotto in strutture concrete all’interno del DBMS scelto. In questa sezione vengono presentati gli script SQL che permettono la creazione delle tabelle, dei vincoli di integrità, delle funzioni, dei trigger e delle viste, garantendo la robustezza, la sicurezza e l’efficienza del sistema informativo. L’obiettivo è fornire una base dati pronta all’uso, ottimizzata per le operazioni di gestione e analisi tipiche di un negozio di alimentari.
 
-\subsection{Script SQL}
+\subsection{Tabelle SQL}
 \noindent
-In questo sottocapitolo sono riportati gli script SQL necessari per la creazione delle principali strutture del database: tipi enumerativi, tabelle, vincoli e relazioni. Ogni script è stato progettato per assicurare la coerenza dei dati e la corretta rappresentazione delle regole di business individuate in fase di analisi.
+Di seguito sono riportati le tabelle SQL necessarie per la creazione delle principali strutture del database: tipi enumerativi, tabelle, vincoli e relazioni. Ogni script è stato progettato per assicurare la coerenza dei dati e la corretta rappresentazione delle regole di business individuate in fase di analisi.
 
 \subsubsection*{Enumerazioni}
 \begin{lstlisting}[style=sqlstyle]
