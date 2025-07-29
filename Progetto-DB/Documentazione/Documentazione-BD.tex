@@ -113,8 +113,10 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \section{Progettazione Logica}
 
 \subsection{Schema relazionale}
-\noindent
-Lo schema relazionale rappresenta la struttura del database, evidenziando le relazioni tra le tabelle e i vincoli di integrità. Nella tabella seguente sono indicate le chiavi primarie (sottolineate) e le chiavi esterne (doppia sottolineatura), secondo la convenzione accademica.
+
+Lo schema relazionale è stato progettato per riflettere fedelmente le esigenze di gestione di un negozio di alimentari. Sono stati definiti tipi enumerativi per le categorie di prodotto (\texttt{TIPOLOGIA}) e per lo stato della tessera fedeltà (\texttt{STATOTESSERA}), assicurando la validazione dei dati e la chiarezza semantica.
+
+Le principali entità (cliente, tessera, dipendente, prodotto, ordine, articoliordine) sono state implementate con vincoli di unicità, referenzialità e regole di business. In particolare, la tabella \texttt{prodotto} include un vincolo \texttt{CHECK} che garantisce la coerenza degli attributi in base alla categoria, evitando errori di inserimento e mantenendo la qualità dei dati.
 
 \vspace{0.5em}
 \renewcommand{\arraystretch}{1.35}
@@ -138,7 +140,13 @@ articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK
 \end{table}
 \arrayrulecolor{black}
 
+
 \vspace{1.5em}
+\subsection{Dizionario delle entità}
+
+Ogni tabella è stata pensata per rappresentare un aspetto fondamentale del sistema: i clienti e i dipendenti sono identificati in modo univoco e validati tramite espressioni regolari per email e codice fiscale; la tessera fedeltà è associata a ciascun cliente e gestisce il saldo punti e lo stato; i prodotti sono caratterizzati da attributi specifici per tipologia; gli ordini e gli articoli d’ordine permettono di tracciare le transazioni e i movimenti di magazzino.
+
+\vspace{1em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -160,17 +168,13 @@ articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \end{table}
 \arrayrulecolor{black}
 
-\vspace{1.5em}
-\subsection{Dizionario delle entità}
-\noindent
-Il dizionario delle entità descrive le principali tabelle del database, specificando il ruolo di ciascuna nel sistema informativo.
-
 
 \vspace{1.5em}
 \subsection{Associazioni e relazioni}
-\noindent
-Le associazioni rappresentano i legami logici tra le entità del database, utili per comprendere la struttura delle relazioni.
 
+Le relazioni tra le entità sono state implementate tramite chiavi esterne e vincoli di integrità referenziale. Il sistema supporta associazioni uno-a-uno (cliente-tessera), uno-a-molti (cliente-ordine, dipendente-ordine) e molti-a-molti (ordine-prodotto tramite articoliordine), garantendo la tracciabilità e la consistenza delle operazioni.
+
+\vspace{1em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -190,11 +194,13 @@ Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M
 \end{table}
 \arrayrulecolor{black}
 
+
 \vspace{1.5em}
 \subsection{Vincoli di integrità}
-\noindent
-Questa sezione riassume i vincoli e le regole di integrità che garantiscono la coerenza e la correttezza dei dati nel database.
 
+Oltre ai vincoli di chiave primaria ed esterna, sono stati introdotti vincoli \texttt{CHECK} su valori numerici (ad esempio, scorta e prezzo non negativi) e regole di validazione per i dati obbligatori. Il vincolo sulla tabella \texttt{prodotto} assicura che ogni categoria abbia solo gli attributi pertinenti valorizzati, riducendo il rischio di errori e facilitando la gestione.
+
+\vspace{1em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[ht]
@@ -212,32 +218,6 @@ Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra 
 \hline
 \end{tabular}
 \caption{Vincoli e regole di integrità implementati nel database.}
-\end{table}
-\arrayrulecolor{black}
-
-\vspace{1.5em}
-\subsection{Trigger e procedure}
-\noindent
-I trigger e le procedure automatizzano la gestione e il controllo dei dati, migliorando la robustezza del sistema.
-
-\renewcommand{\arraystretch}{1.3}
-\arrayrulecolor{myblue}
-\begin{table}[htbp]
-\centering
-\setlength{\tabcolsep}{8pt}
-\begin{tabular}{|>{\centering\arraybackslash}m{4cm}|>{\raggedright\arraybackslash}m{9cm}|}
-\hline
-\rowcolor{myblue}\textcolor{white}{\textbf{Trigger/Procedura}} & \textcolor{white}{\textbf{Descrizione}} \\
-\hline
-\rowcolor{mygray} VerificaScortaProdotto & Blocca l’inserimento di articoli in ordine se la scorta è insufficiente. \\
-AggiornaScortaEPunti & Aggiorna la scorta del prodotto e accredita i punti fedeltà al cliente dopo l’inserimento di un articolo. \\
-\rowcolor{mygray} AggiornaPrezzoOrdine & Aggiorna il prezzo totale dell’ordine dopo l’inserimento di un articolo. \\
-AggiornaStatoTessera & Aggiorna automaticamente lo stato della tessera in base alla data di scadenza. \\
-\rowcolor{mygray} RipristinaScortaProdotto & Ripristina la scorta e ricalcola i punti dopo la cancellazione di un articolo da un ordine. \\
-AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la cancellazione di un articolo. \\
-\hline
-\end{tabular}
-\caption{Trigger e procedure principali implementate per la gestione automatica dei dati.}
 \end{table}
 \arrayrulecolor{black}
 

@@ -5,12 +5,11 @@
 \contentsline {subsection}{\numberline {3.2}Descrizione delle entità}{5}{subsection.3.2}%
 \contentsline {section}{\numberline {4}Progettazione Logica}{6}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Schema relazionale}{6}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Dizionario delle entità}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.2}Dizionario delle entità}{6}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Associazioni e relazioni}{7}{subsection.4.3}%
 \contentsline {subsection}{\numberline {4.4}Vincoli di integrità}{7}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Trigger e procedure}{8}{subsection.4.5}%
-\contentsline {section}{\numberline {5}Progettazione Fisica}{9}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Tabelle SQL}{9}{subsection.5.1}%
+\contentsline {section}{\numberline {5}Progettazione Fisica}{8}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Tabelle SQL}{8}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Trigger e Funzioni}{12}{subsection.5.2}%
 \contentsline {subsection}{\numberline {5.3}View e Funzioni}{16}{subsection.5.3}%
-\contentsline {section}{\numberline {6}Popolamento e Dati di Esempio}{19}{section.6}%
+\contentsline {section}{\numberline {6}Popolamento e Dati di Esempio}{18}{section.6}%
