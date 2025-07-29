@@ -335,12 +335,14 @@ INPUT /usr/share/texmf/tex/latex/lm/ts1lmtt.fd
 INPUT /usr/share/texmf/tex/latex/lm/ts1lmtt.fd
 INPUT /usr/share/texmf/tex/latex/lm/ts1lmtt.fd
 INPUT /usr/share/texmf/fonts/tfm/public/lm/ts1-lmtt10.tfm
+INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmri12.tfm
 INPUT Documentazione-BD.aux
 INPUT ./Documentazione-BD.out
 INPUT ./Documentazione-BD.out
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmr12.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmr17.pfb
+INPUT /usr/share/texmf/fonts/type1/public/lm/lmri12.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb

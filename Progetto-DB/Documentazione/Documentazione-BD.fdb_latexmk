@@ -1,8 +1,8 @@
 # Fdb version 4
-["pdflatex"] 1753784361.00789 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/Documentazione-BD.tex" "Documentazione-BD.pdf" "Documentazione-BD" 1753784361.72379 0
+["pdflatex"] 1753785652.88731 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/Documentazione-BD.tex" "Documentazione-BD.pdf" "Documentazione-BD" 1753785653.5796 0
   "../Immagini/Frontespazio.png" 1753094963 2406519 938c1e6ca4fadb490877b2b71af949b3 ""
   "/etc/texmf/web2c/texmf.cnf" 1752838060.96153 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/Documentazione-BD.tex" 1753784360.19323 27220 b9be9572092ac7375f9b731f54c1d4ac ""
+  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/Documentazione-BD.tex" 1753785651.99363 32145 bcac19d9a158ccfa24f68e9f125f9c25 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm" 1246382020 928 2dc8d444221b7a635bb58038579b861a ""
@@ -159,6 +159,7 @@
   "/usr/share/texmf/fonts/tfm/public/lm/rm-lmr17.tfm" 1254269338 11948 fa976674f030491ad35532a8a1e37325 ""
   "/usr/share/texmf/fonts/tfm/public/lm/rm-lmr6.tfm" 1254269338 11836 e3b6ce3e601aec94f64a536e7f4224d5 ""
   "/usr/share/texmf/fonts/tfm/public/lm/rm-lmr8.tfm" 1254269338 11864 309fd7f43e4a0ba39f6f7644d76e8edf ""
+  "/usr/share/texmf/fonts/tfm/public/lm/rm-lmri12.tfm" 1254269338 16968 09a34e0af90920bbcece784f13606525 ""
   "/usr/share/texmf/fonts/tfm/public/lm/rm-lmtk10.tfm" 1254269338 1336 cd5d5949a1a8258ba2142355fab78e6f ""
   "/usr/share/texmf/fonts/tfm/public/lm/rm-lmtt10.tfm" 1254269338 1340 adaa94f9add991a099a6fc98bbb5f02c ""
   "/usr/share/texmf/fonts/tfm/public/lm/rm-lmtt12.tfm" 1254269338 1336 3f1d3798f35e35601b79a222d795ee97 ""
@@ -168,6 +169,7 @@
   "/usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb" 1255129361 116908 1fca96723793882c2e0160350c192fc8 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr12.pfb" 1255129361 113634 f99c44d58bae0863375faf0e1d74d612 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmr17.pfb" 1255129361 119752 1bd8d06e4079df624bf59ce3ad7c9aa6 ""
+  "/usr/share/texmf/fonts/type1/public/lm/lmri12.pfb" 1255129361 109265 32320cb6133d4d76bf83e27b5eb4009b ""
   "/usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb" 1254269338 27863 09ce3735688ffde955e72da27c95b61a ""
   "/usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb" 1255129361 117319 7f8361f845845ce6d5b36cbd9f9cf377 ""
   "/usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb" 1255129361 113227 1010e11451afc2822c95dae77c390042 ""
@@ -184,10 +186,10 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1752838090 128227 ed67923a37f7748d267799454bc1f95b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1753010313 1929624 f93ffbe1384c00abd93b46cd694dbaf4 ""
-  "Documentazione-BD.aux" 1753784361.65307 2764 7cad250075c7c2b13b17e757f30198cc "pdflatex"
-  "Documentazione-BD.out" 1753784361.65407 2318 66efea0d66bfb3efbe183ff446e3d3e7 "pdflatex"
-  "Documentazione-BD.tex" 1753784360.19323 27220 b9be9572092ac7375f9b731f54c1d4ac ""
-  "Documentazione-BD.toc" 1753784361.65407 1228 f1402094ee2289bec9c1b14541a342b4 "pdflatex"
+  "Documentazione-BD.aux" 1753785653.48346 2764 9023b0ce6267efd008cf7bcc00339159 "pdflatex"
+  "Documentazione-BD.out" 1753785653.48446 2318 66efea0d66bfb3efbe183ff446e3d3e7 "pdflatex"
+  "Documentazione-BD.tex" 1753785651.99363 32145 bcac19d9a158ccfa24f68e9f125f9c25 ""
+  "Documentazione-BD.toc" 1753785653.48558 1228 3652a4561b4e1fce1a749d1ebe015296 "pdflatex"
   (generated)
   "Documentazione-BD.aux"
   "Documentazione-BD.log"

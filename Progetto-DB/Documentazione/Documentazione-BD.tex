@@ -383,10 +383,40 @@ CREATE TABLE IF NOT EXISTS articoliordine (
 \vspace{1.5em}
 
 \subsection{Trigger e Funzioni}
+
 \noindent
-Qui vengono illustrate le principali funzioni e i trigger implementati per automatizzare la gestione dei dati e garantire il rispetto delle regole di integrità. I trigger intervengono in modo automatico su eventi specifici (inserimenti, aggiornamenti, cancellazioni), mentre le funzioni permettono di eseguire calcoli e controlli complessi, migliorando la qualità e la sicurezza delle operazioni.
+In questa sezione vengono presentati i principali trigger e funzioni che automatizzano la gestione dei dati e garantiscono il rispetto delle regole di integrità. I trigger agiscono automaticamente su eventi specifici (inserimenti, aggiornamenti, cancellazioni), mentre le funzioni eseguono calcoli e controlli complessi, migliorando la qualità e la sicurezza delle operazioni.\newline
+\vspace{0.5em}
+\begin{tcolorbox}[colback=mygray,colframe=myblue,title=Nota Importante]
+L'utilizzo di trigger e funzioni consente di:
+\begin{itemize}
+    \item Aggiornare automaticamente la scorta dei prodotti e i punti fedeltà dei clienti.
+    \item Verificare la disponibilità dei prodotti prima di ogni vendita.
+    \item Mantenere la coerenza tra ordini, articoli e tessere punti.
+    \item Prevenire errori e garantire la robustezza del sistema.
+\end{itemize}
+\end{tcolorbox}
+
+\subsubsection*{Panoramica dei Trigger}
+\noindent
+Di seguito una panoramica dei principali trigger implementati, con una breve descrizione del loro scopo:
+\begin{itemize}
+    \item \textbf{TrgAggiornaScortaPunti}: aggiorna la scorta del prodotto e i punti della tessera cliente dopo l'inserimento di un articolo in un ordine.
+    \item \textbf{TrgAggiornaPrezzoOrdine}: aggiorna il prezzo totale dell'ordine dopo l'inserimento di un articolo.
+    \item \textbf{TrgVerificaScortaProdotto}: verifica che la scorta sia sufficiente prima di inserire un articolo nell'ordine.
+    \item \textbf{TrgAggiornaStatoTessera}: aggiorna lo stato della tessera (es. scaduta) in base alla data di scadenza.
+    \item \textbf{TrgRipristinaScortaPunti}: ripristina la scorta e aggiorna i punti tessera dopo la cancellazione di un articolo da un ordine.
+    \item \textbf{TrgAggiornaPrezzoOrdineDelete}: aggiorna il prezzo totale dell'ordine dopo la cancellazione di un articolo.
+\end{itemize}
+\vspace{1em}
+\textbf{Esempio pratico:}
+\begin{tcolorbox}[colback=mygray,colframe=myblue]
+Quando un cliente acquista 3 mele (prodotto con scorta 10), il trigger \texttt{TrgAggiornaScortaPunti} riduce la scorta a 7 e aggiunge il 10\% del valore speso ai punti della tessera associata. Se la scorta fosse insufficiente, il trigger \texttt{TrgVerificaScortaProdotto} bloccherebbe l'operazione.
+\end{tcolorbox}
+
 
 \subsubsection*{Trigger principali}
+
 \vspace{1.5em}
 \begin{lstlisting}[style=sqlstyle]
 -- Trigger per aggiornare scorta e punti tessera dopo inserimento articolo
@@ -401,13 +431,13 @@ AFTER INSERT ON articoliordine
 FOR EACH ROW
 EXECUTE FUNCTION AggiornaPrezzoOrdine();
 
+-- Trigger per verificare la scorta prima dell'inserimento
 CREATE TRIGGER TrgVerificaScortaProdotto
 BEFORE INSERT ON articoliordine
 FOR EACH ROW
 EXECUTE FUNCTION VerificaScortaProdotto();
 
--- Trigger per aggiornare la scorta e i punti tessera dopo inserimento articolo
-
+-- Trigger per aggiornare lo stato della tessera
 CREATE TRIGGER TrgAggiornaStatoTessera
 BEFORE INSERT OR UPDATE ON tessera
 FOR EACH ROW
@@ -426,6 +456,20 @@ FOR EACH ROW
 EXECUTE FUNCTION AggiornaPrezzoOrdineDelete();
 \end{lstlisting}
 \vspace{1.5em}
+
+\subsubsection*{Descrizione delle Funzioni}
+\noindent
+Ogni funzione associata ai trigger svolge un compito specifico. Di seguito una breve spiegazione prima del codice:
+\begin{itemize}
+    \item \textbf{AggiornaScortaEPunti}: aggiorna la scorta del prodotto e incrementa i punti della tessera cliente in base al valore speso.
+    \item \textbf{AggiornaPrezzoOrdine}: aggiorna il totale dell'ordine dopo l'inserimento di un articolo.
+    \item \textbf{VerificaScortaProdotto}: controlla che la scorta sia sufficiente prima di confermare la vendita.
+    \item \textbf{AggiornaStatoTessera}: imposta lo stato della tessera a "SCADUTA" se la data di scadenza è superata.
+    \item \textbf{RipristinaScortaProdotto}: ripristina la scorta e aggiorna i punti tessera dopo la cancellazione di un articolo.
+    \item \textbf{AggiornaPrezzoOrdineDelete}: aggiorna il totale dell'ordine dopo la cancellazione di un articolo.
+\end{itemize}
+\vspace{1em}
+Per ogni funzione, il codice è preceduto da una breve descrizione e, dove utile, da un esempio pratico di utilizzo.
 
 \subsubsection*{Funzione AggiornaScortaEPunti}
 \vspace{1.5em}
@@ -656,15 +700,45 @@ JOIN prodotto p ON ao.codprodotto = p.codprodotto;
 \newpage
 \section{Popolamento e Dati di Esempio}
 
-Il popolamento del database è stato effettuato tramite lo script \texttt{Popolazione.sql}, che inserisce dati di esempio per tutte le principali entità del sistema:
-\begin{itemize}
-    \item Prodotti di tutte le tipologie (frutta, verdura, farinacei, latticini, uova, confezionati), con relative caratteristiche specifiche.
-    \item Clienti con tessere punti associate e saldo iniziale.
-    \item Dipendenti e dati anagrafici.
-    \item Vendite, ciascuna associata a cliente, dipendente e prodotti acquistati.
-    \item Movimenti punti fedeltà generati dalle vendite.
-\end{itemize}
 
-I dati inseriti permettono di testare tutte le funzionalità implementate, comprese le query di ricerca, le statistiche e la gestione dei punti fedeltà. Lo script può essere eseguito dopo la creazione delle tabelle per ottenere un database pronto all'uso con dati realistici.
+
+Il popolamento del database è stato effettuato tramite lo script \texttt{Popolazione.sql}, che contiene tutti gli \textbf{INSERT} necessari per popolare le tabelle con dati di esempio realistici e coerenti con la struttura progettata. Questo file è fondamentale per testare il funzionamento delle query, dei trigger e delle funzioni implementate, simulando un ambiente operativo completo e credibile.
+\vspace{0.5em}
+\textbf{Cosa contiene Popolazione.sql?}
+\newline
+Lo script inserisce prodotti di tutte le tipologie (frutta, verdura, farinacei, latticini, uova, confezionati), ciascuno con attributi specifici per categoria. Vengono aggiunti clienti e relative tessere punti con saldo iniziale e stato, dipendenti con dati anagrafici completi, ordini associati a clienti e dipendenti, e articoli acquistati. Grazie ai trigger, vengono generati automaticamente i movimenti dei punti fedeltà.
+\vspace{0.5em}
+\textbf{Esempio di inserimento:}
+\begin{lstlisting}[style=sqlstyle]
+-- Inserimento di un prodotto di tipo frutta
+INSERT INTO prodotto (nome, descrizione, prezzo, luogoprovenienza, dataraccolta, categoria, scorta)
+VALUES ('Mela', 'Mela Golden', 1.20, 'Trentino', '2025-07-10', 'FRUTTA', 50);
+
+-- Inserimento di un dipendente
+INSERT INTO dipendente (nome, cognome, codicefiscale, indirizzo, telefono, email)
+VALUES ('Giulia', 'Bianchi', 'BNCGLI90A41H501U', 'Via Milano 5', '3339876543', 'giulia.bianchi@email.it');
+
+-- Inserimento di un cliente
+INSERT INTO cliente (nome, cognome, codicefiscale, indirizzo, telefono, email)
+VALUES ('Mario', 'Rossi', 'RSSMRA80A01H501U', 'Via Roma 1', '3331234567', 'mario.rossi@email.it');
+
+-- Associazione tessera al cliente
+INSERT INTO tessera (codcliente, numeropunti, dataemissione, datascadenza, stato)
+VALUES (1, 10, '2025-07-01', '2027-07-01', 'ATTIVA');
+
+-- Inserimento di un ordine associato a cliente e dipendente
+INSERT INTO ordine (prezzototale, dataacquisto, codcliente, coddipendente)
+VALUES (0, '2025-07-29', 1, 1);
+
+-- Inserimento di articoli nell'ordine (acquisto di 3 mele)
+INSERT INTO articoliordine (codordine, codprodotto, prezzo, numeroarticoli)
+VALUES (1, 1, 1.20, 3);
+\end{lstlisting}
+\vspace{0.5em}
+\textit{Questo esempio mostra un ciclo completo: creazione di prodotto, dipendente, cliente, tessera, ordine e articoli acquistati. I trigger e le funzioni implementate aggiorneranno automaticamente la scorta del prodotto, i punti della tessera e il totale dell'ordine.}
+\vspace{0.5em}
+\textbf{Come utilizzare lo script:}
+\newline
+Eseguire \texttt{Popolazione.sql} dopo la creazione delle tabelle per ottenere un database pronto all'uso, completo di dati di esempio per testare tutte le funzionalità implementate. I dati inseriti permettono di verificare le query di ricerca, le statistiche e la gestione dei punti fedeltà, simulando scenari reali di vendita e gestione clienti.
 
 \end{document}
