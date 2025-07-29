@@ -7,4 +7,5 @@
 \contentsline {section}{\numberline {5}Progettazione Fisica}{8}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Script SQL}{8}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Trigger e Funzioni}{12}{subsection.5.2}%
-\contentsline {section}{\numberline {6}Popolamento e Dati di Esempio}{16}{section.6}%
+\contentsline {subsection}{\numberline {5.3}View e Funzioni}{15}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Popolamento e Dati di Esempio}{18}{section.6}%

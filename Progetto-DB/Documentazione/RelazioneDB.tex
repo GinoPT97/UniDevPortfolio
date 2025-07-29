@@ -413,7 +413,6 @@ CREATE TABLE IF NOT EXISTS articoliordine (
 
 \subsection{Trigger e Funzioni}
 
-
 \subsubsection*{Trigger principali}
 \vspace{1.5em}
 \begin{lstlisting}[style=sqlstyle]
@@ -584,6 +583,101 @@ $$ LANGUAGE plpgsql;
 \end{lstlisting}
 \vspace{1.5em}
 
+\subsection{View e Funzioni}
+\label{sec:view-funzioni}
+
+% Query conformi alla traccia accademica del negozio di alimentari
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE FUNCTION RicercaClientiPerCategoria(categoriaRicerca TIPOLOGIA DEFAULT NULL)
+RETURNS TABLE(
+    codcliente INTEGER,
+    nome VARCHAR(255),
+    cognome VARCHAR(255),
+    categoria TIPOLOGIA,
+    punti_categoria NUMERIC,
+    spesa_categoria NUMERIC,
+    ordini_categoria BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        c.codcliente,
+        c.nome,
+        c.cognome,
+        p.categoria,
+        ROUND(COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0), 2) as punti_categoria,
+        ROUND(COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0), 2) as spesa_categoria,
+        COUNT(DISTINCT o.codordine)::BIGINT as ordini_categoria
+    FROM cliente c
+    JOIN ordine o ON c.codcliente = o.codcliente
+    JOIN articoliordine ao ON o.codordine = ao.codordine
+    JOIN prodotto p ON ao.codprodotto = p.codprodotto
+    WHERE (categoriaRicerca IS NULL OR p.categoria = categoriaRicerca)
+    GROUP BY c.codcliente, c.nome, c.cognome, p.categoria
+    HAVING COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) > 0
+    ORDER BY c.codcliente, punti_categoria DESC;
+END;
+$$ LANGUAGE plpgsql;
+\end{lstlisting}
+
+% Funzione parametrica per intervallo temporale
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE FUNCTION DipendenteStatistiche(data_inizio DATE, data_fine DATE)
+RETURNS TABLE(nome TEXT, cognome TEXT, NumeroOrdini INTEGER, Introiti NUMERIC)
+AS $$
+    SELECT nome, cognome, NumeroOrdini, NULL AS Introiti
+    FROM (
+        SELECT D.nome, D.cognome, COUNT(O.*) AS NumeroOrdini
+        FROM dipendente AS D
+        JOIN ordine AS O ON O.coddipendente = D.coddipendente
+        WHERE O.dataacquisto BETWEEN data_inizio AND data_fine
+        GROUP BY D.nome, D.cognome
+        ORDER BY NumeroOrdini DESC
+        LIMIT 1
+    ) AS TopVendite
+    UNION ALL
+    SELECT nome, cognome, NULL AS NumeroOrdini, Introiti
+    FROM (
+        SELECT D.nome, D.cognome, SUM(O.prezzototale) AS Introiti
+        FROM dipendente AS D
+        JOIN ordine AS O ON O.coddipendente = D.coddipendente
+        WHERE O.dataacquisto BETWEEN data_inizio AND data_fine
+        GROUP BY D.nome, D.cognome
+        ORDER BY Introiti DESC
+        LIMIT 1
+    ) AS TopIntroito;
+$$ LANGUAGE sql;
+\end{lstlisting}
+
+% VIEW 1: Riepilogo punti e stato tessera dei clienti
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE VIEW VwClientiTessere AS
+SELECT c.codcliente, c.nome, c.cognome, t.numeropunti, t.stato, t.datascadenza
+FROM cliente c
+JOIN tessera t ON c.codcliente = t.codcliente;
+\end{lstlisting}
+
+% VIEW 2: Prodotti con scorta bassa (< 20)
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE VIEW VwProdottiScortaBassa AS
+SELECT codprodotto, nome, categoria, scorta
+FROM prodotto
+WHERE scorta < 20;
+\end{lstlisting}
+
+% VIEW 3: Ordini dettagliati
+\begin{lstlisting}[style=sqlstyle]
+CREATE OR REPLACE VIEW VwOrdiniDettagliati AS
+SELECT o.codordine, o.dataacquisto, o.prezzototale, c.nome AS nome_cliente, c.cognome AS cognome_cliente,
+       d.nome AS nome_dipendente, d.cognome AS cognome_dipendente,
+       p.nome AS nome_prodotto, p.categoria, ao.numeroarticoli, ao.prezzo
+FROM ordine o
+JOIN cliente c ON o.codcliente = c.codcliente
+JOIN dipendente d ON o.coddipendente = d.coddipendente
+JOIN articoliordine ao ON o.codordine = ao.codordine
+JOIN prodotto p ON ao.codprodotto = p.codprodotto;
+\end{lstlisting}
+
 \newpage
 \section{Popolamento e Dati di Esempio}
 
@@ -597,6 +691,5 @@ Il popolamento del database è stato effettuato tramite lo script \texttt{Popola
 \end{itemize}
 
 I dati inseriti permettono di testare tutte le funzionalità implementate, comprese le query di ricerca, le statistiche e la gestione dei punti fedeltà. Lo script può essere eseguito dopo la creazione delle tabelle per ottenere un database pronto all'uso con dati realistici.
-
 
 \end{document}
