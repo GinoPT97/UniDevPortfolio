@@ -258,7 +258,12 @@ AggiornaPrezzoOrdineDelete & Aggiorna il prezzo totale dell’ordine dopo la can
 \newpage
 \section{Progettazione Fisica}
 
+\noindent
+La progettazione fisica rappresenta la fase in cui il modello logico viene tradotto in strutture concrete all’interno del DBMS scelto. In questa sezione vengono presentati gli script SQL che permettono la creazione delle tabelle, dei vincoli di integrità, delle funzioni, dei trigger e delle viste, garantendo la robustezza, la sicurezza e l’efficienza del sistema informativo. L’obiettivo è fornire una base dati pronta all’uso, ottimizzata per le operazioni di gestione e analisi tipiche di un negozio di alimentari.
+
 \subsection{Script SQL}
+\noindent
+In questo sottocapitolo sono riportati gli script SQL necessari per la creazione delle principali strutture del database: tipi enumerativi, tabelle, vincoli e relazioni. Ogni script è stato progettato per assicurare la coerenza dei dati e la corretta rappresentazione delle regole di business individuate in fase di analisi.
 
 \subsubsection*{Enumerazioni}
 \begin{lstlisting}[style=sqlstyle]
@@ -412,6 +417,8 @@ CREATE TABLE IF NOT EXISTS articoliordine (
 \vspace{1.5em}
 
 \subsection{Trigger e Funzioni}
+\noindent
+Qui vengono illustrate le principali funzioni e i trigger implementati per automatizzare la gestione dei dati e garantire il rispetto delle regole di integrità. I trigger intervengono in modo automatico su eventi specifici (inserimenti, aggiornamenti, cancellazioni), mentre le funzioni permettono di eseguire calcoli e controlli complessi, migliorando la qualità e la sicurezza delle operazioni.
 
 \subsubsection*{Trigger principali}
 \vspace{1.5em}
@@ -585,6 +592,8 @@ $$ LANGUAGE plpgsql;
 
 \subsection{View e Funzioni}
 \label{sec:view-funzioni}
+\noindent
+Le viste e le funzioni presentate in questa sezione consentono di semplificare le interrogazioni e di ottenere rapidamente informazioni aggregate e dettagliate. Le view facilitano la consultazione dei dati più rilevanti per la gestione del negozio, mentre le funzioni parametrizzate permettono di eseguire ricerche e statistiche avanzate, rispondendo alle esigenze di analisi e reportistica.
 
 % Query conformi alla traccia accademica del negozio di alimentari
 \begin{lstlisting}[style=sqlstyle]
