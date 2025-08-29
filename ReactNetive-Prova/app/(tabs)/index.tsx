@@ -8,7 +8,7 @@ import { ThemedView } from '@/components/ThemedView';
 export default function HomeScreen() {
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#E3F6FF', dark: '#A1CEDC' }}
+      headerBackgroundColor={{ light: '#F8FAFC', dark: '#A1CEDC' }}
       headerImage={
         <Image
           source={require('@/assets/images/react-logo.png')}
@@ -16,9 +16,9 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={{ alignItems: 'center', marginTop: 20 }}>
-        <ThemedText type="title" style={{ color: '#185a9d' }}>UniDev Portfolio</ThemedText>
+        <ThemedText type="title" style={{ color: '#6C63FF' }}>UniDev Portfolio</ThemedText>
         <HelloWave />
-        <ThemedText style={{ marginTop: 10, color: '#3a3a3a' }}>
+        <ThemedText style={{ marginTop: 10, color: '#444' }}>
           Benvenuto! Qui puoi esplorare le funzionalità principali dell&apos;app.
         </ThemedText>
       </ThemedView>
@@ -28,7 +28,7 @@ export default function HomeScreen() {
           Prova la calcolatrice per eseguire operazioni matematiche di base.
         </ThemedText>
       </ThemedView>
-      <ThemedView style={{ marginTop: 30, padding: 16, borderRadius: 16, backgroundColor: '#FFD6E0', shadowColor: '#d76d77', shadowOpacity: 0.1, shadowRadius: 6 }}>
+      <ThemedView style={{ marginTop: 30, padding: 16, borderRadius: 16, backgroundColor: '#FFE3E3', shadowColor: '#d76d77', shadowOpacity: 0.1, shadowRadius: 6 }}>
         <ThemedText type="subtitle" style={{ color: '#d76d77' }}>Personalizza il tuo portfolio</ThemedText>
         <ThemedText style={{ color: '#d76d77' }}>
           Modifica i file nella cartella <ThemedText type="defaultSemiBold" style={{ color: '#d76d77' }}>app/</ThemedText> per aggiungere nuove funzionalità.

@@ -6,9 +6,23 @@ const Calculator: React.FC = () => {
   const [num2, setNum2] = useState('');
   const [result, setResult] = useState<string | null>(null);
 
+  const handleClear = () => {
+    setNum1('');
+    setNum2('');
+    setResult(null);
+  };
+
   const handleOperation = (op: string) => {
     const a = parseFloat(num1);
     const b = parseFloat(num2);
+    if (op === '√') {
+      if (isNaN(a)) {
+        setResult('Inserisci un numero valido');
+        return;
+      }
+      setResult(Math.sqrt(a).toString());
+      return;
+    }
     if (isNaN(a) || isNaN(b)) {
       setResult('Inserisci numeri validi');
       return;
@@ -24,6 +38,8 @@ const Calculator: React.FC = () => {
           return;
         }
         res = a / b; break;
+      case '^':
+        res = Math.pow(a, b); break;
       default: return;
     }
     setResult(res.toString());
@@ -31,7 +47,7 @@ const Calculator: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Calcolatrice Basilare</Text>
+      <Text style={styles.title}>Calcolatrice Avanzata</Text>
       <TextInput
         style={styles.input}
         keyboardType="numeric"
@@ -43,7 +59,7 @@ const Calculator: React.FC = () => {
       <TextInput
         style={styles.input}
         keyboardType="numeric"
-        placeholder="Numero 2"
+        placeholder="Numero 2 (opzionale per radice)"
         placeholderTextColor="#636e72"
         value={num2}
         onChangeText={setNum2}
@@ -60,6 +76,17 @@ const Calculator: React.FC = () => {
         </View>
         <View style={styles.button}>
           <Button color="#d63031" title="÷" onPress={() => handleOperation('/')} />
+        </View>
+      </View>
+      <View style={styles.buttonRow}>
+        <View style={styles.button}>
+          <Button color="#6C63FF" title="^" onPress={() => handleOperation('^')} />
+        </View>
+        <View style={styles.button}>
+          <Button color="#FF6F61" title="√" onPress={() => handleOperation('√')} />
+        </View>
+        <View style={styles.button}>
+          <Button color="#b2bec3" title="Pulisci" onPress={handleClear} />
         </View>
       </View>
       {result !== null && <Text style={styles.result}>Risultato: {result}</Text>}
