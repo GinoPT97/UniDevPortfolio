@@ -1,8 +1,13 @@
 package daoimplementation;
 
-import daointerface.ArticoliJDBC;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+
+import daointerface.ArticoliJDBC;
 import model.Articoli;
 import model.Cliente;
 
@@ -36,7 +41,7 @@ public class ArticoliImpl implements ArticoliJDBC {
     public ArrayList<Cliente> searchClient() throws SQLException {
         ArrayList<Cliente> clienti = new ArrayList<>();
         String query = """
-                SELECT 
+                SELECT
                     c.codcliente,
                     c.nome,
                     c.cognome,
@@ -63,11 +68,11 @@ public class ArticoliImpl implements ArticoliJDBC {
                         rs.getInt("ordini_nella_categoria"), // ordini -> numeroArticoli
                         (int)rs.getDouble("spesa_totale_categoria") // spesa -> codCliente
                 );
-                
+
                 clienti.add(new Cliente(
-                        rs.getString("codcliente"), 
-                        rs.getString("nome"), 
-                        rs.getString("cognome"), 
+                        rs.getString("codcliente"),
+                        rs.getString("nome"),
+                        rs.getString("cognome"),
                         null, null, null, null, null,
                         articoliInfo
                 ));

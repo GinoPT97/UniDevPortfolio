@@ -1,6 +1,10 @@
 package dbconfiguration;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,8 +30,8 @@ public class DBConfiguration {
     public int createTableCliente() throws ConnectionException {
         int result = -1;
 
-        if (connectionExists()) {
-            try (Statement statement = connection.createStatement()) {
+        if (connectionExists())
+			try (Statement statement = connection.createStatement()) {
                 if (!tableExists("cliente")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS cliente(
@@ -42,15 +46,13 @@ public class DBConfiguration {
                             """;
 
                     result = statement.executeUpdate(sql);
-                } else {
-                    logger.info("Table Cliente already exists!");
-                }
+                } else
+					logger.info("Table Cliente already exists!");
             } catch (SQLException ex) {
                 logger.log(Level.SEVERE, "SQL Exception in creation table Cliente: ", ex);
             }
-        } else {
-            throw new ConnectionException("A connection must exist!");
-        }
+		else
+			throw new ConnectionException("A connection must exist!");
 
         return result;
     }
@@ -58,8 +60,8 @@ public class DBConfiguration {
     public int createTableDipendente() throws ConnectionException {
         int result = -1;
 
-        if (connectionExists()) {
-            try (Statement statement = connection.createStatement()) {
+        if (connectionExists())
+			try (Statement statement = connection.createStatement()) {
                 if (!tableExists("dipendente")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS dipendente(
@@ -74,15 +76,13 @@ public class DBConfiguration {
                             """;
 
                     result = statement.executeUpdate(sql);
-                } else {
-                    logger.info("Table Dipendente already exists!");
-                }
+                } else
+					logger.info("Table Dipendente already exists!");
             } catch (SQLException ex) {
                 logger.log(Level.SEVERE, "SQL Exception in creation table Dipendente: ", ex);
             }
-        } else {
-            throw new ConnectionException("A connection must exist!");
-        }
+		else
+			throw new ConnectionException("A connection must exist!");
 
         return result;
     }
@@ -90,8 +90,8 @@ public class DBConfiguration {
     public int createTableTessera() throws ConnectionException {
         int result = -1;
 
-        if (connectionExists()) {
-            try (Statement statement = connection.createStatement()) {
+        if (connectionExists())
+			try (Statement statement = connection.createStatement()) {
                 if (!tableExists("tessera")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS tessera(
@@ -109,15 +109,13 @@ public class DBConfiguration {
                             """;
 
                     result = statement.executeUpdate(sql);
-                } else {
-                    logger.info("Table Tessera already exists!");
-                }
+                } else
+					logger.info("Table Tessera already exists!");
             } catch (SQLException ex) {
                 logger.log(Level.SEVERE, "SQL Exception in creation table Tessera: ", ex);
             }
-        } else {
-            throw new ConnectionException("A connection must exist!");
-        }
+		else
+			throw new ConnectionException("A connection must exist!");
 
         return result;
     }
@@ -125,8 +123,8 @@ public class DBConfiguration {
     public int createTableProdotto() throws ConnectionException {
         int result = -1;
 
-        if (connectionExists()) {
-            try (Statement statement = connection.createStatement()) {
+        if (connectionExists())
+			try (Statement statement = connection.createStatement()) {
                 if (!tableExists("prodotto")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS prodotto(
@@ -146,13 +144,13 @@ public class DBConfiguration {
                             """;
 
                     result = statement.executeUpdate(sql);
-                    
+
                     // Aggiungere il vincolo CHECK per le categorie
                     String constraintSql = """
                             ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
                                 -- FRUTTA: deve avere data di raccolta
                                 (categoria = 'FRUTTA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
-                                -- VERDURA: deve avere data di raccolta  
+                                -- VERDURA: deve avere data di raccolta
                                 (categoria = 'VERDURA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
                                 -- LATTICINI: devono avere data di mungitura del latte e data di produzione
                                 (categoria = 'LATTICINI' AND dataraccolta IS NULL AND datamungitura IS NOT NULL AND dataproduzione IS NOT NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
@@ -164,17 +162,15 @@ public class DBConfiguration {
                                 (categoria = 'CONFEZIONATI' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)
                             );
                             """;
-                    
+
                     statement.executeUpdate(constraintSql);
-                } else {
-                    logger.info("Table Prodotto already exists!");
-                }
+                } else
+					logger.info("Table Prodotto already exists!");
             } catch (SQLException ex) {
                 logger.log(Level.SEVERE, "SQL Exception in creation table Prodotto: ", ex);
             }
-        } else {
-            throw new ConnectionException("A connection must exist!");
-        }
+		else
+			throw new ConnectionException("A connection must exist!");
 
         return result;
     }
@@ -182,8 +178,8 @@ public class DBConfiguration {
     public int createTableOrdine() throws ConnectionException {
         int result = -1;
 
-        if (connectionExists()) {
-            try (Statement statement = connection.createStatement()) {
+        if (connectionExists())
+			try (Statement statement = connection.createStatement()) {
                 if (!tableExists("ordine")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS ordine(
@@ -204,15 +200,13 @@ public class DBConfiguration {
                             """;
 
                     result = statement.executeUpdate(sql);
-                } else {
-                    logger.info("Table Ordine already exists!");
-                }
+                } else
+					logger.info("Table Ordine already exists!");
             } catch (SQLException ex) {
                 logger.log(Level.SEVERE, "SQL Exception in creation table Ordine: ", ex);
             }
-        } else {
-            throw new ConnectionException("A connection must exist!");
-        }
+		else
+			throw new ConnectionException("A connection must exist!");
 
         return result;
     }
@@ -220,8 +214,8 @@ public class DBConfiguration {
     public int createTableArticoliOrdine() throws ConnectionException {
         int result = -1;
 
-        if (connectionExists()) {
-            try (Statement statement = connection.createStatement()) {
+        if (connectionExists())
+			try (Statement statement = connection.createStatement()) {
                 if (!tableExists("articoliordine")) {
                     String sql = """
                             CREATE TABLE IF NOT EXISTS articoliordine(
@@ -242,15 +236,13 @@ public class DBConfiguration {
                             """;
 
                     result = statement.executeUpdate(sql);
-                } else {
-                    logger.info("Table ArticoliOrdine already exists!");
-                }
+                } else
+					logger.info("Table ArticoliOrdine already exists!");
             } catch (SQLException ex) {
                 logger.log(Level.SEVERE, "SQL Exception in creation table ArticoliOrdine: ", ex);
             }
-        } else {
-            throw new ConnectionException("A connection must exist!");
-        }
+		else
+			throw new ConnectionException("A connection must exist!");
 
         return result;
     }
@@ -258,20 +250,19 @@ public class DBConfiguration {
     public int createTipologie() throws ConnectionException {
         int result = -1;
 
-        if (connectionExists()) {
-            try (Statement statement = connection.createStatement()) {
+        if (connectionExists())
+			try (Statement statement = connection.createStatement()) {
                 String sql = "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'tipologia') THEN CREATE TYPE TIPOLOGIA AS ENUM('FRUTTA','VERDURA','FARINACEI','LATTICINI','UOVA','CONFEZIONATI'); END IF; END $$;";
                 result = statement.executeUpdate(sql);
-                
+
                 // Creazione del tipo STATOTESSERA
                 String sqlStato = "DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'statotessera') THEN CREATE TYPE STATOTESSERA AS ENUM('ATTIVA','SOSPESA','SCADUTA'); END IF; END $$;";
                 result += statement.executeUpdate(sqlStato);
             } catch (SQLException ex) {
                 logger.log(Level.SEVERE, "SQL Exception in creation type tipologia: ", ex);
             }
-        } else {
-            throw new ConnectionException("A connection must exist!");
-        }
+		else
+			throw new ConnectionException("A connection must exist!");
 
         return result;
     }
@@ -279,9 +270,8 @@ public class DBConfiguration {
     public int formatTables() throws ConnectionException {
         int result = 0;
 
-        if (!connectionExists()) {
-            throw new ConnectionException("A connection must exist!");
-        }
+        if (!connectionExists())
+			throw new ConnectionException("A connection must exist!");
 
         String sql = """
             DO $$
@@ -324,9 +314,8 @@ public class DBConfiguration {
     public int populateDatabase() throws ConnectionException {
         int result = 0;
 
-        if (!connectionExists()) {
-            throw new ConnectionException("A connection must exist!");
-        }
+        if (!connectionExists())
+			throw new ConnectionException("A connection must exist!");
 
         try {
             // Verifica se il database è già popolato
@@ -418,7 +407,7 @@ public class DBConfiguration {
                 """;
             result += statement.executeUpdate(sqlProdotto);
 
-            // Inserimento ordini conformi a Popolazione.sql  
+            // Inserimento ordini conformi a Popolazione.sql
             String sqlOrdine = """
                 INSERT INTO ordine (prezzototale, dataacquisto, codcliente, coddipendente) VALUES
                 (7.70, '2023-12-01', 1, 1),
@@ -447,62 +436,62 @@ public class DBConfiguration {
                 (1, 1, 1.50, 3),  -- Mele rosse
                 (1, 4, 1.00, 2),  -- Carote
                 (1, 13, 1.20, 1), -- Spaghetti
-                
+
                 -- Ordine 2: Cliente 2
                 (2, 2, 1.20, 5),  -- Arance
                 (2, 8, 18.00, 1), -- Parmigiano
-                
+
                 -- Ordine 3: Cliente 3
                 (3, 7, 1.20, 2),  -- Latte fresco
                 (3, 15, 2.50, 6), -- Uova biologiche
                 (3, 17, 2.00, 4), -- Pomodori pelati
-                
+
                 -- Ordine 4: Cliente 4
                 (4, 5, 1.30, 3),  -- Zucchine
                 (4, 9, 2.50, 2),  -- Mozzarella
                 (4, 18, 3.50, 1), -- Tonno in scatola
-                
+
                 -- Ordine 5: Cliente 5
                 (5, 11, 1.50, 2), -- Pane integrale
                 (5, 16, 2.00, 4), -- Uova fresche
-                
+
                 -- Ordine 6: Cliente 6
                 (6, 3, 2.00, 2),  -- Banane
                 (6, 10, 0.90, 6), -- Yogurt
-                
+
                 -- Ordine 7: Cliente 7
                 (7, 6, 2.50, 1),  -- Pomodori freschi
                 (7, 19, 2.00, 3), -- Biscotti
-                
+
                 -- Ordine 8: Cliente 8
                 (8, 12, 2.50, 2), -- Pasta senza glutine
                 (8, 21, 5.00, 1), -- Miele
-                
+
                 -- Ordine 9: Cliente 1 (secondo ordine)
                 (9, 14, 0.80, 3), -- Farina
                 (9, 20, 3.00, 2), -- Cereali
-                
+
                 -- Ordine 10: Cliente 2 (secondo ordine)
                 (10, 1, 1.50, 4), -- Mele rosse
                 (10, 4, 1.00, 3), -- Carote
                 (10, 7, 1.20, 2), -- Latte fresco
-                
+
                 -- Ordine 11: Cliente 3 (secondo ordine)
                 (11, 8, 18.00, 1), -- Parmigiano
                 (11, 13, 1.20, 5), -- Spaghetti
-                
+
                 -- Ordine 12: Cliente 4 (secondo ordine)
                 (12, 2, 1.20, 6), -- Arance
                 (12, 15, 2.50, 4), -- Uova biologiche
-                
+
                 -- Ordine 13: Cliente 5 (secondo ordine)
                 (13, 17, 2.00, 3), -- Pomodori pelati
                 (13, 18, 3.50, 2), -- Tonno in scatola
-                
+
                 -- Ordine 14: Cliente 6 (secondo ordine)
                 (14, 5, 1.30, 2), -- Zucchine
                 (14, 9, 2.50, 3), -- Mozzarella
-                
+
                 -- Ordine 15: Cliente 7 (secondo ordine)
                 (15, 19, 2.00, 4), -- Biscotti
                 (15, 21, 5.00, 1)  -- Miele
@@ -516,46 +505,45 @@ public class DBConfiguration {
 
         return result;
     }
-    
+
     /**
      * Metodo per inizializzare completamente il database
      * Crea prima i tipi, poi le tabelle e infine popola con i dati
      */
     public int initializeCompleteDatabase() throws ConnectionException {
         int result = 0;
-        
-        if (!connectionExists()) {
-            throw new ConnectionException("A connection must exist!");
-        }
-        
+
+        if (!connectionExists())
+			throw new ConnectionException("A connection must exist!");
+
         try {
             // 1. Crea tipi ENUM
             result += createTipologie();
             logger.info("Tipi ENUM creati");
-            
+
             // 2. Crea tabelle nell'ordine corretto
             result += createTableCliente();
-            result += createTableTessera();  
+            result += createTableTessera();
             result += createTableDipendente();
             result += createTableProdotto();
             result += createTableOrdine();
             result += createTableArticoliOrdine();
             logger.info("Tabelle create");
-            
+
             // 3. Popola con dati di test
             result += populateDatabase();
             logger.info("Database popolato con dati di test");
-            
+
             logger.info("Inizializzazione database completata con successo!");
-            
+
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Errore durante l'inizializzazione del database: ", e);
             throw new ConnectionException("Errore durante l'inizializzazione: " + e.getMessage());
         }
-        
+
         return result;
     }
-    
+
     /**
      * Verifica se il database è già popolato contando i record nelle tabelle principali
      */
@@ -563,9 +551,8 @@ public class DBConfiguration {
         String sql = "SELECT COUNT(*) FROM cliente";
         try (Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery(sql)) {
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
+            if (rs.next())
+				return rs.getInt(1) > 0;
         }
         return false;
     }

@@ -1,11 +1,12 @@
 package daoimplementation;
 
-import daointerface.TesseraJDBC;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import daointerface.TesseraJDBC;
 import model.Cliente;
 import model.Tessera;
 
@@ -28,10 +29,10 @@ public class Tesseraimpl implements TesseraJDBC {
     @Override
     public boolean newtessera(String codcl) throws SQLException {
         if (codcl == null) return false; // Non può creare tessera senza codice cliente
-        
+
         newtesseraStmt.setDouble(1, 0.00);  // Tessera inizialmente con 0 punti
         newtesseraStmt.setInt(2, Integer.parseInt(codcl)); // Conversione String -> int per codcliente
-        
+
         return newtesseraStmt.executeUpdate() > 0;  // Restituisce true se è stata inserita una riga
     }
 
@@ -39,9 +40,8 @@ public class Tesseraimpl implements TesseraJDBC {
     public String getpuntit(String codt) throws SQLException {
         getpuntitStmt.setString(1, codt);
         try (ResultSet rs = getpuntitStmt.executeQuery()) {
-            if (rs.next()) {
-                return String.valueOf(rs.getDouble("numeropunti"));  // Converto il valore in String
-            }
+            if (rs.next())
+				return String.valueOf(rs.getDouble("numeropunti"));  // Converto il valore in String
         }
         return null;  // Se non ci sono risultati
     }
@@ -50,8 +50,8 @@ public class Tesseraimpl implements TesseraJDBC {
     public ArrayList<Tessera> alltessera() throws SQLException {
         ArrayList<Tessera> tessere = new ArrayList<>();
         try (ResultSet rs = alltesseraStmt.executeQuery()) {
-            while (rs.next()) {
-                // Creo e aggiungo una nuova Tessera all'elenco
+            while (rs.next())
+				// Creo e aggiungo una nuova Tessera all'elenco
                 tessere.add(new Tessera(
                         rs.getString("codtessera"),
                         rs.getDouble("numeropunti"),
@@ -70,7 +70,6 @@ public class Tesseraimpl implements TesseraJDBC {
                                 null
                         )
                 ));
-            }
         }
         return tessere;
     }

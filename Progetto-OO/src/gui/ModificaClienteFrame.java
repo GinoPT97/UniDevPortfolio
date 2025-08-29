@@ -1,10 +1,27 @@
 package gui;
 
-import controller.Controller;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.sql.SQLException;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+
+import controller.Controller;
 
 public class ModificaClienteFrame extends JFrame {
     private JPanel contentPane;
@@ -125,9 +142,8 @@ public class ModificaClienteFrame extends JFrame {
             valid = false;
             if (firstError == -1) firstError = 5;
         }
-        if (!valid && firstError != -1) {
-            fields[firstError].requestFocus();
-        }
+        if (!valid && firstError != -1)
+			fields[firstError].requestFocus();
         return valid;
     }
 

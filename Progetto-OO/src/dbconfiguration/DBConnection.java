@@ -37,14 +37,13 @@ public final class DBConnection {
     }
 
     public void close() {
-        if (connection != null) {
-            try {
+        if (connection != null)
+			try {
                 connection.close();
                 LOGGER.info("Database connection closed");
             } catch (SQLException e) {
                 LOGGER.log(Level.WARNING, "Error closing database connection", e);
             }
-        }
     }
 
     private static class Holder {

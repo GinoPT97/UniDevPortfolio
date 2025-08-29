@@ -1,12 +1,28 @@
 package gui;
 
-import controller.Controller;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.sql.SQLException;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+
+import controller.Controller;
 
 public class VisioneProdottiFrame extends JFrame {
     private JTable table;
@@ -108,10 +124,10 @@ public class VisioneProdottiFrame extends JFrame {
         String query = searchtf.getText().trim();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(c.prodModel);
         table.setRowSorter(sorter);
-        if (query.isEmpty()) {
-            sorter.setRowFilter(null);
-        } else {
-            try {
+        if (query.isEmpty())
+			sorter.setRowFilter(null);
+		else
+			try {
                 RowFilter<DefaultTableModel, Object> filtro = creaFiltro(query);
                 sorter.setRowFilter(filtro);
                 if (table.getRowCount() == 0) {
@@ -121,12 +137,11 @@ public class VisioneProdottiFrame extends JFrame {
             } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(null, "Errore nella ricerca: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
             }
-        }
     }
 
     private RowFilter<DefaultTableModel, Object> creaFiltro(String query) {
         String[] parole = query.split("\\s+");
-        return new RowFilter<DefaultTableModel, Object>() {
+        return new RowFilter<>() {
             @Override
             public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
                 for (String parola : parole) {
@@ -147,8 +162,8 @@ public class VisioneProdottiFrame extends JFrame {
 
     private void aggiornaProdotto(Controller c) {
         int i = table.getSelectedRow();
-        if (i >= 0) {
-            try {
+        if (i >= 0)
+			try {
                 String codice = table.getValueAt(i, 0).toString();
                 String nome = table.getValueAt(i, 1).toString();
                 String descrizione = table.getValueAt(i, 2).toString();
@@ -163,9 +178,8 @@ public class VisioneProdottiFrame extends JFrame {
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "Errore nel formato dei dati: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
-        }
+		else
+			JOptionPane.showMessageDialog(null, "Scegli una riga da modificare", "Attenzione", JOptionPane.WARNING_MESSAGE);
     }
 }
 

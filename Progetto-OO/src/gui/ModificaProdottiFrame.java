@@ -1,10 +1,32 @@
 package gui;
 
-import controller.Controller;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ItemEvent;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+
+import controller.Controller;
 
 public class ModificaProdottiFrame extends JFrame {
     // Costanti per le categorie
@@ -14,7 +36,7 @@ public class ModificaProdottiFrame extends JFrame {
     private static final String LATTICINI = "LATTICINI";
     private static final String UOVA = "UOVA";
     private static final String CONFEZIONATI = "CONFEZIONATI";
-    
+
     private String cod;
     private JTextField nometf;
     private JTextField provtf;
@@ -126,9 +148,8 @@ public class ModificaProdottiFrame extends JFrame {
             public void keyTyped(java.awt.event.KeyEvent e) {
                 String text = descta.getText();
                 if (text.equals("Inserisci la descrizione")) text = "";
-                if (text.length() >= 500 && descta.getSelectedText() == null) {
-                    e.consume();
-                }
+                if (text.length() >= 500 && descta.getSelectedText() == null)
+					e.consume();
             }
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
@@ -221,9 +242,8 @@ public class ModificaProdottiFrame extends JFrame {
         categoriapanel.add(categoriacb);
         // Listener centralizzato solo qui
         categoriacb.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                aggiornaCampiCategoria((String) categoriacb.getSelectedItem());
-            }
+            if (e.getStateChange() == ItemEvent.SELECTED)
+				aggiornaCampiCategoria((String) categoriacb.getSelectedItem());
         });
 
         // Pannello dei bottoni separato e distanziato
@@ -260,9 +280,8 @@ public class ModificaProdottiFrame extends JFrame {
         JLabel label = new JLabel(labelText);
         panel.add(label);
         boolean isTextField = inputComponent instanceof JTextField;
-        if (isTextField) {
-            ((JTextField) inputComponent).setEditable(true);
-        }
+        if (isTextField)
+			((JTextField) inputComponent).setEditable(true);
         panel.add(inputComponent);
         return panel;
     }
@@ -271,11 +290,10 @@ public class ModificaProdottiFrame extends JFrame {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel label = new JLabel(labelText);
         panel.add(label);
-        if (inputComponent instanceof JTextField textField) {
-            textField.setEditable(editable);
-        } else if (inputComponent instanceof JCheckBox checkBox) {
-            checkBox.setEnabled(editable);
-        }
+        if (inputComponent instanceof JTextField textField)
+			textField.setEditable(editable);
+		else if (inputComponent instanceof JCheckBox checkBox)
+			checkBox.setEnabled(editable);
         panel.add(inputComponent);
         return panel;
     }
@@ -289,7 +307,7 @@ public class ModificaProdottiFrame extends JFrame {
         return button;
     }
 
-    public void viewprod(String codProdotto, String nome, String descrizione, String luogoProvenienza, 
+    public void viewprod(String codProdotto, String nome, String descrizione, String luogoProvenienza,
                         double prezzo, int scorta, boolean glutine, String categoria) {
         cod = codProdotto;
         nometf.setText(nome);
@@ -332,17 +350,27 @@ public class ModificaProdottiFrame extends JFrame {
         glutcb.setEnabled(false);
 
         if (categoria == null) return;
-        if (categoria.equals(FRUTTA) || categoria.equals(VERDURA)) {
-            racctf.setEnabled(true);
-        } else if (categoria.equals(FARINACEI)) {
-            glutcb.setEnabled(true);
-        } else if (categoria.equals(LATTICINI)) {
-            mungtf.setEnabled(true);
-            prodtf.setEnabled(true);
-            scadtf.setEnabled(true);
-        } else if (categoria.equals(UOVA) || categoria.equals(CONFEZIONATI)) {
-            scadtf.setEnabled(true);
-        }
+        switch (categoria) {
+		case FRUTTA:
+		case VERDURA:
+			racctf.setEnabled(true);
+			break;
+		case FARINACEI:
+			glutcb.setEnabled(true);
+			break;
+		case LATTICINI:
+			mungtf.setEnabled(true);
+			prodtf.setEnabled(true);
+			scadtf.setEnabled(true);
+			break;
+		case UOVA:
+		case CONFEZIONATI:
+			scadtf.setEnabled(true);
+			break;
+		case null:
+		default:
+			break;
+		}
     }
 
     private boolean validateFields() {
@@ -368,15 +396,14 @@ public class ModificaProdottiFrame extends JFrame {
         }
         // Prezzo numerico
         String prezzo = prezzotf.getText().trim();
-        if (!prezzo.isEmpty()) {
-            try {
+        if (!prezzo.isEmpty())
+			try {
                 Double.parseDouble(prezzo);
             } catch (NumberFormatException ex) {
                 prezzotf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
                 valid = false;
                 if (firstError == -1) firstError = 2;
             }
-        }
         // Scorta numerica
         String scorta = scortatf.getText().trim();
         if (!scorta.isEmpty() && !scorta.matches("^\\d+$")) {
@@ -396,11 +423,10 @@ public class ModificaProdottiFrame extends JFrame {
             }
         }
         // Focus sul primo errore
-        if (!valid && firstError != -1) {
-            if (firstError < obbligatori.length) obbligatori[firstError].requestFocus();
+        if (!valid && firstError != -1)
+			if (firstError < obbligatori.length) obbligatori[firstError].requestFocus();
             else if (firstError == obbligatori.length) descta.requestFocus();
             else dateFields[firstError - obbligatori.length - 1].requestFocus();
-        }
         return valid;
     }
 
@@ -455,15 +481,12 @@ public class ModificaProdottiFrame extends JFrame {
                 java.time.LocalDate dataRaccolta = null;
                 java.time.LocalDate dataMungitura = null;
                 java.time.LocalDate dataScadenza = null;
-                if ((FRUTTA.equals(categoria) || VERDURA.equals(categoria)) && !racctf.getText().trim().isEmpty()) {
-                    dataRaccolta = java.time.LocalDate.parse(racctf.getText().trim(), formatter);
-                }
-                if (LATTICINI.equals(categoria) && !mungtf.getText().trim().isEmpty()) {
-                    dataMungitura = java.time.LocalDate.parse(mungtf.getText().trim(), formatter);
-                }
-                if ((UOVA.equals(categoria) || CONFEZIONATI.equals(categoria) || LATTICINI.equals(categoria)) && !scadtf.getText().trim().isEmpty()) {
-                    dataScadenza = java.time.LocalDate.parse(scadtf.getText().trim(), formatter);
-                }
+                if ((FRUTTA.equals(categoria) || VERDURA.equals(categoria)) && !racctf.getText().trim().isEmpty())
+					dataRaccolta = java.time.LocalDate.parse(racctf.getText().trim(), formatter);
+                if (LATTICINI.equals(categoria) && !mungtf.getText().trim().isEmpty())
+					dataMungitura = java.time.LocalDate.parse(mungtf.getText().trim(), formatter);
+                if ((UOVA.equals(categoria) || CONFEZIONATI.equals(categoria) || LATTICINI.equals(categoria)) && !scadtf.getText().trim().isEmpty())
+					dataScadenza = java.time.LocalDate.parse(scadtf.getText().trim(), formatter);
                 c.upprod(
                         cod,
                         nometf.getText(),

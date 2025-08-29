@@ -1,22 +1,38 @@
 package gui;
 
-import controller.Controller;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import controller.Controller;
+
 public class RicercaFrame extends JFrame {
     private static final String TUTTI = "Tutti";
-    
+
     // Array delle categorie e punti per evitare ridondanza
     private static final String[] CATEGORIE = {"FRUTTA", "VERDURA", "FARINACEI", "LATTICINI", "UOVA", "CONFEZIONATI", TUTTI};
     private static final String[] OPZIONI_PUNTI = {"0-500", "501-1000", "1001-5000", ">5000", TUTTI};
-    
+
     private JTable searchtable;
     private JComboBox<String> categoriacb;
     private final DefaultTableModel searchmodel = new DefaultTableModel();
@@ -134,7 +150,7 @@ public class RicercaFrame extends JFrame {
         // Gestione del click sul pulsante "Indietro"
         backbutton.addActionListener(e -> c.returnToLastFrame());
     }
-    
+
     // Applica i filtri alla tabella in base alle selezioni dei ComboBox
     private void applicaFiltri() {
         String categoriaSelezionata = (String) categoriacb.getSelectedItem();
@@ -143,34 +159,31 @@ public class RicercaFrame extends JFrame {
         List<RowFilter<Object, Object>> filters = new ArrayList<>();
 
         // Filtro categoria (colonna 3)
-        if (!TUTTI.equals(categoriaSelezionata)) {
-            filters.add(RowFilter.regexFilter(categoriaSelezionata, 3));
-        }
+        if (!TUTTI.equals(categoriaSelezionata))
+			filters.add(RowFilter.regexFilter(categoriaSelezionata, 3));
 
         // Filtro punti basato sull'intervallo selezionato (colonna 4 - Punti Categoria)
         if (!TUTTI.equals(intervalloPunti)) {
             RowFilter<Object, Object> puntiFilter = creaPuntiFilter(intervalloPunti);
-            if (puntiFilter != null) {
-                filters.add(puntiFilter);
-            }
+            if (puntiFilter != null)
+				filters.add(puntiFilter);
         }
 
         // Applica i filtri alla tabella
         try {
             TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(searchmodel);
-            if (!filters.isEmpty()) {
-                sorter.setRowFilter(RowFilter.andFilter(filters));
-            } else {
-                sorter.setRowFilter(null);
-            }
+            if (!filters.isEmpty())
+				sorter.setRowFilter(RowFilter.andFilter(filters));
+			else
+				sorter.setRowFilter(null);
             searchtable.setRowSorter(sorter);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                "Errore nell'applicazione dei filtri: " + ex.getMessage(), 
+            JOptionPane.showMessageDialog(this,
+                "Errore nell'applicazione dei filtri: " + ex.getMessage(),
                 "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     //Crea il filtro per i punti in base all'intervallo selezionato
     private RowFilter<Object, Object> creaPuntiFilter(String intervalloPunti) {
         return switch (intervalloPunti) {

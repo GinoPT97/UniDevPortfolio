@@ -1,11 +1,12 @@
 package daoimplementation;
 
-import daointerface.ProdottoJDBC;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import daointerface.ProdottoJDBC;
 import model.Prodotto;
 
 public class ProdottoImpl implements ProdottoJDBC {
@@ -70,9 +71,8 @@ public class ProdottoImpl implements ProdottoJDBC {
         initStatements(); // Inizializza le query preparate
         ArrayList<Prodotto> prodotti = new ArrayList<>();
         try (ResultSet rs = getAllProdottiStmt.executeQuery()) {
-            while (rs.next()) {
-                prodotti.add(createProdottoFromResultSet(rs));
-            }
+            while (rs.next())
+				prodotti.add(createProdottoFromResultSet(rs));
         }
         closeStatements();
         return prodotti;
@@ -86,9 +86,8 @@ public class ProdottoImpl implements ProdottoJDBC {
         try (PreparedStatement getCategoriaStmt = connection.prepareStatement(query)) {
             getCategoriaStmt.setString(1, categoria);
             try (ResultSet rs = getCategoriaStmt.executeQuery()) {
-                while (rs.next()) {
-                    prodottiCategoria.add(createProdottoFromResultSet(rs));
-                }
+                while (rs.next())
+					prodottiCategoria.add(createProdottoFromResultSet(rs));
             }
         }
         return prodottiCategoria;
@@ -160,15 +159,12 @@ public class ProdottoImpl implements ProdottoJDBC {
 
     // Metodo per chiudere le dichiarazioni preparate
     private void closeStatements() throws SQLException {
-        if (setNewProdottoStmt != null) {
-            setNewProdottoStmt.close();
-        }
-        if (getAllProdottiStmt != null) {
-            getAllProdottiStmt.close();
-        }
-        if (updateProdottoStmt != null) {
-            updateProdottoStmt.close();
-        }
+        if (setNewProdottoStmt != null)
+			setNewProdottoStmt.close();
+        if (getAllProdottiStmt != null)
+			getAllProdottiStmt.close();
+        if (updateProdottoStmt != null)
+			updateProdottoStmt.close();
     }
 }
 

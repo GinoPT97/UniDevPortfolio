@@ -1,10 +1,32 @@
 package gui;
 
-import controller.Controller;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.sql.SQLException;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+
+import controller.Controller;
 
 public class NuovoProdottoFrame extends JFrame {
     // Costanti per le categorie
@@ -122,9 +144,8 @@ public class NuovoProdottoFrame extends JFrame {
             public void keyTyped(java.awt.event.KeyEvent e) {
                 String text = descArea.getText();
                 if (text.equals("Inserisci la descrizione")) text = "";
-                if (text.length() >= 500 && descArea.getSelectedText() == null) {
-                    e.consume();
-                }
+                if (text.length() >= 500 && descArea.getSelectedText() == null)
+					e.consume();
             }
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
@@ -186,7 +207,7 @@ public class NuovoProdottoFrame extends JFrame {
         glutLabel.setFont(labelFont);
         elempanel.add(glutLabel, gbc);
         gbc.gridx = 1;
-        ((JCheckBox)fields[7]).setFont(fieldFont);
+        fields[7].setFont(fieldFont);
         elempanel.add(fields[7], gbc);
 
         row++;
@@ -254,11 +275,10 @@ public class NuovoProdottoFrame extends JFrame {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel label = new JLabel(labelText);
         panel.add(label);
-        if (inputComponent instanceof JTextField textField) {
-            textField.setEditable(editable);
-        } else if (inputComponent instanceof JCheckBox checkBox) {
-            checkBox.setEnabled(editable);
-        }
+        if (inputComponent instanceof JTextField textField)
+			textField.setEditable(editable);
+		else if (inputComponent instanceof JCheckBox checkBox)
+			checkBox.setEnabled(editable);
         panel.add(inputComponent);
         return panel;
     }
@@ -274,20 +294,20 @@ public class NuovoProdottoFrame extends JFrame {
 
 
     public void clean() {
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i] instanceof JTextField) {
-                JTextField tf = (JTextField) fields[i];
+        for (JComponent field : fields) {
+            if (field instanceof JTextField) {
+                JTextField tf = (JTextField) field;
                 tf.setText("");
                 tf.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
             }
-            if (fields[i] instanceof JTextArea) {
-                JTextArea ta = (JTextArea) fields[i];
+            if (field instanceof JTextArea) {
+                JTextArea ta = (JTextArea) field;
                 ta.setForeground(Color.GRAY);
                 ta.setText("Inserisci la descrizione");
                 ta.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextArea.border"));
             }
-            if (fields[i] instanceof JCheckBox) {
-                JCheckBox cb = (JCheckBox) fields[i];
+            if (field instanceof JCheckBox) {
+                JCheckBox cb = (JCheckBox) field;
                 cb.setSelected(false);
             }
         }
@@ -299,8 +319,8 @@ public class NuovoProdottoFrame extends JFrame {
         int firstError = -1;
         // Campi obbligatori: nome, descrizione, provenienza, prezzo, scorta
         int[] obbligatori = {0, 1, 2, 3, 9};
-        for (int idx : obbligatori) {
-            if (fields[idx] instanceof JTextField tf) {
+        for (int idx : obbligatori)
+			if (fields[idx] instanceof JTextField tf) {
                 String text = tf.getText().trim();
                 tf.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
                 if (text.isEmpty()) {
@@ -317,29 +337,27 @@ public class NuovoProdottoFrame extends JFrame {
                     if (firstError == -1) firstError = idx;
                 }
             }
-        }
         // Prezzo numerico
         String prezzo = ((JTextField)fields[3]).getText().trim();
-        if (!prezzo.isEmpty()) {
-            try {
+        if (!prezzo.isEmpty())
+			try {
                 Double.parseDouble(prezzo);
             } catch (NumberFormatException ex) {
-                ((JTextField)fields[3]).setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+                fields[3].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
                 valid = false;
                 if (firstError == -1) firstError = 3;
             }
-        }
         // Scorta numerica
         String scorta = ((JTextField)fields[9]).getText().trim();
         if (!scorta.isEmpty() && !scorta.matches("^\\d+$")) {
-            ((JTextField)fields[9]).setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+            fields[9].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
             valid = false;
             if (firstError == -1) firstError = 9;
         }
         // Date: formato yyyy-MM-dd se non vuote
         int[] dateIdx = {4, 5, 6, 8};
-        for (int idx : dateIdx) {
-            if (fields[idx] instanceof JTextField tf) {
+        for (int idx : dateIdx)
+			if (fields[idx] instanceof JTextField tf) {
                 String text = tf.getText().trim();
                 if (!text.isEmpty() && !text.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
                     tf.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
@@ -347,7 +365,6 @@ public class NuovoProdottoFrame extends JFrame {
                     if (firstError == -1) firstError = idx;
                 }
             }
-        }
         if (!valid && firstError != -1) {
             if (fields[firstError] instanceof JTextField tf) tf.requestFocus();
             if (fields[firstError] instanceof JTextArea ta) ta.requestFocus();
@@ -370,18 +387,14 @@ public class NuovoProdottoFrame extends JFrame {
                 java.time.LocalDate dataMungitura = null;
                 java.time.LocalDate dataScadenza = null;
                 java.time.LocalDate dataProduzione = null;
-                if ((categoria.equals(FRUTTA) || categoria.equals(VERDURA)) && !((JTextField)fields[4]).getText().trim().isEmpty()) {
-                    dataRaccolta = java.time.LocalDate.parse(((JTextField)fields[4]).getText().trim(), formatter);
-                }
-                if (categoria.equals(LATTICINI) && !((JTextField)fields[5]).getText().trim().isEmpty()) {
-                    dataMungitura = java.time.LocalDate.parse(((JTextField)fields[5]).getText().trim(), formatter);
-                }
-                if ((categoria.equals(UOVA) || categoria.equals(CONFEZIONATI) || categoria.equals(LATTICINI)) && !((JTextField)fields[8]).getText().trim().isEmpty()) {
-                    dataScadenza = java.time.LocalDate.parse(((JTextField)fields[8]).getText().trim(), formatter);
-                }
-                if (categoria.equals(LATTICINI) && !((JTextField)fields[6]).getText().trim().isEmpty()) {
-                    dataProduzione = java.time.LocalDate.parse(((JTextField)fields[6]).getText().trim(), formatter);
-                }
+                if ((categoria.equals(FRUTTA) || categoria.equals(VERDURA)) && !((JTextField)fields[4]).getText().trim().isEmpty())
+					dataRaccolta = java.time.LocalDate.parse(((JTextField)fields[4]).getText().trim(), formatter);
+                if (categoria.equals(LATTICINI) && !((JTextField)fields[5]).getText().trim().isEmpty())
+					dataMungitura = java.time.LocalDate.parse(((JTextField)fields[5]).getText().trim(), formatter);
+                if ((categoria.equals(UOVA) || categoria.equals(CONFEZIONATI) || categoria.equals(LATTICINI)) && !((JTextField)fields[8]).getText().trim().isEmpty())
+					dataScadenza = java.time.LocalDate.parse(((JTextField)fields[8]).getText().trim(), formatter);
+                if (categoria.equals(LATTICINI) && !((JTextField)fields[6]).getText().trim().isEmpty())
+					dataProduzione = java.time.LocalDate.parse(((JTextField)fields[6]).getText().trim(), formatter);
                 c.newprod(
                         "",
                         ((JTextField)fields[0]).getText(),
@@ -404,31 +417,40 @@ public class NuovoProdottoFrame extends JFrame {
         });
         // Gestione dinamica della selezione categoria: blocco/sblocco campi
         categoriacb.addItemListener(e -> {
-            if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-                aggiornaCampiCategoria((String) categoriacb.getSelectedItem());
-            }
+            if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED)
+				aggiornaCampiCategoria((String) categoriacb.getSelectedItem());
         });
     }
 
     // Metodo per abilitare/disabilitare i campi in base alla categoria
     private void aggiornaCampiCategoria(String categoria) {
-        ((JTextField)fields[4]).setEnabled(false); // Data Raccolta
-        ((JTextField)fields[5]).setEnabled(false); // Data Mungitura
-        ((JTextField)fields[6]).setEnabled(false); // Data Produzione
-        ((JTextField)fields[8]).setEnabled(false); // Data Scadenza
+        fields[4].setEnabled(false); // Data Raccolta
+        fields[5].setEnabled(false); // Data Mungitura
+        fields[6].setEnabled(false); // Data Produzione
+        fields[8].setEnabled(false); // Data Scadenza
         ((JCheckBox)fields[7]).setEnabled(false); // Glutine
 
         if (categoria == null) return;
-        if (categoria.equals(FRUTTA) || categoria.equals(VERDURA)) {
-            ((JTextField)fields[4]).setEnabled(true);
-        } else if (categoria.equals(FARINACEI)) {
-            ((JCheckBox)fields[7]).setEnabled(true);
-        } else if (categoria.equals(LATTICINI)) {
-            ((JTextField)fields[5]).setEnabled(true);
-            ((JTextField)fields[6]).setEnabled(true);
-            ((JTextField)fields[8]).setEnabled(true);
-        } else if (categoria.equals(UOVA) || categoria.equals(CONFEZIONATI)) {
-            ((JTextField)fields[8]).setEnabled(true);
-        }
+        switch (categoria) {
+		case FRUTTA:
+		case VERDURA:
+			fields[4].setEnabled(true);
+			break;
+		case FARINACEI:
+			((JCheckBox)fields[7]).setEnabled(true);
+			break;
+		case LATTICINI:
+			fields[5].setEnabled(true);
+			fields[6].setEnabled(true);
+			fields[8].setEnabled(true);
+			break;
+		case UOVA:
+		case CONFEZIONATI:
+			fields[8].setEnabled(true);
+			break;
+		case null:
+		default:
+			break;
+		}
     }
 }

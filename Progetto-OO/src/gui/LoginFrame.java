@@ -1,12 +1,29 @@
 package gui;
 
-import controller.Controller;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
-import javax.swing.*;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+
+import controller.Controller;
 
 public class LoginFrame extends JFrame {
     private JPanel contentPane;
@@ -96,9 +113,8 @@ public class LoginFrame extends JFrame {
                     c.iddip = id;
                     c.logtoutente(2);
                     showMessage("Accesso Dipendente");
-                } else {
-                    showMessage("Id errato!");
-                }
+                } else
+					showMessage("Id errato!");
                 idtf.setText("");
             } catch (SQLException e1) {
                 showMessage("Errore!\nTipo di errore : " + e1);
@@ -110,9 +126,8 @@ public class LoginFrame extends JFrame {
         idtf.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    logbutt.doClick();
-                }
+                if (e.getKeyCode() == KeyEvent.VK_ENTER)
+					logbutt.doClick();
             }
         });
     }

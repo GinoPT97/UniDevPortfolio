@@ -1,11 +1,16 @@
 package daoimplementation;
 
-import daointerface.OrdiniJDBC;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import daointerface.OrdiniJDBC;
 import model.Ordine;
 
 public class OrdiniImpl implements OrdiniJDBC {
@@ -34,15 +39,14 @@ public class OrdiniImpl implements OrdiniJDBC {
     public ArrayList<Ordine> getallordini() throws SQLException {
         ArrayList<Ordine> ordiniList = new ArrayList<>();
         try (ResultSet rs = getAllOrdiniStmt.executeQuery()) {
-            while (rs.next()) {
-                ordiniList.add(new Ordine(
+            while (rs.next())
+				ordiniList.add(new Ordine(
                         rs.getString("codordine"),
                         rs.getDate("dataacquisto"),
                         rs.getDouble("prezzototale"),
                         rs.getInt("codcliente"),
                         rs.getInt("coddipendente")
                 ));
-            }
         }
         return ordiniList;
     }
@@ -67,9 +71,8 @@ public class OrdiniImpl implements OrdiniJDBC {
         String query = "SELECT currval(pg_get_serial_sequence('ordine', 'codordine')) AS codordine";
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
-            if (rs.next()) {
-                return rs.getString("codordine");
-            }
+            if (rs.next())
+				return rs.getString("codordine");
         }
         return null;
     }

@@ -3,6 +3,7 @@ package daointerface;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
+
 import model.Dipendente;
 
 public interface DipendenteJDBC {

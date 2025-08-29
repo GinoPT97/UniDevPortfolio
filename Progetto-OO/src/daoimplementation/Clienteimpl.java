@@ -1,13 +1,18 @@
 package daoimplementation;
 
-import daointerface.ClienteJDBC;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+
+import daointerface.ClienteJDBC;
 import model.Cliente;
 import model.Tessera;
 
 public class Clienteimpl implements ClienteJDBC {
-    private static final String CODCLIENTE = "codcliente"; 
+    private static final String CODCLIENTE = "codcliente";
     private final PreparedStatement setNewCt;
     private final PreparedStatement updateCl;
     private final Statement getAllCt;
@@ -36,7 +41,7 @@ public class Clienteimpl implements ClienteJDBC {
                        "FROM cliente c " +
                        "LEFT JOIN tessera t ON c.codcliente = t.codcliente " +
                        "ORDER BY c.cognome DESC";
-        
+
         try (ResultSet rs = getAllCt.executeQuery(query)) {
             while (rs.next()) {
                 Tessera tessera = null;
@@ -72,9 +77,8 @@ public class Clienteimpl implements ClienteJDBC {
     @Override
     public String getIdCt(String codicefiscale) throws SQLException {
         try (ResultSet rs = idCl.executeQuery("SELECT " + CODCLIENTE + " FROM cliente WHERE codicefiscale = '" + codicefiscale + "'")) {
-            if (rs.next()) {
-                return rs.getString(CODCLIENTE); // Use constant
-            }
+            if (rs.next())
+				return rs.getString(CODCLIENTE); // Use constant
         }
         return null;
     }

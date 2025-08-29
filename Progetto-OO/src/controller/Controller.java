@@ -1,11 +1,7 @@
 package controller;
 
-import daoimplementation.*;
-import daointerface.*;
-import dbconfiguration.DBConfiguration;
-import dbconfiguration.DBConnection;
-import gui.*;
-import java.awt.*;
+import java.awt.EventQueue;
+import java.awt.Frame;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
@@ -14,11 +10,48 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.swing.table.DefaultTableModel;
-import model.*;
+
+import daoimplementation.ArticoliImpl;
+import daoimplementation.Clienteimpl;
+import daoimplementation.DipendenteImpl;
+import daoimplementation.OrdiniImpl;
+import daoimplementation.ProdottoImpl;
+import daoimplementation.Tesseraimpl;
+import daointerface.ArticoliJDBC;
+import daointerface.ClienteJDBC;
+import daointerface.DipendenteJDBC;
+import daointerface.OrdiniJDBC;
+import daointerface.ProdottoJDBC;
+import daointerface.TesseraJDBC;
+import dbconfiguration.DBConfiguration;
+import dbconfiguration.DBConnection;
+import gui.AdminFrame;
+import gui.CarrelloFrame;
+import gui.DipendenteFrame;
+import gui.LoginFrame;
+import gui.ModificaClienteFrame;
+import gui.ModificaDipendenteFrame;
+import gui.ModificaProdottiFrame;
+import gui.NuovoClienteFrame;
+import gui.NuovoDipendenteFrame;
+import gui.NuovoProdottoFrame;
+import gui.RicercaFrame;
+import gui.StatisticheDipendentiFrame;
+import gui.VisioneClienteFrame;
+import gui.VisioneDipendentiFrame;
+import gui.VisioneOrdineFrame;
+import gui.VisioneProdottiFrame;
+import model.Articoli;
+import model.Cliente;
+import model.Dipendente;
+import model.Ordine;
+import model.Prodotto;
+import model.Tessera;
 
 public class Controller {
-    
+
     // Esempi di istanze modello per riferimento (non usati direttamente nei metodi)
     private Cliente cliente;
     private Dipendente dipendente;
@@ -31,35 +64,35 @@ public class Controller {
     private static final String[] DIPENDENTE_COLUMNS = {"Id", "Nome", "Cognome", "Codice fiscale", "Email", "Indirizzo", "Telefono"};
     private static final String[] PRODOTTO_COLUMNS = {"Id", "Nome", "Descrizione", "Prezzo", "Provenienza", "Raccolta", "Mungitura", "Glutine", "Scadenza", "Produzione", "Categoria", "Scorta"};
     private static final String[] ORDINE_COLUMNS = {"Id Ordine", "Data", "Prezzo Totale", "Cliente", "Dipendente"};
-    
+
     // Costanti applicazione
     private static final String GLUTINE_SI = "Si";
     private static final String GLUTINE_NO = "No";
     private static final String NULL_VALUE = "N/A";
-    
+
     // Frame references
     public ModificaProdottiFrame modprodf;
     public ModificaDipendenteFrame updipf;
     public ModificaClienteFrame upclf;
-    
+
     // Classe helper per creare TableModel non editabili
     private static class ReadOnlyTableModel extends DefaultTableModel {
         public ReadOnlyTableModel(Object[] columnNames, int rowCount) {
             super(columnNames, rowCount);
         }
-        
+
         @Override
         public boolean isCellEditable(int row, int column) {
             return false; // Nessuna cella è editabile
         }
     }
-    
+
     // Table models - Non editabili
     public DefaultTableModel clienteModel = new ReadOnlyTableModel(CLIENTE_COLUMNS, 0);
     public DefaultTableModel dipModel = new ReadOnlyTableModel(DIPENDENTE_COLUMNS, 0);
     public DefaultTableModel prodModel = new ReadOnlyTableModel(PRODOTTO_COLUMNS, 0);
     public DefaultTableModel ordModel = new ReadOnlyTableModel(ORDINE_COLUMNS, 0);
-    
+
     public String iddip;
     // Dichiarazione dei frame
     private final LoginFrame logf;
@@ -124,14 +157,11 @@ public class Controller {
 
     // Gestisce la visibilità dei frame
     private void setVisibleFrame(Frame toShow, Frame... toHide) {
-        for (Frame frame : toHide) {
-            if (frame != null) {
-                frame.setVisible(false);
-            }
-        }
-        if (toShow != null) {
-            toShow.setVisible(true);
-        }
+        for (Frame frame : toHide)
+			if (frame != null)
+				frame.setVisible(false);
+        if (toShow != null)
+			toShow.setVisible(true);
     }
 
     // Cambia il frame visibile in base al tipo di logout
@@ -226,46 +256,43 @@ public class Controller {
         model.setRowCount(0);
         items.forEach(item -> model.addRow(mapper.apply(item)));
     }
-    
+
     // Metodo di utilità per aggiornare righe nel modello della tabella
     private void updateTableRow(DefaultTableModel model, String searchValue, Object[] newValues) {
-        for (int i = 0; i < model.getRowCount(); i++) {
-            if (model.getValueAt(i, 0).equals(searchValue)) {
-                for (int j = 0; j < newValues.length; j++) {
-                    model.setValueAt(newValues[j], i, j);
-                }
+        for (int i = 0; i < model.getRowCount(); i++)
+			if (model.getValueAt(i, 0).equals(searchValue)) {
+                for (int j = 0; j < newValues.length; j++)
+					model.setValueAt(newValues[j], i, j);
                 break;
             }
-        }
     }
-    
+
     // Metodo di utilità per creare array di oggetti con checkNull
     private Object[] createRowData(Object... values) {
         Object[] result = new Object[values.length];
-        for (int i = 0; i < values.length; i++) {
-            result[i] = checkNull(values[i]);
-        }
+        for (int i = 0; i < values.length; i++)
+			result[i] = checkNull(values[i]);
         return result;
     }
-    
+
     // Metodo di utilità per formattare lo status del glutine
     private String formatGlutineStatus(boolean glutine) {
         return glutine ? GLUTINE_SI : GLUTINE_NO;
     }
-    
+
     public void addToCarrelloModel(Object[] articleData) {
         ordModel.addRow(articleData);
     }
-    
+
     public void clearCarrelloModel() {
         ordModel.setRowCount(0);
     }
-    
+
     // Metodo di supporto per verificare se un campo è nullo o vuoto
     private String checkNull(Object value) {
         return (value == null || value.toString().trim().isEmpty()) ? NULL_VALUE : value.toString();
     }
-    
+
     // Metodo per connettersi al database
     public void connect() throws SQLException {
         try {
@@ -295,12 +322,11 @@ public class Controller {
     public boolean newdip(String codDipendente, String nome, String cognome, String codFis, String email, String indirizzo, String telefono) throws SQLException {
         dipendente = new Dipendente(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
         boolean success = dpjdbc.setNewDip(dipendente);
-        
+
         // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
-        if (success) {
-            updateDipendenteModelAfterInsert(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
-        }
-        
+        if (success)
+			updateDipendenteModelAfterInsert(codDipendente, nome, cognome, codFis, email, indirizzo, telefono);
+
         return success;
     }
 
@@ -312,13 +338,12 @@ public class Controller {
         if (clienteSuccess) {
             updateClienteModelAfterInsert(codCliente, nome, cognome, codFis, email, indirizzo, telefono);
             String codClienteDb = cljdbc.getIdCt(codFis); // Recupera solo tramite codice fiscale
-            if (codClienteDb != null) {
-                try {
+            if (codClienteDb != null)
+				try {
                     tsjdbc.newtessera(codClienteDb);
                 } catch (SQLException e) {
                     System.err.println("Errore creazione tessera cliente: " + e.getMessage());
                 }
-            }
         }
         return clienteSuccess;
     }
@@ -331,15 +356,14 @@ public class Controller {
 
 
     // Aggiunge un nuovo prodotto al database
-    public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
+    public boolean newprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza,
                           java.time.LocalDate dataRaccolta, java.time.LocalDate dataMungitura, boolean glutine, java.time.LocalDate dataScadenza, java.time.LocalDate dataproduzione, String categoria, int scorta) throws SQLException {
         prodotto = new Prodotto(codProdotto, nome, descrizione, prezzo, luogoProvenienza, dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta, dataproduzione);
         boolean success = prdjdbc.setNewProdotto(prodotto);
         // Se l'inserimento nel database ha successo, aggiorna anche il model della tabella
-        if (success) {
-            updateProdottoModelAfterInsert(codProdotto, nome, descrizione, prezzo, luogoProvenienza, 
+        if (success)
+			updateProdottoModelAfterInsert(codProdotto, nome, descrizione, prezzo, luogoProvenienza,
                                          dataRaccolta, dataMungitura, glutine, dataScadenza, categoria, scorta);
-        }
         return success;
     }
 
@@ -358,7 +382,7 @@ public class Controller {
         return dpjdbc.getDipVendite(di, df);
     }
     // Aggiorna le informazioni di un prodotto
-    public boolean upprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza, 
+    public boolean upprod(String codProdotto, String nome, String descrizione, double prezzo, String luogoProvenienza,
                          java.time.LocalDate dataRaccolta, java.time.LocalDate dataMungitura, boolean glutine, java.time.LocalDate dataScadenza, String categoria, int scorta) throws SQLException {
         Prodotto pe = new Prodotto(
             codProdotto, nome, descrizione, prezzo, luogoProvenienza,
@@ -400,16 +424,14 @@ public class Controller {
     // Aggiorna i punti associati a un cliente
     public boolean uppunti(String codcl, double d) throws SQLException {
         boolean success = tsjdbc.updatepunti(codcl, d);
-        if (success) {
-            for (int i = 0; i < clienteModel.getRowCount(); i++) {
-                if (clienteModel.getValueAt(i, 0).equals(codcl)) {
+        if (success)
+			for (int i = 0; i < clienteModel.getRowCount(); i++)
+				if (clienteModel.getValueAt(i, 0).equals(codcl)) {
                     double punti = 0.0;
                     try { punti = Double.parseDouble(clienteModel.getValueAt(i, 8).toString()); } catch (Exception ignored) {}
                     clienteModel.setValueAt(punti + d, i, 8);
                     break;
                 }
-            }
-        }
         return success;
     }
 
@@ -449,9 +471,9 @@ public class Controller {
                 c.getArticoliOrdini() != null ? c.getArticoliOrdini().getNumeroArticoli() : null // Ordini Categoria
         ));
     }
-    
+
     // Crea una riga di dati per la ricerca clienti mantenendo i tipi numerici necessari per il corretto funzionamento dei filtri di Swing
-    private Object[] createClientSearchRowData(Object codCliente, Object nome, Object cognome, 
+    private Object[] createClientSearchRowData(Object codCliente, Object nome, Object cognome,
                                              Object categoria, Object puntiCategoria, Object spesaTotale, Object ordiniCategoria) {
         return new Object[]{
             checkNull(codCliente),      // Colonna 0: Cod Cliente (String)
@@ -511,7 +533,7 @@ public class Controller {
         List<Dipendente> dipendenti = dpjdbc.getAllDip();
         Map<String, Cliente> clientiMap = clienti.stream().collect(Collectors.toMap(c -> String.valueOf(c.getCodCliente()), c -> c));
         Map<String, Dipendente> dipMap = dipendenti.stream().collect(Collectors.toMap(d -> String.valueOf(d.getCodDIP()), d -> d));
-        
+
         List<Ordine> ordini = ordjdbc.getallordini();
         populateTable(ordini, ordModel, o -> {
             Cliente ct = clientiMap.get(String.valueOf(o.getIdCliente()));

@@ -1,8 +1,13 @@
 package gui;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import javax.swing.*;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 public class IconUtils {
     private IconUtils() {}

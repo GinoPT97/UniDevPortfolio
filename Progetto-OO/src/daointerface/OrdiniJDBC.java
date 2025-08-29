@@ -1,9 +1,9 @@
 package daointerface;
 
-import model.Ordine;
-
 import java.sql.SQLException;
 import java.util.List;
+
+import model.Ordine;
 
 public interface OrdiniJDBC {
     public boolean newordine(Ordine ordine) throws SQLException;

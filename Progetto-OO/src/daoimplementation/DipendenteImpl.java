@@ -1,9 +1,15 @@
 package daoimplementation;
 
-import daointerface.DipendenteJDBC;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import daointerface.DipendenteJDBC;
 import model.Dipendente;
 
 public class DipendenteImpl implements DipendenteJDBC {
@@ -58,8 +64,8 @@ public class DipendenteImpl implements DipendenteJDBC {
     public ArrayList<Dipendente> getAllDip() throws SQLException {
         ArrayList<Dipendente> dipendenti = new ArrayList<>();
         try (ResultSet rs = getAllDip.executeQuery("SELECT coddipendente, nome, cognome, codicefiscale, email, indirizzo, telefono FROM dipendente ORDER BY " + COGNOME + " DESC")) {
-            while (rs.next()) {
-                dipendenti.add(new Dipendente(
+            while (rs.next())
+				dipendenti.add(new Dipendente(
                         rs.getString("coddipendente"),
                         rs.getString("nome"),
                         rs.getString(COGNOME),
@@ -68,7 +74,6 @@ public class DipendenteImpl implements DipendenteJDBC {
                         rs.getString("indirizzo"),
                         rs.getString("telefono")
                 ));
-            }
         }
         return dipendenti;
     }

@@ -1,13 +1,22 @@
 package gui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 
 public class ImagePanel extends JPanel {
     private transient Image image;
@@ -60,9 +69,8 @@ public class ImagePanel extends JPanel {
     @Override
     public Dimension getPreferredSize() {
         Container parent = getParent();
-        if (parent != null) {
-            return new Dimension(parent.getWidth() / 2, parent.getHeight());
-        }
+        if (parent != null)
+			return new Dimension(parent.getWidth() / 2, parent.getHeight());
         return super.getPreferredSize();
     }
 
@@ -91,11 +99,9 @@ public class ImagePanel extends JPanel {
         if (image == null) return;
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        if (scaledImage == null || panelWidth != lastWidth || panelHeight != lastHeight) {
-            updateScaledImage();
-        }
-        if (scaledImage != null) {
-            g.drawImage(scaledImage, 0, 0, this);
-        }
+        if (scaledImage == null || panelWidth != lastWidth || panelHeight != lastHeight)
+			updateScaledImage();
+        if (scaledImage != null)
+			g.drawImage(scaledImage, 0, 0, this);
     }
 }

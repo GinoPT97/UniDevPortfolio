@@ -1,10 +1,29 @@
 package gui;
 
-import controller.Controller;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.sql.SQLException;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+
+import controller.Controller;
 
 public class NuovoClienteFrame extends JFrame {
     private JPanel contentPane;
@@ -58,7 +77,7 @@ public class NuovoClienteFrame extends JFrame {
             elempanel.add(fieldPanel);
             elempanel.add(Box.createVerticalStrut(8));
         }
-        
+
         JLabel tesseraLabel = new JLabel("La relativa tessera verrà creata in automatico");
         tesseraLabel.setFont(new Font("Tahoma", Font.ITALIC, 14));
         tesseraLabel.setForeground(new Color(85, 107, 47));
@@ -101,10 +120,12 @@ public class NuovoClienteFrame extends JFrame {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         // Effetto hover
         button.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
+            @Override
+			public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(color.brighter());
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
+            @Override
+			public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(color);
             }
         });
@@ -146,9 +167,8 @@ public class NuovoClienteFrame extends JFrame {
             valid = false;
             if (firstError == -1) firstError = 5;
         }
-        if (!valid && firstError != -1) {
-            fields[firstError].requestFocus();
-        }
+        if (!valid && firstError != -1)
+			fields[firstError].requestFocus();
         return valid;
     }
 
