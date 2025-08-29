@@ -1,5 +1,4 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -12,59 +11,33 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require('@/assets/images/react-logo.png')}
+          style={{ width: 120, height: 120, alignSelf: 'center', marginTop: 30 }}
         />
       }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+      <ThemedView style={{ alignItems: 'center', marginTop: 20 }}>
+        <ThemedText type="title">UniDev Portfolio</ThemedText>
         <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
+        <ThemedText style={{ marginTop: 10 }}>
+          Benvenuto! Qui puoi esplorare le funzionalità principali dell&apos;app.
         </ThemedText>
       </ThemedView>
-  {/* Step 2 rimosso completamente: Explore */}
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+      <ThemedView style={{ marginTop: 30, padding: 16, borderRadius: 12, backgroundColor: '#e0eafc' }}>
+        <ThemedText type="subtitle">Calcolatrice</ThemedText>
+        </ThemedView>
+        <ThemedView style={{ marginTop: 30, padding: 16, borderRadius: 12, backgroundColor: '#e0eafc' }}>
+          <ThemedText type="subtitle">Calcolatrice</ThemedText>
+          <ThemedText>
+            Prova la calcolatrice per eseguire operazioni matematiche di base.
+          </ThemedText>
+        </ThemedView>
+        <ThemedView style={{ marginTop: 30, padding: 16, borderRadius: 12, backgroundColor: '#e0eafc' }}>
+          <ThemedText type="subtitle">Personalizza il tuo portfolio</ThemedText>
+          <ThemedText>
+            Modifica i file nella cartella <ThemedText type="defaultSemiBold">app/</ThemedText> per aggiungere nuove funzionalità.
+          </ThemedText>
+        </ThemedView>
+      </ParallaxScrollView>
+    );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
