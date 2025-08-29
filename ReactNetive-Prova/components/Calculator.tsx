@@ -64,29 +64,19 @@ const Calculator: React.FC = () => {
         value={num2}
         onChangeText={setNum2}
       />
-      <View style={styles.buttonRow}>
-        <View style={styles.button}>
-          <Button color="#00b894" title="+" onPress={() => handleOperation('+')} />
+      <View style={styles.buttonGrid}>
+        <View style={styles.buttonRow}>
+          <View style={styles.button}><Button color="#00b894" title="+" onPress={() => handleOperation('+')} /></View>
+          <View style={styles.button}><Button color="#fdcb6e" title="-" onPress={() => handleOperation('-')} /></View>
+          <View style={styles.button}><Button color="#0984e3" title="×" onPress={() => handleOperation('*')} /></View>
         </View>
-        <View style={styles.button}>
-          <Button color="#fdcb6e" title="-" onPress={() => handleOperation('-')} />
+        <View style={styles.buttonRow}>
+          <View style={styles.button}><Button color="#d63031" title="÷" onPress={() => handleOperation('/')} /></View>
+          <View style={styles.button}><Button color="#6C63FF" title="^" onPress={() => handleOperation('^')} /></View>
+          <View style={styles.button}><Button color="#FF6F61" title="√" onPress={() => handleOperation('√')} /></View>
         </View>
-        <View style={styles.button}>
-          <Button color="#0984e3" title="×" onPress={() => handleOperation('*')} />
-        </View>
-        <View style={styles.button}>
-          <Button color="#d63031" title="÷" onPress={() => handleOperation('/')} />
-        </View>
-      </View>
-      <View style={styles.buttonRow}>
-        <View style={styles.button}>
-          <Button color="#6C63FF" title="^" onPress={() => handleOperation('^')} />
-        </View>
-        <View style={styles.button}>
-          <Button color="#FF6F61" title="√" onPress={() => handleOperation('√')} />
-        </View>
-        <View style={styles.button}>
-          <Button color="#b2bec3" title="Pulisci" onPress={handleClear} />
+        <View style={[styles.buttonRow, { justifyContent: 'center' }] }>
+          <View style={[styles.button, { maxWidth: 120 }]}><Button color="#b2bec3" title="Pulisci" onPress={handleClear} /></View>
         </View>
       </View>
       {result !== null && <Text style={styles.result}>Risultato: {result}</Text>}
@@ -121,11 +111,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     color: '#2d3436',
   },
+  buttonGrid: {
+    marginTop: 10,
+    marginBottom: 18,
+    width: 240,
+    alignSelf: 'center',
+  },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: 180,
-    marginBottom: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    width: '100%',
+  },
+  button: {
+    flex: 1,
+    minWidth: 70,
+    maxWidth: 80,
+    marginHorizontal: 2,
+    borderRadius: 6,
+    overflow: 'hidden',
   },
   result: {
     fontSize: 18,
@@ -137,12 +142,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
     minWidth: 120,
     textAlign: 'center',
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 2,
-    borderRadius: 6,
-    overflow: 'hidden',
   },
 });
 
