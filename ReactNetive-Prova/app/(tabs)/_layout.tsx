@@ -8,9 +8,13 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { Image } from 'expo-image';
 
 const HomeIcon = ({ color }: { color: string }) => (
-  <IconSymbol size={28} name="house.fill" color={color} />
+  <Image
+    source={require('@/assets/images/react-logo.png')}
+    style={{ width: 28, height: 28 }}
+  />
 );
 
 const CalculatorIcon = ({ color }: { color: string }) => (
