@@ -24,156 +24,159 @@ import javax.swing.border.EmptyBorder;
 import controller.Controller;
 
 public class ModificaDipendenteFrame extends JFrame {
-    private JPanel contentPane;
-    private String cod;
-    private final String[] labels = {"Nome:", "Cognome:", "Codice Fiscale:", "Email:", "Indirizzo:", "Telefono: +39"};
-    private final JTextField[] fields = new JTextField[labels.length];
-    private JButton backbutton;
-    private JButton clearbutton;
-    private JButton addbutton;
+	private JPanel contentPane;
+	private String cod;
+	private final String[] labels = { "Nome:", "Cognome:", "Codice Fiscale:", "Email:", "Indirizzo:", "Telefono: +39" };
+	private final JTextField[] fields = new JTextField[labels.length];
+	private JButton backbutton;
+	private JButton clearbutton;
+	private JButton addbutton;
 
-    public ModificaDipendenteFrame(String title, Controller c) {
-        super(title);
-        this.elementi();
-        this.azioni(c);
-    }
+	public ModificaDipendenteFrame(String title, Controller c) {
+		super(title);
+		this.elementi();
+		this.azioni(c);
+	}
 
-    private void elementi() {
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 700, 500);
-        setLocationRelativeTo(null);
+	private void elementi() {
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		setBounds(100, 100, 700, 500);
+		setLocationRelativeTo(null);
 
-        contentPane = new JPanel(new BorderLayout(0, 0));
-        contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        setContentPane(contentPane);
+		contentPane = new JPanel(new BorderLayout(0, 0));
+		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+		setContentPane(contentPane);
 
-        JPanel titlepanel = new JPanel();
-        titlepanel.setBackground(Color.ORANGE);
-        JLabel titlelabel = new JLabel("Modifica Dipendente");
-        titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
-        titlelabel.setForeground(Color.WHITE);
-        titlepanel.add(titlelabel);
-        contentPane.add(titlepanel, BorderLayout.NORTH);
+		JPanel titlepanel = new JPanel();
+		titlepanel.setBackground(Color.ORANGE);
+		JLabel titlelabel = new JLabel("Modifica Dipendente");
+		titlelabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+		titlelabel.setForeground(Color.WHITE);
+		titlepanel.add(titlelabel);
+		contentPane.add(titlepanel, BorderLayout.NORTH);
 
-        JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        addbutton = creaButton("Inserisci", new Color(34, 139, 34));
-        clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
-        backbutton = creaButton("Indietro", new Color(178, 34, 34));
-        buttonpanel.add(addbutton);
-        buttonpanel.add(clearbutton);
-        buttonpanel.add(backbutton);
-        contentPane.add(buttonpanel, BorderLayout.SOUTH);
+		JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		addbutton = creaButton("Inserisci", new Color(34, 139, 34));
+		clearbutton = creaButton("Pulisci", new Color(255, 165, 0));
+		backbutton = creaButton("Indietro", new Color(178, 34, 34));
+		buttonpanel.add(addbutton);
+		buttonpanel.add(clearbutton);
+		buttonpanel.add(backbutton);
+		contentPane.add(buttonpanel, BorderLayout.SOUTH);
 
-        JPanel elempanel = new JPanel();
-        elempanel.setBorder(new EmptyBorder(20, 50, 20, 50));
-        elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
-        contentPane.add(elempanel, BorderLayout.CENTER);
+		JPanel elempanel = new JPanel();
+		elempanel.setBorder(new EmptyBorder(20, 50, 20, 50));
+		elempanel.setLayout(new BoxLayout(elempanel, BoxLayout.Y_AXIS));
+		contentPane.add(elempanel, BorderLayout.CENTER);
 
-        for (int i = 0; i < labels.length; i++) {
-            fields[i] = new JTextField(20);
-            fields[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
-            fields[i].setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
-                BorderFactory.createEmptyBorder(4, 8, 4, 8)));
-            fields[i].setBackground(new Color(250, 250, 250));
-            fields[i].setMaximumSize(new Dimension(Integer.MAX_VALUE, 14));
-            JPanel fieldPanel = createInputPanel(labels[i], fields[i]);
-            fieldPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            elempanel.add(fieldPanel);
-            elempanel.add(Box.createVerticalStrut(8));
-        }
-    }
+		for (int i = 0; i < labels.length; i++) {
+			fields[i] = new JTextField(20);
+			fields[i].setFont(new Font("Tahoma", Font.PLAIN, 15));
+			fields[i].setBorder(BorderFactory.createCompoundBorder(
+					BorderFactory.createLineBorder(new Color(180, 180, 180), 2, true),
+					BorderFactory.createEmptyBorder(4, 8, 4, 8)));
+			fields[i].setBackground(new Color(250, 250, 250));
+			fields[i].setMaximumSize(new Dimension(Integer.MAX_VALUE, 14));
+			JPanel fieldPanel = createInputPanel(labels[i], fields[i]);
+			fieldPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+			elempanel.add(fieldPanel);
+			elempanel.add(Box.createVerticalStrut(8));
+		}
+	}
 
-    private JPanel createInputPanel(String labelText, JTextField textField) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel label = new JLabel(labelText);
-        panel.add(label);
-        panel.add(textField);
-        return panel;
-    }
+	private JPanel createInputPanel(String labelText, JTextField textField) {
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JLabel label = new JLabel(labelText);
+		panel.add(label);
+		panel.add(textField);
+		return panel;
+	}
 
-    private JButton creaButton(String text, Color color) {
-        JButton button = new JButton(text, gui.IconUtils.getIconForText(text, color));
-        button.setBackground(color);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        return button;
-    }
+	private JButton creaButton(String text, Color color) {
+		JButton button = new JButton(text, gui.IconUtils.getIconForText(text, color));
+		button.setBackground(color);
+		button.setForeground(Color.WHITE);
+		button.setFocusPainted(false);
+		button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+		return button;
+	}
 
+	public void clean() {
+		for (JTextField field : fields) {
+			field.setText("");
+			field.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+		}
+	}
 
-    public void clean() {
-        for (JTextField field : fields) {
-            field.setText("");
-            field.setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
-        }
-    }
-
-    private boolean validateFields() {
-        boolean valid = true;
-        int firstError = -1;
-        for (int i = 0; i < fields.length; i++) {
-            String text = fields[i].getText().trim();
-            fields[i].setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
-            if (text.isEmpty()) {
-                fields[i].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-                valid = false;
-                if (firstError == -1) firstError = i;
-            }
-        }
-        // Email semplice
-        String email = fields[3].getText().trim();
-        if (!email.isEmpty() && !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
-            fields[3].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-            valid = false;
-            if (firstError == -1) firstError = 3;
-        }
-        // Telefono numerico
-        String tel = fields[5].getText().trim();
-        if (!tel.isEmpty() && !tel.matches("^\\d{6,15}$")) {
-            fields[5].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-            valid = false;
-            if (firstError == -1) firstError = 5;
-        }
-        if (!valid && firstError != -1)
+	private boolean validateFields() {
+		boolean valid = true;
+		int firstError = -1;
+		for (int i = 0; i < fields.length; i++) {
+			String text = fields[i].getText().trim();
+			fields[i].setBorder(UIManager.getLookAndFeel().getDefaults().getBorder("TextField.border"));
+			if (text.isEmpty()) {
+				fields[i].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+				valid = false;
+				if (firstError == -1)
+					firstError = i;
+			}
+		}
+		// Email semplice
+		String email = fields[3].getText().trim();
+		if (!email.isEmpty() && !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+			fields[3].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+			valid = false;
+			if (firstError == -1)
+				firstError = 3;
+		}
+		// Telefono numerico
+		String tel = fields[5].getText().trim();
+		if (!tel.isEmpty() && !tel.matches("^\\d{6,15}$")) {
+			fields[5].setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+			valid = false;
+			if (firstError == -1)
+				firstError = 5;
+		}
+		if (!valid && firstError != -1)
 			fields[firstError].requestFocus();
-        return valid;
-    }
+		return valid;
+	}
 
-    public void viewdip(String codDip, String nome, String cognome, String codFis, String indirizzo, String email, String telefono) {
-        cod = codDip;
-        fields[0].setText(nome);
-        fields[1].setText(cognome);
-        fields[2].setText(codFis);
-        fields[3].setText(email);
-        fields[4].setText(indirizzo);
-        fields[5].setText(telefono);
-    }
+	public void viewdip(String codDip, String nome, String cognome, String codFis, String indirizzo, String email,
+			String telefono) {
+		cod = codDip;
+		fields[0].setText(nome);
+		fields[1].setText(cognome);
+		fields[2].setText(codFis);
+		fields[3].setText(email);
+		fields[4].setText(indirizzo);
+		fields[5].setText(telefono);
+	}
 
-    private void azioni(Controller c) {
-        backbutton.addActionListener(e -> { clean(); c.visAndElem(2, 3); });
-        addbutton.addActionListener(e -> {
-            if (!validateFields()) {
-                JOptionPane.showMessageDialog(this, "Compila correttamente tutti i campi obbligatori.\nControlla email e telefono.", "Errore di validazione", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            try {
-                c.updip(
-                        cod,
-                        fields[0].getText(),
-                        fields[1].getText(),
-                        fields[2].getText(),
-                        fields[3].getText(),
-                        fields[4].getText(),
-                        fields[5].getText()
-                );
-                clean();
-                c.visAndElem(2, 3);
-                JOptionPane.showMessageDialog(this, "Dipendente modificato", "Successo", JOptionPane.INFORMATION_MESSAGE);
-            } catch (SQLException e1) {
-                JOptionPane.showMessageDialog(this, "Errore!\nTipo di errore: " + e1, "Errore", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-        clearbutton.addActionListener(e -> clean());
-    }
+	private void azioni(Controller c) {
+		backbutton.addActionListener(e -> {
+			clean();
+			c.visAndElem(2, 3);
+		});
+		addbutton.addActionListener(e -> {
+			if (!validateFields()) {
+				JOptionPane.showMessageDialog(this,
+						"Compila correttamente tutti i campi obbligatori.\nControlla email e telefono.",
+						"Errore di validazione", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			try {
+				c.updip(cod, fields[0].getText(), fields[1].getText(), fields[2].getText(), fields[3].getText(),
+						fields[4].getText(), fields[5].getText());
+				clean();
+				c.visAndElem(2, 3);
+				JOptionPane.showMessageDialog(this, "Dipendente modificato", "Successo",
+						JOptionPane.INFORMATION_MESSAGE);
+			} catch (SQLException e1) {
+				JOptionPane.showMessageDialog(this, "Errore!\nTipo di errore: " + e1, "Errore",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		});
+		clearbutton.addActionListener(e -> clean());
+	}
 }
