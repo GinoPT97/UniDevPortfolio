@@ -62,8 +62,6 @@ fabric.properties
 *.code-workspace
 
 # Eclipse files
-.project
-.classpath
 .settings/
 
 # NetBeans files

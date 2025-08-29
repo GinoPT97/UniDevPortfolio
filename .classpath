@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="Java - Personale/Java-Varie/Termostato MVC 18-19/src"/>
+	<classpathentry kind="src" path="Java - Personale/Padding/src"/>
+	<classpathentry kind="src" path="Java - Personale/ProveElementari/src"/>
+	<classpathentry kind="src" path="Java - Personale/Prove MVC/src"/>
+	<classpathentry kind="lib" path="FileProgrammi/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="FileProgrammi/postgresql-42.7.3.jar"/>
+	<classpathentry kind="src" path="Progetto-OO/src/controller"/>
+	<classpathentry kind="src" path="Progetti-Java/Progetto-OO/src/controller"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
