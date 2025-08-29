@@ -1,3 +1,4 @@
+
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -7,6 +8,14 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+
+const HomeIcon = ({ color }: { color: string }) => (
+  <IconSymbol size={28} name="house.fill" color={color} />
+);
+
+const CalculatorIcon = ({ color }: { color: string }) => (
+  <IconSymbol size={28} name="function" color={color} />
+);
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -30,14 +39,14 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: HomeIcon,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="calculator"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Calculator',
+          tabBarIcon: CalculatorIcon,
         }}
       />
     </Tabs>
