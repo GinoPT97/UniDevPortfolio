@@ -292,6 +292,15 @@ system_optimization() {
     fi
     run_cmd "ldconfig" "Ricostruzione cache librerie condivise" true
     run_cmd "sync" "Sincronizzazione filesystem"
+
+        # Pulizia e backup della bash history
+        log "INFO" "Backup della bash history..."
+        cp ~/.bash_history ~/.bash_history.bak
+        log "INFO" "Mantieni solo gli ultimi 100 comandi nella bash history."
+        tail -100 ~/.bash_history > ~/.bash_history.tmp && mv ~/.bash_history.tmp ~/.bash_history
+        history -c
+        history -r
+        log "INFO" "Bash history ottimizzata e sincronizzata."
 }
 
 # Funzione per la gestione dei servizi PostgreSQL

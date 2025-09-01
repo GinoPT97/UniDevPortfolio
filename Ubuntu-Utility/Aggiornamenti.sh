@@ -1,35 +1,32 @@
+
 #!/bin/bash
+set -e  # Ferma lo script in caso di errore
+
 
 # Funzione per registrare i messaggi
 log() {
     local type="$1"
     shift
-    echo "[$type] $(date '+%Y-%m-%d %H:%M:%S') - $*"
+    echo "[$type] $(date '+%Y-%m-%d %H:%M:%S') - $*" | tee -a /var/log/aggiornamenti.log
 }
 
 # Funzione per aggiornare i pacchetti APT
 update_apt_packages() {
     log "INFO" "Aggiornamento dell'elenco dei pacchetti..."
-    if sudo apt-get update -y; then
-        log "INFO" "Elenco pacchetti aggiornato."
-    else
-        log "ERROR" "Errore durante l'aggiornamento dell'elenco dei pacchetti."
-        exit 1
-    fi
+    sudo apt-get update -y
+    log "INFO" "Elenco pacchetti aggiornato."
 
     log "INFO" "Aggiornamento dei pacchetti APT..."
-    if sudo apt-get upgrade -y; then
-        log "INFO" "Pacchetti APT aggiornati."
-    else
-        log "ERROR" "Errore durante l'aggiornamento dei pacchetti APT."
-        exit 1
-    fi
+    sudo apt-get upgrade -y
+    log "INFO" "Pacchetti APT aggiornati."
 }
 
 # Funzione per pulire i pacchetti APT
 clean_apt_packages() {
     log "INFO" "Pulizia dei pacchetti inutili e della cache..."
-    sudo apt-get autoremove --purge -y && sudo apt-get clean -y
+    sudo apt-get autoremove --purge -y
+    sudo apt-get clean -y
+    log "INFO" "Pacchetti inutili rimossi e cache pulita."
 }
 
 # Funzione per sbloccare tutte le interfacce di rete
@@ -125,11 +122,9 @@ execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
 if command_exists docker; then
     log "INFO" "Pulizia delle risorse Docker inutilizzate..."
     docker system prune --filter "until=3h" -f
+    log "INFO" "Risorse Docker pulite."
 else
     log "INFO" "Docker non è installato. Salto la pulizia delle risorse Docker."
 fi
 
 log "INFO" "Aggiornamenti completati!"
-
-# Mantieni solo gli ultimi 100 comandi (più conservativo)
-tail -100 ~/.bash_history > ~/.bash_history.tmp && mv ~/.bash_history.tmp ~/.bash_history
