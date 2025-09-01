@@ -130,3 +130,6 @@ else
 fi
 
 log "INFO" "Aggiornamenti completati!"
+
+# Mantieni solo gli ultimi 100 comandi (più conservativo)
+tail -100 ~/.bash_history > ~/.bash_history.tmp && mv ~/.bash_history.tmp ~/.bash_history
