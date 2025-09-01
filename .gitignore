@@ -58,7 +58,7 @@ fabric.properties
 !app/src/
 
 # VS Code files
-.vscode/
+#.vscode/
 *.code-workspace
 
 # Eclipse files
