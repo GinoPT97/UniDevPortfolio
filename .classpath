@@ -12,6 +12,5 @@
 	<classpathentry kind="lib" path="FileProgrammi/jcalendar-1.4.jar"/>
 	<classpathentry kind="lib" path="FileProgrammi/postgresql-42.7.3.jar"/>
 	<classpathentry kind="src" path="Progetto-OO/src/controller"/>
-	<classpathentry kind="src" path="Progetti-Java/Progetto-OO/src/controller"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
