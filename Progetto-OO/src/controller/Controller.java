@@ -212,7 +212,8 @@ public class Controller {
 		case 3 -> handleClienteContext(x);
 		case 4 -> handleProdottoContext(x);
 		default -> {
-// Blocco vuoto intenzionale: nessuna azione richiesta per il valore di default
+			// Blocco vuoto intenzionale: nessuna azione richiesta per il valore di default
+		}
 		}
 	}
 
@@ -220,7 +221,9 @@ public class Controller {
 		switch (x) {
 		case 1 -> setVisibleFrame(carrf, visordf);
 		case 2 -> setVisibleFrame(visordf, carrf);
-		default -> {}
+		default -> {
+			// Blocco vuoto intenzionale: nessuna azione richiesta per il valore di default
+		}
 		}
 	}
 
@@ -230,7 +233,8 @@ public class Controller {
 		case 2 -> setVisibleFrame(updipf, vdipf, ndipf);
 		case 3 -> setVisibleFrame(vdipf, ndipf, updipf);
 		default -> {
-// Blocco vuoto intenzionale: nessuna azione richiesta per il valore di default
+			// Blocco vuoto intenzionale: nessuna azione richiesta per il valore di default
+		}
 		}
 	}
 
@@ -239,8 +243,10 @@ public class Controller {
 		case 1 -> setVisibleFrame(nclf, visctf);
 		case 2 -> setVisibleFrame(upclf, visctf);
 		case 3 -> setVisibleFrame(visctf, nclf, upclf);
-		default -> {}
-// Blocco vuoto intenzionale: nessuna azione richiesta per il valore di default
+		default -> {
+			// Blocco vuoto intenzionale: nessuna azione richiesta per il valore di default
+		}
+		}
 	}
 
 	private void handleProdottoContext(int x) {
@@ -249,7 +255,8 @@ public class Controller {
 		case 2 -> setVisibleFrame(modprodf, vprodf);
 		case 3 -> setVisibleFrame(vprodf, nprodf, modprodf);
 		default -> {
-// Blocco vuoto intenzionale: nessuna azione richiesta per il valore di default
+			// Blocco vuoto intenzionale: nessuna azione richiesta per il valore di default
+		}
 		}
 	}
 
@@ -443,7 +450,8 @@ public class Controller {
 					double punti = 0.0;
 					try {
 						punti = Double.parseDouble(clienteModel.getValueAt(i, 8).toString());
-                    } catch (Exception ignored) { }
+					} catch (NumberFormatException | NullPointerException ignored) {
+					}
 					clienteModel.setValueAt(punti + d, i, 8);
 					break;
 				}
