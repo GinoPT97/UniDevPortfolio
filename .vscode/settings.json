@@ -1,3 +1,5 @@
 {
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "java.jdt.ls.java.home": "/usr/lib/jvm/java-21-openjdk-amd64",
+    "avdmanager.executable": "/home/kenobi/Android/Sdk"
 }
