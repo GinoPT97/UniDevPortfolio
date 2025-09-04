@@ -267,6 +267,11 @@ OUTPUT Documentazione-BD.pdf
 INPUT ./Documentazione-BD.out
 INPUT ./Documentazione-BD.out
 OUTPUT Documentazione-BD.out
+INPUT ../Immagini/Federico-II.png
+INPUT ../Immagini/Federico-II.png
+INPUT ../Immagini/Federico-II.png
+INPUT ../Immagini/Federico-II.png
+INPUT ../Immagini/Federico-II.png
 INPUT ../Immagini/Frontespazio.png
 INPUT ../Immagini/Frontespazio.png
 INPUT ../Immagini/Frontespazio.png
