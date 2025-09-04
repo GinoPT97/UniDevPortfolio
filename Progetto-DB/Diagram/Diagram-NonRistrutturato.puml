@@ -11,116 +11,106 @@ skinparam class {
 }
 hide empty members
 
-package "Enumerazioni" <<Frame>> {
-  enum TIPOLOGIA {
-    FRUTTA
-    VERDURA
-    FARINACEI
-    LATTICINI
-    UOVA
-    CONFEZIONATI
-  }
-  enum STATOTESSERA {
-    ATTIVA
-    SOSPESA
-    SCADUTA
-  }
+enum TIPOLOGIA {
+  FRUTTA
+  VERDURA
+  FARINACEI
+  LATTICINI
+  UOVA
+  CONFEZIONATI
+}
+enum STATOTESSERA {
+  ATTIVA
+  SOSPESA
+  SCADUTA
 }
 
-package "Utenti" <<Rectangle>> {
-  abstract class Utente <<Entity>> {
-    +codicefiscale: CHAR(16)
-    nome: VARCHAR(255)
-    cognome: VARCHAR(255)
-    indirizzo: VARCHAR(255)
-    telefono: VARCHAR(20)
-    email: VARCHAR(255)
-  }
-  class Cliente <<Entity>> {
-    +codcliente: SERIAL
-  }
-  class Dipendente <<Entity>> {
-    +coddipendente: SERIAL
-  }
-  Utente <|-- Cliente
-  Utente <|-- Dipendente
+abstract class Utente <<Entity>> {
+  +codicefiscale: CHAR(16)
+  nome: VARCHAR(255)
+  cognome: VARCHAR(255)
+  indirizzo: VARCHAR(255)
+  telefono: VARCHAR(20)
+  email: VARCHAR(255)
+}
+class Cliente <<Entity>> {
+  +codcliente: SERIAL
+}
+class Dipendente <<Entity>> {
+  +coddipendente: SERIAL
+}
+Utente <|-- Cliente
+Utente <|-- Dipendente
+
+class Tessera <<Entity>> {
+  +codtessera: SERIAL
+  codcliente: INTEGER <<UNIQUE>>
+  numeropunti: NUMERIC
+  dataemissione: DATE
+  datascadenza: DATE
+  stato: STATOTESSERA
 }
 
-package "Gestione Tessere" <<Rectangle>> {
-  class Tessera <<Entity>> {
-    +codtessera: SERIAL
-    codcliente: INTEGER <<UNIQUE>>
-    numeropunti: NUMERIC
-    dataemissione: DATE
-    datascadenza: DATE
-    stato: STATOTESSERA
-  }
+class Ordine <<Entity>> {
+  +codordine: SERIAL
+  prezzototale: REAL
+  dataacquisto: DATE
+  codcliente: INTEGER
+  coddipendente: INTEGER
+}
+class ArticoliOrdine <<Entity>> {
+  codordine: INTEGER
+  codprodotto: INTEGER
+  prezzo: NUMERIC
+  numeroarticoli: INT
 }
 
-package "Ordini" <<Rectangle>> {
-  class Ordine <<Entity>> {
-    +codordine: SERIAL
-    prezzototale: REAL
-    dataacquisto: DATE
-    codcliente: INTEGER
-    coddipendente: INTEGER
-  }
-  class ArticoliOrdine <<Entity>> {
-    codordine: INTEGER
-    codprodotto: INTEGER
-    prezzo: NUMERIC
-    numeroarticoli: INT
-  }
+abstract class Prodotto <<Entity>> {
+  +codprodotto: SERIAL
+  nome: VARCHAR(255)
+  descrizione: VARCHAR(500)
+  prezzo: NUMERIC
+  luogoprovenienza: VARCHAR(255)
+  dataraccolta: DATE
+  datamungitura: DATE
+  dataproduzione: DATE
+  datascadenza: DATE
+  glutine: BOOLEAN
+  categoria: TIPOLOGIA
+  scorta: INT
 }
-
-package "Prodotti" <<Rectangle>> {
-  abstract class Prodotto <<Entity>> {
-    +codprodotto: SERIAL
-    nome: VARCHAR(255)
-    descrizione: VARCHAR(500)
-    prezzo: NUMERIC
-    luogoprovenienza: VARCHAR(255)
-    dataraccolta: DATE
-    datamungitura: DATE
-    dataproduzione: DATE
-    datascadenza: DATE
-    glutine: BOOLEAN
-    categoria: TIPOLOGIA
-    scorta: INT
-  }
-  class Frutta <<Entity>> {
-    +codprodotto: SERIAL
-    dataraccolta: DATE
-  }
-  class Verdura <<Entity>> {
-    +codprodotto: SERIAL
-    dataraccolta: DATE
-  }
-  class Farinacei <<Entity>> {
-    +codprodotto: SERIAL
-    glutine: BOOLEAN
-  }
-  class Latticini <<Entity>> {
-    +codprodotto: SERIAL
-    datamungitura: DATE
-    dataproduzione: DATE
-    datascadenza: DATE
-  }
-  class Uova <<Entity>> {
-    +codprodotto: SERIAL
-    datascadenza: DATE
-  }
-  class Confezionati <<Entity>> {
-    +codprodotto: SERIAL
-    datascadenza: DATE
-  }
-  Prodotto <|-- Frutta
-  Prodotto <|-- Verdura
-  Prodotto <|-- Farinacei
-  Prodotto <|-- Latticini
-  Prodotto <|-- Uova
-  Prodotto <|-- Confezionati
+class Frutta <<Entity>> {
+  +codprodotto: SERIAL
+  dataraccolta: DATE
 }
+class Verdura <<Entity>> {
+  +codprodotto: SERIAL
+  dataraccolta: DATE
+}
+class Farinacei <<Entity>> {
+  +codprodotto: SERIAL
+  glutine: BOOLEAN
+}
+class Latticini <<Entity>> {
+  +codprodotto: SERIAL
+  datamungitura: DATE
+  dataproduzione: DATE
+  datascadenza: DATE
+}
+class Uova <<Entity>> {
+  +codprodotto: SERIAL
+  datascadenza: DATE
+}
+class Confezionati <<Entity>> {
+  +codprodotto: SERIAL
+  datascadenza: DATE
+}
+Prodotto <|-- Frutta
+Prodotto <|-- Verdura
+Prodotto <|-- Farinacei
+Prodotto <|-- Latticini
+Prodotto <|-- Uova
+Prodotto <|-- Confezionati
 
 ' Relazioni tra le classi con etichette e ruoli
 Cliente "1" -- "1" Tessera : possiede >
