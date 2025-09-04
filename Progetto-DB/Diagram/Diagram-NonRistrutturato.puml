@@ -1,128 +1,128 @@
 @startuml DiagramNonRistrutturato
-' Definizione delle enumerazioni
-enum TIPOLOGIA {
-  FRUTTA
-  VERDURA
-  FARINACEI
-  LATTICINI
-  UOVA
-  CONFEZIONATI
+skinparam class {
+    BackgroundColor #F9F9F9
+    ArrowColor #2D6A4F
+    BorderColor #2D6A4F
+    FontName "Segoe UI"
+    FontSize 12
+    AttributeFontColor #333333
+    StereotypeFontColor #2D6A4F
+    StereotypeFontSize 11
+}
+hide empty members
+
+package "Enumerazioni" <<Frame>> {
+  enum TIPOLOGIA {
+    FRUTTA
+    VERDURA
+    FARINACEI
+    LATTICINI
+    UOVA
+    CONFEZIONATI
+  }
+  enum STATOTESSERA {
+    ATTIVA
+    SOSPESA
+    SCADUTA
+  }
 }
 
-enum STATOTESSERA {
-  ATTIVA
-  SOSPESA
-  SCADUTA
+package "Utenti" <<Rectangle>> {
+  abstract class Utente <<Entity>> {
+    +codicefiscale: CHAR(16)
+    nome: VARCHAR(255)
+    cognome: VARCHAR(255)
+    indirizzo: VARCHAR(255)
+    telefono: VARCHAR(20)
+    email: VARCHAR(255)
+  }
+  class Cliente <<Entity>> {
+    +codcliente: SERIAL
+  }
+  class Dipendente <<Entity>> {
+    +coddipendente: SERIAL
+  }
+  Utente <|-- Cliente
+  Utente <|-- Dipendente
 }
 
-' Classe astratta Utente
-abstract class Utente {
-  +codicefiscale: CHAR(16)
-  nome: VARCHAR(255)
-  cognome: VARCHAR(255)
-  indirizzo: VARCHAR(255)
-  telefono: VARCHAR(20)
-  email: VARCHAR(255)
+package "Gestione Tessere" <<Rectangle>> {
+  class Tessera <<Entity>> {
+    +codtessera: SERIAL
+    codcliente: INTEGER <<UNIQUE>>
+    numeropunti: NUMERIC
+    dataemissione: DATE
+    datascadenza: DATE
+    stato: STATOTESSERA
+  }
 }
 
-' Classi concrete per le specializzazioni
-class Cliente {
-  +codcliente: SERIAL
+package "Ordini" <<Rectangle>> {
+  class Ordine <<Entity>> {
+    +codordine: SERIAL
+    prezzototale: REAL
+    dataacquisto: DATE
+    codcliente: INTEGER
+    coddipendente: INTEGER
+  }
+  class ArticoliOrdine <<Entity>> {
+    codordine: INTEGER
+    codprodotto: INTEGER
+    prezzo: NUMERIC
+    numeroarticoli: INT
+  }
 }
 
-class Dipendente {
-  +coddipendente: SERIAL
+package "Prodotti" <<Rectangle>> {
+  abstract class Prodotto <<Entity>> {
+    +codprodotto: SERIAL
+    nome: VARCHAR(255)
+    descrizione: VARCHAR(500)
+    prezzo: NUMERIC
+    luogoprovenienza: VARCHAR(255)
+    dataraccolta: DATE
+    datamungitura: DATE
+    dataproduzione: DATE
+    datascadenza: DATE
+    glutine: BOOLEAN
+    categoria: TIPOLOGIA
+    scorta: INT
+  }
+  class Frutta <<Entity>> {
+    +codprodotto: SERIAL
+    dataraccolta: DATE
+  }
+  class Verdura <<Entity>> {
+    +codprodotto: SERIAL
+    dataraccolta: DATE
+  }
+  class Farinacei <<Entity>> {
+    +codprodotto: SERIAL
+    glutine: BOOLEAN
+  }
+  class Latticini <<Entity>> {
+    +codprodotto: SERIAL
+    datamungitura: DATE
+    dataproduzione: DATE
+    datascadenza: DATE
+  }
+  class Uova <<Entity>> {
+    +codprodotto: SERIAL
+    datascadenza: DATE
+  }
+  class Confezionati <<Entity>> {
+    +codprodotto: SERIAL
+    datascadenza: DATE
+  }
+  Prodotto <|-- Frutta
+  Prodotto <|-- Verdura
+  Prodotto <|-- Farinacei
+  Prodotto <|-- Latticini
+  Prodotto <|-- Uova
+  Prodotto <|-- Confezionati
 }
 
-' Relazione di generalizzazione
-Utente <|-- Cliente
-Utente <|-- Dipendente
-
-' Classe Tessera
-class Tessera {
-  +codtessera: SERIAL
-  codcliente: INTEGER <<UNIQUE>>
-  numeropunti: NUMERIC
-  dataemissione: DATE
-  datascadenza: DATE
-  stato: STATOTESSERA
-}
-
-' Classe Ordine
-class Ordine {
-  +codordine: SERIAL
-  prezzototale: REAL
-  dataacquisto: DATE
-  codcliente: INTEGER
-  coddipendente: INTEGER
-}
-
-' Classe ArticoliOrdine
-class ArticoliOrdine {
-  codordine: INTEGER
-  codprodotto: INTEGER
-  prezzo: NUMERIC
-  numeroarticoli: INT
-}
-
-' Classe astratta Prodotto
-abstract class Prodotto {
-  +codprodotto: SERIAL
-  nome: VARCHAR(255)
-  descrizione: VARCHAR(500)
-  prezzo: NUMERIC
-  luogoprovenienza: VARCHAR(255)
-  dataraccolta: DATE
-  datamungitura: DATE
-  dataproduzione: DATE
-  datascadenza: DATE
-  glutine: BOOLEAN
-  categoria: TIPOLOGIA
-  scorta: INT
-}
-
-' Classi concrete per ogni categoria di prodotto
-class Frutta {
-  +codprodotto: SERIAL
-  dataraccolta: DATE
-}
-
-class Verdura {
-  +codprodotto: SERIAL
-  dataraccolta: DATE
-}
-
-class Farinacei {
-  +codprodotto: SERIAL
-  glutine: BOOLEAN
-}
-
-class Latticini {
-  +codprodotto: SERIAL
-  datamungitura: DATE
-  dataproduzione: DATE
-  datascadenza: DATE
-}
-
-class Uova {
-  +codprodotto: SERIAL
-  datascadenza: DATE
-}
-
-class Confezionati {
-  +codprodotto: SERIAL
-  datascadenza: DATE
-}
-
-' Relazione di generalizzazione
-Prodotto <|-- Frutta
-Prodotto <|-- Verdura
-Prodotto <|-- Farinacei
-Prodotto <|-- Latticini
-Prodotto <|-- Uova
-Prodotto <|-- Confezionati
-
-' Relazioni tra le classi
+' Relazioni tra le classi con etichette e ruoli
 Cliente "1" -- "1" Tessera : possiede >
 Cliente "1" -- "*" Ordine : effettua >
 Dipendente "1" -- "*" Ordine : gestisce >
@@ -132,4 +132,74 @@ ArticoliOrdine "*" -- "1" Ordine : appartiene a >
 ArticoliOrdine "*" -- "1" Prodotto : si riferisce a >
 Tessera "1" -- "1" Cliente : intestata a >
 
+' Note stile Visual Paradigm
+note top of Cliente
+  <<Entity>>
+  Rappresenta un cliente registrato
+end note
+note top of Dipendente
+  <<Entity>>
+  Rappresenta un dipendente
+end note
+note right of Prodotto
+  <<Entity>>
+  Classe astratta per i prodotti
+end note
+
+@enduml
+@startuml
+class Cliente {
+  +codcliente : int
+  +nome : string
+  +cognome : string
+  +codicefiscale : string
+  +indirizzo : string
+  +telefono : string
+  +email : string
+}
+
+class Tessera {
+  +codtessera : int
+  +numeropunti : float
+  +dataemissione : date
+  +datascadenza : date
+  +stato : enum
+}
+
+class Dipendente {
+  +coddipendente : int
+  +nome : string
+  +cognome : string
+  +codicefiscale : string
+  +indirizzo : string
+  +telefono : string
+  +email : string
+}
+
+class Prodotto {
+  +codprodotto : int
+  +nome : string
+  +descrizione : string
+  +prezzo : float
+  +luogoprovenienza : string
+  +categoria : enum
+  +scorta : int
+}
+
+class Ordine {
+  +codordine : int
+  +prezzototale : float
+  +dataacquisto : date
+}
+
+class ArticoliOrdine {
+  +prezzo : float
+  +numeroarticoli : int
+}
+
+Cliente "1" -- "1" Tessera : possiede
+Cliente "1" -- "0..*" Ordine : effettua
+Dipendente "1" -- "0..*" Ordine : gestisce
+Ordine "1" -- "1..*" ArticoliOrdine : contiene
+Prodotto "1" -- "0..*" ArticoliOrdine : è contenuto
 @enduml

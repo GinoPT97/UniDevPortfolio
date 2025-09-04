@@ -1,0 +1,66 @@
+@startuml
+entity Cliente {
+  codcliente : SERIAL [PK]
+  nome : VARCHAR
+  cognome : VARCHAR
+  codicefiscale : CHAR(16)
+  indirizzo : VARCHAR
+  telefono : VARCHAR
+  email : VARCHAR
+}
+
+entity Tessera {
+  codtessera : SERIAL [PK]
+  codcliente : INTEGER [FK, UNIQUE]
+  numeropunti : NUMERIC
+  dataemissione : DATE
+  datascadenza : DATE
+  stato : STATOTESSERA
+}
+
+entity Dipendente {
+  coddipendente : SERIAL [PK]
+  nome : VARCHAR
+  cognome : VARCHAR
+  codicefiscale : CHAR(16)
+  indirizzo : VARCHAR
+  telefono : VARCHAR
+  email : VARCHAR
+}
+
+entity Prodotto {
+  codprodotto : SERIAL [PK]
+  nome : VARCHAR
+  descrizione : VARCHAR
+  prezzo : NUMERIC
+  luogoprovenienza : VARCHAR
+  dataraccolta : DATE
+  datamungitura : DATE
+  glutine : BOOLEAN
+  datascadenza : DATE
+  dataproduzione : DATE
+  categoria : TIPOLOGIA
+  scorta : INT
+}
+
+entity Ordine {
+  codordine : SERIAL [PK]
+  prezzototale : REAL
+  dataacquisto : DATE
+  codcliente : INTEGER [FK]
+  coddipendente : INTEGER [FK]
+}
+
+entity ArticoliOrdine {
+  codordine : INTEGER [PK, FK]
+  codprodotto : INTEGER [PK, FK]
+  prezzo : NUMERIC
+  numeroarticoli : INT
+}
+
+Cliente ||--o{ Tessera : possiede
+Cliente ||--o{ Ordine : effettua
+Dipendente ||--o{ Ordine : gestisce
+Ordine ||--o{ ArticoliOrdine : contiene
+Prodotto ||--o{ ArticoliOrdine : è contenuto
+@enduml
