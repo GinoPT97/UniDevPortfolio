@@ -11,6 +11,9 @@ skinparam class {
 }
 hide empty members
 
+' Layout ordinato con posizionamento esplicito
+left to right direction
+
 enum TIPOLOGIA {
   FRUTTA
   VERDURA
@@ -25,7 +28,7 @@ enum STATOTESSERA {
   SCADUTA
 }
 
-abstract class Utente <<Entity>> {
+abstract class Utente {
   +codicefiscale: CHAR(16)
   nome: VARCHAR(255)
   cognome: VARCHAR(255)
@@ -33,16 +36,16 @@ abstract class Utente <<Entity>> {
   telefono: VARCHAR(20)
   email: VARCHAR(255)
 }
-class Cliente <<Entity>> {
+class Cliente {
   +codcliente: SERIAL
 }
-class Dipendente <<Entity>> {
+class Dipendente {
   +coddipendente: SERIAL
 }
 Utente <|-- Cliente
 Utente <|-- Dipendente
 
-class Tessera <<Entity>> {
+class Tessera {
   +codtessera: SERIAL
   codcliente: INTEGER <<UNIQUE>>
   numeropunti: NUMERIC
@@ -51,21 +54,21 @@ class Tessera <<Entity>> {
   stato: STATOTESSERA
 }
 
-class Ordine <<Entity>> {
+class Ordine {
   +codordine: SERIAL
   prezzototale: REAL
   dataacquisto: DATE
   codcliente: INTEGER
   coddipendente: INTEGER
 }
-class ArticoliOrdine <<Entity>> {
+class ArticoliOrdine {
   codordine: INTEGER
   codprodotto: INTEGER
   prezzo: NUMERIC
   numeroarticoli: INT
 }
 
-abstract class Prodotto <<Entity>> {
+abstract class Prodotto {
   +codprodotto: SERIAL
   nome: VARCHAR(255)
   descrizione: VARCHAR(500)
@@ -79,29 +82,29 @@ abstract class Prodotto <<Entity>> {
   categoria: TIPOLOGIA
   scorta: INT
 }
-class Frutta <<Entity>> {
+class Frutta {
   +codprodotto: SERIAL
   dataraccolta: DATE
 }
-class Verdura <<Entity>> {
+class Verdura {
   +codprodotto: SERIAL
   dataraccolta: DATE
 }
-class Farinacei <<Entity>> {
+class Farinacei {
   +codprodotto: SERIAL
   glutine: BOOLEAN
 }
-class Latticini <<Entity>> {
+class Latticini {
   +codprodotto: SERIAL
   datamungitura: DATE
   dataproduzione: DATE
   datascadenza: DATE
 }
-class Uova <<Entity>> {
+class Uova {
   +codprodotto: SERIAL
   datascadenza: DATE
 }
-class Confezionati <<Entity>> {
+class Confezionati {
   +codprodotto: SERIAL
   datascadenza: DATE
 }
@@ -122,74 +125,4 @@ ArticoliOrdine "*" -- "1" Ordine : appartiene a >
 ArticoliOrdine "*" -- "1" Prodotto : si riferisce a >
 Tessera "1" -- "1" Cliente : intestata a >
 
-' Note stile Visual Paradigm
-note top of Cliente
-  <<Entity>>
-  Rappresenta un cliente registrato
-end note
-note top of Dipendente
-  <<Entity>>
-  Rappresenta un dipendente
-end note
-note right of Prodotto
-  <<Entity>>
-  Classe astratta per i prodotti
-end note
-
-@enduml
-@startuml
-class Cliente {
-  +codcliente : int
-  +nome : string
-  +cognome : string
-  +codicefiscale : string
-  +indirizzo : string
-  +telefono : string
-  +email : string
-}
-
-class Tessera {
-  +codtessera : int
-  +numeropunti : float
-  +dataemissione : date
-  +datascadenza : date
-  +stato : enum
-}
-
-class Dipendente {
-  +coddipendente : int
-  +nome : string
-  +cognome : string
-  +codicefiscale : string
-  +indirizzo : string
-  +telefono : string
-  +email : string
-}
-
-class Prodotto {
-  +codprodotto : int
-  +nome : string
-  +descrizione : string
-  +prezzo : float
-  +luogoprovenienza : string
-  +categoria : enum
-  +scorta : int
-}
-
-class Ordine {
-  +codordine : int
-  +prezzototale : float
-  +dataacquisto : date
-}
-
-class ArticoliOrdine {
-  +prezzo : float
-  +numeroarticoli : int
-}
-
-Cliente "1" -- "1" Tessera : possiede
-Cliente "1" -- "0..*" Ordine : effettua
-Dipendente "1" -- "0..*" Ordine : gestisce
-Ordine "1" -- "1..*" ArticoliOrdine : contiene
-Prodotto "1" -- "0..*" ArticoliOrdine : è contenuto
 @enduml
