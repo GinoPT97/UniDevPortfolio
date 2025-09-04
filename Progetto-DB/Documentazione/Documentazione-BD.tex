@@ -13,6 +13,27 @@
 \usepackage{hyperref}
 \geometry{margin=2.5cm}
 
+% --- Configurazione link blu e moderni per indice ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=myblue,
+    urlcolor=myblue,
+    citecolor=myblue,
+    filecolor=myblue,
+    pdfborder={0 0 0}
+}
+
+% --- Miglioramento grafica indice ---
+\usepackage{tocloft}
+% Colore titoli indice
+\renewcommand{\cftsecfont}{\color{myblue}\bfseries}
+\renewcommand{\cftsubsecfont}{\color{myblue}}
+\renewcommand{\cftsecpagefont}{\color{myblue}\bfseries}
+\renewcommand{\cftsubsecpagefont}{\color{myblue}}
+% Spaziatura tra voci
+\setlength{\cftbeforesecskip}{6pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+
 % --- Evidenziazione codice SQL stile editor ---
 \usepackage{listings}
 \usepackage{color}
@@ -69,7 +90,15 @@
 \end{tcolorbox}
 
 \newpage
-\tableofcontents
+
+% Indice racchiuso in box colorato e titolo personalizzato
+\begin{tcolorbox}[colback=mygray,colframe=myblue,width=\textwidth,arc=4mm,boxrule=1pt]
+    \begin{center}
+        {\Huge\bfseries\color{myblue}Indice}
+    \end{center}
+    \vspace{0.5em}
+    \tableofcontents
+\end{tcolorbox}
 
 \newpage
 \section{Introduzione}
