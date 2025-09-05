@@ -1,15 +1,14 @@
 @startuml DiagramNonRistrutturato
 skinparam class {
-    BackgroundColor #F9F9F9
-    ArrowColor #2D6A4F
+  BackgroundColor #F9F9F9
+  ArrowColor #2D6A4F
   BorderColor #2D6A4F
   FontName "Segoe UI"
   FontSize 12
-    AttributeFontColor #333333
-    StereotypeFontColor #2D6A4F
-    StereotypeFontSize 11
+  AttributeFontColor #333333
+  StereotypeFontColor #2D6A4F
+  StereotypeFontSize 11
 }
-hide empty members
 
 ' Layout ordinato con posizionamento esplicito
 left to right direction
@@ -108,6 +107,7 @@ Prodotto <|-- Farinacei
 Prodotto <|-- Latticini
 Prodotto <|-- Uova
 Prodotto <|-- Confezionati
+
 
 ' Relazioni tra le classi con etichette e ruoli
 Cliente "1" -- "1" Tessera : possiede/intestata a >
