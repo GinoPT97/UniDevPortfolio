@@ -110,13 +110,10 @@ Prodotto <|-- Uova
 Prodotto <|-- Confezionati
 
 ' Relazioni tra le classi con etichette e ruoli
-Cliente "1" -- "1" Tessera : possiede >
+Cliente "1" -- "1" Tessera : possiede/intestata a >
 Cliente "1" -- "*" Ordine : effettua >
 Dipendente "1" -- "*" Ordine : gestisce >
-Ordine "1" -- "*" ArticoliOrdine : contiene >
-Prodotto "1" -- "*" ArticoliOrdine : incluso in >
-ArticoliOrdine "*" -- "1" Ordine : appartiene a >
+Ordine "1" -- "*" ArticoliOrdine : contiene/appartiene a >
 ArticoliOrdine "*" -- "1" Prodotto : si riferisce a >
-Tessera "1" -- "1" Cliente : intestata a >
 
 @enduml
