@@ -2,9 +2,9 @@
 skinparam class {
     BackgroundColor #F9F9F9
     ArrowColor #2D6A4F
-    BorderColor #2D6A4F
-    FontName "Segoe UI"
-    FontSize 12
+  BorderColor #2D6A4F
+  FontName "Segoe UI"
+  FontSize 12
     AttributeFontColor #333333
     StereotypeFontColor #2D6A4F
     StereotypeFontSize 11
@@ -83,29 +83,23 @@ abstract class Prodotto {
   scorta: INT
 }
 class Frutta {
-  +codprodotto: SERIAL
   dataraccolta: DATE
 }
 class Verdura {
-  +codprodotto: SERIAL
   dataraccolta: DATE
 }
 class Farinacei {
-  +codprodotto: SERIAL
   glutine: BOOLEAN
 }
 class Latticini {
-  +codprodotto: SERIAL
   datamungitura: DATE
   dataproduzione: DATE
   datascadenza: DATE
 }
 class Uova {
-  +codprodotto: SERIAL
   datascadenza: DATE
 }
 class Confezionati {
-  +codprodotto: SERIAL
   datascadenza: DATE
 }
 Prodotto <|-- Frutta
