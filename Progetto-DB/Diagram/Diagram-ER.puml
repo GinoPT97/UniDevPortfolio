@@ -1,6 +1,9 @@
-@startuml DiagramER
+
+' Layout orizzontale
+left to right direction
+' Entità con PK/FK evidenziate
 entity Cliente {
-  codcliente : SERIAL [PK]
+  codcliente : SERIAL <<PK>>
   nome : VARCHAR
   cognome : VARCHAR
   codicefiscale : CHAR(16)
@@ -10,8 +13,8 @@ entity Cliente {
 }
 
 entity Tessera {
-  codtessera : SERIAL [PK]
-  codcliente : INTEGER [FK, UNIQUE]
+  codtessera : SERIAL <<PK>>
+  codcliente : INTEGER <<FK, UNIQUE>>
   numeropunti : NUMERIC
   dataemissione : DATE
   datascadenza : DATE
@@ -19,7 +22,7 @@ entity Tessera {
 }
 
 entity Dipendente {
-  coddipendente : SERIAL [PK]
+  coddipendente : SERIAL <<PK>>
   nome : VARCHAR
   cognome : VARCHAR
   codicefiscale : CHAR(16)
@@ -29,7 +32,7 @@ entity Dipendente {
 }
 
 entity Prodotto {
-  codprodotto : SERIAL [PK]
+  codprodotto : SERIAL <<PK>>
   nome : VARCHAR
   descrizione : VARCHAR
   prezzo : NUMERIC
@@ -44,23 +47,28 @@ entity Prodotto {
 }
 
 entity Ordine {
-  codordine : SERIAL [PK]
+  codordine : SERIAL <<PK>>
   prezzototale : REAL
   dataacquisto : DATE
-  codcliente : INTEGER [FK]
-  coddipendente : INTEGER [FK]
+  codcliente : INTEGER <<FK>>
+  coddipendente : INTEGER <<FK>>
 }
 
 entity ArticoliOrdine {
-  codordine : INTEGER [PK, FK]
-  codprodotto : INTEGER [PK, FK]
+  codordine : INTEGER <<PK, FK>>
+  codprodotto : INTEGER <<PK, FK>>
   prezzo : NUMERIC
   numeroarticoli : INT
 }
 
-Cliente ||--o{ Tessera : possiede
-Cliente ||--o{ Ordine : effettua
-Dipendente ||--o{ Ordine : gestisce
-Ordine ||--o{ ArticoliOrdine : contiene
-Prodotto ||--o{ ArticoliOrdine : è contenuto
+' Relazioni con cardinalità
+Cliente ||--|| Tessera : "1:1"
+Cliente ||--o{ Ordine : "1:N"
+Dipendente ||--o{ Ordine : "1:N"
+Ordine ||--o{ ArticoliOrdine : "1:N"
+Prodotto ||--o{ ArticoliOrdine : "1:N"
+
+ArticoliOrdine }o--|| Ordine : "N:1"
+ArticoliOrdine }o--|| Prodotto : "N:1"
+
 @enduml
