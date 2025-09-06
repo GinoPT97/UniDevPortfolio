@@ -4,9 +4,11 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 
 export default function HomeScreen() {
+  const router = useRouter();
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#F8FAFC', dark: '#A1CEDC' }}
@@ -46,8 +48,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           style={{ backgroundColor: '#185a9d', paddingVertical: 8, paddingHorizontal: 18, borderRadius: 8, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 8 }}
           onPress={() => {
-            // Navigazione: usa router.push se disponibile
-            window.location.href = '/calculator';
+            router.push('/calculator');
           }}
         >
           <Ionicons name="calculator-outline" size={20} color="#fff" style={{ marginRight: 6 }} />
