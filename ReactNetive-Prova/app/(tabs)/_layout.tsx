@@ -4,7 +4,6 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-// ...existing code...
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -34,9 +33,9 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
+        tabBarPosition: 'top',
         tabBarStyle: Platform.select({
           ios: {
-            // Usa uno sfondo trasparente su iOS per mostrare l'effetto blur
             position: 'absolute',
           },
           default: {},
