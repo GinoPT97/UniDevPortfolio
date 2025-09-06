@@ -44,25 +44,17 @@ export default function HomeScreen() {
           Prova la calcolatrice per eseguire operazioni matematiche di base.
         </ThemedText>
         <TouchableOpacity
-          style={{ backgroundColor: '#185a9d', paddingVertical: 8, paddingHorizontal: 18, borderRadius: 8, alignSelf: 'flex-start' }}
+          style={{ backgroundColor: '#185a9d', paddingVertical: 8, paddingHorizontal: 18, borderRadius: 8, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 8 }}
           onPress={() => {
             // Navigazione: usa router.push se disponibile
             window.location.href = '/calculator';
           }}
         >
+          <Ionicons name="calculator-outline" size={20} color="#fff" style={{ marginRight: 6 }} />
           <ThemedText style={{ color: '#fff', fontWeight: 'bold' }}>Vai alla Calcolatrice</ThemedText>
         </TouchableOpacity>
       </ThemedView>
 
-      {/* Card Personalizzazione */}
-      <ThemedView style={{ marginTop: 30, padding: 16, borderRadius: 16, backgroundColor: '#FFE3E3', shadowColor: '#d76d77', shadowOpacity: 0.1, shadowRadius: 6 }}>
-        <ThemedText type="subtitle" style={{ color: '#d76d77', fontSize: 18 }}>
-          <Ionicons name="color-palette-outline" size={20} color="#d76d77" /> Personalizza il tuo portfolio
-        </ThemedText>
-        <ThemedText style={{ color: '#d76d77', marginBottom: 10 }}>
-          Modifica i file nella cartella <ThemedText type="defaultSemiBold" style={{ color: '#d76d77' }}>app/</ThemedText> per aggiungere nuove funzionalità.
-        </ThemedText>
-      </ThemedView>
     </ParallaxScrollView>
   );
 }
