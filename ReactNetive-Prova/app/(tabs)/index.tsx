@@ -30,15 +30,23 @@ export default function HomeScreen() {
       </ThemedView>
 
       {/* Sezione Bio */}
-      <ThemedView style={{ marginTop: 30, padding: 16, borderRadius: 16, backgroundColor: '#F3F3F3', alignItems: 'center', flexDirection: 'row', gap: 12 }}>
-        <Ionicons name="person-circle-outline" size={40} color="#6C63FF" style={{ marginRight: 10 }} />
-        <ThemedText style={{ color: '#444', fontSize: 15 }}>
+      <ThemedView style={{ marginTop: 30, padding: 18, borderRadius: 18, backgroundColor: '#F3F3F3', alignItems: 'center', flexDirection: 'row' }}>
+        <Ionicons name="person-circle-outline" size={40} color="#6C63FF" style={{ marginRight: 14 }} />
+        <ThemedText style={{ color: '#444', fontSize: 16 }}>
           <ThemedText type="defaultSemiBold">Kenobi1797</ThemedText> — Studente e appassionato di sviluppo mobile e web. Sempre alla ricerca di nuove tecnologie!
         </ThemedText>
       </ThemedView>
 
       {/* Card Calcolatrice con pulsante */}
-      <ThemedView style={{ marginTop: 30, padding: 16, borderRadius: 16, backgroundColor: '#B6E0FE', shadowColor: '#185a9d', shadowOpacity: 0.1, shadowRadius: 6 }}>
+      <ThemedView style={{
+        marginTop: 30,
+        padding: 18,
+        borderRadius: 18,
+        backgroundColor: '#B6E0FE',
+        shadowColor: '#185a9d',
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+      }}>
         <ThemedText type="subtitle" style={{ color: '#185a9d', fontSize: 18 }}>
           <Ionicons name="calculator-outline" size={20} color="#185a9d" /> Calcolatrice
         </ThemedText>
@@ -46,13 +54,21 @@ export default function HomeScreen() {
           Prova la calcolatrice per eseguire operazioni matematiche di base.
         </ThemedText>
         <TouchableOpacity
-          style={{ backgroundColor: '#185a9d', paddingVertical: 8, paddingHorizontal: 18, borderRadius: 8, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 8 }}
+          style={{
+            backgroundColor: '#185a9d',
+            paddingVertical: 12,
+            paddingHorizontal: 22,
+            borderRadius: 10,
+            alignSelf: 'flex-start',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
           onPress={() => {
             router.push('/calculator');
           }}
         >
-          <Ionicons name="calculator-outline" size={20} color="#fff" style={{ marginRight: 6 }} />
-          <ThemedText style={{ color: '#fff', fontWeight: 'bold' }}>Vai alla Calcolatrice</ThemedText>
+          <Ionicons name="calculator-outline" size={22} color="#fff" style={{ marginRight: 12 }} />
+          <ThemedText style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Vai alla Calcolatrice</ThemedText>
         </TouchableOpacity>
       </ThemedView>
 
