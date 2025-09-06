@@ -4,21 +4,24 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+// ...existing code...
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+
+import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 
 const HomeIcon = ({ color }: { color: string }) => (
   <Image
     source={require('@/assets/images/react-logo.png')}
     style={{ width: 28, height: 28 }}
+    contentFit="contain"
   />
 );
 
 const CalculatorIcon = ({ color }: { color: string }) => (
-  <IconSymbol size={28} name="function" color={color} />
+  <Ionicons name="calculator-outline" size={28} color={color} />
 );
 
 export default function TabLayout() {

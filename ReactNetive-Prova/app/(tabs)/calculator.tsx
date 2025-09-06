@@ -1,7 +1,7 @@
+import { ThemedText } from '@/components/ThemedText';
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { View } from 'react-native';
-import { Image } from 'expo-image';
-import { ThemedText } from '@/components/ThemedText';
 import Calculator from '../../components/Calculator';
 
 export default function CalculatorScreen() {
@@ -9,10 +9,7 @@ export default function CalculatorScreen() {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f6fa' }}>
       <View style={{ alignItems: 'center', marginBottom: 18 }}>
         <View style={{ backgroundColor: '#0984e3', borderRadius: 50, padding: 12, marginBottom: 8 }}>
-          <Image
-            source={require('@/assets/images/icon.png')}
-            style={{ width: 48, height: 48 }}
-          />
+          <Ionicons name="calculator-outline" size={48} color="#fff" />
         </View>
         <ThemedText type="title">Calcolatrice</ThemedText>
         <ThemedText style={{ marginTop: 6, color: '#636e72' }}>
