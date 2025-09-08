@@ -1,4 +1,4 @@
-
+@startuml Diagram-ER
 ' Layout orizzontale
 left to right direction
 ' Entità con PK/FK evidenziate
