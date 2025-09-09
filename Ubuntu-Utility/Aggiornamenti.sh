@@ -1,6 +1,12 @@
-#!/bin/bash
 
+#!/bin/bash
 set -e  # Ferma lo script in caso di errore
+
+# Verifica permessi root
+if [[ $EUID -ne 0 ]]; then
+    echo "[ERROR] $(date '+%Y-%m-%d %H:%M:%S') - Devi eseguire questo script come root!" | tee -a /var/log/aggiornamenti.log
+    exit 1
+fi
 
 # Funzione per registrare i messaggi
 log() {
@@ -12,26 +18,26 @@ log() {
 # Funzione per aggiornare i pacchetti APT
 update_apt_packages() {
     log "INFO" "Aggiornamento dell'elenco dei pacchetti..."
-    sudo apt-get update -y
+    apt-get update -y
     log "INFO" "Elenco pacchetti aggiornato."
 
     log "INFO" "Aggiornamento dei pacchetti APT..."
-    sudo apt-get upgrade -y
+    apt-get upgrade -y
     log "INFO" "Pacchetti APT aggiornati."
 }
 
 # Funzione per pulire i pacchetti APT
 clean_apt_packages() {
     log "INFO" "Pulizia dei pacchetti inutili e della cache..."
-    sudo apt-get autoremove --purge -y
-    sudo apt-get clean -y
+    apt-get autoremove --purge -y
+    apt-get clean -y
     log "INFO" "Pacchetti inutili rimossi e cache pulita."
 }
 
 # Funzione per sbloccare tutte le interfacce di rete
 unblock_network_interfaces() {
     log "INFO" "Sblocco della sospensione energetica di tutte le interfacce di rete..."
-    sudo rfkill unblock all
+    rfkill unblock all
 }
 
 # Funzione per installare Snapd
@@ -39,34 +45,34 @@ install_snapd() {
     log "INFO" "Controllo di Snapd..."
     if ! dpkg -l | grep -q snapd; then
         log "INFO" "Installazione di Snapd..."
-        sudo apt-get install snapd -y
+    apt-get install snapd -y
     else
         log "INFO" "Snapd è già installato."
     fi
 
     log "INFO" "Aggiornamento dei pacchetti Snap..."
-    sudo snap refresh
+    snap refresh
 }
 
 # Funzione per gestire i potenziali blocchi di dpkg
 reload_systemd_and_dpkg() {
     log "INFO" "Ricaricamento dei demoni di sistema..."
-    sudo systemctl daemon-reload
+    systemctl daemon-reload
 
     log "INFO" "Gestione del blocco dpkg..."
-    while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+    while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
         log "INFO" "Blocco dpkg rilevato. Attesa di 5 secondi..."
         sleep 5
     done
-    sudo dpkg --configure -a
+    dpkg --configure -a
 }
 
 # Funzione per abilitare il firewall
 enable_firewall() {
     log "INFO" "Verifica dello stato del firewall..."
-    if ! sudo ufw status | grep -q 'Status: active'; then
+    if ! ufw status | grep -q 'Status: active'; then
         log "INFO" "Abilitazione del firewall..."
-        sudo ufw enable
+        ufw enable
     else
         log "INFO" "Il firewall è già attivo."
     fi
@@ -93,7 +99,7 @@ command_exists() {
 # Funzione per aggiornare alla nuova versione di Ubuntu
 upgrade_ubuntu() {
     log "INFO" "Aggiornamento alla nuova versione di Ubuntu..."
-    if sudo do-release-upgrade; then
+    if do-release-upgrade; then
         log "INFO" "Aggiornamento completato con successo."
     else
         log "INFO" "Nessuna nuova versione di Ubuntu trovata."
@@ -109,7 +115,7 @@ clean_apt_packages
 unblock_network_interfaces
 install_snapd
 enable_firewall
-sudo apt modernize-sources -y
+# apt modernize-sources -y  # Comando non standard, commentato
 
 # Aggiungi comandi per aggiornare il sistema Ubuntu 24.10
 log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
