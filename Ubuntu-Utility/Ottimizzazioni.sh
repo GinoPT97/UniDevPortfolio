@@ -212,23 +212,85 @@ cleanup_logs() {
     run_cmd "logrotate -f /etc/logrotate.conf" "Rotazione forzata dei log" true
 }
 
-# Funzione per la pulizia dei file temporanei
+# Funzione per la pulizia dei file temporanei e cache aggiuntive
 cleanup_temp_files() {
-    log "INFO" "=== PULIZIA FILE TEMPORANEI ==="
+    log "INFO" "=== PULIZIA FILE TEMPORANEI E CACHE AGGIUNTIVE ==="
 
     # Pulizia cartelle temporanee utente (SAFE, solo file, no directory)
     for user in $(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 && $1!~/^(nobody|systemd-)/ {print $1}'); do
         home_dir=$(getent passwd "$user" | cut -d: -f6)
+        # Thumbnails
         thumb_dir="$home_dir/.cache/thumbnails"
         if [[ -d "$thumb_dir" ]]; then
             find "$thumb_dir" -type f -print0 | while IFS= read -r -d '' file; do
-                if [[ "$file" != /* ]]; then
-                    log "WARN" "Percorso non valido: '$file'"
-                    continue
-                fi
                 safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
+        # Firefox
+        ff_dir="$home_dir/.cache/mozilla"
+        if [[ -d "$ff_dir" ]]; then
+            find "$ff_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+            done
+        fi
+        # Chromium
+        chromium_dir="$home_dir/.cache/chromium"
+        if [[ -d "$chromium_dir" ]]; then
+            find "$chromium_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+            done
+        fi
+        # Fontconfig
+        font_dir="$home_dir/.cache/fontconfig"
+        if [[ -d "$font_dir" ]]; then
+            find "$font_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+            done
+        fi
+        # npm
+        npm_dir="$home_dir/.npm"
+        if [[ -d "$npm_dir" ]]; then
+            find "$npm_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+            done
+        fi
+        # yarn
+        yarn_dir="$home_dir/.cache/yarn"
+        if [[ -d "$yarn_dir" ]]; then
+            find "$yarn_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+            done
+        fi
+        # Flatpak
+        flatpak_dir="$home_dir/.var/app"
+        if [[ -d "$flatpak_dir" ]]; then
+            find "$flatpak_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+            done
+        fi
+        # Snap
+        snap_cache="$home_dir/snap"
+        if [[ -d "$snap_cache" ]]; then
+            find "$snap_cache" -type f -print0 | while IFS= read -r -d '' file; do
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+            done
+        fi
+        # Python __pycache__ e *.pyc
+        find "$home_dir" -type d -name "__pycache__" -prune -exec rm -rf {} +
+        find "$home_dir" -type f -name "*.pyc" -delete
+    done
+
+    # File temporanei di sistema
+    find /tmp -type f -print0 | while IFS= read -r -d '' file; do
+        safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+    done
+    find /var/tmp -type f -print0 | while IFS= read -r -d '' file; do
+        safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+    done
+
+    # Log compressi vecchi (>30 giorni)
+    find /var/log -type f \( -name "*.gz" -o -name "*.1" \) -mtime +30 -print0 | while IFS= read -r -d '' file; do
+        safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
     done
 }
 
