@@ -418,15 +418,11 @@ main() {
     local space_freed=$(echo "scale=2; ($space_before-$space_after)/1024/1024" | bc -l 2>/dev/null || echo "N/A")
     local duration=$(( $(date +%s) - start_time ))
     
-    log "INFO" "=== PULIZIA COMPLETATA ==="
-    log "INFO" "Tempo di esecuzione: ${duration} secondi"
-    log "INFO" "Spazio recuperato: ${space_freed} GB"
-    log "INFO" "Log salvato in: $LOGFILE"
     
     if [[ "$DRY_RUN" == "false" ]]; then
         echo -e "${GREEN}✓ Pulizia completata con successo!${NC}"
         echo -e "  Spazio recuperato: ${space_freed} GB"
-        echo -e "  Log disponibile in: $LOGFILE"
+        echo -e "  Log disponibile in: /var/log/ubuntu-cleaner.log"
     else
         echo -e "${BLUE}ℹ Simulazione completata. Nessuna modifica applicata.${NC}"
     fi
@@ -508,7 +504,6 @@ report_dettagliato() {
     echo -e "${BLUE}Spazio usato prima: $1 MB${NC}"
     echo -e "${BLUE}Spazio usato dopo: $2 MB${NC}"
     echo -e "${GREEN}Spazio recuperato: $3 GB${NC}"
-    echo -e "${BLUE}Log: $LOGFILE${NC}"
 }
 
 main() {
@@ -539,13 +534,11 @@ main() {
     log "INFO" "=== PULIZIA COMPLETATA ==="
     log "INFO" "Tempo di esecuzione: ${duration} secondi"
     log "INFO" "Spazio recuperato: ${space_freed} GB"
-    log "INFO" "Log salvato in: $LOGFILE"
 
     report_dettagliato "$space_before" "$space_after" "$space_freed"
 
     echo -e "${GREEN}✓ Pulizia completata con successo!${NC}"
     echo -e "  Spazio recuperato: ${space_freed} GB"
-    echo -e "  Log disponibile in: $LOGFILE"
 }
 
 main "$@"
