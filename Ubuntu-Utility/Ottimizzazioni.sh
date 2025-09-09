@@ -17,7 +17,7 @@ trap cleanup SIGINT ERR EXIT
 SCRIPT_NAME="Sistema di Ottimizzazione Ubuntu"
 VERSION="2.0"
 LOGFILE="/var/log/ubuntu-cleaner.log"
-DRY_RUN=true  # Modalità sicura di default
+DRY_RUN=false  # Modalità dry-run rimossa
 BACKUP_BEFORE_DELETE=false  # Imposta a true per abilitare backup automatico dei file eliminati
 VERBOSE=false
 FORCE=false
@@ -34,16 +34,14 @@ show_help() {
 $SCRIPT_NAME v$VERSION
 
 USO: $0 [OPZIONI]
-  -h, --help          Mostra questo messaggio
-  -d, --dry-run       Simula senza modifiche
-  -v, --verbose       Output dettagliato
-  -f, --force         Nessuna conferma
-  -l, --log-file FILE Log personalizzato
+    -h, --help          Mostra questo messaggio
+    -v, --verbose       Output dettagliato
+    -f, --force         Nessuna conferma
+    -l, --log-file FILE Log personalizzato
 
 Esempi:
-  $0                  Pulizia completa
-  $0 --dry-run        Simula la pulizia
-  $0 --verbose        Output dettagliato
+    $0                  Pulizia completa
+    $0 --verbose        Output dettagliato
 EOF
 }
 
@@ -54,14 +52,7 @@ while [[ $# -gt 0 ]]; do
             show_help
             exit 0
             ;;
-        -d|--dry-run)
-            DRY_RUN=true
-            shift
-            ;;
-        --no-dry-run)
-            DRY_RUN=false
-            shift
-            ;;
+    # Opzioni dry-run rimosse
         -v|--verbose)
             VERBOSE=true
             shift
@@ -144,7 +135,7 @@ safe_delete() {
     if [[ "$BACKUP_BEFORE_DELETE" == true ]]; then
         backup_file "$target"
     fi
-    if [[ "$FORCE" == "true" ]] || [[ "$DRY_RUN" == "true" ]]; then
+    if [[ "$FORCE" == "true" ]]; then
         run_cmd "rm -f -- \"$target\"" "Eliminazione sicura di $target"
     else
         if confirm_action "Eliminare il file $target? Percorso: $target"; then
@@ -163,10 +154,7 @@ run_cmd() {
         log "DEBUG" "Eseguendo: $cmd"
     fi
     
-    if [[ "$DRY_RUN" == "true" ]]; then
-        log "INFO" "[DRY-RUN] $desc: $cmd"
-        return 0
-    fi
+    # Dry-run rimosso: esecuzione sempre eseguita
     
     local start_time=$(date +%s)
     
@@ -193,7 +181,7 @@ run_cmd() {
 # Funzione per conferma utente
 confirm_action() {
     local message="$1"
-    if [[ "$FORCE" == "true" ]] || [[ "$DRY_RUN" == "true" ]]; then
+    if [[ "$FORCE" == "true" ]]; then
         return 0
     fi
     echo -e "${YELLOW}CONFERMA RICHIESTA:${NC} $message"
@@ -242,7 +230,11 @@ cleanup_temp_files() {
         thumb_dir="$home_dir/.cache/thumbnails"
         if [[ -d "$thumb_dir" ]]; then
             find "$thumb_dir" -type f -print0 | while IFS= read -r -d '' file; do
-                safe_delete "$file"
+                if [[ "$file" != /* ]]; then
+                    log "WARN" "Percorso non valido: '$file'"
+                    continue
+                fi
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
     done
@@ -256,22 +248,38 @@ cleanup_user_cache() {
         local home_dir=$(getent passwd "$user" | cut -d: -f6)
         if [[ -d "$home_dir/.cache/mozilla" ]]; then
             find "$home_dir/.cache/mozilla" -type f -print0 | while IFS= read -r -d '' file; do
-                safe_delete "$file"
+                if [[ "$file" != /* ]]; then
+                    log "WARN" "Percorso non valido: '$file'"
+                    continue
+                fi
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
         if [[ -d "$home_dir/.cache/google-chrome" ]]; then
             find "$home_dir/.cache/google-chrome" -type f -print0 | while IFS= read -r -d '' file; do
-                safe_delete "$file"
+                if [[ "$file" != /* ]]; then
+                    log "WARN" "Percorso non valido: '$file'"
+                    continue
+                fi
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
         if [[ -d "$home_dir/.cache/chromium" ]]; then
             find "$home_dir/.cache/chromium" -type f -print0 | while IFS= read -r -d '' file; do
-                safe_delete "$file"
+                if [[ "$file" != /* ]]; then
+                    log "WARN" "Percorso non valido: '$file'"
+                    continue
+                fi
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
         if [[ -d "$home_dir/.cache/thumbnails" ]]; then
             find "$home_dir/.cache/thumbnails" -type f -print0 | while IFS= read -r -d '' file; do
-                safe_delete "$file"
+                if [[ "$file" != /* ]]; then
+                    log "WARN" "Percorso non valido: '$file'"
+                    continue
+                fi
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
     done
@@ -374,10 +382,117 @@ main() {
 trap 'log "ERROR" "Script interrotto dall'\''utente"; exit 130' INT TERM
 
 # Controllo dipendenze (bc per calcoli)
-if ! command -v bc &>/dev/null; then
-    log "WARN" "bc non installato, i calcoli dello spazio potrebbero non funzionare"
-fi
+check_dependencies() {
+    local deps=(bc apt-get dpkg logrotate journalctl find tail df sync ldconfig)
+    local missing=()
+    for dep in "${deps[@]}"; do
+        if ! command -v "$dep" &>/dev/null; then
+            missing+=("$dep")
+        fi
+    done
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log "WARN" "Comandi mancanti: ${missing[*]}"
+    fi
+    # smartctl è opzionale
+    if ! command -v smartctl &>/dev/null; then
+        log "INFO" "smartctl non installato: analisi SMART dischi non disponibile"
+    fi
+}
 
 # Esecuzione del main
+
+# Pulizia file .tmp/.bak obsoleti nelle home
+cleanup_tmp_bak_files() {
+    log "INFO" "=== PULIZIA FILE .tmp/.bak OBSOLETI NELLE HOME ==="
+    local users=$(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 && $1!~/^(nobody|systemd-)/ {print $1}')
+    for user in $users; do
+        local home_dir=$(getent passwd "$user" | cut -d: -f6)
+        if [[ -d "$home_dir" ]]; then
+            find "$home_dir" -type f \( -name '*.tmp' -o -name '*.bak' \) -mtime +14 -print0 | while IFS= read -r -d '' file; do
+                if [[ "$file" != /* ]]; then
+                    log "WARN" "Percorso non valido: '$file'"
+                    continue
+                fi
+                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
+            done
+        fi
+    done
+}
+
+# Analisi SMART dischi
+smart_disks_report() {
+    log "INFO" "=== ANALISI SMART DEI DISCHI ==="
+    if command -v smartctl &>/dev/null; then
+        for disk in /dev/sd[a-z]; do
+            if [[ -b "$disk" ]]; then
+                log "INFO" "SMART info per $disk:"
+                smartctl -H "$disk" | grep -E 'SMART overall-health|PASSED|FAILED' | while read -r line; do
+                    log "INFO" "$disk: $line"
+                done
+            fi
+        done
+    else
+        log "INFO" "smartctl non disponibile, salto analisi SMART."
+    fi
+}
+
+# Ottimizzazione RAM (drop caches)
+optimize_ram() {
+    log "INFO" "=== OTTIMIZZAZIONE RAM (DROP CACHES) ==="
+    # Dry-run rimosso: drop caches sempre eseguito se permessi
+    if [[ $EUID -ne 0 ]]; then
+        log "ERROR" "Permessi insufficienti per drop caches."
+        return 1
+    fi
+    sync
+    echo 3 > /proc/sys/vm/drop_caches && log "INFO" "RAM ottimizzata: caches droppate."
+}
+
+# Report dettagliato finale
+report_dettagliato() {
+    log "INFO" "=== REPORT DETTAGLIATO ==="
+    echo -e "${BLUE}Spazio usato prima: $1 MB${NC}"
+    echo -e "${BLUE}Spazio usato dopo: $2 MB${NC}"
+    echo -e "${GREEN}Spazio recuperato: $3 GB${NC}"
+    echo -e "${BLUE}Log: $LOGFILE${NC}"
+}
+
+main() {
+    local start_time=$(date +%s)
+    local space_before=$(calculate_space)
+
+    log "INFO" "=== AVVIO $SCRIPT_NAME v$VERSION ==="
+    log "INFO" "Modalità: NORMALE"
+    log "INFO" "Spazio utilizzato iniziale: $(echo "scale=2; $space_before/1024/1024" | bc -l 2>/dev/null || echo "N/A") GB"
+
+    [[ -f "$LOGFILE" ]] && cp "$LOGFILE" "${LOGFILE}.backup" 2>/dev/null || true
+
+    check_dependencies
+    basic_cleanup
+    cleanup_logs
+    cleanup_temp_files
+    cleanup_user_cache
+    cleanup_tmp_bak_files
+    postgresql_maintenance
+    system_optimization
+    smart_disks_report
+    optimize_ram
+
+    local space_after=$(calculate_space)
+    local space_freed=$(echo "scale=2; ($space_before-$space_after)/1024/1024" | bc -l 2>/dev/null || echo "N/A")
+    local duration=$(( $(date +%s) - start_time ))
+
+    log "INFO" "=== PULIZIA COMPLETATA ==="
+    log "INFO" "Tempo di esecuzione: ${duration} secondi"
+    log "INFO" "Spazio recuperato: ${space_freed} GB"
+    log "INFO" "Log salvato in: $LOGFILE"
+
+    report_dettagliato "$space_before" "$space_after" "$space_freed"
+
+    echo -e "${GREEN}✓ Pulizia completata con successo!${NC}"
+    echo -e "  Spazio recuperato: ${space_freed} GB"
+    echo -e "  Log disponibile in: $LOGFILE"
+}
+
 main "$@"
 SCRIPT_SUCCESS=true
