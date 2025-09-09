@@ -293,14 +293,25 @@ system_optimization() {
     run_cmd "ldconfig" "Ricostruzione cache librerie condivise" true
     run_cmd "sync" "Sincronizzazione filesystem"
 
-        # Pulizia e backup della bash history
-        log "INFO" "Backup della bash history..."
-        cp ~/.bash_history ~/.bash_history.bak
-        log "INFO" "Mantieni solo gli ultimi 100 comandi nella bash history."
-        tail -100 ~/.bash_history > ~/.bash_history.tmp && mv ~/.bash_history.tmp ~/.bash_history
-        history -c
-        history -r
-        log "INFO" "Bash history ottimizzata e sincronizzata."
+    # Pulizia e backup della bash history per ogni utente reale
+    local users=()
+    while IFS=: read -r user _ uid _ _ home _; do
+        if [[ $uid -ge 1000 && $uid -lt 65534 && -d "$home" ]]; then
+            users+=("$home")
+        fi
+    done < <(getent passwd)
+    for home_dir in "${users[@]}"; do
+        local hist_file="$home_dir/.bash_history"
+        if [[ -f "$hist_file" ]]; then
+            log "INFO" "Backup della bash history per $home_dir..."
+            cp "$hist_file" "$hist_file.bak"
+            log "INFO" "Mantieni solo gli ultimi 100 comandi nella bash history di $home_dir."
+            tail -100 "$hist_file" > "$hist_file.tmp" && mv "$hist_file.tmp" "$hist_file"
+        else
+            log "WARN" "Nessuna bash history trovata per $home_dir."
+        fi
+    done
+    log "INFO" "Bash history ottimizzata e sincronizzata per tutti gli utenti."
 }
 
 # Funzione per la gestione dei servizi PostgreSQL
