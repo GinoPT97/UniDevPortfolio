@@ -2,6 +2,23 @@
 set -Eeuo pipefail
 
 # Variabile globale per tracciare l'uscita pulita
+
+# Configurazione script
+SCRIPT_NAME="Sistema di Ottimizzazione Ubuntu"
+VERSION="2.1"
+LOGFILE="/var/log/ubuntu-cleaner.log"
+DRY_RUN=false  # Modalità dry-run rimossa
+BACKUP_BEFORE_DELETE=false  # Imposta a true per abilitare backup automatico dei file eliminati
+VERBOSE=true
+FORCE=true
+
+# Controllo permessi superutente all'avvio
+if [[ $EUID -ne 0 ]]; then
+    echo -e "\033[0;31m[ERROR]\033[0m Questo script deve essere eseguito come superutente."
+    echo "Prova: sudo $0"
+    exit 1
+fi
+
 SCRIPT_SUCCESS=false
 # Cleanup handler
 cleanup() {
@@ -12,15 +29,6 @@ cleanup() {
     log "ERROR" "Script interrotto o errore. Pulizia in corso."
 }
 trap cleanup SIGINT ERR EXIT
-
-# Configurazione script
-SCRIPT_NAME="Sistema di Ottimizzazione Ubuntu"
-VERSION="2.0"
-LOGFILE="/var/log/ubuntu-cleaner.log"
-DRY_RUN=false  # Modalità dry-run rimossa
-BACKUP_BEFORE_DELETE=false  # Imposta a true per abilitare backup automatico dei file eliminati
-VERBOSE=false
-FORCE=false
 
 # Colori per output
 RED='\033[0;31m'
@@ -51,15 +59,6 @@ while [[ $# -gt 0 ]]; do
         -h|--help)
             show_help
             exit 0
-            ;;
-    # Opzioni dry-run rimosse
-        -v|--verbose)
-            VERBOSE=true
-            shift
-            ;;
-        -f|--force)
-            FORCE=true
-            shift
             ;;
         -l|--log-file)
             LOGFILE="$2"
@@ -178,16 +177,9 @@ run_cmd() {
     fi
 }
 
-# Funzione per conferma utente
 confirm_action() {
-    local message="$1"
-    if [[ "$FORCE" == "true" ]]; then
-        return 0
-    fi
-    echo -e "${YELLOW}CONFERMA RICHIESTA:${NC} $message"
-    read -p "Continuare? [s/N]: " -n 1 -r
-    echo
-    [[ $REPLY =~ ^[Ss]$ ]]
+    # Con FORCE attivo, conferma automatica
+    return 0
 }
 
 # Calcola spazio usato su /
