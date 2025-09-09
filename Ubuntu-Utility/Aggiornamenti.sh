@@ -1,7 +1,6 @@
-
 #!/bin/bash
-set -e  # Ferma lo script in caso di errore
 
+set -e  # Ferma lo script in caso di errore
 
 # Funzione per registrare i messaggi
 log() {
