@@ -1,5 +1,5 @@
-
 #!/bin/bash
+
 set -e  # Ferma lo script in caso di errore
 
 # Verifica permessi root
