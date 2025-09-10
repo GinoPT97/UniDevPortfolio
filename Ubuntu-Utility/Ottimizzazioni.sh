@@ -135,10 +135,10 @@ safe_delete() {
         backup_file "$target"
     fi
     if [[ "$FORCE" == "true" ]]; then
-        run_cmd "rm -f -- \"$target\"" "Eliminazione sicura di $target"
+        run_cmd "rm -f -- \"${target}\"" "Eliminazione sicura di \"${target}\""
     else
-        if confirm_action "Eliminare il file $target? Percorso: $target"; then
-            run_cmd "rm -f -- \"$target\"" "Eliminazione sicura di $target"
+        if confirm_action "Eliminare il file \"${target}\"? Percorso: \"${target}\""; then
+            run_cmd "rm -f -- \"${target}\"" "Eliminazione sicura di \"${target}\""
         fi
     fi
 }
