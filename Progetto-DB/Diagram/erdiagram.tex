@@ -75,22 +75,49 @@
 \node[attribute, right=1.2cm of articoli_ordine] (numeroarticoli) {numeroarticoli};
 
 % Entità PRODOTTO (affianco e in linea con DIPENDENTE)
+
+% Entità PRODOTTO (padre)
 \node[entity] (prodotto) at (3.5,-6) {PRODOTTO};
 \node[key, above=0.8cm of prodotto] (codprodotto) {\underline{codprodotto}};
 \node[attribute, above left=0.8cm and 1.2cm of prodotto] (nome_p) {nome};
 \node[attribute, above right=0.8cm and 1.2cm of prodotto] (descrizione) {descrizione};
 \node[attribute, left=1.5cm of prodotto] (prezzo_p) {prezzo};
 \node[attribute, right=1.5cm of prodotto] (luogoprovenienza) {luogoprovenienza};
-\node[attribute, below left=0.8cm and 1.2cm of prodotto] (dataraccolta) {dataraccolta};
-\node[attribute, below right=0.8cm and 1.2cm of prodotto] (datascadenza_p) {datascadenza};
-\node[attribute, below=1.2cm of prodotto] (glutine) {glutine};
-\node[attribute, below left=1.5cm and 0.5cm of prodotto] (datamungitura) {datamungitura};
-\node[attribute, below right=1.5cm and 0.5cm of prodotto] (dataproduzione) {dataproduzione};
 \node[attribute, above left=1.5cm and 0.5cm of prodotto] (scorta) {scorta};
-\node[attribute, above right=1.5cm and 0.5cm of prodotto] (categoria) {categoria};
 
-% ENUM TIPOLOGIA (posizionato strategicamente per non uscire dai margini)
-\node[enum, above=1.8cm of prodotto] (tipologia) {\begin{tabular}{c}TIPOLOGIA\\FRUTTA\\VERDURA\\FARINACEI\\LATTICINI\\UOVA\\CONFEZIONATI\end{tabular}};
+% Specializzazione prodotto
+% Nodo cerchio bianco con 'd' per specializzazione
+\node[draw, circle, minimum size=0.6cm, fill=white] (spec_prod) at (3.5,-8.2) {\textbf{d}};
+
+% Entità figlie per ogni categoria
+
+% Entità figlie di prodotto, centrate e distanziate per evitare tagli e sovrapposizioni
+
+% Entità figlie di prodotto, più centrali e distanziate
+
+% Entità figlie di prodotto, più compatte e più in alto per evitare tagli
+
+% Entità figlie di prodotto, più distanziate orizzontalmente per evitare sovrapposizioni
+\node[entity] (frutta) at (-2.8,-9.5) {FRUTTA};
+\node[attribute, below=0.7cm of frutta] (dataraccolta_f) {dataraccolta};
+
+\node[entity] (verdura) at (-0.1,-9.5) {VERDURA};
+\node[attribute, below=0.7cm of verdura] (dataraccolta_v) {dataraccolta};
+
+\node[entity] (latticini) at (3.4,-13) {LATTICINI};
+\node[attribute, below left=0.7cm and 0.7cm of latticini] (datamungitura_l) {datamungitura};
+\node[attribute, below right=0.7cm and 0.7cm of latticini] (dataproduzione_l) {dataproduzione};
+\node[attribute, below=1.2cm of latticini] (datascadenza_l) {datascadenza};
+
+\node[entity] (farinacei) at (2.5,-9.5) {FARINACEI};
+\node[attribute, below=0.7cm of farinacei] (glutine_fa) {glutine};
+
+\node[entity] (uova) at (5.1,-9.5) {UOVA};
+\node[attribute, below=0.7cm of uova] (datascadenza_u) {datascadenza};
+
+\node[entity] (confezionati) at (8,-9.5) {CONFEZIONATI};
+\node[attribute, below=0.7cm of confezionati] (datascadenza_c) {datascadenza};
+
 
 % Connessioni attributi-entità CLIENTE
 \draw (cliente) -- (codcliente);
@@ -124,14 +151,29 @@
 \draw (prodotto) -- (descrizione);
 \draw (prodotto) -- (prezzo_p);
 \draw (prodotto) -- (luogoprovenienza);
-\draw (prodotto) -- (dataraccolta);
-\draw (prodotto) -- (datamungitura);
-\draw (prodotto) -- (glutine);
-\draw (prodotto) -- (datascadenza_p);
-\draw (prodotto) -- (dataproduzione);
-\draw (prodotto) -- (categoria);
 \draw (prodotto) -- (scorta);
-\draw[dashed] (categoria) -- (tipologia);
+
+% Connessioni specializzazione
+
+% Connessioni specializzazione con archi curvi e maggiore distanza
+\draw[thick] (prodotto) -- (spec_prod);
+% Archi curvi per specializzazione, come Pagamento
+\draw[thick, bend left=35] (spec_prod) to (frutta);
+\draw[thick, bend left=20] (spec_prod) to (verdura);
+\draw[thick] (spec_prod) -- (latticini);
+\draw[thick, bend right=20] (spec_prod) to (farinacei);
+\draw[thick, bend right=35] (spec_prod) to (uova);
+\draw[thick, bend right=50] (spec_prod) to (confezionati);
+
+% Attributi specifici sotto le entità figlie
+\draw (frutta) -- (dataraccolta_f);
+\draw (verdura) -- (dataraccolta_v);
+\draw (latticini) -- (datamungitura_l);
+\draw (latticini) -- (dataproduzione_l);
+\draw (latticini) -- (datascadenza_l);
+\draw (farinacei) -- (glutine_fa);
+\draw (uova) -- (datascadenza_u);
+\draw (confezionati) -- (datascadenza_c);
 
 % Connessioni attributi-entità ORDINE
 \draw (ordine) -- (codordine);
@@ -154,7 +196,7 @@
 
 % Connessioni ENUM
 \draw[dashed] (stato) -- (statotessera);
-\draw[dashed] (categoria) -- (tipologia);
+% ...rimosso collegamento dashed obsoleto...
 
 % Cardinalità con formato (min,max) - centrate rispetto alle linee
 % Relazione POSSIEDE (Cliente-Tessera) - offset verticale per evitare sovrapposizione
@@ -174,6 +216,7 @@
 \node[font=\scriptsize] at ($(articoli_ordine) + (0,-0.8)$) {(1,N)};
 
 \end{tikzpicture}
+
 \end{center}
 
 \end{document}
