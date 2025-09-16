@@ -1,0 +1,183 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, fit, calc}
+\usepackage{geometry}
+\geometry{margin=0.5cm}
+
+\begin{document}
+
+\title{Diagramma ER - Database Negozio di Prodotti Biologici}
+\author{Schema Entità-Relazione Ristrutturato}
+\date{\today}
+\maketitle
+
+\begin{center}
+\begin{tikzpicture}[
+    entity/.style={rectangle, draw=black, thick, minimum width=2.5cm, minimum height=1cm, fill=teal!30, font=\small\bfseries, rounded corners=3pt},
+    attribute/.style={ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm, fill=teal!20, font=\scriptsize},
+    key/.style={ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm, fill=teal!20, font=\scriptsize\bfseries, text=black},
+    relationship/.style={diamond, draw=black, thick, minimum width=2cm, minimum height=1cm, fill=yellow!60, font=\small\bfseries},
+    enum/.style={rectangle, draw=black, rounded corners, minimum width=1.8cm, minimum height=0.8cm, fill=gray!30, font=\scriptsize},
+    specialization/.style={triangle, draw=black, thick, minimum width=1.5cm, minimum height=1cm, fill=yellow!40, font=\small},
+    node distance=1.2cm and 1.8cm,
+    scale=0.9, transform shape
+]
+
+% Layout riorganizzato per evitare sovrapposizioni e taglio degli attributi
+
+% Entità CLIENTE (in alto a sinistra)
+\node[entity] (cliente) at (-2,6) {CLIENTE};
+\node[key, above=0.8cm of cliente] (codcliente) {codcliente};
+\node[attribute, above left=0.8cm and 1cm of cliente] (nome_c) {nome};
+\node[attribute, above right=0.8cm and 1cm of cliente] (cognome_c) {cognome};
+\node[attribute, left=1.2cm of cliente] (cf_c) {codicefiscale};
+\node[attribute, right=1.2cm of cliente] (indirizzo_c) {indirizzo};
+\node[attribute, below left=0.8cm and 1cm of cliente] (telefono_c) {telefono};
+\node[attribute, below right=0.8cm and 1cm of cliente] (email_c) {email};
+
+% Relazione POSSIEDE
+\node[relationship] (possiede) at (2,6) {possiede};
+
+% Entità TESSERA (collegata al cliente)
+\node[entity] (tessera) at (6,6) {TESSERA};
+\node[key, above=0.8cm of tessera] (codtessera) {codtessera};
+\node[attribute, above left=0.8cm and 1cm of tessera] (numeropunti) {numeropunti};
+\node[attribute, above right=0.8cm and 1cm of tessera] (dataemissione) {dataemissione};
+\node[attribute, right=1.2cm of tessera] (datascadenza) {datascadenza};
+\node[attribute, below=0.8cm of tessera] (stato) {stato};
+
+% ENUM STATOTESSERA (spostato per evitare sovrapposizioni)
+\node[enum, below right=1.2cm and 0.8cm of tessera] (statotessera) {\begin{tabular}{c}STATOTESSERA\\ATTIVA\\SOSPESA\\SCADUTA\end{tabular}};
+
+% Relazione EFFETTUA (Cliente-Ordine)
+\node[relationship] (effettua) at (0,3) {effettua};
+
+% Entità ORDINE (al centro, spostato leggermente a sinistra)
+\node[entity] (ordine) at (4,1.5) {ORDINE};
+\node[key, above=0.8cm of ordine] (codordine) {codordine};
+\node[attribute, left=1.2cm of ordine] (prezzototale) {prezzototale};
+\node[attribute, right=1.2cm of ordine] (dataacquisto) {dataacquisto};
+
+% Entità DIPENDENTE (in basso a sinistra)
+\node[entity] (dipendente) at (-2,-2) {DIPENDENTE};
+\node[key, above=0.8cm of dipendente] (coddipendente) {coddipendente};
+\node[attribute, above left=0.8cm and 1cm of dipendente] (nome_d) {nome};
+\node[attribute, above right=0.8cm and 1cm of dipendente] (cognome_d) {cognome};
+\node[attribute, left=1.2cm of dipendente] (cf_d) {codicefiscale};
+\node[attribute, right=1.2cm of dipendente] (indirizzo_d) {indirizzo};
+\node[attribute, below left=0.8cm and 1cm of dipendente] (telefono_d) {telefono};
+\node[attribute, below right=0.8cm and 1cm of dipendente] (email_d) {email};
+
+% Relazione GESTISCE (Dipendente-Ordine)
+\node[relationship] (gestisce) at (1,0) {gestisce};
+
+% Entità associativa ARTICOLI_ORDINE
+\node[entity] (articoli_ordine) at (8,1.5) {ARTICOLI\_ORDINE};
+\node[attribute, above left=0.8cm and 1cm of articoli_ordine] (prezzo_art) {prezzo};
+\node[attribute, above right=0.8cm and 1cm of articoli_ordine] (numeroarticoli) {numeroarticoli};
+
+% Entità PRODOTTO (riposizionata per contenere tutti gli attributi)
+\node[entity] (prodotto) at (11,1.5) {PRODOTTO};
+\node[key, above=0.8cm of prodotto] (codprodotto) {codprodotto};
+\node[attribute, above left=1.2cm and 1.2cm of prodotto] (nome_p) {nome};
+\node[attribute, above right=1.2cm and 1.2cm of prodotto] (descrizione) {descrizione};
+\node[attribute, left=1.5cm of prodotto] (prezzo_p) {prezzo};
+\node[attribute, right=1.5cm of prodotto] (luogoprovenienza) {luogoprovenienza};
+\node[attribute, below left=1.2cm and 1.2cm of prodotto] (dataraccolta) {dataraccolta};
+\node[attribute, below left=0.8cm and 1.5cm of prodotto] (datamungitura) {datamungitura};
+\node[attribute, below=1cm of prodotto] (glutine) {glutine};
+\node[attribute, below right=0.8cm and 1.2cm of prodotto] (datascadenza_p) {datascadenza};
+\node[attribute, below right=1.2cm and 1.2cm of prodotto] (dataproduzione) {dataproduzione};
+\node[attribute, above right=0.6cm and 1.8cm of prodotto] (categoria) {categoria};
+\node[attribute, above left=0.6cm and 1.8cm of prodotto] (scorta) {scorta};
+
+% ENUM TIPOLOGIA (posizionato strategicamente per non uscire dai margini)
+\node[enum, above=1.8cm of prodotto] (tipologia) {\begin{tabular}{c}TIPOLOGIA\\FRUTTA\\VERDURA\\FARINACEI\\LATTICINI\\UOVA\\CONFEZIONATI\end{tabular}};
+
+% Connessioni attributi-entità CLIENTE
+\draw (cliente) -- (codcliente);
+\draw (cliente) -- (nome_c);
+\draw (cliente) -- (cognome_c);
+\draw (cliente) -- (cf_c);
+\draw (cliente) -- (indirizzo_c);
+\draw (cliente) -- (telefono_c);
+\draw (cliente) -- (email_c);
+
+% Connessioni attributi-entità TESSERA
+\draw (tessera) -- (codtessera);
+\draw (tessera) -- (numeropunti);
+\draw (tessera) -- (dataemissione);
+\draw (tessera) -- (datascadenza);
+\draw (tessera) -- (stato);
+\draw[dashed] (stato) -- (statotessera);
+
+% Connessioni attributi-entità DIPENDENTE
+\draw (dipendente) -- (coddipendente);
+\draw (dipendente) -- (nome_d);
+\draw (dipendente) -- (cognome_d);
+\draw (dipendente) -- (cf_d);
+\draw (dipendente) -- (indirizzo_d);
+\draw (dipendente) -- (telefono_d);
+\draw (dipendente) -- (email_d);
+
+% Connessioni attributi-entità PRODOTTO
+\draw (prodotto) -- (codprodotto);
+\draw (prodotto) -- (nome_p);
+\draw (prodotto) -- (descrizione);
+\draw (prodotto) -- (prezzo_p);
+\draw (prodotto) -- (luogoprovenienza);
+\draw (prodotto) -- (dataraccolta);
+\draw (prodotto) -- (datamungitura);
+\draw (prodotto) -- (glutine);
+\draw (prodotto) -- (datascadenza_p);
+\draw (prodotto) -- (dataproduzione);
+\draw (prodotto) -- (categoria);
+\draw (prodotto) -- (scorta);
+\draw[dashed] (categoria) -- (tipologia);
+
+% Connessioni attributi-entità ORDINE
+\draw (ordine) -- (codordine);
+\draw (ordine) -- (prezzototale);
+\draw (ordine) -- (dataacquisto);
+
+% Connessioni attributi-entità ARTICOLI_ORDINE
+\draw (articoli_ordine) -- (prezzo_art);
+\draw (articoli_ordine) -- (numeroarticoli);
+
+% Connessioni principali seguendo lo stile dell'esempio
+\draw[thick] (cliente) -- (possiede);
+\draw[thick] (possiede) -- (tessera);
+\draw[thick] (cliente) -- (effettua);
+\draw[thick] (effettua) -- (ordine);
+\draw[thick] (dipendente) -- (gestisce);
+\draw[thick] (gestisce) -- (ordine);
+\draw[thick] (ordine) -- (articoli_ordine);
+\draw[thick] (articoli_ordine) -- (prodotto);
+
+% Connessioni ENUM
+\draw[dashed] (stato) -- (statotessera);
+\draw[dashed] (categoria) -- (tipologia);
+
+% Cardinalità con stile dell'esempio
+\node[font=\scriptsize] at ($(cliente)!0.3!(possiede)$) {1};
+\node[font=\scriptsize] at ($(tessera)!0.3!(possiede)$) {1};
+
+\node[font=\scriptsize] at ($(cliente)!0.3!(effettua)$) {1};
+\node[font=\scriptsize] at ($(ordine)!0.3!(effettua)$) {*};
+
+\node[font=\scriptsize] at ($(dipendente)!0.3!(gestisce)$) {1};
+\node[font=\scriptsize] at ($(ordine)!0.3!(gestisce)$) {*};
+
+\node[font=\scriptsize] at ($(ordine)!0.3!(articoli_ordine)$) {1};
+\node[font=\scriptsize] at ($(articoli_ordine)!0.7!(prodotto)$) {*};
+
+% Partecipazione totale (linee doppie)
+\draw[thick, double] (cliente) -- (possiede);
+\draw[thick, double] (tessera) -- (possiede);
+
+\end{tikzpicture}
+\end{center}
+
+\end{document}
