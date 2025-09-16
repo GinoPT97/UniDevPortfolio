@@ -25,7 +25,7 @@
 
 % Entità CLIENTE (allineato verticalmente con ORDINE, più spazio in altezza)
 \node[entity] (cliente) at (-8,8) {CLIENTE};
-\node[key, above=0.8cm of cliente] (codcliente) {codcliente};
+\node[key, above=0.8cm of cliente] (codcliente) {\underline{codcliente}};
 \node[attribute, above left=0.8cm and 1cm of cliente] (nome_c) {nome};
 \node[attribute, above right=0.8cm and 1cm of cliente] (cognome_c) {cognome};
 \node[attribute, left=1.2cm of cliente] (cf_c) {codicefiscale};
@@ -38,7 +38,7 @@
 
 % Entità TESSERA (oltre i limiti della pagina a destra)
 \node[entity] (tessera) at (4.5,8) {TESSERA};
-\node[key, above=0.8cm of tessera] (codtessera) {codtessera};
+\node[key, above=0.8cm of tessera] (codtessera) {\underline{codtessera}};
 \node[attribute, above left=0.8cm and 1cm of tessera] (numeropunti) {numeropunti};
 \node[attribute, above right=0.8cm and 1cm of tessera] (dataemissione) {dataemissione};
 \node[attribute, right=1.2cm of tessera] (datascadenza) {datascadenza};
@@ -53,7 +53,7 @@
 % Entità ORDINE (spostato quanto più a sinistra possibile, più spazio in altezza)
 \node[entity] (ordine) at (-8,1) {ORDINE};
 \node[attribute, left=1.2cm of ordine] (prezzototale) {prezzototale};
-\node[key, below=0.8cm of prezzototale] (codordine) {codordine};
+\node[key, below=0.8cm of prezzototale] (codordine) {\underline{codordine}};
 
 % Entità DIPENDENTE (allineato verticalmente con ORDINE, più spazio in altezza)
 \node[entity] (dipendente) at (-8,-6) {DIPENDENTE};
@@ -63,7 +63,7 @@
 \node[attribute, right=1.2cm of dipendente] (indirizzo_d) {indirizzo};
 \node[attribute, below left=0.8cm and 1cm of dipendente] (telefono_d) {telefono};
 \node[attribute, below right=0.8cm and 1cm of dipendente] (email_d) {email};
-\node[key, below=0.8cm of dipendente] (coddipendente) {coddipendente};
+\node[key, below=0.8cm of dipendente] (coddipendente) {\underline{coddipendente}};
 
 % Relazione GESTISCE (Dipendente-Ordine)
 \node[relationship] (gestisce) at (-8,-2.5) {gestisce};
@@ -76,7 +76,7 @@
 
 % Entità PRODOTTO (affianco e in linea con DIPENDENTE)
 \node[entity] (prodotto) at (3.5,-6) {PRODOTTO};
-\node[key, above=0.8cm of prodotto] (codprodotto) {codprodotto};
+\node[key, above=0.8cm of prodotto] (codprodotto) {\underline{codprodotto}};
 \node[attribute, above left=0.8cm and 1.2cm of prodotto] (nome_p) {nome};
 \node[attribute, above right=0.8cm and 1.2cm of prodotto] (descrizione) {descrizione};
 \node[attribute, left=1.5cm of prodotto] (prezzo_p) {prezzo};
