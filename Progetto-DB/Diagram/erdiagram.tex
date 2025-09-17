@@ -42,10 +42,21 @@
 \node[attribute, above left=0.8cm and 1cm of tessera] (numeropunti) {numeropunti};
 \node[attribute, above right=0.8cm and 1cm of tessera] (dataemissione) {dataemissione};
 \node[attribute, right=1.2cm of tessera] (datascadenza) {datascadenza};
-\node[attribute, below=0.8cm of tessera] (stato) {stato};
+% Attributi specifici per lo stato della tessera
+% Nodo di specializzazione per STATOTESSERA
+% Nodo di specializzazione per STATOTESSERA, allineato verticalmente con TESSERA
+% Nodo di specializzazione per STATOTESSERA, distanza verticale ridotta
+\node[draw, circle, minimum size=0.6cm, fill=white] (spec_statotessera) at (4.5,5.8) {\textbf{d}};
 
-% ENUM STATOTESSERA (spostato per evitare sovrapposizioni)
-\node[enum, below right=1.2cm and 0.8cm of tessera] (statotessera) {\begin{tabular}{c}STATOTESSERA\\ATTIVA\\SOSPESA\\SCADUTA\end{tabular}};
+% Entità per gli stati della tessera
+% Entità per gli stati della tessera, allineate verticalmente sotto il nodo di specializzazione
+% Entità per gli stati della tessera, disposte orizzontalmente sotto il nodo di specializzazione
+% Entità per gli stati della tessera, disposte orizzontalmente con maggiore distanza
+% Entità per gli stati della tessera, distanza equilibrata
+% Entità per gli stati della tessera, distanza leggermente aumentata
+\node[entity] (attiva) at (4.5,4) {ATTIVA};
+\node[entity] (sospesa) at (1.5,4) {SOSPESA};
+\node[entity] (scaduta) at (7.5,4) {SCADUTA};
 
 % Relazione EFFETTUA (Cliente-Ordine)
 \node[relationship] (effettua) at (-8,4.5) {effettua};
@@ -90,23 +101,25 @@
 \node[draw, circle, minimum size=0.6cm, fill=white] (spec_prod) at (-2,-8.2) {\textbf{d}};
 
 % Entità figlie di prodotto - rettangoli adattivi
-\node[entity] (frutta) at (-8,-11) {FRUTTA};
+
+% Entità figlie di prodotto - rettangoli adattivi (spostate più a sinistra)
+\node[entity] (frutta) at (-11,-11) {FRUTTA};
 \node[attribute, below=0.8cm of frutta] (dataraccolta_f) {dataraccolta};
 
-\node[entity] (verdura) at (-5,-11) {VERDURA};
+\node[entity] (verdura) at (-8,-11) {VERDURA};
 \node[attribute, below=0.8cm of verdura] (dataraccolta_v) {dataraccolta};
 
-\node[entity] (confezionati) at (-2,-11) {CONFEZIONATI};
+\node[entity] (confezionati) at (-5,-11) {CONFEZIONATI};
 \node[attribute, below=0.8cm of confezionati] (datascadenza_c) {datascadenza};
 
-\node[entity] (farinacei) at (1,-11) {FARINACEI};
+\node[entity] (farinacei) at (-2,-11) {FARINACEI};
 \node[attribute, below=0.8cm of farinacei] (glutine_fa) {glutine};
 
-\node[entity] (uova) at (4,-11) {UOVA};
+\node[entity] (uova) at (1,-11) {UOVA};
 \node[attribute, below=0.8cm of uova] (datascadenza_u) {datascadenza};
 
-\node[entity] (latticini) at (7,-11) {LATTICINI};
-\node[attribute, below left=0.8cm and 0.8cm of latticini] (datamungitura_l) {datamungitura};
+\node[entity] (latticini) at (4,-11) {LATTICINI};
+\node[attribute, above right=0.8cm and 0.8cm of latticini] (datamungitura_l) {datamungitura};
 \node[attribute, below right=0.8cm and 0.8cm of latticini] (dataproduzione_l) {dataproduzione};
 \node[attribute, below=1.4cm of latticini] (datascadenza_l) {datascadenza};
 
@@ -125,8 +138,12 @@
 \draw (tessera) -- (numeropunti);
 \draw (tessera) -- (dataemissione);
 \draw (tessera) -- (datascadenza);
-\draw (tessera) -- (stato);
-\draw[dashed] (stato) -- (statotessera);
+% Connessione tra TESSERA e nodo di specializzazione
+\draw[thick] (tessera) -- (spec_statotessera);
+% Connessioni tra nodo di specializzazione e entità stato
+\draw[thick] (spec_statotessera) -- (attiva);
+\draw[thick] (spec_statotessera) -- (sospesa);
+\draw[thick] (spec_statotessera) -- (scaduta);
 
 % Connessioni attributi-entità DIPENDENTE
 \draw (dipendente) -- (coddipendente);
@@ -184,8 +201,6 @@
 % Connessione diretta tra ARTICOLI_ORDINE e PRODOTTO
 \draw[thick] (articoli_ordine) -- (prodotto);
 
-% Connessioni ENUM
-\draw[dashed] (stato) -- (statotessera);
 % ...rimosso collegamento dashed obsoleto...
 
 % Cardinalità con formato (min,max) - centrate rispetto alle linee
