@@ -82,7 +82,7 @@
 
 % Entità associativa ARTICOLI_ORDINE (allineata in altezza con ORDINE)
 \node[entity] (articoli_ordine) at (0,1) {ARTICOLI\_ORDINE};
-\node[attribute, above=0.8cm of articoli_ordine] (prezzo_art) {prezzo};
+\node[attribute, below right=0.8cm and 1cm of articoli_ordine] (prezzo_art) {prezzo};
 \node[attribute, right=1.2cm of articoli_ordine] (numeroarticoli) {numeroarticoli};
 
 % Entità PRODOTTO (affianco e in linea con DIPENDENTE)
@@ -140,10 +140,14 @@
 \draw (tessera) -- (datascadenza);
 % Connessione tra TESSERA e nodo di specializzazione
 \draw[thick] (tessera) -- (spec_statotessera);
+\node[font=\scriptsize] at ($(tessera)!0.5!(spec_statotessera) + (0.5,0)$) {statotessera};
 % Connessioni tra nodo di specializzazione e entità stato
 \draw[thick] (spec_statotessera) -- (attiva);
+\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(attiva) + (0.3,0)$) {'Attiva'};
 \draw[thick] (spec_statotessera) -- (sospesa);
+\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(sospesa) + (-0.3,0)$) {'Sospesa'};
 \draw[thick] (spec_statotessera) -- (scaduta);
+\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(scaduta) + (0.3,0)$) {'Scaduta'};
 
 % Connessioni attributi-entità DIPENDENTE
 \draw (dipendente) -- (coddipendente);
