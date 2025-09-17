@@ -78,7 +78,7 @@
 
 % Entità PRODOTTO (padre)
 \node[entity] (prodotto) at (3.5,-6) {PRODOTTO};
-\node[key, above=0.8cm of prodotto] (codprodotto) {\underline{codprodotto}};
+\node[key, below=1.2cm of prodotto] (codprodotto) {\underline{codprodotto}};
 \node[attribute, above left=0.8cm and 1.2cm of prodotto] (nome_p) {nome};
 \node[attribute, above right=0.8cm and 1.2cm of prodotto] (descrizione) {descrizione};
 \node[attribute, left=1.5cm of prodotto] (prezzo_p) {prezzo};
@@ -87,36 +87,28 @@
 
 % Specializzazione prodotto
 % Nodo cerchio bianco con 'd' per specializzazione
-\node[draw, circle, minimum size=0.6cm, fill=white] (spec_prod) at (3.5,-8.2) {\textbf{d}};
+\node[draw, circle, minimum size=0.6cm, fill=white] (spec_prod) at (-2,-8.2) {\textbf{d}};
 
-% Entità figlie per ogni categoria
+% Entità figlie di prodotto - rettangoli adattivi
+\node[entity] (frutta) at (-8,-11) {FRUTTA};
+\node[attribute, below=0.8cm of frutta] (dataraccolta_f) {dataraccolta};
 
-% Entità figlie di prodotto, centrate e distanziate per evitare tagli e sovrapposizioni
+\node[entity] (verdura) at (-5,-11) {VERDURA};
+\node[attribute, below=0.8cm of verdura] (dataraccolta_v) {dataraccolta};
 
-% Entità figlie di prodotto, più centrali e distanziate
+\node[entity] (confezionati) at (-2,-11) {CONFEZIONATI};
+\node[attribute, below=0.8cm of confezionati] (datascadenza_c) {datascadenza};
 
-% Entità figlie di prodotto, più compatte e più in alto per evitare tagli
+\node[entity] (farinacei) at (1,-11) {FARINACEI};
+\node[attribute, below=0.8cm of farinacei] (glutine_fa) {glutine};
 
-% Entità figlie di prodotto, più distanziate orizzontalmente per evitare sovrapposizioni
-\node[entity] (frutta) at (-2.8,-9.5) {FRUTTA};
-\node[attribute, below=0.7cm of frutta] (dataraccolta_f) {dataraccolta};
+\node[entity] (uova) at (4,-11) {UOVA};
+\node[attribute, below=0.8cm of uova] (datascadenza_u) {datascadenza};
 
-\node[entity] (verdura) at (-0.1,-9.5) {VERDURA};
-\node[attribute, below=0.7cm of verdura] (dataraccolta_v) {dataraccolta};
-
-\node[entity] (latticini) at (3.4,-13) {LATTICINI};
-\node[attribute, below left=0.7cm and 0.7cm of latticini] (datamungitura_l) {datamungitura};
-\node[attribute, below right=0.7cm and 0.7cm of latticini] (dataproduzione_l) {dataproduzione};
-\node[attribute, below=1.2cm of latticini] (datascadenza_l) {datascadenza};
-
-\node[entity] (farinacei) at (2.5,-9.5) {FARINACEI};
-\node[attribute, below=0.7cm of farinacei] (glutine_fa) {glutine};
-
-\node[entity] (uova) at (5.1,-9.5) {UOVA};
-\node[attribute, below=0.7cm of uova] (datascadenza_u) {datascadenza};
-
-\node[entity] (confezionati) at (8,-9.5) {CONFEZIONATI};
-\node[attribute, below=0.7cm of confezionati] (datascadenza_c) {datascadenza};
+\node[entity] (latticini) at (7,-11) {LATTICINI};
+\node[attribute, below left=0.8cm and 0.8cm of latticini] (datamungitura_l) {datamungitura};
+\node[attribute, below right=0.8cm and 0.8cm of latticini] (dataproduzione_l) {dataproduzione};
+\node[attribute, below=1.4cm of latticini] (datascadenza_l) {datascadenza};
 
 
 % Connessioni attributi-entità CLIENTE
@@ -153,17 +145,14 @@
 \draw (prodotto) -- (luogoprovenienza);
 \draw (prodotto) -- (scorta);
 
-% Connessioni specializzazione
-
-% Connessioni specializzazione con archi curvi e maggiore distanza
+% Connessioni specializzazione - dirette come esempio Pagamento
 \draw[thick] (prodotto) -- (spec_prod);
-% Archi curvi per specializzazione, come Pagamento
-\draw[thick, bend left=35] (spec_prod) to (frutta);
-\draw[thick, bend left=20] (spec_prod) to (verdura);
+\draw[thick] (spec_prod) -- (frutta);
+\draw[thick] (spec_prod) -- (verdura);
 \draw[thick] (spec_prod) -- (latticini);
-\draw[thick, bend right=20] (spec_prod) to (farinacei);
-\draw[thick, bend right=35] (spec_prod) to (uova);
-\draw[thick, bend right=50] (spec_prod) to (confezionati);
+\draw[thick] (spec_prod) -- (farinacei);
+\draw[thick] (spec_prod) -- (uova);
+\draw[thick] (spec_prod) -- (confezionati);
 
 % Attributi specifici sotto le entità figlie
 \draw (frutta) -- (dataraccolta_f);
@@ -192,6 +181,7 @@
 \draw[thick] (dipendente) -- (gestisce);
 \draw[thick] (gestisce) -- (ordine);
 \draw[thick] (ordine) -- (articoli_ordine);
+% Connessione diretta tra ARTICOLI_ORDINE e PRODOTTO
 \draw[thick] (articoli_ordine) -- (prodotto);
 
 % Connessioni ENUM
