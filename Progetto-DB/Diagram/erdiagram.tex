@@ -98,27 +98,27 @@
 
 % Specializzazione prodotto
 % Nodo cerchio bianco con 'd' per specializzazione
-\node[draw, circle, minimum size=0.6cm, fill=white] (spec_prod) at (-2,-8.2) {\textbf{d}};
+\node[draw, circle, minimum size=0.6cm, fill=white] (spec_prod) at (-2,-10) {\textbf{d}};
 
 % Entità figlie di prodotto - rettangoli adattivi
 
 % Entità figlie di prodotto - rettangoli adattivi (spostate più a sinistra)
-\node[entity] (frutta) at (-11,-11) {FRUTTA};
+\node[entity] (frutta) at (-11,-14) {FRUTTA};
 \node[attribute, below=0.8cm of frutta] (dataraccolta_f) {dataraccolta};
 
-\node[entity] (verdura) at (-8,-11) {VERDURA};
+\node[entity] (verdura) at (-8,-14) {VERDURA};
 \node[attribute, below=0.8cm of verdura] (dataraccolta_v) {dataraccolta};
 
-\node[entity] (confezionati) at (-5,-11) {CONFEZIONATI};
+\node[entity] (confezionati) at (-5,-14) {CONFEZIONATI};
 \node[attribute, below=0.8cm of confezionati] (datascadenza_c) {datascadenza};
 
-\node[entity] (farinacei) at (-2,-11) {FARINACEI};
+\node[entity] (farinacei) at (-2,-14) {FARINACEI};
 \node[attribute, below=0.8cm of farinacei] (glutine_fa) {glutine};
 
-\node[entity] (uova) at (1,-11) {UOVA};
+\node[entity] (uova) at (1,-14) {UOVA};
 \node[attribute, below=0.8cm of uova] (datascadenza_u) {datascadenza};
 
-\node[entity] (latticini) at (4,-11) {LATTICINI};
+\node[entity] (latticini) at (4,-14) {LATTICINI};
 \node[attribute, above right=0.8cm and 0.8cm of latticini] (datamungitura_l) {datamungitura};
 \node[attribute, below right=0.8cm and 0.8cm of latticini] (dataproduzione_l) {dataproduzione};
 \node[attribute, below=1.4cm of latticini] (datascadenza_l) {datascadenza};
