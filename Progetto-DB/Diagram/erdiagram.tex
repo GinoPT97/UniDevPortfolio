@@ -143,11 +143,11 @@
 \node[font=\scriptsize] at ($(tessera)!0.5!(spec_statotessera) + (0.5,0)$) {statotessera};
 % Connessioni tra nodo di specializzazione e entità stato
 \draw[thick] (spec_statotessera) -- (attiva);
-\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(attiva) + (-0.3,0)$) {'Attiva'};
+\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(attiva) + (-0.3,-0.3)$) {'Attiva'};
 \draw[thick] (spec_statotessera) -- (sospesa);
-\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(sospesa) + (-0.3,0)$) {'Sospesa'};
+\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(sospesa) + (-0.3,-0.3)$) {'Sospesa'};
 \draw[thick] (spec_statotessera) -- (scaduta);
-\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(scaduta) + (0.3,0)$) {'Scaduta'};
+\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(scaduta) + (0.3,-0.3)$) {'Scaduta'};
 
 % Connessioni attributi-entità DIPENDENTE
 \draw (dipendente) -- (coddipendente);
