@@ -54,9 +54,9 @@
 % Entità per gli stati della tessera, disposte orizzontalmente con maggiore distanza
 % Entità per gli stati della tessera, distanza equilibrata
 % Entità per gli stati della tessera, distanza leggermente aumentata
-\node[entity] (attiva) at (4.5,4) {ATTIVA};
-\node[entity] (sospesa) at (1.5,4) {SOSPESA};
-\node[entity] (scaduta) at (7.5,4) {SCADUTA};
+\node[entity] (attiva) at (4.5,3) {ATTIVA};
+\node[entity] (sospesa) at (1.5,3) {SOSPESA};
+\node[entity] (scaduta) at (7.5,3) {SCADUTA};
 
 % Relazione EFFETTUA (Cliente-Ordine)
 \node[relationship] (effettua) at (-8,4.5) {effettua};
@@ -143,7 +143,7 @@
 \node[font=\scriptsize] at ($(tessera)!0.5!(spec_statotessera) + (0.5,0)$) {statotessera};
 % Connessioni tra nodo di specializzazione e entità stato
 \draw[thick] (spec_statotessera) -- (attiva);
-\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(attiva) + (0.3,0)$) {'Attiva'};
+\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(attiva) + (-0.3,0)$) {'Attiva'};
 \draw[thick] (spec_statotessera) -- (sospesa);
 \node[font=\scriptsize] at ($(spec_statotessera)!0.5!(sospesa) + (-0.3,0)$) {'Sospesa'};
 \draw[thick] (spec_statotessera) -- (scaduta);
