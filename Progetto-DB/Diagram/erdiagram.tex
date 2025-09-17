@@ -63,6 +63,7 @@
 
 % Entità ORDINE (spostato quanto più a sinistra possibile, più spazio in altezza)
 \node[entity] (ordine) at (-8,1) {ORDINE};
+\node[attribute, above left=0.8cm and 1cm of ordine] (dataacquisto) {dataacquisto};
 \node[attribute, left=1.2cm of ordine] (prezzototale) {prezzototale};
 \node[key, below=0.8cm of prezzototale] (codordine) {\underline{codordine}};
 
@@ -82,7 +83,6 @@
 % Entità associativa ARTICOLI_ORDINE (allineata in altezza con ORDINE)
 \node[entity] (articoli_ordine) at (0,1) {ARTICOLI\_ORDINE};
 \node[attribute, above=0.8cm of articoli_ordine] (prezzo_art) {prezzo};
-\node[attribute, above right=0.8cm and 1cm of articoli_ordine] (dataacquisto_art) {dataacquisto};
 \node[attribute, right=1.2cm of articoli_ordine] (numeroarticoli) {numeroarticoli};
 
 % Entità PRODOTTO (affianco e in linea con DIPENDENTE)
@@ -184,10 +184,10 @@
 % Connessioni attributi-entità ORDINE
 \draw (ordine) -- (codordine);
 \draw (ordine) -- (prezzototale);
+\draw (ordine) -- (dataacquisto);
 
 % Connessioni attributi-entità ARTICOLI_ORDINE
 \draw (articoli_ordine) -- (prezzo_art);
-\draw (articoli_ordine) -- (dataacquisto_art);
 \draw (articoli_ordine) -- (numeroarticoli);
 
 % Connessioni principali seguendo lo stile dell'esempio
