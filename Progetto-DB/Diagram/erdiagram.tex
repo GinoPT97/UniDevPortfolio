@@ -42,10 +42,9 @@
 \node[attribute, above left=0.8cm and 1cm of tessera] (numeropunti) {numeropunti};
 \node[attribute, above right=0.8cm and 1cm of tessera] (dataemissione) {dataemissione};
 \node[attribute, right=1.2cm of tessera] (datascadenza) {datascadenza};
-\node[draw=black, ellipse, double, line width=1pt, double distance=1.5pt, fill=teal!20, fill opacity=1, minimum width=1.7cm, minimum height=0.9cm, below=1.2cm of tessera, font=\normalsize] (statotessera) {statotessera};
+\node[ellipse, draw=black, double, line width=1pt, double distance=1.5pt, fill=teal!20, minimum width=1.7cm, minimum height=0.9cm, below=1.2cm of tessera, font=\normalsize] (statotessera) {statotessera};
 
 % Dominio di statotessera
-\node[font=\scriptsize] at ($(statotessera)+(0,-0.7)$) {\{ATTIVA, SOSPESA, SCADUTA\}};
 
 % Relazione EFFETTUA (Cliente-Ordine)
 \node[relationship] (effettua) at (-8,4.5) {effettua};

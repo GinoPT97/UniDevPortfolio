@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1758181776.71105 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Diagram/erdiagram.tex" "erdiagram.pdf" "erdiagram" 1758181777.08348 0
+["pdflatex"] 1758184691.13934 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Diagram/erdiagram.tex" "erdiagram.pdf" "erdiagram" 1758184691.50447 0
   "/etc/texmf/web2c/texmf.cnf" 1752838060.96153 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Diagram/erdiagram.tex" 1758181771.58507 10492 fde0bf875f8c9c47e13ac9704b58e667 ""
+  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Diagram/erdiagram.tex" 1758184685.65862 10389 b16fc5f547485f1818348910205fca14 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1136768653 1328 c834bbb027764024c09d3d2bf908b5f0 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmbx7.tfm" 1136768653 1336 3125ccb448c1a09074e3aa4a9832f130 ""
@@ -12,7 +12,6 @@
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb" 1248133631 32298 c6d25bb16d1eac01ebdc6d7084126a1e ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1248133631 35752 024fb6c41858982481f6968b5fc26508 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1248133631 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
-  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1461363279 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/share/texlive/texmf-dist/tex/generic/babel-italian/italian.ldf" 1728589403 11361 8658bbf8ead5c43fd2f199c4b2910145 ""
   "/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty" 1739572459 143388 b008e1666520ff43d0878397f2926242 ""
@@ -82,7 +81,6 @@
   "/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def" 1673816307 6950 8524a062d82b7afdc4a88a57cb377784 ""
   "/usr/share/texlive/texmf-dist/tex/latex/base/article.cls" 1738182759 20144 63d8bacaf52e5abf4db3bc322373e1d4 ""
   "/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty" 1738182759 5048 0270515b828149155424600fd2d58ac5 ""
-  "/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd" 1738182759 2469 c75f72b1dc17277decdd842fa4a321a8 ""
   "/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo" 1738182759 8448 5cf247d4bd0c7d5d711bbbdf111fae2e ""
   "/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty" 1579991033 13886 d1306dcf79a944f6988e688c1785f9ce ""
   "/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty" 1739306980 46850 d87daedc2abdc653769a6f1067849fe0 ""
@@ -112,8 +110,8 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1752838090 128227 ed67923a37f7748d267799454bc1f95b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1753010313 1929624 f93ffbe1384c00abd93b46cd694dbaf4 ""
-  "erdiagram.aux" 1758181777.05514 172 3a5be4c2e6d9e5c37161bda2caf96064 "pdflatex"
-  "erdiagram.tex" 1758181771.58507 10492 fde0bf875f8c9c47e13ac9704b58e667 ""
+  "erdiagram.aux" 1758184691.4771 172 3a5be4c2e6d9e5c37161bda2caf96064 "pdflatex"
+  "erdiagram.tex" 1758184685.65862 10389 b16fc5f547485f1818348910205fca14 ""
   (generated)
   "erdiagram.aux"
   "erdiagram.log"
