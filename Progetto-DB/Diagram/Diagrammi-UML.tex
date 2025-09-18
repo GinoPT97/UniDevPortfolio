@@ -1,0 +1,102 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{tikz}
+\usetikzlibrary{positioning} % per usare 'of='
+\usepackage{geometry}
+\geometry{margin=1cm}
+
+\tikzset{
+  class/.style={
+    rectangle, draw=black, rounded corners,
+    minimum width=4cm,
+    font=\small,
+    align=left,
+    text width=5cm
+  },
+  separator/.style={draw=black},
+  relation/.style={-latex, thick}
+}
+
+\begin{document}
+
+\begin{center}
+\begin{tikzpicture}[node distance=3cm]
+
+% Classe Cliente
+\node[class] (cliente) {
+  \textbf{Cliente}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codcliente : int\\
+  + nome : string\\
+  + cognome : string\\
+  + codicefiscale : string\\
+  + indirizzo : string\\
+  + telefono : string\\
+  + email : string
+};
+
+% Classe Tessera
+\node[class, right=6cm of cliente] (tessera) {
+  \textbf{Tessera}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codtessera : int\\
+  + numeropunti : numeric\\
+  + dataemissione : date\\
+  + datascadenza : date\\
+  + stato : STATOTESSERA
+};
+
+% Classe Dipendente
+\node[class, below=4cm of cliente] (dipendente) {
+  \textbf{Dipendente}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + coddipendente : int\\
+  + nome : string\\
+  + cognome : string\\
+  + codicefiscale : string\\
+  + indirizzo : string\\
+  + telefono : string\\
+  + email : string
+};
+
+% Classe Ordine
+\node[class, right=6cm of dipendente] (ordine) {
+  \textbf{Ordine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codordine : int\\
+  + prezzototale : real\\
+  + dataacquisto : date
+};
+
+% Classe Prodotto
+\node[class, right=6cm of ordine] (prodotto) {
+  \textbf{Prodotto}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codprodotto : int\\
+  + nome : string\\
+  + descrizione : string\\
+  + prezzo : numeric\\
+  + luogoprovenienza : string\\
+  + dataraccolta : date\\
+  + datamungitura : date\\
+  + glutine : boolean\\
+  + datascadenza : date\\
+  + dataproduzione : date\\
+  + categoria : TIPOLOGIA\\
+  + scorta : int
+};
+
+% Classe ArticoliOrdine
+\node[class, below=4cm of ordine] (articoli) {
+  \textbf{ArticoliOrdine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + prezzo : numeric\\
+  + numeroarticoli : int
+};
+
+% Relazioni
+\draw[relation] (cliente) -- node[above]{1..1} (tessera);
+\draw[relation] (cliente) -- node[above]{0..*} (ordine);
+\draw[relation] (dipendente) -- node[above]{0..*} (ordine);
+\draw[relation] (ordine) -- node[right]{0..*} (articoli);
+\draw[relation] (prodotto) -- node[right]{0..*} (articoli);
+
+\end{tikzpicture}
+\end{center}
+
+\end{document}
