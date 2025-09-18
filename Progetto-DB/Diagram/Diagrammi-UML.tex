@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[italian]{babel}
 \usepackage{tikz}
-\usetikzlibrary{positioning} % per usare 'of='
+\usetikzlibrary{positioning}
 \usepackage{geometry}
 \geometry{margin=0.5cm}
 
@@ -14,17 +14,137 @@
     align=left,
     text width=3.5cm
   },
-  separator/.style={draw=black},
   relation/.style={-latex, thick}
 }
 
 \begin{document}
 
-\begin{center}
-\begin{tikzpicture}[node distance=2.5cm]
+% ==============================
+% Diagramma NON RISTRUTTURATO
+% ==============================
+\section*{Diagramma non ristrutturato}
 
-% Classe Cliente
-\node[class] (cliente) {
+\begin{center}
+\begin{tikzpicture}[node distance=3cm]
+
+% Persona
+\node[class] (persona) {
+  \textbf{Persona}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + nome : string\\
+  + cognome : string\\
+  + codicefiscale : string\\
+  + indirizzo : string\\
+  + telefono : string\\
+  + email : string
+};
+
+% Cliente
+\node[class, below left=of persona] (cliente) {
+  \textbf{Cliente}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codcliente : int
+};
+
+% Dipendente
+\node[class, below right=of persona] (dipendente) {
+  \textbf{Dipendente}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + coddipendente : int
+};
+
+% Tessera
+\node[class, right=4cm of cliente] (tessera) {
+  \textbf{Tessera}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codtessera : int\\
+  + numeropunti : numeric\\
+  + dataemissione : date\\
+  + datascadenza : date\\
+  + stato : {ATTIVA, SOSPESA, SCADUTA}
+};
+
+% Ordine
+\node[class, below=5cm of persona] (ordine) {
+  \textbf{Ordine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codordine : int\\
+  + prezzototale : real\\
+  + dataacquisto : date
+};
+
+% ArticoliOrdine
+\node[class, right=5cm of ordine] (articoli) {
+  \textbf{ArticoliOrdine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + prezzo : numeric\\
+  + numeroarticoli : int
+};
+
+% Prodotto
+\node[class, right=5cm of tessera] (prodotto) {
+  \textbf{Prodotto}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codprodotto : int\\
+  + nome : string\\
+  + descrizione : string\\
+  + prezzo : numeric\\
+  + luogoprovenienza : string\\
+  + scorta : int
+};
+
+% Specializzazioni di Prodotto
+\node[class, below left=of prodotto] (frutta) {
+  \textbf{Frutta}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + dataraccolta : date
+};
+\node[class, below=of prodotto] (verdura) {
+  \textbf{Verdura}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + dataraccolta : date
+};
+\node[class, below right=of prodotto] (latticini) {
+  \textbf{Latticini}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + datamungitura : date\\
+  + dataproduzione : date\\
+  + datascadenza : date
+};
+\node[class, right=5cm of latticini] (uova) {
+  \textbf{Uova}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + datascadenza : date
+};
+\node[class, left=5cm of latticini] (farinacei) {
+  \textbf{Farinacei}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + glutine : boolean
+};
+\node[class, below=5cm of verdura] (confezionati) {
+  \textbf{Confezionati}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + datascadenza : date
+};
+
+% Relazioni
+\draw[relation] (persona.south west) -- (cliente.north);
+\draw[relation] (persona.south east) -- (dipendente.north);
+\draw[relation] (cliente) -- (tessera);
+\draw[relation] (cliente) -- (ordine);
+\draw[relation] (dipendente) -- (ordine);
+\draw[relation] (ordine) -- (articoli);
+\draw[relation] (prodotto) -- (articoli);
+
+% Generalizzazione prodotto
+\draw[relation] (prodotto.south) -- (frutta.north);
+\draw[relation] (prodotto.south) -- (verdura.north);
+\draw[relation] (prodotto.south) -- (latticini.north);
+\draw[relation] (prodotto.south) -- (uova.north);
+\draw[relation] (prodotto.south) -- (farinacei.north);
+\draw[relation] (prodotto.south) -- (confezionati.north);
+
+\end{tikzpicture}
+\end{center}
+
+
+% ==============================
+% Diagramma RISTRUTTURATO
+% ==============================
+\section*{Diagramma ristrutturato}
+
+\begin{center}
+\begin{tikzpicture}[node distance=3cm]
+
+% Cliente
+\node[class] (cliente2) {
   \textbf{Cliente}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codcliente : int\\
   + nome : string\\
@@ -35,8 +155,8 @@
   + email : string
 };
 
-% Classe Tessera
-\node[class, right=4cm of cliente] (tessera) {
+% Tessera
+\node[class, right=4cm of cliente2] (tessera2) {
   \textbf{Tessera}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codtessera : int\\
   + numeropunti : numeric\\
@@ -45,8 +165,8 @@
   + stato : STATOTESSERA
 };
 
-% Classe Dipendente
-\node[class, below=3cm of cliente] (dipendente) {
+% Dipendente
+\node[class, below=3cm of cliente2] (dipendente2) {
   \textbf{Dipendente}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + coddipendente : int\\
   + nome : string\\
@@ -57,16 +177,16 @@
   + email : string
 };
 
-% Classe Ordine
-\node[class, right=4cm of dipendente] (ordine) {
+% Ordine
+\node[class, right=4cm of dipendente2] (ordine2) {
   \textbf{Ordine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codordine : int\\
   + prezzototale : real\\
   + dataacquisto : date
 };
 
-% Classe Prodotto
-\node[class, right=4cm of tessera] (prodotto) {
+% Prodotto (ristrutturato, senza generalizzazioni)
+\node[class, right=4cm of tessera2] (prodotto2) {
   \textbf{Prodotto}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codprodotto : int\\
   + nome : string\\
@@ -78,23 +198,23 @@
   + glutine : boolean\\
   + datascadenza : date\\
   + dataproduzione : date\\
-  + categoria : TIPOLOGIA\\
+  + categoria : {FRUTTA, VERDURA, LATTICINI, FARINACEI, UOVA, CONFEZIONATI}\\
   + scorta : int
 };
 
-% Classe ArticoliOrdine
-\node[class, below=3cm of ordine] (articoli) {
+% ArticoliOrdine
+\node[class, below=3cm of ordine2] (articoli2) {
   \textbf{ArticoliOrdine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + prezzo : numeric\\
   + numeroarticoli : int
 };
 
 % Relazioni
-\draw[relation] (cliente) -- node[above]{1..1} (tessera);
-\draw[relation] (cliente) -- node[above]{0..*} (ordine);
-\draw[relation] (dipendente) -- node[above]{0..*} (ordine);
-\draw[relation] (ordine) -- node[right]{0..*} (articoli);
-\draw[relation] (prodotto) -- node[right]{0..*} (articoli);
+\draw[relation] (cliente2) -- (tessera2);
+\draw[relation] (cliente2) -- (ordine2);
+\draw[relation] (dipendente2) -- (ordine2);
+\draw[relation] (ordine2) -- (articoli2);
+\draw[relation] (prodotto2) -- (articoli2);
 
 \end{tikzpicture}
 \end{center}
