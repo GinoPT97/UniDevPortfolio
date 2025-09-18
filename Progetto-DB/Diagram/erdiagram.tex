@@ -42,21 +42,10 @@
 \node[attribute, above left=0.8cm and 1cm of tessera] (numeropunti) {numeropunti};
 \node[attribute, above right=0.8cm and 1cm of tessera] (dataemissione) {dataemissione};
 \node[attribute, right=1.2cm of tessera] (datascadenza) {datascadenza};
-% Attributi specifici per lo stato della tessera
-% Nodo di specializzazione per STATOTESSERA
-% Nodo di specializzazione per STATOTESSERA, allineato verticalmente con TESSERA
-% Nodo di specializzazione per STATOTESSERA, distanza verticale ridotta
-\node[draw, circle, minimum size=0.6cm, fill=white] (spec_statotessera) at (4.5,5.8) {\textbf{d}};
+\node[draw=black, ellipse, double, line width=1pt, double distance=1.5pt, fill=teal!20, fill opacity=1, minimum width=1.7cm, minimum height=0.9cm, below=1.2cm of tessera, font=\normalsize] (statotessera) {statotessera};
 
-% Entità per gli stati della tessera
-% Entità per gli stati della tessera, allineate verticalmente sotto il nodo di specializzazione
-% Entità per gli stati della tessera, disposte orizzontalmente sotto il nodo di specializzazione
-% Entità per gli stati della tessera, disposte orizzontalmente con maggiore distanza
-% Entità per gli stati della tessera, distanza equilibrata
-% Entità per gli stati della tessera, distanza leggermente aumentata
-\node[entity] (attiva) at (4.5,3) {ATTIVA};
-\node[entity] (sospesa) at (1.5,3) {SOSPESA};
-\node[entity] (scaduta) at (7.5,3) {SCADUTA};
+% Dominio di statotessera
+\node[font=\scriptsize] at ($(statotessera)+(0,-0.7)$) {\{ATTIVA, SOSPESA, SCADUTA\}};
 
 % Relazione EFFETTUA (Cliente-Ordine)
 \node[relationship] (effettua) at (-8,4.5) {effettua};
@@ -138,16 +127,7 @@
 \draw (tessera) -- (numeropunti);
 \draw (tessera) -- (dataemissione);
 \draw (tessera) -- (datascadenza);
-% Connessione tra TESSERA e nodo di specializzazione
-\draw[thick] (tessera) -- (spec_statotessera);
-\node[font=\scriptsize] at ($(tessera)!0.5!(spec_statotessera) + (0.8,0)$) {statotessera};
-% Connessioni tra nodo di specializzazione e entità stato
-\draw[thick] (spec_statotessera) -- (attiva);
-\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(attiva) + (-0.5,-0.5)$) {'Attiva'};
-\draw[thick] (spec_statotessera) -- (sospesa);
-\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(sospesa) + (-1.3,-0.5)$) {'Sospesa'};
-\draw[thick] (spec_statotessera) -- (scaduta);
-\node[font=\scriptsize] at ($(spec_statotessera)!0.5!(scaduta) + (1.3,-0.5)$) {'Scaduta'};
+\draw (tessera) -- (statotessera);
 
 % Connessioni attributi-entità DIPENDENTE
 \draw (dipendente) -- (coddipendente);
