@@ -1,18 +1,18 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper,landscape]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[italian]{babel}
 \usepackage{tikz}
 \usetikzlibrary{positioning} % per usare 'of='
 \usepackage{geometry}
-\geometry{margin=1cm}
+\geometry{margin=0.5cm}
 
 \tikzset{
   class/.style={
     rectangle, draw=black, rounded corners,
-    minimum width=4cm,
-    font=\small,
+    minimum width=3.5cm,
+    font=\footnotesize,
     align=left,
-    text width=5cm
+    text width=3.5cm
   },
   separator/.style={draw=black},
   relation/.style={-latex, thick}
@@ -21,7 +21,7 @@
 \begin{document}
 
 \begin{center}
-\begin{tikzpicture}[node distance=3cm]
+\begin{tikzpicture}[node distance=2.5cm]
 
 % Classe Cliente
 \node[class] (cliente) {
@@ -36,7 +36,7 @@
 };
 
 % Classe Tessera
-\node[class, right=6cm of cliente] (tessera) {
+\node[class, right=4cm of cliente] (tessera) {
   \textbf{Tessera}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codtessera : int\\
   + numeropunti : numeric\\
@@ -46,7 +46,7 @@
 };
 
 % Classe Dipendente
-\node[class, below=4cm of cliente] (dipendente) {
+\node[class, below=3cm of cliente] (dipendente) {
   \textbf{Dipendente}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + coddipendente : int\\
   + nome : string\\
@@ -58,7 +58,7 @@
 };
 
 % Classe Ordine
-\node[class, right=6cm of dipendente] (ordine) {
+\node[class, right=4cm of dipendente] (ordine) {
   \textbf{Ordine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codordine : int\\
   + prezzototale : real\\
@@ -66,7 +66,7 @@
 };
 
 % Classe Prodotto
-\node[class, right=6cm of ordine] (prodotto) {
+\node[class, right=4cm of tessera] (prodotto) {
   \textbf{Prodotto}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codprodotto : int\\
   + nome : string\\
@@ -83,7 +83,7 @@
 };
 
 % Classe ArticoliOrdine
-\node[class, below=4cm of ordine] (articoli) {
+\node[class, below=3cm of ordine] (articoli) {
   \textbf{ArticoliOrdine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + prezzo : numeric\\
   + numeroarticoli : int
