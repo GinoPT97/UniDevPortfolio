@@ -43,6 +43,8 @@ install_deb "https://github.com/shiftkey/desktop/releases/download/release-2.8.1
 git config --global user.email "g.pandozzitrani@studenti.unina.it"                                  
 git config --global user.name "kenobi1797"
 
+sudo apt install texlive-pictures texlive-science
+
 echo "Installazione applicazioni Snap..."
 sudo snap install --classic dbeaver-ce
 sudo snap install --classic openjdk
