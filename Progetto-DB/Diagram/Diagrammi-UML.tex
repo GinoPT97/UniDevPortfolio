@@ -88,35 +88,35 @@
   + scorta : int
 };
 
-% Specializzazioni di Prodotto - disposte con ancora più spazio orizzontale
-\node[class] (frutta) at (4,-12) {
+% Specializzazioni di Prodotto - disposte simmetricamente
+\node[class] (frutta) at (2,-15) {
   \textbf{Frutta}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + dataraccolta : date
 };
 
-\node[class] (verdura) at (8,-12) {
+\node[class] (verdura) at (5,-15) {
   \textbf{Verdura}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + dataraccolta : date
 };
 
-\node[class] (latticini) at (12,-12) {
+\node[class] (latticini) at (8,-15) {
   \textbf{Latticini}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + datamungitura : date\\
   + dataproduzione : date\\
   + datascadenza : date
 };
 
-\node[class] (farinacei) at (4,-15) {
+\node[class] (farinacei) at (11,-15) {
   \textbf{Farinacei}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + glutine : boolean
 };
 
-\node[class] (uova) at (8,-15) {
+\node[class] (uova) at (14,-15) {
   \textbf{Uova}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + datascadenza : date
 };
 
-\node[class] (confezionati) at (12,-15) {
+\node[class] (confezionati) at (17,-15) {
   \textbf{Confezionati}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + datascadenza : date
 };
@@ -225,7 +225,7 @@
 \draw[relation] (cliente2) -- node[pos=0.45, above] {effettua (1:N)} (ordine2);
 \draw[relation] (dipendente2) -- node[pos=0.5, above] {gestisce (1:N)} (ordine2);
 \draw[relation] (ordine2) -- node[midway, left] {contiene (1:N)} (articoli2);
-    \draw[relation] (articoli2) .. controls (12,-9.5) and (16,-6) .. node[midway, below] {riferisce (N:1)} (prodotto2);
+  \draw[relation] (articoli2) -- node[midway, above] {riferisce (N:1)} (prodotto2);
 
 \end{tikzpicture}
 \end{center}
