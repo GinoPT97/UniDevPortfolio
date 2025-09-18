@@ -89,16 +89,19 @@
 };
 
 % Specializzazioni di Prodotto - disposte simmetricamente
+% Specializzazioni di Prodotto - frutta in basso
 \node[class] (frutta) at (2,-15) {
   \textbf{Frutta}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + dataraccolta : date
 };
 
-\node[class] (verdura) at (5,-15) {
+% Specializzazioni di Prodotto - verdura in alto a destra
+\node[class] (verdura) at (17,-10) {
   \textbf{Verdura}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + dataraccolta : date
 };
 
+% Specializzazioni di Prodotto - latticini in basso
 \node[class] (latticini) at (8,-15) {
   \textbf{Latticini}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + datamungitura : date\\
@@ -106,17 +109,20 @@
   + datascadenza : date
 };
 
-\node[class] (farinacei) at (11,-15) {
+% Specializzazioni di Prodotto - farinacei in alto a destra
+\node[class] (farinacei) at (17,-13) {
   \textbf{Farinacei}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + glutine : boolean
 };
 
+% Specializzazioni di Prodotto - uova in basso
 \node[class] (uova) at (14,-15) {
   \textbf{Uova}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + datascadenza : date
 };
 
-\node[class] (confezionati) at (17,-15) {
+% Specializzazioni di Prodotto - confezionati in alto a destra
+\node[class] (confezionati) at (17,-7) {
   \textbf{Confezionati}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + datascadenza : date
 };
