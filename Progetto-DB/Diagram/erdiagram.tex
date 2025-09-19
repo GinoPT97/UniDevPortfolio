@@ -8,6 +8,16 @@
 
 \begin{document}
 
+% ===================================================================
+% DIAGRAMMA ENTITY-RELATIONSHIP (ER) - VERSIONE CORRETTA
+% ===================================================================
+% Correzioni applicate:
+% 1. Cardinalità in formato standard ER (1, *, 0, 1..*)
+% 2. Specializzazione totale: doppia linea tra PRODOTTO e cerchio 'd'
+% 3. Layout ottimizzato per evitare sovrapposizioni
+% 4. Cardinalità coerenti con l'immagine di riferimento
+% ===================================================================
+
 
 \begin{center}
 \begin{tikzpicture}[
@@ -41,8 +51,8 @@
 \node[key, above=0.8cm of tessera] (codtessera) {\underline{codtessera}};
 \node[attribute, above left=0.8cm and 1cm of tessera] (numeropunti) {numeropunti};
 \node[attribute, above right=0.8cm and 1cm of tessera] (dataemissione) {dataemissione};
-\node[attribute, right=1.2cm of tessera] (datascadenza) {datascadenza};
-\node[ellipse, draw=black, double, line width=1pt, double distance=1.5pt, fill=teal!20, minimum width=1.7cm, minimum height=0.9cm, below=1.2cm of tessera, font=\normalsize] (statotessera) {statotessera};
+\node[attribute, right=1.5cm of tessera] (datascadenza) {datascadenza};
+\node[ellipse, draw=black, double, line width=1pt, double distance=1.5pt, fill=teal!20, minimum width=1.7cm, minimum height=0.9cm, below=1.5cm of tessera, font=\normalsize] (statotessera) {statotessera};
 
 % Dominio di statotessera
 
@@ -77,16 +87,16 @@
 
 % Entità PRODOTTO (padre)
 \node[entity] (prodotto) at (3.5,-6) {PRODOTTO};
-\node[key, below=1.2cm of prodotto] (codprodotto) {\underline{codprodotto}};
+\node[key, below=1.4cm of prodotto] (codprodotto) {\underline{codprodotto}};
 \node[attribute, above left=0.8cm and 1.2cm of prodotto] (nome_p) {nome};
 \node[attribute, above right=0.8cm and 1.2cm of prodotto] (descrizione) {descrizione};
-\node[attribute, left=1.5cm of prodotto] (prezzo_p) {prezzo};
-\node[attribute, right=1.5cm of prodotto] (luogoprovenienza) {luogoprovenienza};
-\node[attribute, above left=1.5cm and 0.5cm of prodotto] (scorta) {scorta};
+\node[attribute, left=1.8cm of prodotto] (prezzo_p) {prezzo};
+\node[attribute, right=1.8cm of prodotto] (luogoprovenienza) {luogoprovenienza};
+\node[attribute, above=1.2cm of prodotto] (scorta) {scorta};
 
 % Specializzazione prodotto
-% Nodo cerchio bianco con 'd' per specializzazione
-\node[draw, circle, minimum size=0.6cm, fill=white] (spec_prod) at (-2,-10) {\textbf{d}};
+% Nodo cerchio bianco con 'd' per specializzazione disgiunta e totale
+\node[draw, circle, minimum size=0.6cm, fill=white, double, double distance=1pt] (spec_prod) at (-2,-10) {\textbf{d}};
 
 % Entità figlie di prodotto - rettangoli adattivi
 
@@ -145,8 +155,8 @@
 \draw (prodotto) -- (luogoprovenienza);
 \draw (prodotto) -- (scorta);
 
-% Connessioni specializzazione - dirette come esempio Pagamento
-\draw[thick] (prodotto) -- (spec_prod);
+% Connessioni specializzazione - doppia linea tra PRODOTTO e cerchio 'd' per indicare specializzazione totale
+\draw[thick, double, double distance=1pt] (prodotto) -- (spec_prod);
 \node[font=\scriptsize] at ($(prodotto)!0.5!(spec_prod) + (-0.5,0.3)$) {tipoprodotto};
 \draw[thick] (spec_prod) -- (frutta);
 \node[font=\scriptsize] at ($(spec_prod)!0.5!(frutta) + (-3.0,-1.0)$) {'Frutta'};
@@ -198,22 +208,26 @@
 
 % ...rimosso collegamento dashed obsoleto...
 
-% Cardinalità con formato (min,max) - centrate rispetto alle linee
+% Cardinalità con formato standard ER - centrate rispetto alle linee
 % Relazione POSSIEDE (Cliente-Tessera) - offset verticale per evitare sovrapposizione
-\node[font=\scriptsize] at ($(cliente)!0.25!(possiede) + (0,0.25)$) {(1,1)};
-\node[font=\scriptsize] at ($(tessera)!0.25!(possiede) + (0,0.25)$) {(1,1)};
+\node[font=\scriptsize] at ($(cliente)!0.25!(possiede) + (0,0.25)$) {1};
+\node[font=\scriptsize] at ($(tessera)!0.25!(possiede) + (0,0.25)$) {1};
 
 % Relazione EFFETTUA (Cliente-Ordine) - centrate sulla linea
-\node[font=\scriptsize] at ($(cliente)!0.3!(effettua) + (0.3,0)$) {(0,N)};
-\node[font=\scriptsize] at ($(ordine)!0.3!(effettua) + (0.3,0)$) {(1,1)};
+\node[font=\scriptsize] at ($(cliente)!0.3!(effettua) + (0.3,0)$) {*};
+\node[font=\scriptsize] at ($(ordine)!0.3!(effettua) + (0.3,0)$) {1};
 
 % Relazione GESTISCE (Dipendente-Ordine) - centrate sulla linea
-\node[font=\scriptsize] at ($(dipendente)!0.3!(gestisce) + (0.3,0)$) {(0,N)};
-\node[font=\scriptsize] at ($(ordine)!0.3!(gestisce) + (0.3,0)$) {(1,1)};
+\node[font=\scriptsize] at ($(dipendente)!0.3!(gestisce) + (0.3,0)$) {*};
+\node[font=\scriptsize] at ($(ordine)!0.3!(gestisce) + (0.3,0)$) {1};
 
-% Relazione ARTICOLI_ORDINE (Ordine-Prodotto) - ottimizzate per linea lunga
-\node[font=\scriptsize] at ($(ordine)!0.25!(articoli_ordine) + (0,0.25)$) {(1,1)};
-\node[font=\scriptsize] at ($(articoli_ordine) + (0,-0.8)$) {(1,N)};
+% Relazione ARTICOLI_ORDINE (Ordine-Prodotto) - corrette secondo immagine
+\node[font=\scriptsize] at ($(ordine)!0.25!(articoli_ordine) + (0,0.25)$) {1};
+\node[font=\scriptsize] at ($(articoli_ordine) + (0,-0.8)$) {*};
+
+% Relazione INCLUDE (ArticoliOrdine-Prodotto) - cardinalità corrette secondo immagine
+\node[font=\scriptsize] at ($(articoli_ordine)!0.3!(prodotto) + (0,0.3)$) {*};
+\node[font=\scriptsize] at ($(prodotto)!0.3!(articoli_ordine) + (-0.3,0)$) {1};
 
 \end{tikzpicture}
 
