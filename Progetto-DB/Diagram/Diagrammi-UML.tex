@@ -191,7 +191,7 @@
 };
 
 % Livello secondo - Tessera e Ordine (più distanziati)
-\node[class] (tessera2) at (-11,-4.5) {
+\node[class] (tessera2) at (-11,-6.5) {
   \textbf{Tessera}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codtessera : int\\
   + codcliente : int\\
@@ -201,7 +201,7 @@
   + stato : STATOTESSERA
 };
 
-\node[class] (ordine2) at (0,-4.5) {
+\node[class] (ordine2) at (0,-6.5) {
   \textbf{Ordine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codordine : int\\
   + prezzototale : real\\
@@ -211,7 +211,7 @@
 };
 
 % Livello terzo - Prodotto a destra (più largo e distanziato)
-\node[class] (prodotto2) at (11,-4.5) {
+\node[class] (prodotto2) at (11,-11.5) {
   \textbf{Prodotto}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codprodotto : int\\
   + nome : string\\
@@ -228,7 +228,7 @@
 };
 
 % Livello inferiore - ArticoliOrdine al centro (più in basso)
-\node[class] (articoli2) at (0,-9.5) {
+\node[class] (articoli2) at (0,-11.5) {
   \textbf{ArticoliOrdine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codordine : int\\
   + codprodotto : int\\
@@ -237,11 +237,11 @@
 };
 
 % Relazioni con etichette descrittive
-\draw[relation] (cliente2) -- node[midway, above] {possiede (1:1)} (tessera2);
-\draw[relation] (cliente2) -- node[pos=0.45, above] {effettua (1:N)} (ordine2);
-\draw[relation] (dipendente2) -- node[pos=0.5, above] {gestisce (1:N)} (ordine2);
-\draw[relation] (ordine2) -- node[midway, left] {contiene (1:N)} (articoli2);
-  \draw[relation] (articoli2) -- node[midway, above] {riferisce (N:1)} (prodotto2);
+\draw[relation] (cliente2) -- node[midway, above] {possiede} node[near start, below] {1} node[near end, below] {1} (tessera2);
+\draw[relation] (cliente2) -- node[pos=0.45, above] {effettua} node[near start, below] {1} node[near end, below] {*} (ordine2);
+\draw[relation] (dipendente2) -- node[pos=0.5, above] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine2);
+\draw[relation] (ordine2) -- node[midway, left] {contiene} node[near start, right] {1} node[near end, right] {*} (articoli2);
+\draw[relation] (articoli2) -- node[midway, above] {riferisce} node[near start, below] {*} node[near end, below] {1} (prodotto2);
 
 \end{tikzpicture}
 \end{center}
