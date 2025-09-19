@@ -138,14 +138,14 @@
 
 % Relazioni Cliente
 \draw[relation] (cliente) -- node[midway, left] {possiede} node[near start, left] {1} node[near end, left] {1} (tessera);
-\draw[relation] (cliente) -- node[pos=0.55, above] {effettua} node[near start, below] {1} node[near end, below] {*} (ordine);
+\draw[relation] (cliente) -- node[midway, right] {effettua} node[near start, below] {1} node[near end, below] {*} (ordine);
 
 % Relazioni Dipendente
-\draw[relation] (dipendente) -- node[pos=0.55, above] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine);
+\draw[relation] (dipendente) -- node[midway, left] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine);
 
 % Relazioni Ordine-ArticoliOrdine-Prodotto
 \draw[relation] (ordine) -- node[midway, left] {contiene} node[near start, right] {1} node[near end, right] {*} (articoli);
-\draw[relation] (articoli) -- node[midway, above] {riferisce} node[near start, below] {*} node[near end, below] {1} (prodotto);
+\draw[relation] (articoli) -- node[midway, left] {riferisce} node[near start, below] {*} node[near end, below] {1} (prodotto);
 
 % Generalizzazioni Prodotto - disposte a griglia
 \draw[relation] (prodotto) -- (frutta);
@@ -257,9 +257,9 @@
 };
 
 % Relazioni con etichette descrittive
-\draw[relation] (cliente2) -- node[midway, above] {possiede} node[near start, below] {1} node[near end, below] {1} (tessera2);
-\draw[relation] (cliente2) -- node[pos=0.45, above] {effettua} node[near start, below] {1} node[near end, below] {*} (ordine2);
-\draw[relation] (dipendente2) -- node[pos=0.5, above] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine2);
+\draw[relation] (cliente2) -- node[pos=0.6, left] {possiede} node[near start, below] {1} node[near end, below] {1} (tessera2);
+\draw[relation] (cliente2) -- node[pos=0.5, right] {effettua} node[near start, below] {1} node[near end, below] {*} (ordine2);
+\draw[relation] (dipendente2) -- node[pos=0.5, left] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine2);
 \draw[relation] (ordine2) -- node[midway, left] {contiene} node[near start, right] {1} node[near end, right] {*} (articoli2);
 \draw[relation] (articoli2) -- node[midway, above] {riferisce} node[near start, below] {*} node[near end, below] {1} (prodotto2);
 
