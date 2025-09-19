@@ -223,11 +223,11 @@
 
 % Relazione ARTICOLI_ORDINE (Ordine-Prodotto) - corrette secondo immagine
 \node[font=\scriptsize] at ($(ordine)!0.25!(articoli_ordine) + (0,0.25)$) {1};
-\node[font=\scriptsize] at ($(articoli_ordine) + (0,-0.8)$) {*};
+\node[font=\scriptsize] at ($(articoli_ordine) + (-2,0.2)$) {*};
 
-% Relazione INCLUDE (ArticoliOrdine-Prodotto) - cardinalità corrette secondo immagine
-\node[font=\scriptsize] at ($(articoli_ordine)!0.3!(prodotto) + (0,0.3)$) {*};
-\node[font=\scriptsize] at ($(prodotto)!0.3!(articoli_ordine) + (-0.3,0)$) {1};
+% Relazione INCLUDE (ArticoliOrdine-Prodotto) - cardinalità corrette: un articolo contiene 1 o più prodotti
+\node[font=\scriptsize] at ($(articoli_ordine) + (0,-0.7)$) {1..*};
+\node[font=\scriptsize] at ($(prodotto)!0.3!(articoli_ordine) + (-0.3,0)$) {*};
 
 \end{tikzpicture}
 
