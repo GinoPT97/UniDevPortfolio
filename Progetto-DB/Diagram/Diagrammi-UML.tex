@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[italian]{babel}
 \usepackage{tikz}
-\usetikzlibrary{positioning}
+\usetikzlibrary{positioning,arrows.meta,shapes}
 \usepackage{geometry}
 \geometry{margin=0.3cm, paperwidth=42cm, paperheight=29.7cm}
 
@@ -16,7 +16,13 @@
     text width=3.5cm,
     inner sep=0.3cm
   },
-  relation/.style={-latex, thick},
+  % Stili per diverse relazioni UML
+  association/.style={thick}, % Associazione semplice (SENZA freccia)
+  generalization/.style={-{Triangle[open]}, thick}, % Generalizzazione (triangolo vuoto)
+  dependency/.style={->, thick, dashed}, % Dipendenza (linea tratteggiata)
+  composition/.style={-{Diamond[fill=black]}, thick}, % Composizione (rombo pieno)
+  aggregation/.style={-{Diamond[open]}, thick}, % Aggregazione (rombo vuoto)
+  relation/.style={->, thick}, % Mantenuto per compatibilità
   every node/.style={anchor=center}
 }
 
@@ -60,7 +66,7 @@
   + numeropunti : numeric\\
   + dataemissione : date\\
   + datascadenza : date\\
-  + stato : {ATTIVA, SOSPESA, SCADUTA}
+  + stato : STATOTESSERA
 };
 
 % Livello centrale - Ordine come entità di collegamento
@@ -132,28 +138,28 @@
   + datascadenza : date
 };
 
-% Relazioni principali - Ereditarietà
-\draw[relation] (persona) -- (cliente);
-\draw[relation] (persona) -- (dipendente);
+% Relazioni principali - Ereditarietà (generalizzazione)
+\draw[generalization] (cliente) -- (persona);
+\draw[generalization] (dipendente) -- (persona);
 
-% Relazioni Cliente
-\draw[relation] (cliente) -- node[midway, left] {possiede} node[near start, left] {1} node[near end, left] {1} (tessera);
-\draw[relation] (cliente) -- node[midway, right] {effettua} node[near start, below] {1} node[near end, below] {*} (ordine);
+% Relazioni Cliente 
+\draw[composition] (cliente) -- node[midway, left] {possiede} node[near start, right] {1} node[near end, right] {1} (tessera);
+\draw[association] (cliente) -- node[midway, right] {effettua} node[near start, left] {1} node[near end, left] {*} (ordine);
 
 % Relazioni Dipendente
-\draw[relation] (dipendente) -- node[midway, left] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine);
+\draw[association] (dipendente) -- node[midway, right] {gestisce} node[near start, left] {1} node[near end, left] {*} (ordine);
 
 % Relazioni Ordine-ArticoliOrdine-Prodotto
-\draw[relation] (ordine) -- node[midway, left] {contiene} node[near start, right] {1} node[near end, right] {*} (articoli);
-\draw[relation] (articoli) -- node[midway, left] {riferisce} node[near start, below] {*} node[near end, below] {1} (prodotto);
+\draw[composition] (ordine) -- node[midway, right] {contiene} node[near start, left] {1} node[near end, left] {*} (articoli);
+\draw[association] (articoli) -- node[midway, above] {riferisce} node[near start, above] {*} node[near end, above] {1} (prodotto);
 
-% Generalizzazioni Prodotto - disposte a griglia
-\draw[relation] (prodotto) -- (frutta);
-\draw[relation] (prodotto) -- (verdura);
-\draw[relation] (prodotto) -- (latticini);
-\draw[relation] (prodotto) -- (farinacei);
-\draw[relation] (prodotto) -- (uova);
-\draw[relation] (prodotto) -- (confezionati);
+% Generalizzazioni Prodotto - con triangoli di generalizzazione
+\draw[generalization] (frutta) -- (prodotto);
+\draw[generalization] (verdura) -- (prodotto);
+\draw[generalization] (latticini) -- (prodotto);
+\draw[generalization] (farinacei) -- (prodotto);
+\draw[generalization] (uova) -- (prodotto);
+\draw[generalization] (confezionati) -- (prodotto);
 
 \end{tikzpicture}
 \end{center}
@@ -257,11 +263,15 @@
 };
 
 % Relazioni con etichette descrittive
-\draw[relation] (cliente2) -- node[pos=0.6, left] {possiede} node[near start, below] {1} node[near end, below] {1} (tessera2);
-\draw[relation] (cliente2) -- node[pos=0.5, right] {effettua} node[near start, below] {1} node[near end, below] {*} (ordine2);
-\draw[relation] (dipendente2) -- node[pos=0.5, left] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine2);
-\draw[relation] (ordine2) -- node[midway, left] {contiene} node[near start, right] {1} node[near end, right] {*} (articoli2);
-\draw[relation] (articoli2) -- node[midway, above] {riferisce} node[near start, below] {*} node[near end, below] {1} (prodotto2);
+\draw[composition] (cliente2) -- node[pos=0.6, left] {possiede} node[near start, right] {1} node[near end, right] {1} (tessera2);
+\draw[association] (cliente2) -- node[pos=0.5, right] {effettua} node[near start, left] {1} node[near end, left] {*} (ordine2);
+\draw[association] (dipendente2) -- node[pos=0.5, left] {gestisce} node[near start, right] {1} node[near end, right] {*} (ordine2);
+\draw[composition] (ordine2) -- node[midway, right] {contiene} node[near start, left] {1} node[near end, left] {*} (articoli2);
+\draw[association] (articoli2) -- node[midway, above] {riferisce} node[near start, above] {*} node[near end, above] {1} (prodotto2);
+
+% Dipendenze per le enumerazioni (linee tratteggiate)
+\draw[dependency] (tessera2) -- node[pos=0.7, right] {«uses»} (statotessera);
+\draw[dependency] (prodotto2) -- node[pos=0.7, left] {«uses»} (tipologia);
 
 \end{tikzpicture}
 \end{center}
