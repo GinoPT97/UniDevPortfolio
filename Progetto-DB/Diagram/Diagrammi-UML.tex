@@ -139,8 +139,8 @@
 \draw[relation] (dipendente) -- node[pos=0.55, above] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine);
 
 % Relazioni Ordine-ArticoliOrdine-Prodotto
-\draw[relation] (ordine) -- node[midway, left] {contiene} (articoli);
-\draw[relation] (articoli) -- node[midway, above] {riferisce} (prodotto);
+\draw[relation] (ordine) -- node[midway, left] {contiene} node[near start, right] {1} node[near end, right] {*} (articoli);
+\draw[relation] (articoli) -- node[midway, above] {riferisce} node[near start, below] {*} node[near end, below] {1} (prodotto);
 
 % Generalizzazioni Prodotto - disposte a griglia
 \draw[relation] (prodotto) -- (frutta);
