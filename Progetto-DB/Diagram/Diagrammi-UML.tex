@@ -132,11 +132,11 @@
 \draw[relation] (persona) -- (dipendente);
 
 % Relazioni Cliente
-\draw[relation] (cliente) -- node[midway, left] {possiede} (tessera);
-\draw[relation] (cliente) -- node[pos=0.55, above] {effettua} (ordine);
+\draw[relation] (cliente) -- node[midway, left] {possiede} node[near start, left] {1} node[near end, left] {1} (tessera);
+\draw[relation] (cliente) -- node[pos=0.55, above] {effettua} node[near start, below] {1} node[near end, below] {*} (ordine);
 
 % Relazioni Dipendente
-\draw[relation] (dipendente) -- node[pos=0.55, above] {gestisce} (ordine);
+\draw[relation] (dipendente) -- node[pos=0.55, above] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine);
 
 % Relazioni Ordine-ArticoliOrdine-Prodotto
 \draw[relation] (ordine) -- node[midway, left] {contiene} (articoli);
