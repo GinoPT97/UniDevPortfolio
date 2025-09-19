@@ -236,12 +236,36 @@
   + numeroarticoli : int
 };
 
+% Enumerazioni - posizionate sotto le rispettive entità
+\node[class] (statotessera) at (-11,-10) {
+  \textbf{<<enumeration>>}\\
+  \textbf{STATOTESSERA}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  ATTIVA\\
+  SOSPESA\\
+  SCADUTA
+};
+
+\node[class] (tipologia) at (11,-18) {
+  \textbf{<<enumeration>>}\\
+  \textbf{TIPOLOGIA}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  FRUTTA\\
+  VERDURA\\
+  FARINACEI\\
+  LATTICINI\\
+  UOVA\\
+  CONFEZIONATI
+};
+
 % Relazioni con etichette descrittive
 \draw[relation] (cliente2) -- node[midway, above] {possiede} node[near start, below] {1} node[near end, below] {1} (tessera2);
 \draw[relation] (cliente2) -- node[pos=0.45, above] {effettua} node[near start, below] {1} node[near end, below] {*} (ordine2);
 \draw[relation] (dipendente2) -- node[pos=0.5, above] {gestisce} node[near start, below] {1} node[near end, below] {*} (ordine2);
 \draw[relation] (ordine2) -- node[midway, left] {contiene} node[near start, right] {1} node[near end, right] {*} (articoli2);
 \draw[relation] (articoli2) -- node[midway, above] {riferisce} node[near start, below] {*} node[near end, below] {1} (prodotto2);
+
+% Relazioni di dipendenza dalle enumerazioni
+\draw[->, dashed] (tessera2) -- node[midway, left] {<<uses>>} (statotessera);
+\draw[->, dashed] (prodotto2) -- node[midway, right] {<<uses>>} (tipologia);
 
 \end{tikzpicture}
 \end{center}
