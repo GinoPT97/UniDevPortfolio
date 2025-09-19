@@ -56,6 +56,7 @@
 \node[class] (tessera) at (-7,-8) {
   \textbf{Tessera}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codtessera : int\\
+  + codcliente : int\\
   + numeropunti : numeric\\
   + dataemissione : date\\
   + datascadenza : date\\
@@ -67,12 +68,16 @@
   \textbf{Ordine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codordine : int\\
   + prezzototale : real\\
-  + dataacquisto : date
+  + dataacquisto : date\\
+  + codcliente : int\\
+  + coddipendente : int
 };
 
 % Livello quarto - ArticoliOrdine
 \node[class] (articoli) at (0,-12) {
   \textbf{ArticoliOrdine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codordine : int\\
+  + codprodotto : int\\
   + prezzo : numeric\\
   + numeroarticoli : int
 };
@@ -189,6 +194,7 @@
 \node[class] (tessera2) at (-11,-4.5) {
   \textbf{Tessera}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codtessera : int\\
+  + codcliente : int\\
   + numeropunti : numeric\\
   + dataemissione : date\\
   + datascadenza : date\\
@@ -199,7 +205,9 @@
   \textbf{Ordine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codordine : int\\
   + prezzototale : real\\
-  + dataacquisto : date
+  + dataacquisto : date\\
+  + codcliente : int\\
+  + coddipendente : int
 };
 
 % Livello terzo - Prodotto a destra (più largo e distanziato)
@@ -222,6 +230,8 @@
 % Livello inferiore - ArticoliOrdine al centro (più in basso)
 \node[class] (articoli2) at (0,-9.5) {
   \textbf{ArticoliOrdine}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
+  + codordine : int\\
+  + codprodotto : int\\
   + prezzo : numeric\\
   + numeroarticoli : int
 };
