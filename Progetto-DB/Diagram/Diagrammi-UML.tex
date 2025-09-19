@@ -128,8 +128,8 @@
 };
 
 % Relazioni principali - Ereditarietà
-\draw[relation] (persona) -- node[midway, above left, sloped] {ISA} (cliente);
-\draw[relation] (persona) -- node[midway, above right, sloped] {ISA} (dipendente);
+\draw[relation] (persona) -- (cliente);
+\draw[relation] (persona) -- (dipendente);
 
 % Relazioni Cliente
 \draw[relation] (cliente) -- node[midway, left] {possiede} (tessera);
@@ -143,12 +143,12 @@
 \draw[relation] (articoli) -- node[midway, above] {riferisce} (prodotto);
 
 % Generalizzazioni Prodotto - disposte a griglia
-\draw[relation] (prodotto) -- node[midway, left] {ISA} (frutta);
-\draw[relation] (prodotto) -- node[midway, left] {ISA} (verdura);
-\draw[relation] (prodotto) -- node[midway, right] {ISA} (latticini);
-\draw[relation] (prodotto) -- node[midway, left] {ISA} (farinacei);
-\draw[relation] (prodotto) -- node[midway, left] {ISA} (uova);
-\draw[relation] (prodotto) -- node[midway, right] {ISA} (confezionati);
+\draw[relation] (prodotto) -- (frutta);
+\draw[relation] (prodotto) -- (verdura);
+\draw[relation] (prodotto) -- (latticini);
+\draw[relation] (prodotto) -- (farinacei);
+\draw[relation] (prodotto) -- (uova);
+\draw[relation] (prodotto) -- (confezionati);
 
 \end{tikzpicture}
 \end{center}
