@@ -219,10 +219,33 @@ cleanup_temp_files() {
     # Pulizia cartelle temporanee utente (SAFE, solo file, no directory)
     for user in $(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 && $1!~/^(nobody|systemd-)/ {print $1}'); do
         home_dir=$(getent passwd "$user" | cut -d: -f6)
+        # Directory da escludere
+        EXCLUDE_DIRS=(
+            "$home_dir/.thunderbird"
+            "$home_dir/.config/thunderbird"
+            "$home_dir/.config/Microsoft/Microsoft Teams"
+            "$home_dir/.var/app/com.microsoft.Teams"
+            "$home_dir/snap/thunderbird"
+            "$home_dir/snap/teams-for-linux"
+            "$home_dir/.config/TelegramDesktop"
+            "$home_dir/.var/app/org.telegram.desktop"
+            "$home_dir/snap/telegram-desktop"
+        )
+        # Funzione per verificare se un file è in una directory esclusa
+        is_excluded() {
+            local file="$1"
+            for excl in "${EXCLUDE_DIRS[@]}"; do
+                if [[ "$file" == "$excl"* ]]; then
+                    return 0
+                fi
+            done
+            return 1
+        }
         # Thumbnails
         thumb_dir="$home_dir/.cache/thumbnails"
         if [[ -d "$thumb_dir" ]]; then
             find "$thumb_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                is_excluded "$file" && continue
                 safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
@@ -230,6 +253,7 @@ cleanup_temp_files() {
         ff_dir="$home_dir/.cache/mozilla"
         if [[ -d "$ff_dir" ]]; then
             find "$ff_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                is_excluded "$file" && continue
                 safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
@@ -237,6 +261,7 @@ cleanup_temp_files() {
         chromium_dir="$home_dir/.cache/chromium"
         if [[ -d "$chromium_dir" ]]; then
             find "$chromium_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                is_excluded "$file" && continue
                 safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
@@ -244,6 +269,7 @@ cleanup_temp_files() {
         font_dir="$home_dir/.cache/fontconfig"
         if [[ -d "$font_dir" ]]; then
             find "$font_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                is_excluded "$file" && continue
                 safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
@@ -251,6 +277,7 @@ cleanup_temp_files() {
         npm_dir="$home_dir/.npm"
         if [[ -d "$npm_dir" ]]; then
             find "$npm_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                is_excluded "$file" && continue
                 safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
@@ -258,6 +285,7 @@ cleanup_temp_files() {
         yarn_dir="$home_dir/.cache/yarn"
         if [[ -d "$yarn_dir" ]]; then
             find "$yarn_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                is_excluded "$file" && continue
                 safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
@@ -265,6 +293,7 @@ cleanup_temp_files() {
         flatpak_dir="$home_dir/.var/app"
         if [[ -d "$flatpak_dir" ]]; then
             find "$flatpak_dir" -type f -print0 | while IFS= read -r -d '' file; do
+                is_excluded "$file" && continue
                 safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
@@ -272,6 +301,7 @@ cleanup_temp_files() {
         snap_cache="$home_dir/snap"
         if [[ -d "$snap_cache" ]]; then
             find "$snap_cache" -type f -print0 | while IFS= read -r -d '' file; do
+                is_excluded "$file" && continue
                 safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
             done
         fi
