@@ -11,17 +11,15 @@
 % ===================================================================
 % DIAGRAMMA ENTITY-RELATIONSHIP (ER) - VERSIONE CORRETTA
 % ===================================================================
-% Correzioni applicate:
-% 1. Cardinalità in formato standard ER (1, *, 0, 1..*)
-% 2. Specializzazione totale: doppia linea tra PRODOTTO e cerchio 'd'
-% 3. Layout ottimizzato per evitare sovrapposizioni
-% 4. Cardinalità coerenti con l'immagine di riferimento
+% Modifiche:
+% 1. ARTICOLI_ORDINE come entità debole (doppio rettangolo).
+% 2. Mantiene tutte le altre correzioni già fatte.
 % ===================================================================
-
 
 \begin{center}
 \begin{tikzpicture}[
     entity/.style={rectangle, draw=black, thick, minimum width=2.5cm, minimum height=1cm, fill=teal!30, font=\small\bfseries, rounded corners=3pt},
+    weakentity/.style={rectangle, draw=black, thick, double, double distance=1pt, minimum width=2.5cm, minimum height=1cm, fill=teal!30, font=\small\bfseries, rounded corners=3pt},
     attribute/.style={ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm, fill=teal!20, font=\scriptsize},
     key/.style={ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm, fill=teal!20, font=\scriptsize\bfseries, text=black},
     relationship/.style={diamond, draw=black, thick, minimum width=2cm, minimum height=1cm, fill=yellow!60, font=\small\bfseries},
@@ -31,9 +29,9 @@
     scale=0.9, transform shape
 ]
 
-% Layout riorganizzato per evitare sovrapposizioni e taglio degli attributi
-
-% Entità CLIENTE (allineato verticalmente con ORDINE, più spazio in altezza)
+% =============================
+% CLIENTE
+% =============================
 \node[entity] (cliente) at (-8,8) {CLIENTE};
 \node[key, above=0.8cm of cliente] (codcliente) {\underline{codcliente}};
 \node[attribute, above left=0.8cm and 1cm of cliente] (nome_c) {nome};
@@ -46,7 +44,9 @@
 % Relazione POSSIEDE
 \node[relationship] (possiede) at (-2,8) {possiede};
 
-% Entità TESSERA (oltre i limiti della pagina a destra)
+% =============================
+% TESSERA
+% =============================
 \node[entity] (tessera) at (4.5,8) {TESSERA};
 \node[key, above=0.8cm of tessera] (codtessera) {\underline{codtessera}};
 \node[attribute, above left=0.8cm and 1cm of tessera] (numeropunti) {numeropunti};
@@ -54,18 +54,18 @@
 \node[attribute, right=1.15cm of tessera] (datascadenza) {datascadenza};
 \node[ellipse, draw=black, double, line width=1pt, double distance=1.5pt, fill=teal!20, minimum width=1.7cm, minimum height=0.9cm, below=1.5cm of tessera, font=\normalsize] (statotessera) {statotessera};
 
-% Dominio di statotessera
-
-% Relazione EFFETTUA (Cliente-Ordine)
+% =============================
+% ORDINE
+% =============================
 \node[relationship] (effettua) at (-8,4.5) {effettua};
-
-% Entità ORDINE (spostato quanto più a sinistra possibile, più spazio in altezza)
 \node[entity] (ordine) at (-8,1) {ORDINE};
 \node[attribute, above left=0.8cm and 1cm of ordine] (dataacquisto) {dataacquisto};
 \node[attribute, left=1.2cm of ordine] (prezzototale) {prezzototale};
 \node[key, below=0.8cm of prezzototale] (codordine) {\underline{codordine}};
 
-% Entità DIPENDENTE (allineato verticalmente con ORDINE, più spazio in altezza)
+% =============================
+% DIPENDENTE
+% =============================
 \node[entity] (dipendente) at (-8,-6) {DIPENDENTE};
 \node[attribute, above left=0.8cm and 1cm of dipendente] (nome_d) {nome};
 \node[attribute, above right=0.8cm and 1cm of dipendente] (cognome_d) {cognome};
@@ -75,17 +75,18 @@
 \node[attribute, below right=0.8cm and 1cm of dipendente] (email_d) {email};
 \node[key, below=0.8cm of dipendente] (coddipendente) {\underline{coddipendente}};
 
-% Relazione GESTISCE (Dipendente-Ordine)
 \node[relationship] (gestisce) at (-8,-2.5) {gestisce};
 
-% Entità associativa ARTICOLI_ORDINE (allineata in altezza con ORDINE)
-\node[entity] (articoli_ordine) at (0,1) {ARTICOLI\_ORDINE};
+% =============================
+% ARTICOLI_ORDINE (entità debole)
+% =============================
+\node[weakentity] (articoli_ordine) at (0,1) {ARTICOLI\_ORDINE};
 \node[attribute, below right=0.8cm and 1cm of articoli_ordine] (prezzo_art) {prezzo};
 \node[attribute, right=1.2cm of articoli_ordine] (numeroarticoli) {numeroarticoli};
 
-% Entità PRODOTTO (affianco e in linea con DIPENDENTE)
-
-% Entità PRODOTTO (padre)
+% =============================
+% PRODOTTO + specializzazione
+% =============================
 \node[entity] (prodotto) at (3.5,-6) {PRODOTTO};
 \node[key, below=1.4cm of prodotto] (codprodotto) {\underline{codprodotto}};
 \node[attribute, above left=0.8cm and 1.2cm of prodotto] (nome_p) {nome};
@@ -94,13 +95,10 @@
 \node[attribute, right=1.8cm of prodotto] (luogoprovenienza) {luogoprovenienza};
 \node[attribute, above=1.2cm of prodotto] (scorta) {scorta};
 
-% Specializzazione prodotto
-% Nodo cerchio bianco con 'd' per specializzazione disgiunta e totale
+% Nodo specializzazione
 \node[draw, circle, minimum size=0.6cm, fill=white, double, double distance=1pt] (spec_prod) at (-2,-10) {\textbf{d}};
 
-% Entità figlie di prodotto - rettangoli adattivi
-
-% Entità figlie di prodotto - rettangoli adattivi (spostate più a sinistra)
+% Figli specializzazione
 \node[entity] (frutta) at (-11,-14) {FRUTTA};
 \node[attribute, below=0.8cm of frutta] (dataraccolta_f) {dataraccolta};
 
@@ -121,116 +119,52 @@
 \node[attribute, below right=0.8cm and 0.8cm of latticini] (dataproduzione_l) {dataproduzione};
 \node[attribute, below=1.4cm of latticini] (datascadenza_l) {datascadenza};
 
+% =============================
+% Connessioni
+% =============================
+\draw (cliente) -- (codcliente) -- (cliente) -- (nome_c) -- (cliente) -- (cognome_c);
+\draw (cliente) -- (cf_c) -- (cliente) -- (indirizzo_c) -- (cliente) -- (telefono_c) -- (cliente) -- (email_c);
 
-% Connessioni attributi-entità CLIENTE
-\draw (cliente) -- (codcliente);
-\draw (cliente) -- (nome_c);
-\draw (cliente) -- (cognome_c);
-\draw (cliente) -- (cf_c);
-\draw (cliente) -- (indirizzo_c);
-\draw (cliente) -- (telefono_c);
-\draw (cliente) -- (email_c);
+\draw (tessera) -- (codtessera) -- (tessera) -- (numeropunti) -- (tessera) -- (dataemissione) -- (tessera) -- (datascadenza) -- (tessera) -- (statotessera);
 
-% Connessioni attributi-entità TESSERA
-\draw (tessera) -- (codtessera);
-\draw (tessera) -- (numeropunti);
-\draw (tessera) -- (dataemissione);
-\draw (tessera) -- (datascadenza);
-\draw (tessera) -- (statotessera);
+\draw (dipendente) -- (coddipendente) -- (dipendente) -- (nome_d) -- (dipendente) -- (cognome_d) -- (dipendente) -- (cf_d) -- (dipendente) -- (indirizzo_d) -- (dipendente) -- (telefono_d) -- (dipendente) -- (email_d);
 
-% Connessioni attributi-entità DIPENDENTE
-\draw (dipendente) -- (coddipendente);
-\draw (dipendente) -- (nome_d);
-\draw (dipendente) -- (cognome_d);
-\draw (dipendente) -- (cf_d);
-\draw (dipendente) -- (indirizzo_d);
-\draw (dipendente) -- (telefono_d);
-\draw (dipendente) -- (email_d);
+\draw (prodotto) -- (codprodotto) -- (prodotto) -- (nome_p) -- (prodotto) -- (descrizione) -- (prodotto) -- (prezzo_p) -- (prodotto) -- (luogoprovenienza) -- (prodotto) -- (scorta);
 
-% Connessioni attributi-entità PRODOTTO
-\draw (prodotto) -- (codprodotto);
-\draw (prodotto) -- (nome_p);
-\draw (prodotto) -- (descrizione);
-\draw (prodotto) -- (prezzo_p);
-\draw (prodotto) -- (luogoprovenienza);
-\draw (prodotto) -- (scorta);
-
-% Connessioni specializzazione - doppia linea tra PRODOTTO e cerchio 'd' per indicare specializzazione totale
+% Specializzazione
 \draw[thick, double, double distance=1pt] (prodotto) -- (spec_prod);
-\node[font=\scriptsize] at ($(prodotto)!0.5!(spec_prod) + (-0.5,0.3)$) {tipoprodotto};
-\draw[thick] (spec_prod) -- (frutta);
-\node[font=\scriptsize] at ($(spec_prod)!0.5!(frutta) + (-3.0,-1.0)$) {'Frutta'};
-\draw[thick] (spec_prod) -- (verdura);
-\node[font=\scriptsize] at ($(spec_prod)!0.5!(verdura) + (-2.3,-1.0)$) {'Verdura'};
-\draw[thick] (spec_prod) -- (latticini);
-\node[font=\scriptsize] at ($(spec_prod)!0.5!(latticini) + (2.4,-1.0)$) {'Latticini'};
-\draw[thick] (spec_prod) -- (farinacei);
-\node[font=\scriptsize] at ($(spec_prod)!0.5!(farinacei) + (-0.7,-1.0)$) {'Farinacei'};
-\draw[thick] (spec_prod) -- (uova);
-\node[font=\scriptsize] at ($(spec_prod)!0.5!(uova) + (1.2,-1.0)$) {'Uova'};
-\draw[thick] (spec_prod) -- (confezionati);
-\node[font=\scriptsize] at ($(spec_prod)!0.5!(confezionati) + (-1.7,-1.0)$) {'Confezionati'};
+\draw (spec_prod) -- (frutta) -- (dataraccolta_f);
+\draw (spec_prod) -- (verdura) -- (dataraccolta_v);
+\draw (spec_prod) -- (latticini) -- (datamungitura_l) -- (latticini) -- (dataproduzione_l) -- (latticini) -- (datascadenza_l);
+\draw (spec_prod) -- (farinacei) -- (glutine_fa);
+\draw (spec_prod) -- (uova) -- (datascadenza_u);
+\draw (spec_prod) -- (confezionati) -- (datascadenza_c);
 
-% Attributi specifici sotto le entità figlie
-\draw (frutta) -- (dataraccolta_f);
-\draw (verdura) -- (dataraccolta_v);
-\draw (latticini) -- (datamungitura_l);
-\draw (latticini) -- (dataproduzione_l);
-\draw (latticini) -- (datascadenza_l);
-\draw (farinacei) -- (glutine_fa);
-\draw (uova) -- (datascadenza_u);
-\draw (confezionati) -- (datascadenza_c);
+\draw (ordine) -- (codordine) -- (ordine) -- (prezzototale) -- (ordine) -- (dataacquisto);
 
-% Connessioni attributi-entità ORDINE
-\draw (ordine) -- (codordine);
-\draw (ordine) -- (prezzototale);
-\draw (ordine) -- (dataacquisto);
-
-% Connessioni attributi-entità ARTICOLI_ORDINE
 \draw (articoli_ordine) -- (prezzo_art);
 \draw (articoli_ordine) -- (numeroarticoli);
 
-% Connessioni principali seguendo lo stile dell'esempio
-\draw[thick] (cliente) -- (possiede);
-\node[font=\scriptsize] at ($(cliente)!0.5!(possiede) + (0,0.3)$) {ha};
-\draw[thick] (possiede) -- (tessera);
-\draw[thick] (cliente) -- (effettua);
-\node[font=\scriptsize] at ($(cliente)!0.5!(effettua) + (-0.5,0)$) {fa};
-\draw[thick] (effettua) -- (ordine);
-\draw[thick] (dipendente) -- (gestisce);
-\node[font=\scriptsize] at ($(dipendente)!0.5!(gestisce) + (-0.5,0)$) {elabora};
-\draw[thick] (gestisce) -- (ordine);
-\draw[thick] (ordine) -- (articoli_ordine);
-\node[font=\scriptsize] at ($(ordine)!0.5!(articoli_ordine) + (0,0.3)$) {contiene};
-% Connessione diretta tra ARTICOLI_ORDINE e PRODOTTO
-\draw[thick] (articoli_ordine) -- (prodotto);
-\node[font=\scriptsize] at ($(articoli_ordine)!0.5!(prodotto) + (0.5,0)$) {include};
+% =============================
+% Relazioni e cardinalità
+% =============================
+\draw[thick] (cliente) -- (possiede) -- (tessera);
+\draw[thick] (cliente) -- (effettua) -- (ordine);
+\draw[thick] (dipendente) -- (gestisce) -- (ordine);
+\draw[thick] (ordine) -- (articoli_ordine) -- (prodotto);
 
-% ...rimosso collegamento dashed obsoleto...
-
-% Cardinalità con formato standard ER - centrate rispetto alle linee
-% Relazione POSSIEDE (Cliente-Tessera) - offset verticale per evitare sovrapposizione
+% Cardinalità
 \node[font=\scriptsize] at ($(cliente)!0.25!(possiede) + (0,0.25)$) {1};
 \node[font=\scriptsize] at ($(tessera)!0.25!(possiede) + (0,0.25)$) {1};
-
-% Relazione EFFETTUA (Cliente-Ordine) - centrate sulla linea
 \node[font=\scriptsize] at ($(cliente)!0.3!(effettua) + (0.3,0)$) {*};
 \node[font=\scriptsize] at ($(ordine)!0.3!(effettua) + (0.3,0)$) {1};
-
-% Relazione GESTISCE (Dipendente-Ordine) - centrate sulla linea
 \node[font=\scriptsize] at ($(dipendente)!0.3!(gestisce) + (0.3,0)$) {*};
 \node[font=\scriptsize] at ($(ordine)!0.3!(gestisce) + (0.3,0)$) {1};
-
-% Relazione ARTICOLI_ORDINE (Ordine-Prodotto) - corrette secondo immagine
 \node[font=\scriptsize] at ($(ordine)!0.25!(articoli_ordine) + (0,0.25)$) {1};
 \node[font=\scriptsize] at ($(articoli_ordine) + (-2,0.2)$) {*};
-
-% Relazione INCLUDE (ArticoliOrdine-Prodotto) - cardinalità corrette: un articolo contiene 1 o più prodotti
 \node[font=\scriptsize] at ($(articoli_ordine) + (0,-0.7)$) {1..*};
 \node[font=\scriptsize] at ($(prodotto)!0.3!(articoli_ordine) + (-0.3,0)$) {*};
 
 \end{tikzpicture}
-
 \end{center}
-
 \end{document}
