@@ -9,22 +9,44 @@
 \begin{document}
 
 % ===================================================================
-% DIAGRAMMA ENTITY-RELATIONSHIP (ER) - VERSIONE CORRETTA
+% DIAGRAMMA ENTITY-RELATIONSHIP (ER) - VERSIONE CON COLORI UNIFORMI
 % ===================================================================
-% Modifiche:
-% 1. ARTICOLI_ORDINE come entità debole (doppio rettangolo).
-% 2. Mantiene tutte le altre correzioni già fatte.
+% Nota: per evitare la banda bianca tra le due linee doppie impostiamo
+% 'double=teal!30' (stesso colore del fill).
 % ===================================================================
 
 \begin{center}
 \begin{tikzpicture}[
-    entity/.style={rectangle, draw=black, thick, minimum width=2.5cm, minimum height=1cm, fill=teal!30, font=\small\bfseries, rounded corners=3pt},
-    weakentity/.style={rectangle, draw=black, thick, double, double distance=1pt, minimum width=2.5cm, minimum height=1cm, fill=teal!30, font=\small\bfseries, rounded corners=3pt},
-    attribute/.style={ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm, fill=teal!20, font=\scriptsize},
-    key/.style={ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm, fill=teal!20, font=\scriptsize\bfseries, text=black},
-    relationship/.style={diamond, draw=black, thick, minimum width=2cm, minimum height=1cm, fill=yellow!60, font=\small\bfseries},
-    enum/.style={rectangle, draw=black, rounded corners, minimum width=1.8cm, minimum height=0.8cm, fill=gray!30, font=\scriptsize},
-    specialization/.style={triangle, draw=black, thick, minimum width=1.5cm, minimum height=1cm, fill=yellow!40, font=\small},
+    entity/.style={
+      rectangle, draw=black, thick,
+      minimum width=2.5cm, minimum height=1cm,
+      fill=teal!30, font=\small\bfseries, rounded corners=3pt
+    },
+    weakentity/.style={
+      rectangle, draw=black, thick, double, double distance=1.5pt, double=teal!30,
+      minimum width=2.5cm, minimum height=1cm, fill=teal!30,
+      font=\small\bfseries, rounded corners=3pt
+    },
+    attribute/.style={
+      ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm,
+      fill=teal!20, font=\scriptsize
+    },
+    key/.style={
+      ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm,
+      fill=teal!20, font=\scriptsize\bfseries, text=black
+    },
+    relationship/.style={
+      diamond, draw=black, thick, minimum width=2cm, minimum height=1cm,
+      fill=yellow!60, font=\small\bfseries
+    },
+    enum/.style={
+      rectangle, draw=black, rounded corners, minimum width=1.8cm,
+      minimum height=0.8cm, fill=gray!30, font=\scriptsize
+    },
+    specialization/.style={
+      triangle, draw=black, thick, minimum width=1.5cm, minimum height=1cm,
+      fill=yellow!40, font=\small
+    },
     node distance=1.2cm and 1.8cm,
     scale=0.9, transform shape
 ]
@@ -52,7 +74,9 @@
 \node[attribute, above left=0.8cm and 1cm of tessera] (numeropunti) {numeropunti};
 \node[attribute, above right=0.8cm and 1cm of tessera] (dataemissione) {dataemissione};
 \node[attribute, right=1.15cm of tessera] (datascadenza) {datascadenza};
-\node[ellipse, draw=black, double, line width=1pt, double distance=1.5pt, fill=teal!20, minimum width=1.7cm, minimum height=0.9cm, below=1.5cm of tessera, font=\normalsize] (statotessera) {statotessera};
+\node[ellipse, draw=black, double, double distance=1.5pt, double=teal!30,
+      line width=1pt, fill=teal!30, minimum width=1.7cm, minimum height=0.9cm,
+      below=1.5cm of tessera, font=\normalsize] (statotessera) {statotessera};
 
 % =============================
 % ORDINE
@@ -95,8 +119,8 @@
 \node[attribute, right=1.8cm of prodotto] (luogoprovenienza) {luogoprovenienza};
 \node[attribute, above=1.2cm of prodotto] (scorta) {scorta};
 
-% Nodo specializzazione
-\node[draw, circle, minimum size=0.6cm, fill=white, double, double distance=1pt] (spec_prod) at (-2,-10) {\textbf{d}};
+% Nodo specializzazione: doppio cerchio con gap colorato uguale al fill
+\node[draw, circle, minimum size=0.6cm, fill=teal!30, double, double distance=1.5pt, double=teal!30] (spec_prod) at (-2,-10) {\textbf{d}};
 
 % Figli specializzazione
 \node[entity] (frutta) at (-11,-14) {FRUTTA};
@@ -122,25 +146,49 @@
 % =============================
 % Connessioni
 % =============================
-\draw (cliente) -- (codcliente) -- (cliente) -- (nome_c) -- (cliente) -- (cognome_c);
-\draw (cliente) -- (cf_c) -- (cliente) -- (indirizzo_c) -- (cliente) -- (telefono_c) -- (cliente) -- (email_c);
+\draw (cliente) -- (codcliente);
+\draw (cliente) -- (nome_c);
+\draw (cliente) -- (cognome_c);
+\draw (cliente) -- (cf_c);
+\draw (cliente) -- (indirizzo_c);
+\draw (cliente) -- (telefono_c);
+\draw (cliente) -- (email_c);
 
-\draw (tessera) -- (codtessera) -- (tessera) -- (numeropunti) -- (tessera) -- (dataemissione) -- (tessera) -- (datascadenza) -- (tessera) -- (statotessera);
+\draw (tessera) -- (codtessera);
+\draw (tessera) -- (numeropunti);
+\draw (tessera) -- (dataemissione);
+\draw (tessera) -- (datascadenza);
+\draw (tessera) -- (statotessera);
 
-\draw (dipendente) -- (coddipendente) -- (dipendente) -- (nome_d) -- (dipendente) -- (cognome_d) -- (dipendente) -- (cf_d) -- (dipendente) -- (indirizzo_d) -- (dipendente) -- (telefono_d) -- (dipendente) -- (email_d);
+\draw (dipendente) -- (coddipendente);
+\draw (dipendente) -- (nome_d);
+\draw (dipendente) -- (cognome_d);
+\draw (dipendente) -- (cf_d);
+\draw (dipendente) -- (indirizzo_d);
+\draw (dipendente) -- (telefono_d);
+\draw (dipendente) -- (email_d);
 
-\draw (prodotto) -- (codprodotto) -- (prodotto) -- (nome_p) -- (prodotto) -- (descrizione) -- (prodotto) -- (prezzo_p) -- (prodotto) -- (luogoprovenienza) -- (prodotto) -- (scorta);
+\draw (prodotto) -- (codprodotto);
+\draw (prodotto) -- (nome_p);
+\draw (prodotto) -- (descrizione);
+\draw (prodotto) -- (prezzo_p);
+\draw (prodotto) -- (luogoprovenienza);
+\draw (prodotto) -- (scorta);
 
 % Specializzazione
-\draw[thick, double, double distance=1pt] (prodotto) -- (spec_prod);
+\draw[thick] (prodotto) -- (spec_prod);
 \draw (spec_prod) -- (frutta) -- (dataraccolta_f);
 \draw (spec_prod) -- (verdura) -- (dataraccolta_v);
-\draw (spec_prod) -- (latticini) -- (datamungitura_l) -- (latticini) -- (dataproduzione_l) -- (latticini) -- (datascadenza_l);
+\draw (spec_prod) -- (latticini) -- (datamungitura_l);
+\draw (latticini) -- (dataproduzione_l);
+\draw (latticini) -- (datascadenza_l);
 \draw (spec_prod) -- (farinacei) -- (glutine_fa);
 \draw (spec_prod) -- (uova) -- (datascadenza_u);
 \draw (spec_prod) -- (confezionati) -- (datascadenza_c);
 
-\draw (ordine) -- (codordine) -- (ordine) -- (prezzototale) -- (ordine) -- (dataacquisto);
+\draw (ordine) -- (codordine);
+\draw (ordine) -- (prezzototale);
+\draw (ordine) -- (dataacquisto);
 
 \draw (articoli_ordine) -- (prezzo_art);
 \draw (articoli_ordine) -- (numeroarticoli);
@@ -167,4 +215,5 @@
 
 \end{tikzpicture}
 \end{center}
+
 \end{document}
