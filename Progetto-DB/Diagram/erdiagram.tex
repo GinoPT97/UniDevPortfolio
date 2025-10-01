@@ -171,13 +171,13 @@
 % Specializzazione con simbolo di sottoinsieme
 \draw[thick] (prodotto) -- (spec_prod);
 
-% Specializzazione con simbolo sovrapposto e orientato verso le entità figlie
-\draw[thick] (spec_prod) -- (frutta) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
-\draw[thick] (spec_prod) -- (verdura) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
-\draw[thick] (spec_prod) -- (confezionati) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
-\draw[thick] (spec_prod) -- (farinacei) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
-\draw[thick] (spec_prod) -- (uova) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
-\draw[thick] (spec_prod) -- (latticini) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
+% Specializzazione con simbolo sovrapposto, orientato verso le entità figlie e raddoppiato
+\draw[thick] (spec_prod) -- (frutta) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
+\draw[thick] (spec_prod) -- (verdura) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
+\draw[thick] (spec_prod) -- (confezionati) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
+\draw[thick] (spec_prod) -- (farinacei) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
+\draw[thick] (spec_prod) -- (uova) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
+\draw[thick] (spec_prod) -- (latticini) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
 
 % Connessione attributi figli
 \draw (frutta) -- (dataraccolta_f);
