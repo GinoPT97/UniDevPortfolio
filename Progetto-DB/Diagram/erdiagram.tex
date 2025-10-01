@@ -8,13 +8,6 @@
 
 \begin{document}
 
-% ===================================================================
-% DIAGRAMMA ENTITY-RELATIONSHIP (ER) - VERSIONE CON COLORI UNIFORMI
-% ===================================================================
-% Nota: per evitare la banda bianca tra le due linee doppie impostiamo
-% 'double=teal!30' (stesso colore del fill).
-% ===================================================================
-
 \begin{center}
 \begin{tikzpicture}[
     entity/.style={
@@ -175,16 +168,26 @@
 \draw (prodotto) -- (luogoprovenienza);
 \draw (prodotto) -- (scorta);
 
-% Specializzazione
+% Specializzazione con simbolo di sottoinsieme
 \draw[thick] (prodotto) -- (spec_prod);
-\draw (spec_prod) -- (frutta) -- (dataraccolta_f);
-\draw (spec_prod) -- (verdura) -- (dataraccolta_v);
-\draw (spec_prod) -- (latticini) -- (datamungitura_l);
+
+% Specializzazione con simbolo sovrapposto e orientato verso le entità figlie
+\draw[thick] (spec_prod) -- (frutta) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
+\draw[thick] (spec_prod) -- (verdura) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
+\draw[thick] (spec_prod) -- (confezionati) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
+\draw[thick] (spec_prod) -- (farinacei) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
+\draw[thick] (spec_prod) -- (uova) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
+\draw[thick] (spec_prod) -- (latticini) node[pos=0.5, sloped, allow upside down, rotate=180] {\(\subset\)};
+
+% Connessione attributi figli
+\draw (frutta) -- (dataraccolta_f);
+\draw (verdura) -- (dataraccolta_v);
+\draw (confezionati) -- (datascadenza_c);
+\draw (farinacei) -- (glutine_fa);
+\draw (uova) -- (datascadenza_u);
+\draw (latticini) -- (datamungitura_l);
 \draw (latticini) -- (dataproduzione_l);
 \draw (latticini) -- (datascadenza_l);
-\draw (spec_prod) -- (farinacei) -- (glutine_fa);
-\draw (spec_prod) -- (uova) -- (datascadenza_u);
-\draw (spec_prod) -- (confezionati) -- (datascadenza_c);
 
 \draw (ordine) -- (codordine);
 \draw (ordine) -- (prezzototale);
