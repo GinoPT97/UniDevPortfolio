@@ -588,7 +588,7 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \draw[association] (cliente2) -- node[pos=0.5, right] {effettua} node[near start, left] {1} node[near end, left] {*} (ordine2);
 \draw[association] (dipendente2) -- node[pos=0.5, left] {gestisce} node[near start, right] {1} node[near end, right] {*} (ordine2);
 \draw[composition] (ordine2) -- node[midway, right] {contiene} node[near start, left] {1} node[near end, left] {*} (articoli2);
-\draw[association] (articoli2) -- node[midway, right] {riferisce} node[near start, above] {*} node[near end, above] {1} (prodotto2);
+\draw[association] (articoli2) -- node[midway, right] {riferisce} node[near start, right] {*} node[near end, right] {1} (prodotto2);
 
 % Dipendenze per le enumerazioni (linee tratteggiate)
 %\draw[dependency] (tessera2) -- node[pos=0.7, right] {«uses»} (statotessera);
