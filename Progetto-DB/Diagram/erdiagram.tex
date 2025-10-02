@@ -12,49 +12,41 @@
 \begin{tikzpicture}[
     entity/.style={
       rectangle, draw=black, thick,
-      minimum width=2.5cm, minimum height=1cm,
-      fill=teal!30, font=\small\bfseries, rounded corners=3pt
+      minimum width=2cm, minimum height=0.7cm,
+      fill=teal!30, font=\scriptsize\bfseries, rounded corners=2pt
     },
     weakentity/.style={
-      rectangle, draw=black, thick, double, double distance=1.5pt, double=teal!30,
-      minimum width=2.5cm, minimum height=1cm, fill=teal!30,
-      font=\small\bfseries, rounded corners=3pt
+      rectangle, draw=black, thick, double, double distance=1pt, double=teal!30,
+      minimum width=2cm, minimum height=0.7cm, fill=teal!30,
+      font=\scriptsize\bfseries, rounded corners=2pt
     },
     attribute/.style={
-      ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm,
-      fill=teal!20, font=\scriptsize
+      ellipse, draw=black, minimum width=1cm, minimum height=0.5cm,
+      fill=teal!20, font=\tiny
     },
     key/.style={
-      ellipse, draw=black, minimum width=1.3cm, minimum height=0.7cm,
-      fill=teal!20, font=\scriptsize\bfseries, text=black
+      ellipse, draw=black, minimum width=1cm, minimum height=0.5cm,
+      fill=teal!20, font=\tiny\bfseries
     },
     relationship/.style={
-      diamond, draw=black, thick, minimum width=2cm, minimum height=1cm,
-      fill=yellow!60, font=\small\bfseries
+      diamond, draw=black, thick, minimum width=1.5cm, minimum height=0.7cm,
+      fill=yellow!60, font=\scriptsize\bfseries
     },
-    enum/.style={
-      rectangle, draw=black, rounded corners, minimum width=1.8cm,
-      minimum height=0.8cm, fill=gray!30, font=\scriptsize
-    },
-    specialization/.style={
-      triangle, draw=black, thick, minimum width=1.5cm, minimum height=1cm,
-      fill=yellow!40, font=\small
-    },
-    node distance=1.2cm and 1.8cm,
-    scale=0.9, transform shape
+    node distance=0.8cm and 1.2cm,
+    scale=0.85, transform shape
 ]
 
 % =============================
 % CLIENTE
 % =============================
 \node[entity] (cliente) at (-8,8) {CLIENTE};
-\node[key, above=0.8cm of cliente] (codcliente) {\underline{codcliente}};
-\node[attribute, above left=0.8cm and 1cm of cliente] (nome_c) {nome};
-\node[attribute, above right=0.8cm and 1cm of cliente] (cognome_c) {cognome};
-\node[attribute, left=1.2cm of cliente] (cf_c) {codicefiscale};
-\node[attribute, below left=1.5cm and 0.5cm of cliente] (indirizzo_c) {indirizzo};
-\node[attribute, below left=0.8cm and 1.5cm of cliente] (telefono_c) {telefono};
-\node[attribute, below right=0.8cm and 1cm of cliente] (email_c) {email};
+\node[key, above=0.6cm of cliente] (codcliente) {\underline{codcliente}};
+\node[attribute, above left=0.6cm and 0.8cm of cliente] (nome_c) {nome};
+\node[attribute, above right=0.6cm and 0.8cm of cliente] (cognome_c) {cognome};
+\node[attribute, left=0.9cm of cliente] (cf_c) {codicefiscale};
+\node[attribute, below left=1.0cm and -0.2cm of cliente] (indirizzo_c) {indirizzo};
+\node[attribute, below left=0.4cm and 1.0cm of cliente] (telefono_c) {telefono};
+\node[attribute, below right=0.6cm and 0.8cm of cliente] (email_c) {email};
 
 % Relazione POSSIEDE
 \node[relationship] (possiede) at (-2,8) {possiede};
@@ -63,34 +55,34 @@
 % TESSERA
 % =============================
 \node[entity] (tessera) at (4.5,8) {TESSERA};
-\node[key, above=0.8cm of tessera] (codtessera) {\underline{codtessera}};
-\node[attribute, above left=0.8cm and 1cm of tessera] (numeropunti) {numeropunti};
-\node[attribute, above right=0.8cm and 1cm of tessera] (dataemissione) {dataemissione};
-\node[attribute, right=1.15cm of tessera] (datascadenza) {datascadenza};
-\node[ellipse, draw=black, double, double distance=1.5pt, double=teal!30,
-      line width=1pt, fill=teal!30, minimum width=1.7cm, minimum height=0.9cm,
-      below=1.5cm of tessera, font=\normalsize] (statotessera) {statotessera};
+\node[key, above=0.6cm of tessera] (codtessera) {\underline{codtessera}};
+\node[attribute, above left=0.6cm and 0.8cm of tessera] (numeropunti) {numeropunti};
+\node[attribute, above right=0.6cm and 0.8cm of tessera] (dataemissione) {dataemissione};
+\node[attribute, right=0.9cm of tessera] (datascadenza) {datascadenza};
+\node[ellipse, draw=black, double, double distance=1pt, double=teal!30,
+      line width=0.8pt, fill=teal!30, minimum width=1.5cm, minimum height=0.6cm,
+      below=1.0cm of tessera, font=\scriptsize] (statotessera) {statotessera};
 
 % =============================
 % ORDINE
 % =============================
 \node[relationship] (effettua) at (-8,4.5) {effettua};
 \node[entity] (ordine) at (-8,1) {ORDINE};
-\node[attribute, above left=0.8cm and 1cm of ordine] (dataacquisto) {dataacquisto};
-\node[attribute, left=1.2cm of ordine] (prezzototale) {prezzototale};
-\node[key, below=0.8cm of prezzototale] (codordine) {\underline{codordine}};
+\node[attribute, above left=0.6cm and 0.8cm of ordine] (dataacquisto) {dataacquisto};
+\node[attribute, left=0.9cm of ordine] (prezzototale) {prezzototale};
+\node[key, below=0.6cm of prezzototale] (codordine) {\underline{codordine}};
 
 % =============================
 % DIPENDENTE
 % =============================
 \node[entity] (dipendente) at (-8,-6) {DIPENDENTE};
-\node[attribute, above left=0.8cm and 1cm of dipendente] (nome_d) {nome};
-\node[attribute, above right=0.8cm and 1cm of dipendente] (cognome_d) {cognome};
-\node[attribute, left=1.2cm of dipendente] (cf_d) {codicefiscale};
-\node[attribute, right=1.2cm of dipendente] (indirizzo_d) {indirizzo};
-\node[attribute, below left=0.8cm and 1cm of dipendente] (telefono_d) {telefono};
-\node[attribute, below right=0.8cm and 1cm of dipendente] (email_d) {email};
-\node[key, below=0.8cm of dipendente] (coddipendente) {\underline{coddipendente}};
+\node[attribute, above left=0.6cm and 0.8cm of dipendente] (nome_d) {nome};
+\node[attribute, above right=0.6cm and 0.8cm of dipendente] (cognome_d) {cognome};
+\node[attribute, left=0.9cm of dipendente] (cf_d) {codicefiscale};
+\node[attribute, right=0.9cm of dipendente] (indirizzo_d) {indirizzo};
+\node[attribute, below left=0.6cm and 0.8cm of dipendente] (telefono_d) {telefono};
+\node[attribute, below right=0.6cm and 0.8cm of dipendente] (email_d) {email};
+\node[key, below=0.6cm of dipendente] (coddipendente) {\underline{coddipendente}};
 
 \node[relationship] (gestisce) at (-8,-2.5) {gestisce};
 
@@ -98,47 +90,45 @@
 % ARTICOLI_ORDINE (entità debole)
 % =============================
 \node[weakentity] (articoli_ordine) at (0,1) {ARTICOLI\_ORDINE};
-\node[attribute, below right=0.8cm and 1cm of articoli_ordine] (prezzo_art) {prezzo};
-\node[attribute, right=1.2cm of articoli_ordine] (numeroarticoli) {numeroarticoli};
+\node[attribute, below right=0.6cm and 0.8cm of articoli_ordine] (prezzo_art) {prezzo};
+\node[attribute, right=0.9cm of articoli_ordine] (numeroarticoli) {numeroarticoli};
 
 % =============================
 % PRODOTTO + specializzazione
 % =============================
 \node[entity] (prodotto) at (3.5,-6) {PRODOTTO};
-\node[key, below=1.4cm of prodotto] (codprodotto) {\underline{codprodotto}};
-\node[attribute, above left=0.8cm and 1.2cm of prodotto] (nome_p) {nome};
-\node[attribute, above right=0.8cm and 1.2cm of prodotto] (descrizione) {descrizione};
-\node[attribute, left=1.8cm of prodotto] (prezzo_p) {prezzo};
-\node[attribute, right=1.8cm of prodotto] (luogoprovenienza) {luogoprovenienza};
-\node[attribute, above=1.2cm of prodotto] (scorta) {scorta};
+\node[key, below=1.0cm of prodotto] (codprodotto) {\underline{codprodotto}};
+\node[attribute, above left=0.6cm and 1.0cm of prodotto] (nome_p) {nome};
+\node[attribute, above right=0.6cm and 1.0cm of prodotto] (descrizione) {descrizione};
+\node[attribute, left=1.3cm of prodotto] (prezzo_p) {prezzo};
+\node[attribute, right=1.3cm of prodotto] (luogoprovenienza) {luogoprovenienza};
+\node[attribute, above=0.8cm of prodotto] (scorta) {scorta};
 
-% Nodo specializzazione: doppio cerchio con gap colorato uguale al fill
-\node[draw, circle, minimum size=0.6cm, fill=teal!30, double, double distance=1.5pt, double=teal!30] (spec_prod) at (-2,-10) {\textbf{d}};
+% Nodo specializzazione
+\node[draw, circle, minimum size=0.4cm, fill=teal!30, double, double distance=1pt, double=teal!30] (spec_prod) at (-2,-10) {\textbf{d}};
 
 % Figli specializzazione
 \node[entity] (frutta) at (-11,-14) {FRUTTA};
-\node[attribute, below=0.8cm of frutta] (dataraccolta_f) {dataraccolta};
+\node[attribute, below=0.6cm of frutta] (dataraccolta_f) {dataraccolta};
 
 \node[entity] (verdura) at (-8,-14) {VERDURA};
-\node[attribute, below=0.8cm of verdura] (dataraccolta_v) {dataraccolta};
+\node[attribute, below=0.6cm of verdura] (dataraccolta_v) {dataraccolta};
 
 \node[entity] (confezionati) at (-5,-14) {CONFEZIONATI};
-\node[attribute, below=0.8cm of confezionati] (datascadenza_c) {datascadenza};
+\node[attribute, below=0.6cm of confezionati] (datascadenza_c) {datascadenza};
 
 \node[entity] (farinacei) at (-2,-14) {FARINACEI};
-\node[attribute, below=0.8cm of farinacei] (glutine_fa) {glutine};
+\node[attribute, below=0.6cm of farinacei] (glutine_fa) {glutine};
 
 \node[entity] (uova) at (1,-14) {UOVA};
-\node[attribute, below=0.8cm of uova] (datascadenza_u) {datascadenza};
+\node[attribute, below=0.6cm of uova] (datascadenza_u) {datascadenza};
 
 \node[entity] (latticini) at (4,-14) {LATTICINI};
-\node[attribute, above right=0.8cm and 0.8cm of latticini] (datamungitura_l) {datamungitura};
-\node[attribute, below right=0.8cm and 0.8cm of latticini] (dataproduzione_l) {dataproduzione};
-\node[attribute, below=1.4cm of latticini] (datascadenza_l) {datascadenza};
+\node[attribute, above right=0.6cm and 0.6cm of latticini] (datamungitura_l) {datamungitura};
+\node[attribute, below right=0.6cm and 0.6cm of latticini] (dataproduzione_l) {dataproduzione};
+\node[attribute, below=1.0cm of latticini] (datascadenza_l) {datascadenza};
 
-% =============================
-% Connessioni
-% =============================
+% Connessioni (stesso codice originale)
 \draw (cliente) -- (codcliente);
 \draw (cliente) -- (nome_c);
 \draw (cliente) -- (cognome_c);
@@ -168,18 +158,15 @@
 \draw (prodotto) -- (luogoprovenienza);
 \draw (prodotto) -- (scorta);
 
-% Specializzazione con simbolo di sottoinsieme
 \draw[thick] (prodotto) -- (spec_prod);
 
-% Specializzazione con simbolo sovrapposto, orientato verso le entità figlie e raddoppiato
-\draw[thick] (spec_prod) -- (frutta) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
-\draw[thick] (spec_prod) -- (verdura) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
-\draw[thick] (spec_prod) -- (confezionati) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
-\draw[thick] (spec_prod) -- (farinacei) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
-\draw[thick] (spec_prod) -- (uova) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
-\draw[thick] (spec_prod) -- (latticini) node[pos=0.5, sloped, allow upside down, rotate=180, scale=2] {\(\subset\)};
+\draw[thick] (spec_prod) -- (frutta);
+\draw[thick] (spec_prod) -- (verdura);
+\draw[thick] (spec_prod) -- (confezionati);
+\draw[thick] (spec_prod) -- (farinacei);
+\draw[thick] (spec_prod) -- (uova);
+\draw[thick] (spec_prod) -- (latticini);
 
-% Connessione attributi figli
 \draw (frutta) -- (dataraccolta_f);
 \draw (verdura) -- (dataraccolta_v);
 \draw (confezionati) -- (datascadenza_c);
@@ -196,25 +183,10 @@
 \draw (articoli_ordine) -- (prezzo_art);
 \draw (articoli_ordine) -- (numeroarticoli);
 
-% =============================
-% Relazioni e cardinalità
-% =============================
 \draw[thick] (cliente) -- (possiede) -- (tessera);
 \draw[thick] (cliente) -- (effettua) -- (ordine);
 \draw[thick] (dipendente) -- (gestisce) -- (ordine);
 \draw[thick] (ordine) -- (articoli_ordine) -- (prodotto);
-
-% Cardinalità
-\node[font=\scriptsize] at ($(cliente)!0.25!(possiede) + (0,0.25)$) {1};
-\node[font=\scriptsize] at ($(tessera)!0.25!(possiede) + (0,0.25)$) {1};
-\node[font=\scriptsize] at ($(cliente)!0.3!(effettua) + (0.3,0)$) {*};
-\node[font=\scriptsize] at ($(ordine)!0.3!(effettua) + (0.3,0)$) {1};
-\node[font=\scriptsize] at ($(dipendente)!0.3!(gestisce) + (0.3,0)$) {*};
-\node[font=\scriptsize] at ($(ordine)!0.3!(gestisce) + (0.3,0)$) {1};
-\node[font=\scriptsize] at ($(ordine)!0.25!(articoli_ordine) + (0,0.25)$) {1};
-\node[font=\scriptsize] at ($(articoli_ordine) + (-2,0.2)$) {*};
-\node[font=\scriptsize] at ($(articoli_ordine) + (0,-0.7)$) {1..*};
-\node[font=\scriptsize] at ($(prodotto)!0.3!(articoli_ordine) + (-0.3,0)$) {*};
 
 \end{tikzpicture}
 \end{center}
