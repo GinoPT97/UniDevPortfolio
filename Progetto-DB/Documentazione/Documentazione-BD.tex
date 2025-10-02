@@ -476,7 +476,7 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 
 % Relazioni Ordine-ArticoliOrdine-Prodotto
 \draw[composition] (ordine) -- node[midway, right] {contiene} node[near start, left] {1} node[near end, left] {*} (articoli);
-\draw[association] (articoli) -- node[midway, above] {riferisce} node[near start, above] {*} node[near end, above] {1} (prodotto);
+\draw[association] (articoli) -- node[midway, right] {riferisce} node[near start, right] {*} node[near end, above] {1} (prodotto);
 
 % Generalizzazioni Prodotto - con triangoli di generalizzazione
 \draw[generalization] (frutta) -- (prodotto);
@@ -538,7 +538,7 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 };
 
 % Livello terzo - Prodotto a destra (più largo e distanziato)
-\node[class] (prodotto2) at (11,-11.5) {
+\node[class] (prodotto2) at (0,-21) {
   \textbf{Prodotto}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   + codprodotto : int\\
   + nome : string\\
@@ -572,7 +572,7 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
   SCADUTA
 };
 
-\node[class] (tipologia) at (11,-19) {
+\node[class] (tipologia) at (5,-19) {
   \textbf{«enumeration»}\\
   \textbf{TIPOLOGIA}\\[-0.3em]\rule{\linewidth}{0.2pt}\\
   FRUTTA\\
@@ -588,7 +588,7 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \draw[association] (cliente2) -- node[pos=0.5, right] {effettua} node[near start, left] {1} node[near end, left] {*} (ordine2);
 \draw[association] (dipendente2) -- node[pos=0.5, left] {gestisce} node[near start, right] {1} node[near end, right] {*} (ordine2);
 \draw[composition] (ordine2) -- node[midway, right] {contiene} node[near start, left] {1} node[near end, left] {*} (articoli2);
-\draw[association] (articoli2) -- node[midway, above] {riferisce} node[near start, above] {*} node[near end, above] {1} (prodotto2);
+\draw[association] (articoli2) -- node[midway, right] {riferisce} node[near start, above] {*} node[near end, above] {1} (prodotto2);
 
 % Dipendenze per le enumerazioni (linee tratteggiate)
 %\draw[dependency] (tessera2) -- node[pos=0.7, right] {«uses»} (statotessera);
