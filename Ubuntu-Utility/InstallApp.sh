@@ -46,7 +46,6 @@ git config --global user.name "kenobi1797"
 sudo apt install texlive-pictures texlive-science
 
 echo "Installazione applicazioni Snap..."
-sudo snap install --classic dbeaver-ce
 sudo snap install --classic openjdk
 sudo snap install --classic code
 sudo snap install --classic android-studio
