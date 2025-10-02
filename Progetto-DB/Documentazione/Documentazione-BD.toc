@@ -1,16 +1,18 @@
+\babel@toc {italian}{}\relax 
+\babel@toc {italian}{}\relax 
 \contentsline {section}{\numberline {1}Introduzione}{3}{section.1}%
 \contentsline {section}{\numberline {2}Analisi dei Requisiti}{4}{section.2}%
 \contentsline {section}{\numberline {3}Progettazione Concettuale}{5}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Diagramma ER}{5}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Diagramma concettuale}{5}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Diagramma concettuale ristrutturato}{5}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Progettazione Logica}{6}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Schema relazionale}{6}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Dizionario delle entità}{6}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Associazioni e relazioni}{7}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Vincoli di integrità}{7}{subsection.4.4}%
-\contentsline {section}{\numberline {5}Progettazione Fisica}{8}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Tabelle SQL}{8}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Trigger e Funzioni}{12}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}View e Funzioni}{17}{subsection.5.3}%
-\contentsline {section}{\numberline {6}Popolamento e Dati di Esempio}{20}{section.6}%
+\contentsline {subsection}{\numberline {3.2}Diagramma concettuale}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Diagramma concettuale ristrutturato}{6}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Progettazione Logica}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Schema relazionale}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Dizionario delle entità}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Associazioni e relazioni}{8}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Vincoli di integrità}{8}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Progettazione Fisica}{9}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Tabelle SQL}{9}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Trigger e Funzioni}{13}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}View e Funzioni}{18}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Popolamento e Dati di Esempio}{21}{section.6}%
