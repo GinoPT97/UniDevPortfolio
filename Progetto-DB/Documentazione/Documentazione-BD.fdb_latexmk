@@ -1,12 +1,9 @@
 # Fdb version 4
-["pdflatex"] 1757064764.69827 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/Documentazione-BD.tex" "Documentazione-BD.pdf" "Documentazione-BD" 1757064765.48064 0
-  "../Immagini/Diagram-ER.png" 1757064660.21881 65695 f407c0a836b663679b1d797f0198bb7e ""
-  "../Immagini/DiagramNonRistrutturato.png" 1757064631.96809 115777 f8377bf605878f073f78b80f162799dc ""
-  "../Immagini/DiagrammaRistrutturato.png" 1757064653.87786 57278 502c6564996883dd75e93f94be16e802 ""
+["pdflatex"] 1759394596.50416 "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/Documentazione-BD.tex" "Documentazione-BD.pdf" "Documentazione-BD" 1759394597.2468 0
   "../Immagini/Federico-II.png" 1757000414.69781 256683 a2c85aadd40c4de8e0ed0c7e7ce959b8 ""
   "../Immagini/Frontespazio.png" 1753094963 2406519 938c1e6ca4fadb490877b2b71af949b3 ""
   "/etc/texmf/web2c/texmf.cnf" 1752838060.96153 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/Documentazione-BD.tex" 1757064763.58045 33481 d50fda182bebc80850420f4612c19452 ""
+  "/home/kenobi/Documenti/GitHub/UniDevPortfolio/Progetto-DB/Documentazione/Documentazione-BD.tex" 1759394596.4943 33246 b2b6947f7701838bd3a5609431669b6d ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm" 1246382020 928 2dc8d444221b7a635bb58038579b861a ""
@@ -189,12 +186,12 @@
   "/usr/share/texmf/tex/latex/lm/ts1lmr.fd" 1616454256 1914 884882d7ebb0fd65cea93fca77ff6f5a ""
   "/usr/share/texmf/tex/latex/lm/ts1lmtt.fd" 1616454256 2739 a9185ca78909337213035903c24903f2 ""
   "/usr/share/texmf/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
-  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1752838090 128227 ed67923a37f7748d267799454bc1f95b ""
-  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1753010313 1929624 f93ffbe1384c00abd93b46cd694dbaf4 ""
-  "Documentazione-BD.aux" 1757064765.41845 2905 d8f22b97e174148527dbd6973fc2ee14 "pdflatex"
-  "Documentazione-BD.out" 1757064765.41845 2536 c5ab92ca8fec31e948533957c3e107d4 "pdflatex"
-  "Documentazione-BD.tex" 1757064763.58045 33481 d50fda182bebc80850420f4612c19452 ""
-  "Documentazione-BD.toc" 1757064765.41967 1327 b773bf6e14b727383547330eb96df79c "pdflatex"
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1758191741 165211 6b08d096f3d0fe5ff6b266061a2b45e0 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1758191745 1959947 d516d0ac73276b7140b9995a00affdd4 ""
+  "Documentazione-BD.aux" 1759394597.18829 2902 bdedc9b806ab20e38f9c73c9d59287df "pdflatex"
+  "Documentazione-BD.out" 1759394597.18929 2536 c5ab92ca8fec31e948533957c3e107d4 "pdflatex"
+  "Documentazione-BD.tex" 1759394596.4943 33246 b2b6947f7701838bd3a5609431669b6d ""
+  "Documentazione-BD.toc" 1759394597.18929 1325 7c624088af16e08dd9142ddf3f65aaf1 "pdflatex"
   (generated)
   "Documentazione-BD.aux"
   "Documentazione-BD.log"
