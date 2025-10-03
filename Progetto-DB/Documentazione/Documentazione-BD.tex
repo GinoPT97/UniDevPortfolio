@@ -359,7 +359,8 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \subsection{Diagramma concettuale}
 % Inserimento immagine diagramma concettuale
 \begin{center}
-\begin{tikzpicture}[node distance=3.2cm and 5.2cm, scale=0.8, transform shape]
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=3.2cm and 5.2cm, transform shape]
 
 % Livello superiore - Persona come entità principale (centrale)
 \node[class] (persona) at (0,0) {
@@ -487,12 +488,14 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 \draw[generalization] (confezionati) -- (prodotto);
 
 \end{tikzpicture}
+} % fine resizebox
 \end{center}
 
 \subsection{Diagramma concettuale ristrutturato}
 % Inserimento immagine diagramma concettuale ristrutturato
 \begin{center}
-\begin{tikzpicture}[node distance=3.2cm and 5.2cm, scale=0.8, transform shape]
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=3.2cm and 5.2cm, transform shape]
 
 % Livello superiore - Cliente e Dipendente affiancati (più distanziati)
 \node[class] (cliente2) at (-7,0) {
@@ -595,7 +598,9 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 %\draw[dependency] (prodotto2) -- node[pos=0.7, left] {«uses»} (tipologia);
 
 \end{tikzpicture}
+} % fine resizebox
 \end{center}
+
 \newpage
 \section{Progettazione Logica}
 
