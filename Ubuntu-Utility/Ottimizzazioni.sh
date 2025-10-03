@@ -1,64 +1,76 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-# Variabile globale per tracciare l'uscita pulita
-
-# Configurazione script
-SCRIPT_NAME="Sistema di Ottimizzazione Ubuntu"
-VERSION="2.1"
+# Script di Pulizia Ubuntu - Versione Sicura
+SCRIPT_NAME="Ubuntu Safe Cleaner"
+VERSION="3.0"
 LOGFILE="/var/log/ubuntu-cleaner.log"
-DRY_RUN=false  # Modalità dry-run rimossa
-BACKUP_BEFORE_DELETE=false  # Imposta a true per abilitare backup automatico dei file eliminati
-VERBOSE=true
-FORCE=true
+VERBOSE=false  # Meno output per esecuzione automatica
+FORCE=true     # Consenso automatico per cron
+DRY_RUN=false
 
-# Controllo permessi superutente all'avvio
+# Controllo permessi superutente
 if [[ $EUID -ne 0 ]]; then
     echo -e "\033[0;31m[ERROR]\033[0m Questo script deve essere eseguito come superutente."
     echo "Prova: sudo $0"
     exit 1
 fi
 
-SCRIPT_SUCCESS=false
-# Cleanup handler
-cleanup() {
-    if [[ "$SCRIPT_SUCCESS" == "true" ]]; then
-        # Uscita normale, nessun errore
-        return
-    fi
-    log "ERROR" "Script interrotto o errore. Pulizia in corso."
-}
-trap cleanup SIGINT ERR EXIT
-
 # Colori per output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 show_help() {
     cat << EOF
 $SCRIPT_NAME v$VERSION
 
-USO: $0 [OPZIONI]
+USO: $0 [COMANDO] [OPZIONI]
+
+COMANDI:
+    ottimizzazioni      Esegue pulizia completa (default)
+    help                Mostra questo messaggio
+
+OPZIONI:
     -h, --help          Mostra questo messaggio
     -v, --verbose       Output dettagliato
-    -f, --force         Nessuna conferma
+    -f, --force         Nessuna conferma (usa con cautela)
+    -d, --dry-run       Simula senza eliminare
     -l, --log-file FILE Log personalizzato
 
 Esempi:
-    $0                  Pulizia completa
-    $0 --verbose        Output dettagliato
+    $0 ottimizzazioni --dry-run     Simula pulizia
+    $0 ottimizzazioni --force       Pulizia automatica
+    $0 ottimizzazioni               Pulizia con conferme
+    $0 --dry-run                    Simula (shortcut)
 EOF
 }
 
-# Parsing degli argomenti della riga di comando
+# Parsing argomenti
+COMMAND=""
 while [[ $# -gt 0 ]]; do
     case $1 in
+        ottimizzazioni|help)
+            COMMAND="$1"
+            shift
+            ;;
         -h|--help)
             show_help
             exit 0
+            ;;
+        -v|--verbose)
+            VERBOSE=true
+            shift
+            ;;
+        -f|--force)
+            FORCE=true
+            shift
+            ;;
+        -d|--dry-run)
+            DRY_RUN=true
+            shift
             ;;
         -l|--log-file)
             LOGFILE="$2"
@@ -72,18 +84,22 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Verifica permessi superutente
-if [[ $EUID -ne 0 ]]; then
-    echo -e "${RED}[ERROR]${NC} Questo script deve essere eseguito come superutente."
-    echo "Prova: sudo $0"
-    exit 1
+# Se è stato usato "help", mostra aiuto ed esci
+if [[ "$COMMAND" == "help" ]]; then
+    show_help
+    exit 0
 fi
 
-# Controllo dell'esistenza delle directory necessarie
+# "ottimizzazioni" o nessun comando = esegui pulizia
+if [[ "$COMMAND" == "ottimizzazioni" || -z "$COMMAND" ]]; then
+    COMMAND="ottimizzazioni"
+fi
+
+# Inizializza log
 mkdir -p "$(dirname "$LOGFILE")"
 touch "$LOGFILE"
 
-# Funzione per loggare i messaggi con colori e timestamp
+# Funzione log con timestamp
 log() {
     local level="$1"
     local message="$2"
@@ -95,332 +111,304 @@ log() {
         "ERROR") color="$RED" ;;
         "DEBUG") color="$BLUE" ;;
     esac
-    echo -e "${color}[$level]${NC} $timestamp - $message"
+    echo -e "${color}[$level]${NC} $message"
     echo "[$level] $timestamp - $message" >> "$LOGFILE"
 }
 
-# Funzione per backup file prima di eliminare (opzionale)
-backup_file() {
-    local file="$1"
-    if [[ -f "$file" ]]; then
-        cp -- "$file" "${file}.bak_$(date +%s)"
-        log "INFO" "Backup creato: ${file}.bak_$(date +%s)"
-    fi
-}
-
-# Funzione per eliminazione sicura di file (non directory!) solo in percorsi consentiti
-safe_delete() {
-    local target="$1"
-    local allowed_root=("/home" "/tmp" "/var/log" "/var/tmp")
-    if [[ -z "$target" || ! -e "$target" ]]; then
-        log "WARN" "Percorso non valido: '$target'"
-        return 1
-    fi
-    if [[ -d "$target" ]]; then
-        log "WARN" "È una cartella, non la rimuovo: '$target'"
-        return 1
-    fi
-    local allowed=false
-    for dir in "${allowed_root[@]}"; do
-        if [[ "$target" == $dir* ]]; then
-            allowed=true
-            break
-        fi
-    done
-    if [[ "$allowed" != true ]]; then
-        log "ERROR" "Tentativo di eliminazione fuori da percorsi sicuri: $target"
-        return 1
-    fi
-    if [[ "$BACKUP_BEFORE_DELETE" == true ]]; then
-        backup_file "$target"
-    fi
+# Conferma azione
+confirm_action() {
     if [[ "$FORCE" == "true" ]]; then
-        run_cmd "rm -f -- \"${target}\"" "Eliminazione sicura di \"${target}\""
-    else
-        if confirm_action "Eliminare il file \"${target}\"? Percorso: \"${target}\""; then
-            run_cmd "rm -f -- \"${target}\"" "Eliminazione sicura di \"${target}\""
-        fi
+        return 0
     fi
+    local prompt="$1"
+    read -p "$prompt [s/N]: " -n 1 -r
+    echo
+    [[ $REPLY =~ ^[SsYy]$ ]]
 }
 
-# Funzione per eseguire comandi con controllo degli errori migliorato
+# Esegui comando con gestione errori
 run_cmd() {
     local cmd="$1"
     local desc="$2"
-    local optional="${3:-false}"
     
     if [[ "$VERBOSE" == "true" ]]; then
         log "DEBUG" "Eseguendo: $cmd"
     fi
     
-    # Dry-run rimosso: esecuzione sempre eseguita
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log "INFO" "[DRY-RUN] $desc"
+        return 0
+    fi
     
-    local start_time=$(date +%s)
-    
-    if eval "$cmd" 2>&1 | while IFS= read -r line; do
-        [[ "$VERBOSE" == "true" ]] && echo "  $line"
-        echo "  $line" >> "$LOGFILE"
-    done; then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
-        log "INFO" "$desc completata con successo (${duration}s)"
+    if eval "$cmd" >> "$LOGFILE" 2>&1; then
+        log "INFO" "✓ $desc"
         return 0
     else
-        local exit_code=$?
-        if [[ "$optional" == "true" ]]; then
-            log "WARN" "$desc fallita (opzionale) - Codice: $exit_code"
-            return 0
-        else
-            log "ERROR" "$desc fallita - Codice: $exit_code"
-            return $exit_code
-        fi
+        log "WARN" "✗ $desc fallito"
+        return 1
     fi
 }
 
-confirm_action() {
-    # Con FORCE attivo, conferma automatica
-    return 0
+# Cache utenti
+declare -A USER_HOMES
+cache_users() {
+    log "INFO" "Caricamento lista utenti..."
+    while IFS=: read -r user _ uid _ _ home _; do
+        if [[ $uid -ge 1000 && $uid -lt 65534 && -d "$home" ]]; then
+            USER_HOMES["$user"]="$home"
+        fi
+    done < <(getent passwd)
+    log "INFO" "Trovati ${#USER_HOMES[@]} utenti"
 }
 
-# Calcola spazio usato su /
+# Calcola spazio disco
 calculate_space() {
     df --output=used / | tail -1
 }
 
-# Funzione per la pulizia di base del sistema
+# Pulizia BASE - Sicura e standard
 basic_cleanup() {
-    log "INFO" "=== PULIZIA DI BASE DEL SISTEMA ==="
-    # Check connessione internet prima di update
-    if ping -c 1 1.1.1.1 &>/dev/null; then
-        run_cmd "apt-get update" "Aggiornamento indici pacchetti"
+    log "INFO" "=== PULIZIA BASE SISTEMA ==="
+    
+    if ping -c 2 -W 2 8.8.8.8 &>/dev/null; then
+        run_cmd "apt-get update -qq" "Aggiornamento indici pacchetti"
     else
-        log "WARN" "Nessuna connessione internet: salto apt-get update"
+        log "WARN" "Nessuna connessione internet, salto update"
     fi
-    run_cmd "dpkg --configure -a" "Configurazione pacchetti non configurati"
-    run_cmd "apt-get install -f -y" "Risoluzione dipendenze mancanti"
+    
     run_cmd "apt-get clean" "Pulizia cache APT"
-    run_cmd "apt-get autoclean -y" "Pulizia pacchetti APT obsoleti"
-    run_cmd "apt-get autoremove -y" "Rimozione pacchetti obsoleti"
-    run_cmd "fc-cache -f -v" "Aggiornamento cache font" true
+    run_cmd "apt-get autoclean -y" "Pulizia pacchetti obsoleti"
+    run_cmd "apt-get autoremove --purge -y" "Rimozione pacchetti inutilizzati"
 }
 
-# Funzione per la pulizia dei log di sistema
+# Pulizia LOG di sistema
 cleanup_logs() {
-    log "INFO" "=== PULIZIA LOG DI SISTEMA ==="
+    log "INFO" "=== PULIZIA LOG SISTEMA ==="
     
-    run_cmd "journalctl --vacuum-time=7d" "Rimozione log journal vecchi di 7 giorni"
-    run_cmd "logrotate -f /etc/logrotate.conf" "Rotazione forzata dei log" true
-}
-
-# Funzione per la pulizia dei file temporanei e cache aggiuntive
-cleanup_temp_files() {
-    log "INFO" "=== PULIZIA FILE TEMPORANEI E CACHE AGGIUNTIVE ==="
-
-    # Pulizia cartelle temporanee utente (SAFE, solo file, no directory)
-    for user in $(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 && $1!~/^(nobody|systemd-)/ {print $1}'); do
-        home_dir=$(getent passwd "$user" | cut -d: -f6)
-        # Directory da escludere
-        EXCLUDE_DIRS=(
-            "$home_dir/.thunderbird"
-            "$home_dir/.config/thunderbird"
-            "$home_dir/.config/Microsoft/Microsoft Teams"
-            "$home_dir/.var/app/com.microsoft.Teams"
-            "$home_dir/snap/thunderbird"
-            "$home_dir/snap/teams-for-linux"
-            "$home_dir/.config/TelegramDesktop"
-            "$home_dir/.var/app/org.telegram.desktop"
-            "$home_dir/snap/telegram-desktop"
-        )
-        # Funzione per verificare se un file è in una directory esclusa
-        is_excluded() {
-            local file="$1"
-            for excl in "${EXCLUDE_DIRS[@]}"; do
-                if [[ "$file" == "$excl"* ]]; then
-                    return 0
-                fi
-            done
-            return 1
-        }
-        # Thumbnails
-        thumb_dir="$home_dir/.cache/thumbnails"
-        if [[ -d "$thumb_dir" ]]; then
-            find "$thumb_dir" -type f -print0 | while IFS= read -r -d '' file; do
-                is_excluded "$file" && continue
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        # Firefox
-        ff_dir="$home_dir/.cache/mozilla"
-        if [[ -d "$ff_dir" ]]; then
-            find "$ff_dir" -type f -print0 | while IFS= read -r -d '' file; do
-                is_excluded "$file" && continue
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        # Chromium
-        chromium_dir="$home_dir/.cache/chromium"
-        if [[ -d "$chromium_dir" ]]; then
-            find "$chromium_dir" -type f -print0 | while IFS= read -r -d '' file; do
-                is_excluded "$file" && continue
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        # Fontconfig
-        font_dir="$home_dir/.cache/fontconfig"
-        if [[ -d "$font_dir" ]]; then
-            find "$font_dir" -type f -print0 | while IFS= read -r -d '' file; do
-                is_excluded "$file" && continue
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        # npm
-        npm_dir="$home_dir/.npm"
-        if [[ -d "$npm_dir" ]]; then
-            find "$npm_dir" -type f -print0 | while IFS= read -r -d '' file; do
-                is_excluded "$file" && continue
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        # yarn
-        yarn_dir="$home_dir/.cache/yarn"
-        if [[ -d "$yarn_dir" ]]; then
-            find "$yarn_dir" -type f -print0 | while IFS= read -r -d '' file; do
-                is_excluded "$file" && continue
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        # Flatpak
-        flatpak_dir="$home_dir/.var/app"
-        if [[ -d "$flatpak_dir" ]]; then
-            find "$flatpak_dir" -type f -print0 | while IFS= read -r -d '' file; do
-                is_excluded "$file" && continue
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        # Snap
-        snap_cache="$home_dir/snap"
-        if [[ -d "$snap_cache" ]]; then
-            find "$snap_cache" -type f -print0 | while IFS= read -r -d '' file; do
-                is_excluded "$file" && continue
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        # Python __pycache__ e *.pyc
-        find "$home_dir" -type d -name "__pycache__" -prune -exec rm -rf {} +
-        find "$home_dir" -type f -name "*.pyc" -delete
-    done
-
-    # File temporanei di sistema
-    find /tmp -type f -print0 | while IFS= read -r -d '' file; do
-        safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-    done
-    find /var/tmp -type f -print0 | while IFS= read -r -d '' file; do
-        safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-    done
-
-    # Log compressi vecchi (>30 giorni)
-    find /var/log -type f \( -name "*.gz" -o -name "*.1" \) -mtime +30 -print0 | while IFS= read -r -d '' file; do
-        safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-    done
-}
-
-# Funzione per la pulizia delle cache utente
-cleanup_user_cache() {
-    log "INFO" "=== PULIZIA CACHE UTENTE ==="
-    local users=$(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 && $1!~/^(nobody|systemd-)/ {print $1}')
-    for user in $users; do
-        local home_dir=$(getent passwd "$user" | cut -d: -f6)
-        if [[ -d "$home_dir/.cache/mozilla" ]]; then
-            find "$home_dir/.cache/mozilla" -type f -print0 | while IFS= read -r -d '' file; do
-                if [[ "$file" != /* ]]; then
-                    log "WARN" "Percorso non valido: '$file'"
-                    continue
-                fi
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        if [[ -d "$home_dir/.cache/google-chrome" ]]; then
-            find "$home_dir/.cache/google-chrome" -type f -print0 | while IFS= read -r -d '' file; do
-                if [[ "$file" != /* ]]; then
-                    log "WARN" "Percorso non valido: '$file'"
-                    continue
-                fi
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        if [[ -d "$home_dir/.cache/chromium" ]]; then
-            find "$home_dir/.cache/chromium" -type f -print0 | while IFS= read -r -d '' file; do
-                if [[ "$file" != /* ]]; then
-                    log "WARN" "Percorso non valido: '$file'"
-                    continue
-                fi
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-        if [[ -d "$home_dir/.cache/thumbnails" ]]; then
-            find "$home_dir/.cache/thumbnails" -type f -print0 | while IFS= read -r -d '' file; do
-                if [[ "$file" != /* ]]; then
-                    log "WARN" "Percorso non valido: '$file'"
-                    continue
-                fi
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-    done
-}
-
-# Funzione per ottimizzazioni sistema
-system_optimization() {
-    log "INFO" "=== OTTIMIZZAZIONI SISTEMA ==="
+    run_cmd "journalctl --vacuum-time=7d" "Pulizia journal (>7 giorni)"
     
-    # Ottimizzazione SSD (TRIM) DISABILITATA per sicurezza
-    log "INFO" "TRIM SSD disabilitato per sicurezza. Abilitalo solo se sei sicuro."
-    # Ottimizzazione swap DISABILITATA per sicurezza
-    log "INFO" "Ottimizzazione swap disabilitata per sicurezza."
-    
-    # Aggiornamento database locate
-    if command -v updatedb &>/dev/null; then
-        run_cmd "updatedb" "Aggiornamento database locate" true
+    local old_logs=$(find /var/log -type f \( -name "*.gz" -o -name "*.1" -o -name "*.old" \) -mtime +30 2>/dev/null | wc -l)
+    if [[ $old_logs -gt 0 ]]; then
+        log "INFO" "Trovati $old_logs log compressi vecchi"
+        if confirm_action "Eliminare $old_logs log compressi vecchi (>30 giorni)?"; then
+            if [[ "$DRY_RUN" == "false" ]]; then
+                find /var/log -type f \( -name "*.gz" -o -name "*.1" -o -name "*.old" \) -mtime +30 -delete
+                log "INFO" "✓ Log vecchi eliminati"
+            else
+                log "INFO" "[DRY-RUN] Eliminazione log vecchi"
+            fi
+        fi
     fi
-    run_cmd "ldconfig" "Ricostruzione cache librerie condivise" true
-    run_cmd "sync" "Sincronizzazione filesystem"
-
-    # Pulizia e backup della bash history per ogni utente reale
-    local users=()
-    while IFS=: read -r user _ uid _ _ home _; do
-        if [[ $uid -ge 1000 && $uid -lt 65534 && -d "$home" ]]; then
-            users+=("$home")
-        fi
-    done < <(getent passwd)
-    for home_dir in "${users[@]}"; do
-        local hist_file="$home_dir/.bash_history"
-        if [[ -f "$hist_file" ]]; then
-            log "INFO" "Backup della bash history per $home_dir..."
-            cp "$hist_file" "$hist_file.bak"
-            log "INFO" "Mantieni solo gli ultimi 100 comandi nella bash history di $home_dir."
-            tail -100 "$hist_file" > "$hist_file.tmp" && mv "$hist_file.tmp" "$hist_file"
-        else
-            log "WARN" "Nessuna bash history trovata per $home_dir."
-        fi
-    done
-    log "INFO" "Bash history ottimizzata e sincronizzata per tutti gli utenti."
 }
 
-# Funzione per la gestione dei servizi PostgreSQL
-postgresql_maintenance() {
-    log "INFO" "=== MANUTENZIONE POSTGRESQL ==="
+# Pulizia THUMBNAILS
+cleanup_thumbnails() {
+    log "INFO" "=== PULIZIA THUMBNAILS ==="
     
-    # Verifica se PostgreSQL è installato
-    if command -v postgres &>/dev/null || [[ -d /var/lib/postgresql ]]; then
-        # Creazione directory log se necessaria
-        run_cmd "mkdir -p /var/log/postgresql/" "Creazione directory log PostgreSQL"
-        run_cmd "chown -R postgres:postgres /var/log/postgresql/" "Impostazione permessi directory log PostgreSQL" true
+    for user in "${!USER_HOMES[@]}"; do
+        local home="${USER_HOMES[$user]}"
+        local thumb_dir="$home/.cache/thumbnails"
         
-        # Pulizia log PostgreSQL vecchi
-        run_cmd "find /var/log/postgresql -name '*.log' -mtime +7 -delete" "Rimozione log PostgreSQL vecchi" true
-    else
-        log "INFO" "PostgreSQL non installato, salto manutenzione"
+        if [[ -d "$thumb_dir" ]]; then
+            local size=$(du -sh "$thumb_dir" 2>/dev/null | cut -f1)
+            local count=$(find "$thumb_dir" -type f 2>/dev/null | wc -l)
+            
+            if [[ $count -gt 100 ]]; then
+                log "INFO" "Utente $user: $count thumbnails ($size)"
+                if confirm_action "Pulire thumbnails di $user?"; then
+                    if [[ "$DRY_RUN" == "false" ]]; then
+                        find "$thumb_dir" -type f -delete 2>/dev/null
+                        log "INFO" "✓ Thumbnails di $user pulite"
+                    else
+                        log "INFO" "[DRY-RUN] Pulizia thumbnails $user"
+                    fi
+                fi
+            fi
+        fi
+    done
+}
+
+# Pulizia CACHE BROWSER
+cleanup_browser_cache() {
+    log "INFO" "=== PULIZIA CACHE BROWSER ==="
+    
+    for user in "${!USER_HOMES[@]}"; do
+        local home="${USER_HOMES[$user]}"
+        
+        # Firefox cache
+        local ff_cache="$home/.cache/mozilla/firefox"
+        if [[ -d "$ff_cache" ]]; then
+            local size=$(du -sh "$ff_cache" 2>/dev/null | cut -f1)
+            log "INFO" "Firefox cache di $user: $size"
+            if confirm_action "Pulire cache Firefox di $user ($size)?"; then
+                if [[ "$DRY_RUN" == "false" ]]; then
+                    find "$ff_cache" -type f \( -name "*.cache" -o -path "*/cache2/*" \) -delete 2>/dev/null
+                    log "INFO" "✓ Cache Firefox pulita"
+                else
+                    log "INFO" "[DRY-RUN] Pulizia cache Firefox"
+                fi
+            fi
+        fi
+        
+        # Chrome/Chromium cache
+        for browser_cache in "$home/.cache/google-chrome" "$home/.cache/chromium"; do
+            if [[ -d "$browser_cache/Default/Cache" ]]; then
+                local size=$(du -sh "$browser_cache" 2>/dev/null | cut -f1)
+                log "INFO" "Cache browser di $user: $size"
+                if confirm_action "Pulire cache browser di $user ($size)?"; then
+                    if [[ "$DRY_RUN" == "false" ]]; then
+                        find "$browser_cache/Default/Cache" -type f -delete 2>/dev/null
+                        log "INFO" "✓ Cache browser pulita"
+                    else
+                        log "INFO" "[DRY-RUN] Pulizia cache browser"
+                    fi
+                fi
+            fi
+        done
+    done
+}
+
+# Pulizia FILE TEMPORANEI
+cleanup_temp_files() {
+    log "INFO" "=== PULIZIA FILE TEMPORANEI ==="
+    
+    # /tmp - solo file vecchi >3 giorni
+    local tmp_old=$(find /tmp -type f -mtime +3 2>/dev/null | wc -l)
+    if [[ $tmp_old -gt 0 ]]; then
+        log "INFO" "Trovati $tmp_old file temporanei vecchi in /tmp"
+        if confirm_action "Eliminare $tmp_old file temporanei vecchi (>3 giorni)?"; then
+            if [[ "$DRY_RUN" == "false" ]]; then
+                find /tmp -type f -mtime +3 -delete 2>/dev/null
+                log "INFO" "✓ File temporanei /tmp eliminati"
+            else
+                log "INFO" "[DRY-RUN] Eliminazione file temporanei /tmp"
+            fi
+        fi
     fi
+    
+    # /var/tmp - solo file vecchi >7 giorni
+    local vartmp_old=$(find /var/tmp -type f -mtime +7 2>/dev/null | wc -l)
+    if [[ $vartmp_old -gt 0 ]]; then
+        log "INFO" "Trovati $vartmp_old file temporanei vecchi in /var/tmp"
+        if confirm_action "Eliminare $vartmp_old file temporanei vecchi (>7 giorni)?"; then
+            if [[ "$DRY_RUN" == "false" ]]; then
+                find /var/tmp -type f -mtime +7 -delete 2>/dev/null
+                log "INFO" "✓ File temporanei /var/tmp eliminati"
+            else
+                log "INFO" "[DRY-RUN] Eliminazione file temporanei /var/tmp"
+            fi
+        fi
+    fi
+}
+
+# Pulizia PYTHON cache (solo in .cache, non progetti)
+cleanup_python_cache() {
+    log "INFO" "=== PULIZIA CACHE PYTHON ==="
+    
+    for user in "${!USER_HOMES[@]}"; do
+        local home="${USER_HOMES[$user]}"
+        local cache_dir="$home/.cache"
+        
+        if [[ -d "$cache_dir" ]]; then
+            local pycache_count=$(find "$cache_dir" -type d -name "__pycache__" 2>/dev/null | wc -l)
+            local pyc_count=$(find "$cache_dir" -type f -name "*.pyc" 2>/dev/null | wc -l)
+            
+            if [[ $pycache_count -gt 0 || $pyc_count -gt 0 ]]; then
+                log "INFO" "Utente $user: $pycache_count __pycache__, $pyc_count file .pyc"
+                if confirm_action "Pulire cache Python di $user?"; then
+                    if [[ "$DRY_RUN" == "false" ]]; then
+                        find "$cache_dir" -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null
+                        find "$cache_dir" -type f -name "*.pyc" -delete 2>/dev/null
+                        log "INFO" "✓ Cache Python pulita"
+                    else
+                        log "INFO" "[DRY-RUN] Pulizia cache Python"
+                    fi
+                fi
+            fi
+        fi
+    done
+}
+
+# Pulizia BASH HISTORY - mantieni ultimi 100 comandi
+cleanup_bash_history() {
+    log "INFO" "=== OTTIMIZZAZIONE BASH HISTORY ==="
+    
+    for user in "${!USER_HOMES[@]}"; do
+        local home="${USER_HOMES[$user]}"
+        local hist_file="$home/.bash_history"
+        
+        if [[ -f "$hist_file" ]]; then
+            local lines=$(wc -l < "$hist_file")
+            
+            if [[ $lines -gt 100 ]]; then
+                log "INFO" "Utente $user: $lines righe in bash_history"
+                if confirm_action "Mantenere solo ultimi 100 comandi per $user?"; then
+                    if [[ "$DRY_RUN" == "false" ]]; then
+                        # Backup
+                        cp "$hist_file" "$hist_file.backup"
+                        # Mantieni solo ultimi 100
+                        tail -100 "$hist_file" > "$hist_file.tmp" && mv "$hist_file.tmp" "$hist_file"
+                        chown --reference="$hist_file.backup" "$hist_file"
+                        log "INFO" "✓ Bash history ottimizzata (backup: .bash_history.backup)"
+                    else
+                        log "INFO" "[DRY-RUN] Ottimizzazione bash history"
+                    fi
+                fi
+            fi
+        fi
+    done
+}
+
+# Pulizia FILE .tmp e .bak vecchi nelle home
+cleanup_tmp_bak_files() {
+    log "INFO" "=== PULIZIA FILE .tmp/.bak OBSOLETI ==="
+    
+    for user in "${!USER_HOMES[@]}"; do
+        local home="${USER_HOMES[$user]}"
+        
+        local tmp_count=$(find "$home" -maxdepth 3 -type f -name "*.tmp" -mtime +14 2>/dev/null | wc -l)
+        local bak_count=$(find "$home" -maxdepth 3 -type f -name "*.bak" -mtime +30 2>/dev/null | wc -l)
+        
+        if [[ $tmp_count -gt 0 ]]; then
+            log "INFO" "Utente $user: $tmp_count file .tmp vecchi (>14 giorni)"
+            if confirm_action "Eliminare file .tmp vecchi di $user?"; then
+                if [[ "$DRY_RUN" == "false" ]]; then
+                    find "$home" -maxdepth 3 -type f -name "*.tmp" -mtime +14 -delete 2>/dev/null
+                    log "INFO" "✓ File .tmp eliminati"
+                else
+                    log "INFO" "[DRY-RUN] Eliminazione file .tmp"
+                fi
+            fi
+        fi
+        
+        if [[ $bak_count -gt 0 ]]; then
+            log "INFO" "Utente $user: $bak_count file .bak vecchi (>30 giorni)"
+            if confirm_action "Eliminare file .bak vecchi di $user?"; then
+                if [[ "$DRY_RUN" == "false" ]]; then
+                    find "$home" -maxdepth 3 -type f -name "*.bak" -mtime +30 -delete 2>/dev/null
+                    log "INFO" "✓ File .bak eliminati"
+                else
+                    log "INFO" "[DRY-RUN] Eliminazione file .bak"
+                fi
+            fi
+        fi
+    done
+}
+
+# Ottimizzazioni finali
+system_optimization() {
+    log "INFO" "=== OTTIMIZZAZIONI FINALI ==="
+    
+    # Aggiorna database locate
+    if command -v updatedb &>/dev/null; then
+        run_cmd "updatedb" "Aggiornamento database locate"
+    fi
+    
+    # Ricostruisci cache librerie
+    run_cmd "ldconfig" "Ricostruzione cache librerie"
+    
+    # Sincronizza filesystem
+    run_cmd "sync" "Sincronizzazione filesystem"
 }
 
 # Funzione principale
@@ -428,148 +416,83 @@ main() {
     local start_time=$(date +%s)
     local space_before=$(calculate_space)
     
-    log "INFO" "=== AVVIO $SCRIPT_NAME v$VERSION ==="
-    log "INFO" "Modalità: $([ "$DRY_RUN" == "true" ] && echo "DRY-RUN" || echo "NORMALE")"
-    log "INFO" "Spazio utilizzato iniziale: $(echo "scale=2; $space_before/1024/1024" | bc -l 2>/dev/null || echo "N/A") GB"
+    echo -e "${GREEN}╔════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║  $SCRIPT_NAME v$VERSION           ║${NC}"
+    echo -e "${GREEN}╚════════════════════════════════════════════╝${NC}"
+    echo
     
-    # Backup del log precedente
-    [[ -f "$LOGFILE" ]] && cp "$LOGFILE" "${LOGFILE}.backup" 2>/dev/null || true
+    if [[ "$DRY_RUN" == "true" ]]; then
+        echo -e "${BLUE}▶ MODALITÀ DRY-RUN: Nessun file verrà eliminato${NC}"
+    elif [[ "$FORCE" == "true" ]]; then
+        echo -e "${GREEN}▶ MODALITÀ AUTOMATICA: Pulizia senza conferme${NC}"
+    else
+        echo -e "${YELLOW}▶ MODALITÀ INTERATTIVA: Conferme richieste${NC}"
+    fi
+    echo
     
-    # Esecuzione delle funzioni di pulizia
+    log "INFO" "Inizio pulizia sistema"
+    
+    # Calcolo spazio più preciso
+    local space_before_mb=$((space_before / 1024))
+    local space_before_gb=$((space_before_mb / 1024))
+    log "INFO" "Spazio utilizzato: ${space_before_gb}.$(printf '%02d' $((space_before_mb % 1024 * 100 / 1024))) GB"
+    
+    # Cache utenti una volta sola
+    cache_users
+    
+    # Esegui pulizie
     basic_cleanup
     cleanup_logs
+    cleanup_thumbnails
+    cleanup_browser_cache
     cleanup_temp_files
-    cleanup_user_cache
-    postgresql_maintenance
+    cleanup_python_cache
+    cleanup_bash_history
+    cleanup_tmp_bak_files
     system_optimization
     
-    # Calcolo dello spazio recuperato
+    # Calcola spazio recuperato
     local space_after=$(calculate_space)
-    local space_freed=$(echo "scale=2; ($space_before-$space_after)/1024/1024" | bc -l 2>/dev/null || echo "N/A")
+    local space_freed_kb=$((space_before - space_after))
+    local space_freed_mb=$((space_freed_kb / 1024))
+    local space_freed_gb=$((space_freed_mb / 1024))
+    
+    # Formato migliore per visualizzazione
+    local display_space=""
+    if [[ $space_freed_gb -gt 0 ]]; then
+        display_space="${space_freed_gb}.$(printf '%02d' $((space_freed_mb % 1024 * 100 / 1024))) GB"
+    elif [[ $space_freed_mb -gt 0 ]]; then
+        display_space="${space_freed_mb} MB"
+    else
+        display_space="${space_freed_kb} KB"
+    fi
+    
     local duration=$(( $(date +%s) - start_time ))
     
+    echo
+    log "INFO" "=== PULIZIA COMPLETATA ==="
+    log "INFO" "Tempo esecuzione: ${duration} secondi"
+    log "INFO" "Spazio recuperato: ${display_space}"
     
     if [[ "$DRY_RUN" == "false" ]]; then
         echo -e "${GREEN}✓ Pulizia completata con successo!${NC}"
-        echo -e "  Spazio recuperato: ${space_freed} GB"
-        echo -e "  Log disponibile in: /var/log/ubuntu-cleaner.log"
+        echo -e "  Spazio recuperato: ${display_space}"
+        echo -e "  Log: $LOGFILE"
     else
-        echo -e "${BLUE}ℹ Simulazione completata. Nessuna modifica applicata.${NC}"
+        echo -e "${BLUE}ℹ Simulazione completata. Nessun file eliminato.${NC}"
+        echo -e "  Spazio potenzialmente recuperabile: ${display_space}"
     fi
 }
 
-# Gestione dei segnali
-trap 'log "ERROR" "Script interrotto dall'\''utente"; exit 130' INT TERM
+# Gestione segnali
+trap 'log "WARN" "Script interrotto dall'\''utente"; exit 130' INT TERM
 
-# Controllo dipendenze (bc per calcoli)
-check_dependencies() {
-    local deps=(bc apt-get dpkg logrotate journalctl find tail df sync ldconfig)
-    local missing=()
-    for dep in "${deps[@]}"; do
-        if ! command -v "$dep" &>/dev/null; then
-            missing+=("$dep")
-        fi
-    done
-    if [[ ${#missing[@]} -gt 0 ]]; then
-        log "WARN" "Comandi mancanti: ${missing[*]}"
-    fi
-    # smartctl è opzionale
-    if ! command -v smartctl &>/dev/null; then
-        log "INFO" "smartctl non installato: analisi SMART dischi non disponibile"
-    fi
-}
+# Mostra istruzioni per cron se eseguito manualmente
+if [[ -t 1 ]] && [[ "$DRY_RUN" == "false" ]]; then
+    cat << 'CRONINFO'
 
-# Esecuzione del main
+CRONINFO
+fi
 
-# Pulizia file .tmp/.bak obsoleti nelle home
-cleanup_tmp_bak_files() {
-    log "INFO" "=== PULIZIA FILE .tmp/.bak OBSOLETI NELLE HOME ==="
-    local users=$(getent passwd | awk -F: '$3 >= 1000 && $3 < 65534 && $1!~/^(nobody|systemd-)/ {print $1}')
-    for user in $users; do
-        local home_dir=$(getent passwd "$user" | cut -d: -f6)
-        if [[ -d "$home_dir" ]]; then
-            find "$home_dir" -type f \( -name '*.tmp' -o -name '*.bak' \) -mtime +14 -print0 | while IFS= read -r -d '' file; do
-                if [[ "$file" != /* ]]; then
-                    log "WARN" "Percorso non valido: '$file'"
-                    continue
-                fi
-                safe_delete "$file" || log "WARN" "Impossibile eliminare: $file"
-            done
-        fi
-    done
-}
-
-# Analisi SMART dischi
-smart_disks_report() {
-    log "INFO" "=== ANALISI SMART DEI DISCHI ==="
-    if command -v smartctl &>/dev/null; then
-        for disk in /dev/sd[a-z]; do
-            if [[ -b "$disk" ]]; then
-                log "INFO" "SMART info per $disk:"
-                smartctl -H "$disk" | grep -E 'SMART overall-health|PASSED|FAILED' | while read -r line; do
-                    log "INFO" "$disk: $line"
-                done
-            fi
-        done
-    else
-        log "INFO" "smartctl non disponibile, salto analisi SMART."
-    fi
-}
-
-# Ottimizzazione RAM (drop caches)
-optimize_ram() {
-    log "INFO" "=== OTTIMIZZAZIONE RAM (DROP CACHES) ==="
-    # Dry-run rimosso: drop caches sempre eseguito se permessi
-    if [[ $EUID -ne 0 ]]; then
-        log "ERROR" "Permessi insufficienti per drop caches."
-        return 1
-    fi
-    sync
-    echo 3 > /proc/sys/vm/drop_caches && log "INFO" "RAM ottimizzata: caches droppate."
-}
-
-# Report dettagliato finale
-report_dettagliato() {
-    log "INFO" "=== REPORT DETTAGLIATO ==="
-    echo -e "${BLUE}Spazio usato prima: $1 MB${NC}"
-    echo -e "${BLUE}Spazio usato dopo: $2 MB${NC}"
-    echo -e "${GREEN}Spazio recuperato: $3 GB${NC}"
-}
-
-main() {
-    local start_time=$(date +%s)
-    local space_before=$(calculate_space)
-
-    log "INFO" "=== AVVIO $SCRIPT_NAME v$VERSION ==="
-    log "INFO" "Modalità: NORMALE"
-    log "INFO" "Spazio utilizzato iniziale: $(echo "scale=2; $space_before/1024/1024" | bc -l 2>/dev/null || echo "N/A") GB"
-
-    [[ -f "$LOGFILE" ]] && cp "$LOGFILE" "${LOGFILE}.backup" 2>/dev/null || true
-
-    check_dependencies
-    basic_cleanup
-    cleanup_logs
-    cleanup_temp_files
-    cleanup_user_cache
-    cleanup_tmp_bak_files
-    postgresql_maintenance
-    system_optimization
-    smart_disks_report
-    optimize_ram
-
-    local space_after=$(calculate_space)
-    local space_freed=$(echo "scale=2; ($space_before-$space_after)/1024/1024" | bc -l 2>/dev/null || echo "N/A")
-    local duration=$(( $(date +%s) - start_time ))
-
-    log "INFO" "=== PULIZIA COMPLETATA ==="
-    log "INFO" "Tempo di esecuzione: ${duration} secondi"
-    log "INFO" "Spazio recuperato: ${space_freed} GB"
-
-    report_dettagliato "$space_before" "$space_after" "$space_freed"
-
-    echo -e "${GREEN}✓ Pulizia completata con successo!${NC}"
-    echo -e "  Spazio recuperato: ${space_freed} GB"
-}
-
+# Esecuzione
 main "$@"
-SCRIPT_SUCCESS=true
