@@ -12,6 +12,8 @@ sudo apt install -y curl imagemagick \
   linux-tools-common linux-tools-generic gnome-tweaks \
   default-jdk redis tor hplip hplip-gui
 
+sudo apt install bleachbit
+
 git lfs install
 
 echo "Configurazione della password PostgreSQL..."
