@@ -325,12 +325,12 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 
 \draw[thick] (prodotto) -- (spec_prod);
 
-\draw[thick] (spec_prod) -- node[midway, above] {$\cup$} (frutta); 
-\draw[thick] (spec_prod) -- node[midway, above] {$\cup$} (verdura); 
-\draw[thick] (spec_prod) -- node[midway, above] {$\cup$} (confezionati); 
-\draw[thick] (spec_prod) -- node[midway, above] {$\cup$} (farinacei); 
-\draw[thick] (spec_prod) -- node[midway, above] {$\cup$} (uova); 
-\draw[thick] (spec_prod) -- node[midway, above] {$\cup$} (latticini);
+\draw[thick] (spec_prod) -- node[midway, sloped] {$\rotatebox[origin=c]{-90}{$\cup$}$} (frutta);
+\draw[thick] (spec_prod) -- node[midway, sloped] {$\rotatebox[origin=c]{-90}{$\cup$}$} (verdura);
+\draw[thick] (spec_prod) -- node[midway, sloped] {$\rotatebox[origin=c]{-90}{$\cup$}$} (confezionati);
+\draw[thick] (spec_prod) -- node[midway, sloped] {$\rotatebox[origin=c]{-90}{$\cup$}$} (farinacei);
+\draw[thick] (spec_prod) -- node[midway, sloped] {$\rotatebox[origin=c]{90}{$\cup$}$} (uova);
+\draw[thick] (spec_prod) -- node[midway, sloped] {$\rotatebox[origin=c]{90}{$\cup$}$} (latticini);
 
 \draw (frutta) -- (dataraccolta_f);
 \draw (verdura) -- (dataraccolta_v);
