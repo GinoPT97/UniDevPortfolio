@@ -753,21 +753,12 @@ Di seguito sono riportati le tabelle SQL necessarie per la creazione delle princ
 
 \subsubsection*{Enumerazioni}
 \begin{lstlisting}[style=sqlstyle]
--- Creare il nuovo tipo ENUM con le categorie corrette
 CREATE TYPE TIPOLOGIA AS ENUM (
-    'FRUTTA',
-    'VERDURA', 
-    'FARINACEI',
-    'LATTICINI',
-    'UOVA',
-    'CONFEZIONATI'
+    'FRUTTA', 'VERDURA', 'FARINACEI', 'LATTICINI', 'UOVA', 'CONFEZIONATI'
 );
 
--- Creare tipo ENUM per lo stato della tessera
 CREATE TYPE STATOTESSERA AS ENUM (
-    'ATTIVA',
-    'SOSPESA',
-    'SCADUTA'
+    'ATTIVA', 'SOSPESA', 'SCADUTA'
 );
 \end{lstlisting}
 
