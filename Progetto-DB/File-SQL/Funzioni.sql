@@ -1,5 +1,4 @@
--- Funzioni conformi alla traccia accademica del negozio di alimentari
-
+-- Funzione per aggiornare scorta e punti
 CREATE OR REPLACE FUNCTION AggiornaScortaEPunti()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -12,7 +11,7 @@ BEGIN
     WHERE codprodotto = NEW.codprodotto;
 
     -- Calcola i punti da aggiungere (10% del valore speso)
-    punti_da_aggiungere := NEW.prezzo * NEW.numeroarticoli * 0.10;
+    punti_da_aggiungere := ROUND(NEW.prezzo * NEW.numeroarticoli * 0.10, 2);
 
     -- Recupera il cliente associato all'ordine
     SELECT codcliente INTO cod_cliente
@@ -82,9 +81,10 @@ BEGIN
     WHERE codordine = OLD.codordine;
 
     -- Calcola i punti da togliere (10% del valore speso)
-    punti_da_togliere := OLD.prezzo * OLD.numeroarticoli * 0.10;
+    punti_da_togliere := ROUND(OLD.prezzo * OLD.numeroarticoli * 0.10, 2);
 
     -- Aggiorna i punti della tessera del cliente
+    -- Non toglie più punti di quelli disponibili
     UPDATE tessera
     SET numeropunti = GREATEST(numeropunti - punti_da_togliere, 0)
     WHERE codcliente = cod_cliente;

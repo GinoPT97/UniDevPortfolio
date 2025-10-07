@@ -725,7 +725,7 @@ Di seguito sono riportati le tabelle SQL necessarie per la creazione delle princ
 
 \subsubsection*{Enumerazioni}
 \begin{lstlisting}[style=sqlstyle]
--- Creare il nuovo tipo ENUM con le categorie corrette e migliorato
+-- Creare il nuovo tipo ENUM con le categorie corrette
 CREATE TYPE TIPOLOGIA AS ENUM (
     'FRUTTA',
     'VERDURA', 
@@ -749,8 +749,8 @@ CREATE TYPE STATOTESSERA AS ENUM (
 \begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS cliente (
     codcliente SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
-    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z ]+$'),
+    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z'' ]+$'),
+    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z'' ]+$'),
     codicefiscale CHAR(16) NOT NULL UNIQUE CHECK (codicefiscale ~* '^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$'),
     indirizzo VARCHAR(255) NOT NULL,
     telefono VARCHAR(20) CHECK (telefono ~* '^[0-9+ ]+$'),
@@ -781,8 +781,8 @@ CREATE TABLE IF NOT EXISTS tessera (
 \begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS dipendente (
     coddipendente SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
-    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z ]+$'),
+    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z'' ]+$'),
+    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z'' ]+$'),
     codicefiscale CHAR(16) NOT NULL UNIQUE CHECK (codicefiscale ~* '^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$'),
     indirizzo VARCHAR(255) NOT NULL,
     telefono VARCHAR(20) CHECK (telefono ~* '^[0-9+ ]+$'),
@@ -796,17 +796,17 @@ CREATE TABLE IF NOT EXISTS dipendente (
 \begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS prodotto (
     codprodotto SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
+    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z'' ]+$'),
     descrizione VARCHAR(500),
-    prezzo NUMERIC DEFAULT 0.00 CHECK (prezzo >= 0.00),
+    prezzo NUMERIC NOT NULL CHECK (prezzo >= 0.00),
     luogoprovenienza VARCHAR(255),
     dataraccolta DATE,
     datamungitura DATE,
     glutine BOOLEAN,
     datascadenza DATE,
     dataproduzione DATE,
-    categoria TIPOLOGIA,
-    scorta INT CHECK (scorta >= 0)
+    categoria TIPOLOGIA NOT NULL,
+    scorta INT NOT NULL DEFAULT 0 CHECK (scorta >= 0)
 );
 \end{lstlisting}
 \vspace{1.5em}
@@ -821,7 +821,7 @@ ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
   -- VERDURA: deve avere data di raccolta  
   (categoria = 'VERDURA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
   
-  -- LATTICINI: devono avere data di mungitura del latte e data di produzione
+  -- LATTICINI: devono avere data di mungitura del latte, data di produzione e data di scadenza
   (categoria = 'LATTICINI' AND dataraccolta IS NULL AND datamungitura IS NOT NULL AND dataproduzione IS NOT NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
   
   -- FARINACEI: informazioni sul glutine
@@ -841,16 +841,16 @@ ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
 \begin{lstlisting}[style=sqlstyle]
 CREATE TABLE IF NOT EXISTS ordine (
     codordine SERIAL PRIMARY KEY,
-    prezzototale REAL NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0),
+    prezzototale NUMERIC NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0),
     dataacquisto DATE NOT NULL,
     codcliente INTEGER NOT NULL,
     coddipendente INTEGER NOT NULL,
     CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente)
         ON UPDATE CASCADE
-        ON DELETE NO ACTION,
+        ON DELETE RESTRICT,
     CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente)
         ON UPDATE CASCADE
-        ON DELETE NO ACTION
+        ON DELETE RESTRICT
 );
 \end{lstlisting}
 \vspace{1.5em}
@@ -861,12 +861,12 @@ CREATE TABLE IF NOT EXISTS ordine (
 CREATE TABLE IF NOT EXISTS articoliordine (
     codordine INTEGER NOT NULL,
     codprodotto INTEGER NOT NULL,
-    prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK (prezzo >= 0.00),
+    prezzo NUMERIC NOT NULL CHECK (prezzo >= 0.00),
     numeroarticoli INT NOT NULL CHECK (numeroarticoli > 0),
     CONSTRAINT PK_ArticoliOrdine PRIMARY KEY (codordine, codprodotto),
     CONSTRAINT articoliordineprodottofk FOREIGN KEY (codprodotto) REFERENCES prodotto (codprodotto)
         ON UPDATE CASCADE
-        ON DELETE NO ACTION,
+        ON DELETE RESTRICT,
     CONSTRAINT articoliordineordinek FOREIGN KEY (codordine) REFERENCES ordine (codordine)
         ON UPDATE CASCADE
         ON DELETE CASCADE
@@ -978,7 +978,7 @@ BEGIN
     WHERE codprodotto = NEW.codprodotto;
 
     -- Calcola i punti da aggiungere (10% del valore speso)
-    punti_da_aggiungere := NEW.prezzo * NEW.numeroarticoli * 0.10;
+    punti_da_aggiungere := ROUND(NEW.prezzo * NEW.numeroarticoli * 0.10, 2);
 
     -- Recupera il cliente associato all'ordine
     SELECT codcliente INTO cod_cliente
@@ -1064,7 +1064,7 @@ BEGIN
     WHERE codordine = OLD.codordine;
 
     -- Calcola i punti da togliere (10% del valore speso)
-    punti_da_togliere := OLD.prezzo * OLD.numeroarticoli * 0.10;
+    punti_da_togliere := ROUND(OLD.prezzo * OLD.numeroarticoli * 0.10, 2);
 
     -- Aggiorna i punti della tessera del cliente
     UPDATE tessera
@@ -1095,11 +1095,17 @@ $$ LANGUAGE plpgsql;
 \subsection{View e Funzioni}
 \label{sec:view-funzioni}
 \noindent
-Le viste e le funzioni presentate in questa sezione consentono di semplificare le interrogazioni e di ottenere rapidamente informazioni aggregate e dettagliate. Le view facilitano la consultazione dei dati più rilevanti per la gestione del negozio, mentre le funzioni parametrizzate permettono di eseguire ricerche e statistiche avanzate, rispondendo alle esigenze di analisi e reportistica.
+In questa sezione vengono presentate alcune \textbf{view} e \textbf{funzioni} SQL progettate per semplificare l'accesso ai dati, supportare l'analisi e la reportistica e facilitare la gestione del negozio.  
 
-% Query conformi alla traccia accademica del negozio di alimentari
+Le \textbf{view} permettono di aggregare e filtrare informazioni di interesse senza scrivere query complesse ogni volta, mentre le \textbf{funzioni parametrizzate} consentono di ottenere dati personalizzati secondo criteri specifici, come categoria di prodotto o intervallo temporale.
+
+\subsubsection{Funzioni parametrizzate}
+
+% Funzione per la ricerca clienti per categoria
 \begin{lstlisting}[style=sqlstyle]
-CREATE OR REPLACE FUNCTION RicercaClientiPerCategoria(categoriaRicerca TIPOLOGIA DEFAULT NULL)
+CREATE OR REPLACE FUNCTION RicercaClientiPerCategoria(
+    categoriaRicerca TIPOLOGIA DEFAULT NULL
+)
 RETURNS TABLE(
     codcliente INTEGER,
     nome VARCHAR(255),
@@ -1116,42 +1122,55 @@ BEGIN
         c.nome,
         c.cognome,
         p.categoria,
-        ROUND(COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0), 2) as punti_categoria,
-        ROUND(COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0), 2) as spesa_categoria,
-        COUNT(DISTINCT o.codordine)::BIGINT as ordini_categoria
+        ROUND(COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0), 2) AS punti_categoria,
+        ROUND(COALESCE(SUM(ao.prezzo * ao.numeroarticoli), 0), 2) AS spesa_categoria,
+        COUNT(DISTINCT o.codordine)::BIGINT AS ordini_categoria
     FROM cliente c
     JOIN ordine o ON c.codcliente = o.codcliente
     JOIN articoliordine ao ON o.codordine = ao.codordine
     JOIN prodotto p ON ao.codprodotto = p.codprodotto
-    WHERE (categoriaRicerca IS NULL OR p.categoria = categoriaRicerca)
+    WHERE categoriaRicerca IS NULL OR p.categoria = categoriaRicerca
     GROUP BY c.codcliente, c.nome, c.cognome, p.categoria
-    HAVING COALESCE(SUM(ao.prezzo * ao.numeroarticoli * 0.10), 0) > 0
+    HAVING SUM(ao.prezzo * ao.numeroarticoli * 0.10) > 0
     ORDER BY c.codcliente, punti_categoria DESC;
 END;
 $$ LANGUAGE plpgsql;
 \end{lstlisting}
 
-% Funzione parametrica per intervallo temporale
+\noindent
+Questa funzione restituisce, per ogni cliente e categoria (o per tutte le categorie se il parametro è NULL), la somma dei punti fedeltà accumulati, la spesa totale e il numero di ordini effettuati.  
+
+---
+
+% Funzione per statistiche dipendenti in un intervallo temporale
 \begin{lstlisting}[style=sqlstyle]
-CREATE OR REPLACE FUNCTION DipendenteStatistiche(data_inizio DATE, data_fine DATE)
-RETURNS TABLE(nome TEXT, cognome TEXT, NumeroOrdini INTEGER, Introiti NUMERIC)
-AS $$
+CREATE OR REPLACE FUNCTION DipendenteStatistiche(
+    data_inizio DATE,
+    data_fine DATE
+)
+RETURNS TABLE(
+    nome TEXT,
+    cognome TEXT,
+    NumeroOrdini INTEGER,
+    Introiti NUMERIC
+) AS $$
     SELECT nome, cognome, NumeroOrdini, NULL AS Introiti
     FROM (
-        SELECT D.nome, D.cognome, COUNT(O.*) AS NumeroOrdini
-        FROM dipendente AS D
-        JOIN ordine AS O ON O.coddipendente = D.coddipendente
+        SELECT D.nome, D.cognome, COUNT(O.codordine) AS NumeroOrdini
+        FROM dipendente D
+        JOIN ordine O ON O.coddipendente = D.coddipendente
         WHERE O.dataacquisto BETWEEN data_inizio AND data_fine
         GROUP BY D.nome, D.cognome
         ORDER BY NumeroOrdini DESC
         LIMIT 1
     ) AS TopVendite
     UNION ALL
+    -- Dipendente con maggiori introiti
     SELECT nome, cognome, NULL AS NumeroOrdini, Introiti
     FROM (
         SELECT D.nome, D.cognome, SUM(O.prezzototale) AS Introiti
-        FROM dipendente AS D
-        JOIN ordine AS O ON O.coddipendente = D.coddipendente
+        FROM dipendente D
+        JOIN ordine O ON O.coddipendente = D.coddipendente
         WHERE O.dataacquisto BETWEEN data_inizio AND data_fine
         GROUP BY D.nome, D.cognome
         ORDER BY Introiti DESC
@@ -1160,15 +1179,28 @@ AS $$
 $$ LANGUAGE sql;
 \end{lstlisting}
 
-% VIEW 1: Riepilogo punti e stato tessera dei clienti
+\noindent
+Questa funzione individua il dipendente con il maggior numero di ordini e quello con il maggior introito in un dato intervallo temporale, restituendo due righe distinte.  
+
+---
+
+\subsubsection{View principali}
+
+% View 1: riepilogo punti e stato tessera clienti
 \begin{lstlisting}[style=sqlstyle]
 CREATE OR REPLACE VIEW VwClientiTessere AS
-SELECT c.codcliente, c.nome, c.cognome, t.numeropunti, t.stato, t.datascadenza
+SELECT c.codcliente, c.nome, c.cognome,
+       t.numeropunti, t.stato, t.datascadenza
 FROM cliente c
 JOIN tessera t ON c.codcliente = t.codcliente;
 \end{lstlisting}
 
-% VIEW 2: Prodotti con scorta bassa (< 20)
+\noindent
+Visualizza rapidamente il riepilogo dei punti fedeltà e lo stato della tessera per tutti i clienti.  
+
+---
+
+% View 2: prodotti con scorta bassa
 \begin{lstlisting}[style=sqlstyle]
 CREATE OR REPLACE VIEW VwProdottiScortaBassa AS
 SELECT codprodotto, nome, categoria, scorta
@@ -1176,10 +1208,16 @@ FROM prodotto
 WHERE scorta < 20;
 \end{lstlisting}
 
-% VIEW 3: Ordini dettagliati
+\noindent
+Evidenzia i prodotti con scorta inferiore a 20 unità, utile per la gestione degli ordini e del magazzino.  
+
+---
+
+% View 3: ordini dettagliati
 \begin{lstlisting}[style=sqlstyle]
 CREATE OR REPLACE VIEW VwOrdiniDettagliati AS
-SELECT o.codordine, o.dataacquisto, o.prezzototale, c.nome AS nome_cliente, c.cognome AS cognome_cliente,
+SELECT o.codordine, o.dataacquisto, o.prezzototale,
+       c.nome AS nome_cliente, c.cognome AS cognome_cliente,
        d.nome AS nome_dipendente, d.cognome AS cognome_dipendente,
        p.nome AS nome_prodotto, p.categoria, ao.numeroarticoli, ao.prezzo
 FROM ordine o
@@ -1188,6 +1226,35 @@ JOIN dipendente d ON o.coddipendente = d.coddipendente
 JOIN articoliordine ao ON o.codordine = ao.codordine
 JOIN prodotto p ON ao.codprodotto = p.codprodotto;
 \end{lstlisting}
+
+\noindent
+Fornisce una vista completa degli ordini, includendo informazioni su cliente, dipendente e dettagli dei prodotti ordinati.  
+
+---
+
+\subsubsection{Esempi di utilizzo}
+
+\begin{itemize}
+    \item \textbf{Statistiche dipendenti su intervalli temporali diversi:}
+\begin{lstlisting}[style=sqlstyle]
+SELECT * FROM DipendenteStatistiche(CURRENT_DATE - INTERVAL '3 months', CURRENT_DATE);
+SELECT * FROM DipendenteStatistiche(CURRENT_DATE - INTERVAL '12 months', CURRENT_DATE);
+\end{lstlisting}
+
+    \item \textbf{Clienti e punti per tutte le categorie:}
+\begin{lstlisting}[style=sqlstyle]
+SELECT * FROM RicercaClientiPerCategoria() ORDER BY codcliente, categoria;
+SELECT * FROM RicercaClientiPerCategoria('FRUTTA')
+WHERE punti_categoria BETWEEN 0 AND 100;
+\end{lstlisting}
+
+    \item \textbf{Consultazione delle view:}
+\begin{lstlisting}[style=sqlstyle]
+SELECT * FROM VwClientiTessere ORDER BY codcliente;
+SELECT * FROM VwProdottiScortaBassa ORDER BY scorta ASC;
+SELECT * FROM VwOrdiniDettagliati ORDER BY codordine, nome_prodotto;
+\end{lstlisting}
+\end{itemize}
 
 \newpage
 \section{Popolamento e Dati di Esempio}

@@ -1,4 +1,4 @@
--- Creare il nuovo tipo ENUM con le categorie corrette e migliorato
+-- Creare il nuovo tipo ENUM con le categorie corrette
 CREATE TYPE TIPOLOGIA AS ENUM (
     'FRUTTA',
     'VERDURA', 
@@ -15,18 +15,18 @@ CREATE TYPE STATOTESSERA AS ENUM (
     'SCADUTA'
 );
 
--- Tabella cliente (modificata per riferimento alla tessera)
+-- Tabella cliente
 CREATE TABLE IF NOT EXISTS cliente (
     codcliente SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
-    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z ]+$'),
+    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z'' ]+$'),
+    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z'' ]+$'),
     codicefiscale CHAR(16) NOT NULL UNIQUE CHECK (codicefiscale ~* '^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$'),
     indirizzo VARCHAR(255) NOT NULL,
     telefono VARCHAR(20) CHECK (telefono ~* '^[0-9+ ]+$'),
     email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$')
 );
 
--- Tabella tessera (separata come richiesto)
+-- Tabella tessera 
 CREATE TABLE IF NOT EXISTS tessera (
     codtessera SERIAL PRIMARY KEY,
     codcliente INTEGER NOT NULL UNIQUE,
@@ -42,32 +42,31 @@ CREATE TABLE IF NOT EXISTS tessera (
 -- Tabella dipendente
 CREATE TABLE IF NOT EXISTS dipendente (
     coddipendente SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
-    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z ]+$'),
+    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z'' ]+$'),
+    cognome VARCHAR(255) NOT NULL CHECK (cognome ~* '^[A-Za-z'' ]+$'),
     codicefiscale CHAR(16) NOT NULL UNIQUE CHECK (codicefiscale ~* '^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$'),
     indirizzo VARCHAR(255) NOT NULL,
     telefono VARCHAR(20) CHECK (telefono ~* '^[0-9+ ]+$'),
     email VARCHAR(255) NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$')
 );
 
-
 -- Tabella prodotto
 CREATE TABLE IF NOT EXISTS prodotto (
     codprodotto SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z ]+$'),
+    nome VARCHAR(255) NOT NULL CHECK (nome ~* '^[A-Za-z'' ]+$'),
     descrizione VARCHAR(500),
-    prezzo NUMERIC DEFAULT 0.00 CHECK (prezzo >= 0.00),
+    prezzo NUMERIC NOT NULL CHECK (prezzo >= 0.00),
     luogoprovenienza VARCHAR(255),
     dataraccolta DATE,
     datamungitura DATE,
     glutine BOOLEAN,
     datascadenza DATE,
     dataproduzione DATE,
-    categoria TIPOLOGIA,
-    scorta INT CHECK (scorta >= 0)
+    categoria TIPOLOGIA NOT NULL,
+    scorta INT NOT NULL DEFAULT 0 CHECK (scorta >= 0)
 );
 
--- Vincolo CHECK per validare i campi specifici di ogni categoria secondo la traccia accademica
+-- Vincolo CHECK per validare i campi specifici di ogni categoria
 ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
   -- FRUTTA: deve avere data di raccolta
   (categoria = 'FRUTTA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
@@ -75,7 +74,7 @@ ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
   -- VERDURA: deve avere data di raccolta  
   (categoria = 'VERDURA' AND dataraccolta IS NOT NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NULL AND glutine IS NULL) OR
   
-  -- LATTICINI: devono avere data di mungitura del latte e data di produzione
+  -- LATTICINI: devono avere data di mungitura del latte, data di produzione e data di scadenza
   (categoria = 'LATTICINI' AND dataraccolta IS NULL AND datamungitura IS NOT NULL AND dataproduzione IS NOT NULL AND datascadenza IS NOT NULL AND glutine IS NULL) OR
   
   -- FARINACEI: informazioni sul glutine
@@ -88,31 +87,31 @@ ALTER TABLE prodotto ADD CONSTRAINT checkCategoria CHECK (
   (categoria = 'CONFEZIONATI' AND dataraccolta IS NULL AND datamungitura IS NULL AND dataproduzione IS NULL AND datascadenza IS NOT NULL AND glutine IS NULL)
 );
 
--- Tabella ordine
+-- Tabella ordine 
 CREATE TABLE IF NOT EXISTS ordine (
     codordine SERIAL PRIMARY KEY,
-    prezzototale REAL NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0),
+    prezzototale NUMERIC NOT NULL DEFAULT 0.00 CHECK (prezzototale >= 0),
     dataacquisto DATE NOT NULL,
     codcliente INTEGER NOT NULL,
     coddipendente INTEGER NOT NULL,
     CONSTRAINT ordineclientefk FOREIGN KEY (codcliente) REFERENCES cliente (codcliente)
         ON UPDATE CASCADE
-        ON DELETE NO ACTION,
+        ON DELETE RESTRICT,
     CONSTRAINT ordinedipendentefk FOREIGN KEY (coddipendente) REFERENCES dipendente (coddipendente)
         ON UPDATE CASCADE
-        ON DELETE NO ACTION
+        ON DELETE RESTRICT
 );
 
 -- Tabella articoliordine 
 CREATE TABLE IF NOT EXISTS articoliordine (
     codordine INTEGER NOT NULL,
     codprodotto INTEGER NOT NULL,
-    prezzo NUMERIC NOT NULL DEFAULT 0.00 CHECK (prezzo >= 0.00),
+    prezzo NUMERIC NOT NULL CHECK (prezzo >= 0.00),
     numeroarticoli INT NOT NULL CHECK (numeroarticoli > 0),
     CONSTRAINT PK_ArticoliOrdine PRIMARY KEY (codordine, codprodotto),
     CONSTRAINT articoliordineprodottofk FOREIGN KEY (codprodotto) REFERENCES prodotto (codprodotto)
         ON UPDATE CASCADE
-        ON DELETE NO ACTION,
+        ON DELETE RESTRICT,
     CONSTRAINT articoliordineordinek FOREIGN KEY (codordine) REFERENCES ordine (codordine)
         ON UPDATE CASCADE
         ON DELETE CASCADE
