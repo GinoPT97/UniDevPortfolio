@@ -606,9 +606,11 @@ Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
 
 \subsection{Schema relazionale}
 
-Lo schema relazionale è stato progettato per riflettere fedelmente le esigenze di gestione di un negozio di alimentari. Sono stati definiti tipi enumerativi per le categorie di prodotto (\texttt{TIPOLOGIA}) e per lo stato della tessera fedeltà (\texttt{STATOTESSERA}), assicurando la validazione dei dati e la chiarezza semantica.
+Lo schema relazionale del database è stato progettato per soddisfare le esigenze di gestione di un negozio di alimentari, garantendo coerenza, integrità dei dati e facilità di interrogazione.  
+Sono stati definiti tipi enumerativi per le categorie di prodotto (\texttt{TIPOLOGIA}) e per lo stato della tessera fedeltà (\texttt{STATOTESSERA}), assicurando validazione e chiarezza semantica.  
 
-Le principali entità (cliente, tessera, dipendente, prodotto, ordine, articoliordine) sono state implementate con vincoli di unicità, referenzialità e regole di business. In particolare, la tabella \texttt{prodotto} include un vincolo \texttt{CHECK} che garantisce la coerenza degli attributi in base alla categoria, evitando errori di inserimento e mantenendo la qualità dei dati.
+Le principali entità (\texttt{cliente}, \texttt{tessera}, \texttt{dipendente}, \texttt{prodotto}, \texttt{ordine}, \texttt{articoliordine}) sono state implementate con vincoli di unicità, integrità referenziale e regole di business.  
+In particolare, la tabella \texttt{prodotto} include un vincolo \texttt{CHECK} avanzato per garantire che ogni categoria valorizzi solo gli attributi pertinenti, riducendo errori di inserimento.
 
 \vspace{0.5em}
 \renewcommand{\arraystretch}{1.35}
@@ -618,7 +620,7 @@ Le principali entità (cliente, tessera, dipendente, prodotto, ordine, articolio
 \setlength{\tabcolsep}{8pt}
 \begin{tabular}{|>{\centering\arraybackslash}m{3.5cm}|>{\raggedright\arraybackslash}m{10.5cm}|}
 \hline
-\rowcolor{myblue}\textcolor{white}{\textbf{Tabella}} & \textcolor{white}{\textbf{Attributi}} \\
+\rowcolor{myblue}\textcolor{white}{\textbf{Tabella}} & \textcolor{white}{\textbf{Attributi principali}} \\
 \hline
 \rowcolor{mygray} cliente & \underline{codcliente} (PK), nome, cognome, codicefiscale, indirizzo, telefono, email \\
 tessera & \underline{codtessera} (PK), \underline{\underline{codcliente}} (FK, UNIQUE), numeropunti, dataemissione, datascadenza, stato \\
@@ -632,13 +634,20 @@ articoliordine & \underline{codordine} (PK, FK), \underline{codprodotto} (PK, FK
 \end{table}
 \arrayrulecolor{black}
 
-
-\vspace{1.5em}
 \subsection{Dizionario delle entità}
 
-Ogni tabella è stata pensata per rappresentare un aspetto fondamentale del sistema: i clienti e i dipendenti sono identificati in modo univoco e validati tramite espressioni regolari per email e codice fiscale; la tessera fedeltà è associata a ciascun cliente e gestisce il saldo punti e lo stato; i prodotti sono caratterizzati da attributi specifici per tipologia; gli ordini e gli articoli d’ordine permettono di tracciare le transazioni e i movimenti di magazzino.
+Ogni tabella rappresenta un elemento chiave del sistema:
 
-\vspace{1em}
+\begin{itemize}
+    \item \textbf{cliente}: dati anagrafici dei clienti, validati tramite regex per email e codice fiscale.
+    \item \textbf{tessera}: tessera punti associata a ciascun cliente, con saldo punti e stato (\texttt{ATTIVA}, \texttt{SOSPESA}, \texttt{SCADUTA}).
+    \item \textbf{dipendente}: dati anagrafici dei dipendenti, con validazione dei dati.
+    \item \textbf{prodotto}: prodotti in vendita, caratterizzati da tipologia, attributi specifici per categoria, prezzo e scorta.
+    \item \textbf{ordine}: registra ogni vendita, collegata a cliente e dipendente.
+    \item \textbf{articoliordine}: dettaglio dei prodotti acquistati per ogni ordine, con prezzo e quantità.
+\end{itemize}
+
+\vspace{0.5em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -646,27 +655,32 @@ Ogni tabella è stata pensata per rappresentare un aspetto fondamentale del sist
 \setlength{\tabcolsep}{8pt}
 \begin{tabular}{|>{\centering\arraybackslash}m{3.5cm}|>{\raggedright\arraybackslash}m{9.5cm}|}
 \hline
-\rowcolor{myblue}\textcolor{white}{\textbf{Entità (Tabella)}} & \textcolor{white}{\textbf{Descrizione}} \\
+\rowcolor{myblue}\textcolor{white}{\textbf{Entità}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
 \rowcolor{mygray} cliente & Dati anagrafici dei clienti registrati nel sistema. \\
-tessera & Tessera punti associata a ciascun cliente, saldo punti e stato. \\
+tessera & Tessera punti associata a ciascun cliente, con saldo punti e stato. \\
 \rowcolor{mygray} dipendente & Dati anagrafici dei dipendenti del negozio. \\
-prodotto & Prodotti in vendita, con tipologia, caratteristiche e scorta. \\
-\rowcolor{mygray} ordine & Vendita, associata a cliente e dipendente. \\
+prodotto & Prodotti in vendita, con tipologia, caratteristiche, prezzo e scorta. \\
+\rowcolor{mygray} ordine & Rappresenta una vendita, collegata a cliente e dipendente. \\
 articoliordine & Dettaglio dei prodotti acquistati in ogni ordine. \\
 \hline
 \end{tabular}
-\caption{Entità principali del database e loro funzione.}
+\caption{Entità principali e loro funzione nel database.}
 \end{table}
 \arrayrulecolor{black}
 
-
-\vspace{1.5em}
 \subsection{Associazioni e relazioni}
 
-Le relazioni tra le entità sono state implementate tramite chiavi esterne e vincoli di integrità referenziale. Il sistema supporta associazioni uno-a-uno (cliente-tessera), uno-a-molti (cliente-ordine, dipendente-ordine) e molti-a-molti (ordine-prodotto tramite articoliordine), garantendo la tracciabilità e la consistenza delle operazioni.
+Le relazioni tra entità sono implementate tramite chiavi esterne e vincoli di integrità referenziale:
 
-\vspace{1em}
+\begin{itemize}
+    \item \textbf{Cliente-Tessera} (1:1): ogni cliente possiede una sola tessera.
+    \item \textbf{Ordine-Cliente} (N:1): ogni ordine è associato a un cliente.
+    \item \textbf{Ordine-Dipendente} (N:1): ogni ordine è gestito da un dipendente.
+    \item \textbf{Ordine-Prodotto} (N:M): ogni ordine può contenere più prodotti tramite \texttt{articoliordine}.
+\end{itemize}
+
+\vspace{0.5em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[htbp]
@@ -678,21 +692,34 @@ Le relazioni tra le entità sono state implementate tramite chiavi esterne e vin
 \hline
 \rowcolor{mygray} Cliente-Tessera & Ogni cliente ha una tessera (1:1). \\
 Ordine-Cliente & Ogni ordine è associato a un cliente (N:1). \\
-\rowcolor{mygray} Ordine-Dipendente & Ogni ordine è associato a un dipendente (N:1). \\
+\rowcolor{mygray} Ordine-Dipendente & Ogni ordine è gestito da un dipendente (N:1). \\
 Ordine-Prodotto & Ogni ordine contiene più prodotti tramite articoliordine (N:M). \\
 \hline
 \end{tabular}
-\caption{Principali associazioni tra le entità del database.}
+\caption{Principali associazioni tra le entità.}
 \end{table}
 \arrayrulecolor{black}
 
-
-\vspace{1.5em}
 \subsection{Vincoli di integrità}
 
-Oltre ai vincoli di chiave primaria ed esterna, sono stati introdotti vincoli \texttt{CHECK} su valori numerici (ad esempio, scorta e prezzo non negativi) e regole di validazione per i dati obbligatori. Il vincolo sulla tabella \texttt{prodotto} assicura che ogni categoria abbia solo gli attributi pertinenti valorizzati, riducendo il rischio di errori e facilitando la gestione.
+Il database implementa vincoli completi per garantire la coerenza e la qualità dei dati:
 
-\vspace{1em}
+\begin{itemize}
+    \item Vincoli \texttt{PRIMARY KEY} e \texttt{UNIQUE} per garantire l’unicità dei record.
+    \item Vincoli \texttt{FOREIGN KEY} per l’integrità referenziale tra le tabelle.
+    \item Vincoli \texttt{CHECK} su valori numerici (\texttt{prezzo $\geq$ 0}, \texttt{scorta $\geq$ 0}), validazione di email e codice fiscale tramite regex.
+    \item Vincolo \texttt{CHECK} su \texttt{prodotto} per garantire che ogni categoria valorizzi solo gli attributi pertinenti (es. frutta con \texttt{dataraccolta}, latticini con \texttt{datamungitura}, \texttt{dataproduzione} e \texttt{datascadenza}, ecc.).
+    \item Trigger e funzioni associate per:
+    \begin{itemize}
+        \item Aggiornamento automatico della scorta e dei punti tessera (\texttt{AggiornaScortaEPunti}).
+        \item Aggiornamento del prezzo totale dell'ordine (\texttt{AggiornaPrezzoOrdine}, \texttt{AggiornaPrezzoOrdineDelete}).
+        \item Verifica della disponibilità della scorta (\texttt{VerificaScortaProdotto}).
+        \item Aggiornamento dello stato della tessera in base alla data di scadenza (\texttt{AggiornaStatoTessera}).
+        \item Ripristino scorta e punti dopo la cancellazione di articoli ordine (\texttt{RipristinaScortaProdotto}).
+    \end{itemize}
+\end{itemize}
+
+\vspace{0.5em}
 \renewcommand{\arraystretch}{1.3}
 \arrayrulecolor{myblue}
 \begin{table}[ht]
@@ -700,16 +727,17 @@ Oltre ai vincoli di chiave primaria ed esterna, sono stati introdotti vincoli \t
 \setlength{\tabcolsep}{8pt}
 \begin{tabular}{|>{\centering\arraybackslash}m{4cm}|>{\raggedright\arraybackslash}m{10cm}|}
 \hline
-\rowcolor{myblue}\textcolor{white}{\textbf{Vincolo}} & \textcolor{white}{\textbf{Descrizione}} \\
+\rowcolor{myblue}\textcolor{white}{\textbf{Vincolo / Trigger}} & \textcolor{white}{\textbf{Descrizione}} \\
 \hline
-\rowcolor{mygray} Email Regex & Gli indirizzi email di clienti e dipendenti devono essere di forma legittima. \\
-Codice Fiscale Regex & Il codice fiscale deve rispettare il formato italiano standard. \\
-\rowcolor{mygray} Chiavi Primarie & Ogni tabella ha una chiave primaria che garantisce l’unicità dei record. \\
-Chiavi Esterne & Le chiavi esterne garantiscono l’integrità referenziale tra le tabelle. \\
-\rowcolor{mygray} Vincoli CHECK & Su valori numerici (es. scorta $\geq$ 0, prezzo $\geq$ 0), presenza di dati obbligatori, coerenza attributi per categoria prodotto. \\
+\rowcolor{mygray} Email Regex & Validazione degli indirizzi email dei clienti e dipendenti. \\
+Codice Fiscale Regex & Validazione secondo il formato italiano standard. \\
+\rowcolor{mygray} Chiavi Primarie & Unicità dei record in ogni tabella. \\
+Chiavi Esterne & Integrità referenziale tra tabelle correlate. \\
+\rowcolor{mygray} Vincoli CHECK & Controlli su valori numerici e coerenza attributi per categoria prodotto. \\
+Trigger e Funzioni & Gestione automatica di scorte, punti tessera, prezzo ordine e stato tessera. \\
 \hline
 \end{tabular}
-\caption{Vincoli e regole di integrità implementati nel database.}
+\caption{Vincoli di integrità e regole di business implementati nel database.}
 \end{table}
 \arrayrulecolor{black}
 
