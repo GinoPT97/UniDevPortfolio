@@ -5,23 +5,23 @@
 \usepackage[italian]{babel}
 
 % --- Grafica e font ---
-\usepackage{lmodern}            % Font moderno
-\usepackage{titlesec}           % Personalizzazione titoli
-\usepackage{fancyhdr}           % Intestazioni e piè di pagina
-\usepackage[table]{xcolor}      % Colori e tabelle colorate
-\usepackage{tcolorbox}          % Riquadri e box
-\usepackage{enumitem}           % Migliore gestione elenchi
+\usepackage{lmodern}           
+\usepackage{titlesec}           
+\usepackage{fancyhdr}           
+\usepackage[table]{xcolor}     
+\usepackage{tcolorbox}         
+\usepackage{enumitem}           
 
 % --- Matematica e simboli ---
 \usepackage{amsmath, amssymb}
 
 % --- Layout pagina ---
 \usepackage{geometry}
-\geometry{margin=2.5cm}         % Puoi cambiare i margini a piacere
+\geometry{margin=2.5cm}         
 
 % --- Grafica e diagrammi ---
-\usepackage{graphicx}           % Inserimento immagini
-\usepackage{tikz}               % Disegni e diagrammi
+\usepackage{graphicx}           
+\usepackage{tikz}              
 \usetikzlibrary{shapes.geometric, arrows, positioning, fit, calc, positioning,arrows.meta,shapes}
 
 % --- Link e riferimenti ---
@@ -48,12 +48,12 @@
     inner sep=0.3cm
   },
   % Stili per diverse relazioni UML
-  association/.style={thick}, % Associazione semplice (SENZA freccia)
-  generalization/.style={-{Triangle[open,length=8pt,width=10pt]}, thick}, % Generalizzazione (triangolo vuoto più grande)
-  dependency/.style={->, thick, dashed}, % Dipendenza (linea tratteggiata)
-  composition/.style={-{Diamond[fill=black]}, thick}, % Composizione (rombo pieno)
-  aggregation/.style={-{Diamond[open]}, thick}, % Aggregazione (rombo vuoto)
-  relation/.style={->, thick}, % Mantenuto per compatibilità
+  association/.style={thick},
+  generalization/.style={-{Triangle[open,length=8pt,width=10pt]}, thick}, 
+  dependency/.style={->, thick, dashed}, 
+  composition/.style={-{Diamond[fill=black]}, thick},
+  aggregation/.style={-{Diamond[open]}, thick}, 
+  relation/.style={->, thick}, 
   every node/.style={anchor=center}
 }
 
@@ -143,29 +143,32 @@
 
 \newpage
 \section{Introduzione}
-SISTEMA DI GESTIONE PER UN NEGOZIO DI ALIMENTARI
-Si sviluppi un sistema informativo, composto da una base di dati relazionale e un applicativo Java dotato di
-GUI (Swing o JavaFX), per la gestione di un sistema di un negozio di ortofrutta. Il sistema deve permettere di
-gestire le vendite e la disponibilità dei prodotti disponibili, identificando le tipologie (frutta, verdura,
-farinacei, latticini, uova e confezionati). Ogni tipologia di prodotto ha delle caratteristiche diverse (ad
-esempio, la frutta e la verdura hanno una data di raccolta, i latticini hanno sia una data di mungitura del latte
-che una data di produzione, ecc..). Ogni cliente è registrato e ha una tessera punti associata che lo identifica
-al fruttivendolo. Per ogni acquisto il cliente riceve il 10\% del valore della spesa in punti fedeltà. Il sistema
-deve premettere la ricerca dei clienti, differenziandoli sulla base delle categorie di prodotti acquistati e sulla
-quantità di punti che hanno ottenuto per ogni categoria.
-Per il gruppo da 3: il fruttivendolo ha un certo numero di dipendenti, e ad ogni vendita è associato il
-dipendente che l’ha portata a termine. Deve pertanto essere possibile ricercare quale dipendente ha
-effettuato il maggior numero di vendite in un determinato periodo differenziandolo dal dipendente che ha
-portato al fruttivendolo il maggior introito.
-Breve presentazione del progetto, obiettivi e contesto della traccia accademica.
+
+\textbf{Sistema di gestione per un negozio di alimentari}
+
+Il presente progetto riguarda lo sviluppo di un sistema informativo per un negozio di ortofrutta, composto da una base di dati relazionale e un'applicazione Java con interfaccia grafica (GUI) realizzata con Swing o JavaFX.  
+L'obiettivo del sistema è supportare le attività quotidiane del negozio, facilitando la gestione delle vendite, del magazzino e dei clienti, e fornendo strumenti per analizzare le performance di vendita.
+
+Il sistema deve consentire di:
+\begin{itemize}
+    \item Gestire i prodotti disponibili, classificati per tipologia (frutta, verdura, farinacei, latticini, uova e prodotti confezionati), ciascuna con caratteristiche specifiche (ad esempio, la frutta e la verdura hanno una data di raccolta, i latticini hanno una data di mungitura e di produzione, ecc.);
+    \item Registrare i clienti e gestire le tessere punti, calcolando automaticamente i punti fedeltà (10\% del valore della spesa) per ogni acquisto;
+    \item Ricercare i clienti in base ai prodotti acquistati e alla quantità di punti accumulati per ogni categoria;
+    \item Gestire i dipendenti associando ciascuna vendita al personale responsabile, con possibilità di analizzare il numero di vendite effettuate e l’introito generato in un determinato periodo.
+\end{itemize}
+
+Il progetto si inserisce in un contesto accademico volto a sviluppare competenze nella progettazione di database relazionali, nello sviluppo di applicazioni Java con GUI e nell’implementazione di sistemi informativi completi.
 
 \newpage
 \section{Analisi dei Requisiti}
+
+Il sistema deve permettere:
 \begin{itemize}
-    \item Gestione prodotti per tipologia (frutta, verdura, farinacei, latticini, uova, confezionati)
-    \item Gestione clienti e tessere punti
-    \item Gestione dipendenti e vendite
-    \item Statistiche e ricerche
+    \item La gestione dei prodotti per tipologia (frutta, verdura, farinacei, latticini, uova e prodotti confezionati), con caratteristiche specifiche per ciascuna categoria;
+    \item La gestione dei clienti, con registrazione delle informazioni personali e delle tessere punti;
+    \item La gestione dei dipendenti, con associazione di ciascuna vendita al personale responsabile;
+    \item La generazione di statistiche e report, come l’analisi dei clienti per categorie di prodotti acquistati, dei punti fedeltà accumulati e delle performance dei dipendenti;
+    \item La protezione dei dati sensibili dei clienti e l’affidabilità delle operazioni quotidiane del negozio.
 \end{itemize}
 
 \newpage
