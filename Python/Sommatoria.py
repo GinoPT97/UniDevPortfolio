@@ -38,7 +38,7 @@ def calcola_stagione_2025_26():
     Calcola i rimborsi per la stagione 2025/2026.
     :return: tuple (rimborsi_totali, pagato_totale, da_ricevere)
     """
-    Rimborso = [70, 70, 63, 63, 63, 61, 70, 79, 63]
+    Rimborso = [70, 70, 63, 63, 63, 61, 70, 79, 63, 61, 70]
     
     Pagato = [63]
     
