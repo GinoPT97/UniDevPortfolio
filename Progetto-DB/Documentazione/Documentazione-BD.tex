@@ -175,7 +175,27 @@ Il sistema deve permettere:
 \section{Progettazione Concettuale}
 
 \subsection{Diagramma ER}
-% Inserimento immagine diagramma ER
+
+Il diagramma Entità-Relazioni rappresenta la struttura logica dei dati e le interconnessioni tra le entità principali del sistema.  
+Nel modello sono state individuate le seguenti entità principali:
+
+\begin{itemize}
+  \item \textbf{CLIENTE}: rappresenta l’utente che effettua acquisti. È identificato dal codice cliente e possiede attributi anagrafici e di contatto come nome, cognome, codice fiscale, indirizzo, telefono ed e-mail.
+  \item \textbf{TESSERA}: associata univocamente a un cliente, contiene informazioni sul numero di punti accumulati, la data di emissione, la data di scadenza e lo stato (attiva, sospesa o scaduta).
+  \item \textbf{ORDINE}: rappresenta un acquisto effettuato da un cliente e gestito da un dipendente. Comprende data d’acquisto, prezzo totale e codice identificativo.
+  \item \textbf{DIPENDENTE}: rappresenta il personale che gestisce gli ordini. Possiede dati anagrafici simili a quelli del cliente e un proprio codice identificativo.
+  \item \textbf{PRODOTTO}: rappresenta gli articoli venduti. È specializzato in varie categorie (\textit{Frutta}, \textit{Verdura}, \textit{Latticini}, \textit{Farinacei}, \textit{Uova}, \textit{Confezionati}) con attributi specifici per ciascuna.
+  \item \textbf{ARTICOLI\_ORDINE}: entità debole che rappresenta la relazione tra un ordine e i prodotti acquistati, contenente il prezzo e il numero di articoli.
+\end{itemize}
+
+Le principali relazioni tra le entità sono:
+\begin{itemize}
+  \item \textbf{possiede}: collega un cliente alla propria tessera.
+  \item \textbf{effettua}: associa un cliente agli ordini che ha effettuato.
+  \item \textbf{gestisce}: collega un dipendente agli ordini che ha gestito.
+  \item \textbf{contiene}: associa un ordine ai prodotti acquistati (tramite l’entità debole \textit{ARTICOLI\_ORDINE}).
+\end{itemize}
+
 \begin{center}
 \begin{tikzpicture}[
     entity/.style={
@@ -360,7 +380,18 @@ Il sistema deve permettere:
 \end{center}
 
 \subsection{Diagramma concettuale}
-% Inserimento immagine diagramma concettuale
+
+Il diagramma concettuale traduce il modello ER in un formato più astratto, basato su classi e relazioni, che evidenzia l’organizzazione semantica dei dati.  
+Le entità vengono rappresentate come classi con attributi e relazioni (associazioni, composizioni, generalizzazioni).
+
+\begin{itemize}
+  \item \textbf{Persona} è una superclasse astratta che generalizza le caratteristiche comuni di \textit{Cliente} e \textit{Dipendente}.
+  \item \textbf{Cliente} e \textbf{Dipendente} ereditano gli attributi della superclasse e aggiungono un proprio identificatore.
+  \item \textbf{Ordine} rappresenta la transazione commerciale e funge da punto di connessione tra cliente, dipendente e articoli ordinati.
+  \item \textbf{ArticoliOrdine} funge da classe di associazione tra \textit{Ordine} e \textit{Prodotto}, contenendo il prezzo e la quantità acquistata.
+  \item \textbf{Prodotto} è una classe generalizzata con specializzazioni che descrivono categorie merceologiche distinte, ognuna con attributi specifici (es. data di raccolta, presenza di glutine, data di scadenza, ecc.).
+\end{itemize}
+
 \begin{center}
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[node distance=3.2cm and 5.2cm, transform shape]
@@ -495,7 +526,16 @@ Il sistema deve permettere:
 \end{center}
 
 \subsection{Diagramma concettuale ristrutturato}
-% Inserimento immagine diagramma concettuale ristrutturato
+
+Il diagramma concettuale ristrutturato è il risultato della normalizzazione del modello precedente.  
+Le specializzazioni di \textit{Prodotto} sono state accorpate in un’unica classe che include un attributo enumerativo \textit{categoria}, mentre gli attributi specifici delle varie tipologie di prodotti sono stati integrati direttamente nella stessa classe (eventualmente lasciati nulli quando non pertinenti).
+
+\begin{itemize}
+  \item La classe \textbf{Prodotto} diventa quindi più completa, contenendo tutti i possibili attributi (data raccolta, mungitura, produzione, glutine, scadenza, ecc.).
+  \item La classe \textbf{Tessera} mantiene un’associazione di composizione con il cliente, mentre \textbf{Ordine} e \textbf{ArticoliOrdine} restano strutturati come nella fase precedente.
+  \item Sono state introdotte enumerazioni per rappresentare in modo controllato i valori discreti, come lo stato della tessera (\textit{ATTIVA, SOSPESA, SCADUTA}) e la tipologia di prodotto.
+\end{itemize}
+
 \begin{center}
 \resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[node distance=3.2cm and 5.2cm, transform shape]
