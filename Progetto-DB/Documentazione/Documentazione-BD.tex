@@ -789,56 +789,91 @@ Trigger e Funzioni & Gestione automatica di scorte, punti tessera, prezzo ordine
 
 \newpage
 \subsection{Schema logico di funzioni e trigger}
+
 La tabella seguente descrive la logica operativa che governa l'interazione tra le \textbf{tabelle}, le \textbf{funzioni in PL/pgSQL} e i \textbf{trigger} del database.  
 Ogni funzione implementa una regola di business automatizzata, mentre i trigger ne determinano l'attivazione a seguito di specifici eventi DML (\texttt{INSERT}, \texttt{UPDATE}, \texttt{DELETE}).
-\vspace{0.8em}
+
+\vspace{0.5em}
+
+\subsubsection*{Trigger e Funzioni Implementati}
 
 \noindent
 \renewcommand{\arraystretch}{1.35}
 \arrayrulecolor{myblue}
-{\small
-\begin{tabular}{|p{2.6cm}|p{3cm}|p{2.6cm}|p{5.2cm}|}
+{\scriptsize % Ridotto da \footnotesize a \scriptsize
+\begin{tabularx}{\textwidth}{|p{2.2cm}|p{2.6cm}|p{2.2cm}|X|}
 \hline
-\rowcolor{myblue}\textcolor{white}{\textbf{Trigger}} &
+\rowcolor{myblue}
+\textcolor{white}{\textbf{Trigger}} &
 \textcolor{white}{\textbf{Evento}} &
-\textcolor{white}{\textbf{Funzione Richiamata}} &
-\textcolor{white}{\textbf{Scopo / Descrizione}} \\
+\textcolor{white}{\textbf{Funzione}} &
+\textcolor{white}{\textbf{Descrizione}} \\
 \hline
-\rowcolor{mygray} \texttt{\detokenize{TrgAggiorna}\newline\detokenize{ScortaPunti}} &
-AFTER INSERT ON \texttt{articoli\-ordine} &
-\texttt{\detokenize{Aggiorna}\newline\detokenize{ScortaEPunti()}} &
-Aggiorna automaticamente la scorta dei prodotti acquistati e i punti accumulati dal cliente. \\
+\rowcolor{mygray}
+\texttt{TrgAggiorna\-Scorta\-Punti} &
+AFTER INSERT ON \newline\texttt{articoli\-ordine} &
+\texttt{Aggiorna\-Scorta\-EPunti()} &
+Decrementa la scorta del prodotto e incrementa i punti fedeltà del cliente (10\% del valore speso). \\
 \hline
-\texttt{\detokenize{TrgAggiorna}\newline\detokenize{PrezzoOrdine}} &
-AFTER INSERT ON \texttt{articoli\-ordine} &
-\texttt{\detokenize{Aggiorna}\newline\detokenize{PrezzoOrdine()}} &
-Calcola e aggiorna il prezzo totale dell'ordine dopo l'inserimento di nuovi articoli. \\
+\texttt{TrgAggiorna\-Prezzo\-Ordine} &
+AFTER INSERT ON \newline\texttt{articoli\-ordine} &
+\texttt{Aggiorna\-Prezzo\-Ordine()} &
+Ricalcola il prezzo totale dell'ordine sommando il costo dei nuovi articoli. \\
 \hline
-\rowcolor{mygray} \texttt{\detokenize{TrgVerifica}\newline\detokenize{ScortaProdotto}} &
-BEFORE INSERT ON \texttt{articoli\-ordine} &
-\texttt{\detokenize{Verifica}\newline\detokenize{ScortaProdotto()}} &
-Blocca l'inserimento se la quantità richiesta supera la disponibilità di magazzino. \\
+\rowcolor{mygray}
+\texttt{TrgVerifica\-Scorta\-Prodotto} &
+BEFORE INSERT ON \newline\texttt{articoli\-ordine} &
+\texttt{Verifica\-Scorta\-Prodotto()} &
+Verifica che la quantità richiesta non superi la disponibilità. Blocca l'inserimento se insufficiente. \\
 \hline
-\texttt{\detokenize{TrgAggiorna}\newline\detokenize{StatoTessera}} &
+\texttt{TrgAggiorna\-Stato\-Tessera} &
 BEFORE INSERT OR UPDATE ON \texttt{tessera} &
-\texttt{\detokenize{Aggiorna}\newline\detokenize{StatoTessera()}} &
-Aggiorna lo stato della tessera fedeltà in base ai punti o alla data di scadenza. \\
+\texttt{Aggiorna\-Stato\-Tessera()} &
+Aggiorna lo stato della tessera a "SCADUTA" se la data di scadenza è superata. \\
 \hline
-\rowcolor{mygray} \texttt{\detokenize{TrgRipristina}\newline\detokenize{ScortaPunti}} &
-AFTER DELETE ON \texttt{articoli\-ordine} &
-\texttt{\detokenize{Ripristina}\newline\detokenize{ScortaProdotto()}} &
-Ripristina scorte e punti del cliente dopo la cancellazione di un articolo d'ordine. \\
+\rowcolor{mygray}
+\texttt{TrgRipristina\-Scorta\-Punti} &
+AFTER DELETE ON \newline\texttt{articoli\-ordine} &
+\texttt{Ripristina\-Scorta\-Prodotto()} &
+Ripristina la scorta e decrementa i punti del cliente dopo la cancellazione di un articolo. \\
 \hline
-\texttt{\detokenize{TrgAggiorna}\newline\detokenize{PrezzoOrdine}\newline\detokenize{Delete}} &
-AFTER DELETE ON \texttt{articoli\-ordine} &
-\texttt{\detokenize{Aggiorna}\newline\detokenize{PrezzoOrdine}\newline\detokenize{Delete()}} &
-Aggiorna il prezzo totale dell'ordine dopo la rimozione di articoli. \\
+\texttt{TrgAggiorna\-Prezzo\-Ordine\-Delete} &
+AFTER DELETE ON \newline\texttt{articoli\-ordine} &
+\texttt{Aggiorna\-Prezzo\-Ordine\-Delete()} &
+Ricalcola il prezzo totale sottraendo il valore degli articoli rimossi ($\geq 0$). \\
 \hline
-\end{tabular}
+\end{tabularx}
 }
 \arrayrulecolor{black}
 
-\vspace{0.5em}
+\vspace{1em}
+
+\subsubsection*{Dettaglio delle Funzioni PL/pgSQL}
+
+Di seguito vengono descritte le logiche implementate in ciascuna funzione:
+
+\paragraph{AggiornaScortaEPunti()}
+Questa funzione viene attivata dopo ogni inserimento nella tabella \texttt{articoliordine} e svolge due operazioni atomiche:
+\begin{itemize}
+    \item Decrementa la scorta del prodotto di \texttt{numeroarticoli}
+    \item Aggiunge il 10\% del valore della transazione ai punti fedeltà del cliente
+\end{itemize}
+
+\paragraph{AggiornaPrezzoOrdine()}
+Aggiorna il campo \texttt{prezzototale} sommando il valore dei nuovi articoli (\texttt{prezzo $\times$ numeroarticoli}).
+
+\paragraph{VerificaScortaProdotto()}
+Funzione di controllo che verifica la disponibilità prima dell'inserimento. Se \texttt{scorta < numeroarticoli}, solleva un'eccezione che blocca l'operazione.
+
+\paragraph{AggiornaStatoTessera()}
+Controlla la data di scadenza e, se \texttt{datascadenza < CURRENT\_DATE}, imposta lo stato a \texttt{'SCADUTA'}.
+
+\paragraph{RipristinaScortaProdotto()}
+Funzione compensativa che ripristina la scorta e decrementa i punti fedeltà usando \texttt{GREATEST} per evitare valori negativi.
+
+\paragraph{AggiornaPrezzoOrdineDelete()}
+Decrementa il prezzo totale dell'ordine garantendo che il risultato sia sempre $\geq 0$ tramite \texttt{GREATEST}.
+
 \vspace{1em}
 
 \newpage
