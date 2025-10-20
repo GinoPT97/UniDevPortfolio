@@ -27,6 +27,9 @@
 % --- Link e riferimenti ---
 \usepackage{hyperref}
 
+\usepackage{tabularx} % nel preambolo
+\usepackage{colortbl} % se usi colori come myblue/mygray
+
 % --- Configurazione link blu e moderni per indice ---
 \hypersetup{
     colorlinks=true,
@@ -783,6 +786,62 @@ Trigger e Funzioni & Gestione automatica di scorte, punti tessera, prezzo ordine
 \caption{Vincoli di integrità e regole di business implementati nel database.}
 \end{table}
 \arrayrulecolor{black}
+
+\newpage
+\subsection{Schema logico di funzioni e trigger}
+
+La tabella seguente descrive la logica operativa che governa l’interazione tra le \textbf{tabelle}, le \textbf{funzioni in PL/pgSQL} e i \textbf{trigger} del database.  
+Ogni funzione implementa una regola di business automatizzata, mentre i trigger ne determinano l’attivazione a seguito di specifici eventi DML (\texttt{INSERT}, \texttt{UPDATE}, \texttt{DELETE}).
+
+\vspace{0.8em}
+\renewcommand{\arraystretch}{1.35}
+\arrayrulecolor{myblue}
+\begin{table}[htbp]
+\centering
+\setlength{\tabcolsep}{6pt}
+\begin{tabularx}{\textwidth}{|
+    >{\ttfamily\small\raggedright\arraybackslash}X |
+    >{\centering\arraybackslash}p{3cm} |
+    >{\ttfamily\small\raggedright\arraybackslash}X |
+    >{\raggedright\arraybackslash}X |}
+\hline
+\rowcolor{myblue}\textcolor{white}{\textbf{Trigger}} &
+\textcolor{white}{\textbf{Evento}} &
+\textcolor{white}{\textbf{Funzione Richiamata}} &
+\textcolor{white}{\textbf{Scopo / Descrizione}} \\
+\hline
+\rowcolor{mygray} \texttt{\detokenize{TrgAggiornaScortaPunti}} &
+AFTER INSERT ON \texttt{articoliordine} &
+\texttt{\detokenize{AggiornaScortaEPunti()}} &
+Aggiorna automaticamente la scorta dei prodotti acquistati e i punti accumulati dal cliente. \\
+\texttt{\detokenize{TrgAggiornaPrezzoOrdine}} &
+AFTER INSERT ON \texttt{articoliordine} &
+\texttt{\detokenize{AggiornaPrezzoOrdine()}} &
+Calcola e aggiorna il prezzo totale dell’ordine dopo l’inserimento di nuovi articoli. \\
+\rowcolor{mygray} \texttt{\detokenize{TrgVerificaScortaProdotto}} &
+BEFORE INSERT ON \texttt{articoliordine} &
+\texttt{\detokenize{VerificaScortaProdotto()}} &
+Blocca l’inserimento se la quantità richiesta supera la disponibilità di magazzino. \\
+\texttt{\detokenize{TrgAggiornaStatoTessera}} &
+BEFORE INSERT OR UPDATE ON \texttt{tessera} &
+\texttt{\detokenize{AggiornaStatoTessera()}} &
+Aggiorna lo stato della tessera fedeltà in base ai punti o alla data di scadenza. \\
+\rowcolor{mygray} \texttt{\detokenize{TrgRipristinaScortaPunti}} &
+AFTER DELETE ON \texttt{articoliordine} &
+\texttt{\detokenize{RipristinaScortaProdotto()}} &
+Ripristina scorte e punti del cliente dopo la cancellazione di un articolo d’ordine. \\
+\texttt{\detokenize{TrgAggiornaPrezzoOrdineDelete}} &
+AFTER DELETE ON \texttt{articoliordine} &
+\texttt{\detokenize{AggiornaPrezzoOrdineDelete()}} &
+Aggiorna il prezzo totale dell’ordine dopo la rimozione di articoli. \\
+\hline
+\end{tabularx}
+\caption{Mappatura logica tra trigger, eventi e funzioni PL/pgSQL.}
+\end{table}
+\arrayrulecolor{black}
+
+\vspace{1em}
+\noindent
 
 \newpage
 \section{Progettazione Fisica}
