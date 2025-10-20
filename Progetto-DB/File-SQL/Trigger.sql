@@ -18,6 +18,7 @@ BEFORE INSERT ON articoliordine
 FOR EACH ROW
 EXECUTE FUNCTION VerificaScortaProdotto();
 
+-- Trigger per aggiornare lo stato della tessera dopo inserimento o aggiornamento
 CREATE TRIGGER TrgAggiornaStatoTessera
 BEFORE INSERT OR UPDATE ON tessera
 FOR EACH ROW
