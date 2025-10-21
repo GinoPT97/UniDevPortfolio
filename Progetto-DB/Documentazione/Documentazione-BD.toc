@@ -4,8 +4,8 @@
 \contentsline {section}{\numberline {2}Analisi dei Requisiti}{4}{section.2}%
 \contentsline {section}{\numberline {3}Progettazione Concettuale}{5}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Diagramma ER}{5}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Diagramma concettuale}{7}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Diagramma concettuale ristrutturato}{7}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.2}Diagramma Concettuale}{7}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Diagramma Concettuale Ristrutturato}{8}{subsection.3.3}%
 \contentsline {section}{\numberline {4}Progettazione Logica}{10}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Schema relazionale}{10}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Dizionario delle entità}{10}{subsection.4.2}%
