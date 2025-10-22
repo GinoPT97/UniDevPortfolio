@@ -40,7 +40,7 @@ def calcola_stagione_2025_26():
     """
     Rimborso = [63, 79, 70, 61, 63, 63, 63, 70, 70, 61, 70]
     
-    Pagato = [63]
+    Pagato = [63, 140]
     
     somma_rimborso = somma_lista(Rimborso)
     somma_pagato = somma_lista(Pagato)
