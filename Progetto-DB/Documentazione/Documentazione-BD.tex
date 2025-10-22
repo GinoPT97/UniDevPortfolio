@@ -147,18 +147,18 @@
 
 \textbf{Sistema di gestione per un negozio di alimentari}
 
-Il presente progetto riguarda lo sviluppo di un sistema informativo per un negozio di ortofrutta, composto da una base di dati relazionale e un'applicazione Java con interfaccia grafica (GUI) realizzata con Swing o JavaFX.  
-L'obiettivo del sistema è supportare le attività quotidiane del negozio, facilitando la gestione delle vendite, del magazzino e dei clienti, e fornendo strumenti per analizzare le performance di vendita.
+Il presente progetto riguarda lo sviluppo di un sistema informativo per un negozio di ortofrutta, finalizzato a supportare le attività quotidiane del punto vendita.  
+L’obiettivo principale del sistema è facilitare la gestione delle vendite, del magazzino e dei clienti, fornendo al tempo stesso strumenti per analizzare le performance e ottimizzare le operazioni interne.
 
-Il sistema deve consentire di:
+Il sistema è progettato per consentire di:
 \begin{itemize}
-    \item Gestire i prodotti disponibili, classificati per tipologia (frutta, verdura, farinacei, latticini, uova e prodotti confezionati), ciascuna con caratteristiche specifiche (ad esempio, la frutta e la verdura hanno una data di raccolta, i latticini hanno una data di mungitura e di produzione, ecc.);
-    \item Registrare i clienti e gestire le tessere punti, calcolando automaticamente i punti fedeltà (10\% del valore della spesa) per ogni acquisto;
-    \item Ricercare i clienti in base ai prodotti acquistati e alla quantità di punti accumulati per ogni categoria;
-    \item Gestire i dipendenti associando ciascuna vendita al personale responsabile, con possibilità di analizzare il numero di vendite effettuate e l’introito generato in un determinato periodo.
+    \item Gestire i prodotti disponibili, classificati per tipologia (frutta, verdura, farinacei, latticini, uova e prodotti confezionati), ciascuna caratterizzata da attributi specifici (ad esempio, la frutta e la verdura hanno una data di raccolta, mentre i latticini presentano una data di mungitura e una data di produzione);
+    \item Registrare i clienti e gestire le relative tessere punti, calcolando automaticamente i punti fedeltà pari al 10\% del valore di ogni acquisto;
+    \item Ricercare i clienti in base ai prodotti acquistati e alla quantità di punti accumulati per ciascuna categoria di prodotto;
+    \item Gestire i dipendenti, associando a ciascuna vendita il personale responsabile, con possibilità di analizzare il numero di vendite effettuate e l’introito generato in un determinato periodo.
 \end{itemize}
 
-Il progetto si inserisce in un contesto accademico volto a sviluppare competenze nella progettazione di database relazionali, nello sviluppo di applicazioni Java con GUI e nell’implementazione di sistemi informativi completi.
+Il progetto si inserisce in un contesto accademico volto a sviluppare competenze nella progettazione di sistemi informativi e nella gestione di basi di dati relazionali, con particolare attenzione agli aspetti di modellazione dei dati, efficienza delle operazioni e sicurezza delle informazioni.
 
 \newpage
 \subsection{Analisi dei Requisiti}
@@ -171,6 +171,18 @@ Il sistema deve permettere:
     \item La generazione di statistiche e report, come l’analisi dei clienti per categorie di prodotti acquistati, dei punti fedeltà accumulati e delle performance dei dipendenti;
     \item La protezione dei dati sensibili dei clienti e l’affidabilità delle operazioni quotidiane del negozio.
 \end{itemize}
+
+\subsection{Descrizione della Traccia}
+
+\textbf{Traccia 5: Sistema di gestione per un negozio di alimentari}
+
+Il progetto prevede lo sviluppo di un sistema informativo per la gestione di un negozio di ortofrutta.  
+Il sistema deve consentire di gestire le vendite e la disponibilità dei prodotti, identificando le diverse tipologie merceologiche (frutta, verdura, farinacei, latticini, uova e confezionati). Ogni categoria presenta caratteristiche specifiche: ad esempio, la frutta e la verdura dispongono di una data di raccolta, mentre i latticini riportano sia la data di mungitura del latte sia la data di produzione.
+
+Ogni cliente deve essere registrato nel sistema e disporre di una tessera punti che lo identifica presso il negozio. Per ogni acquisto, il cliente riceve un numero di punti fedeltà pari al 10\% del valore della spesa effettuata.  
+Il sistema deve inoltre consentire di ricercare i clienti, distinguendoli in base alle categorie di prodotti acquistati e al numero di punti accumulati per ciascuna tipologia di prodotto.
+
+Nel caso in cui siano presenti più dipendenti, ogni vendita deve essere associata al dipendente che l’ha effettuata. Deve pertanto essere possibile individuare, in un determinato periodo, il dipendente che ha realizzato il maggior numero di vendite e quello che ha generato il maggior introito per il negozio.
 
 \newpage
 \section{Progettazione Concettuale}
