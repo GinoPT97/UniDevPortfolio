@@ -551,7 +551,7 @@ L’obiettivo della ristrutturazione è ridurre la complessità derivante dalla 
 \begin{itemize}
 \item La \textbf{classe \texttt{Prodotto}} è stata unificata e arricchita con un attributo enumerativo \texttt{categoria}, che consente di distinguere le diverse tipologie di articoli. Gli attributi specifici (ad esempio \emph{data raccolta}, \emph{data mungitura}, \emph{data scadenza}, \emph{presenza glutine}) sono ora integrati nella stessa classe e possono assumere valore nullo quando non pertinenti alla tipologia di prodotto. Questa scelta riduce la complessità del modello e favorisce una maggiore flessibilità nella gestione dei dati;
 
-\item Le classi \textbf{Cliente} e \textbf{Dipendente} sono state accorpate nella \textbf{superclasse \texttt{Persona}}, dalla quale ereditano gli attributi comuni (come \emph{nome}, \emph{cognome}, \emph{codice fiscale}, \emph{indirizzo}, \emph{telefono} ed \emph{email}). Tale ristrutturazione migliora la coerenza semantica e semplifica la gestione delle relazioni con le altre entità, mantenendo la distinzione logica tra clienti e dipendenti;
+\item Le classi \textbf{Cliente} e \textbf{Dipendente} sono state accorpate nella \textbf{superclasse \texttt{Persona}}, dalla quale ereditano gli attributi comuni (\emph{nome}, \emph{cognome}, \emph{codice fiscale}, \emph{indirizzo}, \emph{telefono} ed \emph{email}). Tale ristrutturazione migliora la coerenza semantica e semplifica la gestione delle relazioni con le altre entità, mantenendo la distinzione logica tra clienti e dipendenti;
 
 \item Le relazioni tra \textbf{Cliente}, \textbf{Tessera}, \textbf{Ordine} e \textbf{ArticoliOrdine} sono state mantenute inalterate, poiché già correttamente rispecchiano i vincoli cardinali e semantici del dominio applicativo, garantendo la tracciabilità e l’integrità delle transazioni;
 
@@ -920,7 +920,6 @@ CREATE TYPE STATOTESSERA AS ENUM (
     'ATTIVA', 'SOSPESA', 'SCADUTA'
 );
 \end{lstlisting}
-
 
 \subsubsection*{Tabella cliente}
 \vspace{1.5em}
