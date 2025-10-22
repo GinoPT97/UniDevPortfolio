@@ -548,11 +548,14 @@ Questo modello concettuale consente una visione più astratta e modulare dei dat
 Il \textbf{diagramma concettuale ristrutturato} rappresenta una versione ottimizzata e normalizzata del modello concettuale precedente. 
 L’obiettivo della ristrutturazione è ridurre la complessità derivante dalla presenza di numerose specializzazioni, accorpando le categorie di prodotti in un’unica classe più flessibile e parametrizzata.
 
-Le principali modifiche introdotte sono:
 \begin{itemize}
-    \item La \textbf{classe Prodotto} è stata unificata e arricchita con un attributo enumerativo \texttt{categoria}, che permette di distinguere le diverse tipologie di articoli. Gli attributi specifici (es. \emph{data raccolta}, \emph{mungitura}, \emph{scadenza}, \emph{glutine}) sono ora integrati nella stessa classe e possono assumere valore nullo quando non pertinenti;
-    \item Le relazioni tra \textbf{Cliente}, \textbf{Tessera}, \textbf{Ordine} e \textbf{ArticoliOrdine} sono mantenute inalterate, poiché già rispecchiano correttamente i vincoli cardinali e semantici del dominio;
-    \item Sono state introdotte \textbf{enumerazioni} (come \texttt{STATOTESSERA} e \texttt{TIPOLOGIA}) per rappresentare domini discreti e garantire coerenza dei valori nei dati.
+\item La \textbf{classe \texttt{Prodotto}} è stata unificata e arricchita con un attributo enumerativo \texttt{categoria}, che consente di distinguere le diverse tipologie di articoli. Gli attributi specifici (ad esempio \emph{data raccolta}, \emph{data mungitura}, \emph{data scadenza}, \emph{presenza glutine}) sono ora integrati nella stessa classe e possono assumere valore nullo quando non pertinenti alla tipologia di prodotto. Questa scelta riduce la complessità del modello e favorisce una maggiore flessibilità nella gestione dei dati;
+
+\item Le classi \textbf{Cliente} e \textbf{Dipendente} sono state accorpate nella \textbf{superclasse \texttt{Persona}}, dalla quale ereditano gli attributi comuni (come \emph{nome}, \emph{cognome}, \emph{codice fiscale}, \emph{indirizzo}, \emph{telefono} ed \emph{email}). Tale ristrutturazione migliora la coerenza semantica e semplifica la gestione delle relazioni con le altre entità, mantenendo la distinzione logica tra clienti e dipendenti;
+
+\item Le relazioni tra \textbf{Cliente}, \textbf{Tessera}, \textbf{Ordine} e \textbf{ArticoliOrdine} sono state mantenute inalterate, poiché già correttamente rispecchiano i vincoli cardinali e semantici del dominio applicativo, garantendo la tracciabilità e l’integrità delle transazioni;
+
+\item Sono state introdotte \textbf{enumerazioni} (come \texttt{STATOTESSERA} e \texttt{TIPOLOGIA}) per rappresentare domini discreti e garantire coerenza, validità e uniformità dei valori nei dati, facilitando al contempo i controlli di integrità a livello applicativo e di database.
 \end{itemize}
 
 Questa versione del modello risulta più compatta e facilmente traducibile in un modello relazionale normalizzato, mantenendo al contempo l’integrità semantica e la chiarezza del design concettuale.
