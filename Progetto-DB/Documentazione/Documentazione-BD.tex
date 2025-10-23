@@ -1317,8 +1317,6 @@ $$ LANGUAGE plpgsql;
 \noindent
 Questa funzione restituisce, per ogni cliente e categoria (o per tutte le categorie se il parametro è NULL), la somma dei punti fedeltà accumulati, la spesa totale e il numero di ordini effettuati.  
 
----
-
 % Funzione per statistiche dipendenti in un intervallo temporale
 \begin{lstlisting}[style=sqlstyle]
 CREATE OR REPLACE FUNCTION DipendenteStatistiche(
@@ -1359,8 +1357,6 @@ $$ LANGUAGE sql;
 \noindent
 Questa funzione individua il dipendente con il maggior numero di ordini e quello con il maggior introito in un dato intervallo temporale, restituendo due righe distinte.  
 
----
-
 \subsubsection{View principali}
 
 % View 1: riepilogo punti e stato tessera clienti
@@ -1375,8 +1371,6 @@ JOIN tessera t ON c.codcliente = t.codcliente;
 \noindent
 Visualizza rapidamente il riepilogo dei punti fedeltà e lo stato della tessera per tutti i clienti.  
 
----
-
 % View 2: prodotti con scorta bassa
 \begin{lstlisting}[style=sqlstyle]
 CREATE OR REPLACE VIEW VwProdottiScortaBassa AS
@@ -1387,8 +1381,6 @@ WHERE scorta < 20;
 
 \noindent
 Evidenzia i prodotti con scorta inferiore a 20 unità, utile per la gestione degli ordini e del magazzino.  
-
----
 
 % View 3: ordini dettagliati
 \begin{lstlisting}[style=sqlstyle]
@@ -1433,8 +1425,6 @@ SELECT * FROM VwOrdiniDettagliati ORDER BY codordine, nome_prodotto;
 
 \newpage
 \section{Popolamento e Dati di Esempio}
-
-
 
 Il popolamento del database è stato effettuato tramite lo script \texttt{Popolazione.sql}, che contiene tutti gli \textbf{INSERT} necessari per popolare le tabelle con dati di esempio realistici e coerenti con la struttura progettata. Questo file è fondamentale per testare il funzionamento delle query, dei trigger e delle funzioni implementate, simulando un ambiente operativo completo e credibile.
 \vspace{0.5em}
