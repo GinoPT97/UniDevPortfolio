@@ -4,11 +4,11 @@ Questo repository contiene il progetto di database per UniDevPortfolio, sviluppa
 
 ## Struttura delle cartelle
 
-- **Diagram/**: Diagrammi UML e ER del database (formato .puml e immagini PNG).
-- **Documentazione/**: Documentazione tecnica in formato LaTeX e PDF.
+- **Diagram/**: Diagrammi UML e ER del database.
+- **Documentazione/**: Documentazione tecnica in formato PDF.
 - **Documentazione-Aggiunte/**: Materiale aggiuntivo e documenti di progettazione.
 - **File-SQL/**: Script SQL per la creazione, popolamento, funzioni, ricerche e trigger del database.
-- **Immagini/**: Immagini dei diagrammi e altri asset grafici.
+- **Immagini/**: Immagini degli asset grafici.
 
 ## Contenuto principale
 
@@ -20,7 +20,7 @@ Questo repository contiene il progetto di database per UniDevPortfolio, sviluppa
 - `Trigger.sql`: Trigger per la gestione di eventi nel database.
 
 ### Documentazione
-- `Documentazione-BD.tex` / `.pdf`: Documentazione dettagliata del progetto, inclusa la progettazione concettuale, logica e fisica.
+- Documentazione dettagliata del progetto, inclusa la progettazione concettuale, logica e fisica.
 - `Progettazione.pdf`: Approfondimenti sulla progettazione.
 
 ### Diagrammi
@@ -34,11 +34,8 @@ Questo repository contiene il progetto di database per UniDevPortfolio, sviluppa
    - `Tabelle.sql`
    - `Popolazione.sql`
    - `Funzioni.sql`
-   - `Ricerche.sql`
    - `Trigger.sql`
+   - `Ricerche.sql`
 
-## Autori
+## Autore
 - Kenobi1797
-
-## Licenza
-Questo progetto è distribuito per scopi didattici. Consultare il docente per eventuali riutilizzi.
