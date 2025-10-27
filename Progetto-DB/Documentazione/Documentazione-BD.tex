@@ -998,33 +998,6 @@ Esempio di inserimento nuovo articolo in un ordine:
 \end{itemize}
 \end{tcolorbox}
 
-\subsection{Funzioni di Supporto}
-\begin{tcolorbox}[enhanced,breakable,colback=mygray,colframe=myblue,title=Funzioni Principali]
-\begin{itemize}
-    \item \textbf{RicercaClientiPerCategoria}
-        \begin{itemize}
-            \item Input: categoria (TIPOLOGIA)
-            \item Output: clienti con punti/spese per categoria
-            \item Esempio: 
-                \begin{verbatim}
-SELECT * FROM RicercaClientiPerCategoria('FRUTTA')
-WHERE punti_categoria > 50;
-                \end{verbatim}
-        \end{itemize}
-    
-            \item \textbf{DipendenteStatistiche}
-                \begin{itemize}
-                    \item Input: \texttt{data\_inizio}, \texttt{data\_fine}
-                    \item Output: performance dipendenti
-                    \item Esempio:
-                        \begin{verbatim}
-SELECT * FROM DipendenteStatistiche(
-    '2025-01-01', '2025-12-31');
-                        \end{verbatim}
-                \end{itemize}
-\end{itemize}
-\end{tcolorbox}
-
 \section{Progettazione Fisica}
 
 \noindent
