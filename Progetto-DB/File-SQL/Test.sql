@@ -1,6 +1,6 @@
--- ============================================================
--- TEST VINCOLI CHECK E FK
--- ============================================================
+-- =========================   
+-- TEST VINCOLI CHECK E FK =
+-- =========================
 
 -- Deve fallire: FRUTTA non può avere datascadenza
 INSERT INTO prodotto (nome, prezzo, scorta, categoria, datascadenza)
@@ -10,9 +10,9 @@ VALUES ('Mela Verde', 0.5, 100, 'FRUTTA', '2025-12-31');
 INSERT INTO articoliordine (codordine, codprodotto, numeroarticoli, prezzo)
 VALUES (1, 1, 9999, 10.00);
 
--- ============================================================
--- TEST TRIGGER: AggiornaScortaEPunti, AggiornaPrezzoOrdine
--- ============================================================
+-- ==========================================================
+-- TEST TRIGGER: AggiornaScortaEPunti, AggiornaPrezzoOrdine =
+-- ==========================================================
 
 -- Mostra stato iniziale
 SELECT codprodotto, nome, scorta FROM prodotto WHERE codprodotto = 1;
@@ -32,9 +32,9 @@ SELECT codcliente, numeropunti FROM tessera WHERE codcliente = 1;
 -- Verifica aggiornamento prezzo totale (AggiornaPrezzoOrdine)
 SELECT prezzototale FROM ordine WHERE codordine = 1;
 
--- ============================================================
--- TEST TRIGGER: RipristinaScortaProdotto, AggiornaPrezzoOrdineDelete
--- ============================================================
+-- ====================================================================
+-- TEST TRIGGER: RipristinaScortaProdotto, AggiornaPrezzoOrdineDelete =
+-- ====================================================================
 
 -- STATO INIZIALE
 
@@ -63,9 +63,9 @@ SELECT codordine, prezzototale FROM ordine WHERE codordine = 1;
 -- Punti tessera dopo l'eliminazione (RipristinaScortaProdotto)
 SELECT codcliente, numeropunti FROM tessera WHERE codcliente = 1;
 
--- ============================================================
--- TEST TRIGGER: AggiornaStatoTessera
--- ============================================================
+-- ====================================
+-- TEST TRIGGER: AggiornaStatoTessera =
+-- ====================================
 
 -- Mostra stato tessera prima
 SELECT codtessera, datascadenza, stato FROM tessera WHERE codtessera = 1;
@@ -78,9 +78,9 @@ WHERE codtessera = 1;
 -- Verifica aggiornamento automatico stato tessera
 SELECT codtessera, stato FROM tessera WHERE codtessera = 1;
 
--- ============================================================
--- TEST COMPLEMENTARI DI COERENZA
--- ============================================================
+-- ================================
+-- TEST COMPLEMENTARI DI COERENZA =
+-- ================================
 
 -- Prezzo ordine deve essere coerente con articoliordine
 SELECT o.codordine, o.prezzototale AS totale_registrato,
@@ -99,3 +99,63 @@ SELECT * FROM tessera WHERE stato = 'ATTIVA' AND datascadenza < CURRENT_DATE;
 SELECT o.codordine FROM ordine o
 LEFT JOIN articoliordine a ON o.codordine = a.codordine
 WHERE a.codordine IS NULL;
+
+
+-- ==========================
+-- TEST FUNZIONI DI RICERCA =
+-- ==========================
+
+-- VIEW 1: Riepilogo punti e stato tessera dei clienti
+CREATE OR REPLACE VIEW VwClientiTessere AS
+SELECT c.codcliente, c.nome, c.cognome, t.numeropunti, t.stato, t.datascadenza
+FROM cliente c
+JOIN tessera t ON c.codcliente = t.codcliente;
+
+-- VIEW 2: Prodotti con scorta bassa (< 20)
+CREATE OR REPLACE VIEW VwProdottiScortaBassa AS
+SELECT codprodotto, nome, categoria, scorta
+FROM prodotto
+WHERE scorta < 20;
+
+-- VIEW 3: Ordini dettagliati
+CREATE OR REPLACE VIEW VwOrdiniDettagliati AS
+SELECT o.codordine, o.dataacquisto, o.prezzototale, c.nome AS nome_cliente, c.cognome AS cognome_cliente,
+       d.nome AS nome_dipendente, d.cognome AS cognome_dipendente,
+       p.nome AS nome_prodotto, p.categoria, ao.numeroarticoli, ao.prezzo
+FROM ordine o
+JOIN cliente c ON o.codcliente = c.codcliente
+JOIN dipendente d ON o.coddipendente = d.coddipendente
+JOIN articoliordine ao ON o.codordine = ao.codordine
+JOIN prodotto p ON ao.codprodotto = p.codprodotto;
+
+-- Esempi: dipendente con più ordini e con più introiti in diversi intervalli temporali
+SELECT * FROM DipendenteStatistiche((CURRENT_DATE - INTERVAL '3 months')::date, CURRENT_DATE);
+SELECT * FROM DipendenteStatistiche((CURRENT_DATE - INTERVAL '6 months')::date, CURRENT_DATE);
+SELECT * FROM DipendenteStatistiche((CURRENT_DATE - INTERVAL '9 months')::date, CURRENT_DATE);
+SELECT * FROM DipendenteStatistiche((CURRENT_DATE - INTERVAL '12 months')::date, CURRENT_DATE);
+SELECT * FROM DipendenteStatistiche((SELECT MIN(dataacquisto) FROM ordine), (SELECT MAX(dataacquisto) FROM ordine));
+
+-- Esempio: clienti e punti per TUTTE le categorie acquistate
+SELECT *
+FROM RicercaClientiPerCategoria()
+ORDER BY codcliente, categoria;
+
+SELECT *
+FROM RicercaClientiPerCategoria('FRUTTA')
+WHERE punti_categoria BETWEEN 0 AND 100;
+
+-- Esempi di query sulle VIEW
+-- Riepilogo punti e stato tessera di tutti i clienti
+SELECT * FROM VwClientiTessere ORDER BY codcliente;
+
+-- Prodotti con scorta bassa
+SELECT * FROM VwProdottiScortaBassa ORDER BY scorta ASC;
+
+-- Ordini dettagliati (tutti)
+SELECT * FROM VwOrdiniDettagliati ORDER BY codordine, nome_prodotto;
+
+-- Ordini dettagliati per un cliente specifico (es. cliente 1)
+SELECT * FROM VwOrdiniDettagliati WHERE nome_cliente = 'Aldo' AND cognome_cliente = 'Marzante';
+
+-- Ordini dettagliati per un dipendente specifico (es. dipendente 'Dario Forte')
+SELECT * FROM VwOrdiniDettagliati WHERE nome_dipendente = 'Dario' AND cognome_dipendente = 'Forte';
