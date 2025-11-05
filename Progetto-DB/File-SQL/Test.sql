@@ -1,5 +1,5 @@
 -- ============================================================
--- 🧱 TEST VINCOLI CHECK E FK
+-- TEST VINCOLI CHECK E FK
 -- ============================================================
 
 -- Deve fallire: FRUTTA non può avere datascadenza
@@ -11,7 +11,7 @@ INSERT INTO articoliordine (codordine, codprodotto, numeroarticoli, prezzo)
 VALUES (1, 1, 9999, 10.00);
 
 -- ============================================================
--- ⚙️ TEST TRIGGER: AggiornaScortaEPunti, AggiornaPrezzoOrdine
+-- TEST TRIGGER: AggiornaScortaEPunti, AggiornaPrezzoOrdine
 -- ============================================================
 
 -- Mostra stato iniziale
@@ -33,7 +33,7 @@ SELECT codcliente, numeropunti FROM tessera WHERE codcliente = 1;
 SELECT prezzototale FROM ordine WHERE codordine = 1;
 
 -- ============================================================
--- ⚙️ TEST TRIGGER: RipristinaScortaProdotto, AggiornaPrezzoOrdineDelete
+-- TEST TRIGGER: RipristinaScortaProdotto, AggiornaPrezzoOrdineDelete
 -- ============================================================
 
 -- Elimina lo stesso articolo ordine
@@ -50,7 +50,7 @@ SELECT codcliente, numeropunti FROM tessera WHERE codcliente = 1;
 SELECT prezzototale FROM ordine WHERE codordine = 1;
 
 -- ============================================================
--- ⚙️ TEST TRIGGER: AggiornaStatoTessera
+-- TEST TRIGGER: AggiornaStatoTessera
 -- ============================================================
 
 -- Mostra stato tessera prima
@@ -65,7 +65,7 @@ WHERE codtessera = 1;
 SELECT codtessera, stato FROM tessera WHERE codtessera = 1;
 
 -- ============================================================
--- 🔍 TEST COMPLEMENTARI DI COERENZA
+-- TEST COMPLEMENTARI DI COERENZA
 -- ============================================================
 
 -- Prezzo ordine deve essere coerente con articoliordine
