@@ -182,3 +182,25 @@ INSERT INTO articoliordine (codordine, codprodotto, prezzo, numeroarticoli) VALU
 INSERT INTO articoliordine (codordine, codprodotto, prezzo, numeroarticoli) VALUES
 (16, 4, 1.80, 3),  -- Pere
 (16, 13, 2.20, 2); -- Ricotta
+
+-- Aggiornamento manuale del prezzo totale degli ordini
+UPDATE ordine o
+SET prezzototale = sub.totale
+FROM (
+    SELECT codordine, SUM(prezzo * numeroarticoli) AS totale
+    FROM articoliordine
+    GROUP BY codordine
+) AS sub
+WHERE o.codordine = sub.codordine;
+
+-- Aggiornamento punti tessera clienti (10% del totale speso)
+UPDATE tessera t
+SET numeropunti = sub.punti
+FROM (
+    SELECT c.codcliente, SUM(a.prezzo * a.numeroarticoli * 0.10) AS punti
+    FROM cliente c
+    JOIN ordine o ON o.codcliente = c.codcliente
+    JOIN articoliordine a ON a.codordine = o.codordine
+    GROUP BY c.codcliente
+) AS sub
+WHERE t.codcliente = sub.codcliente;
