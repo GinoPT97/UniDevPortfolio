@@ -36,18 +36,32 @@ SELECT prezzototale FROM ordine WHERE codordine = 1;
 -- TEST TRIGGER: RipristinaScortaProdotto, AggiornaPrezzoOrdineDelete
 -- ============================================================
 
--- Elimina lo stesso articolo ordine
+-- STATO INIZIALE
+
+-- Scorta prodotto prima dell'eliminazione
+SELECT codprodotto, nome, scorta FROM prodotto WHERE codprodotto = 1;
+
+-- Prezzo totale ordine prima dell'eliminazione
+SELECT codordine, prezzototale FROM ordine WHERE codordine = 1;
+WHERE codordine = 1;
+
+-- Punti tessera prima dell'eliminazione
+SELECT codcliente, numeropunti FROM tesseraWHERE codcliente = 1;
+
+-- OPERAZIONE CHE ATTIVA I TRIGGER (DELETE)
 DELETE FROM articoliordine
 WHERE codordine = 1 AND codprodotto = 1;
 
--- Verifica ripristino scorte (RipristinaScortaProdotto)
-SELECT codprodotto, scorta FROM prodotto WHERE codprodotto = 1;
+-- STATO FINALE (verifica effetto dei trigger)
 
--- Verifica rimozione punti (RipristinaScortaProdotto)
+-- Scorta prodotto dopo l'eliminazione (RipristinaScortaProdotto)
+SELECT codprodotto, nome, scorta FROM prodotto WHERE codprodotto = 1;
+
+-- Prezzo totale ordine dopo l'eliminazione (AggiornaPrezzoOrdineDelete)
+SELECT codordine, prezzototale FROM ordine WHERE codordine = 1;
+
+-- Punti tessera dopo l'eliminazione (RipristinaScortaProdotto)
 SELECT codcliente, numeropunti FROM tessera WHERE codcliente = 1;
-
--- Verifica aggiornamento prezzo totale dopo DELETE (AggiornaPrezzoOrdineDelete)
-SELECT prezzototale FROM ordine WHERE codordine = 1;
 
 -- ============================================================
 -- TEST TRIGGER: AggiornaStatoTessera
