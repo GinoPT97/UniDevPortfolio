@@ -47,9 +47,20 @@ git config --global user.name "kenobi1797"
 
 sudo apt install texlive-pictures texlive-science
 
+#Installazione di code trmite apt
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
+
+sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] \
+https://packages.microsoft.com/repos/code stable main" \
+> /etc/apt/sources.list.d/vscode.list'
+
+sudo apt update
+sudo apt install code
+
 echo "Installazione applicazioni Snap..."
 sudo snap install --classic openjdk
-sudo snap install --classic code
+#sudo snap install --classic code
 sudo snap install --classic android-studio
 sudo snap install --classic eclipse
 sudo snap install intellij-idea-ultimate --classic
