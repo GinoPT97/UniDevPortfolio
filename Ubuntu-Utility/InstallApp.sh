@@ -58,6 +58,11 @@ https://packages.microsoft.com/repos/code stable main" \
 sudo apt update
 sudo apt install code
 
+#Installazione di Rust
+echo "Installazione di Rust..."
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+source $HOME/.cargo/env
+
 echo "Installazione applicazioni Snap..."
 sudo snap install --classic openjdk
 #sudo snap install --classic code
