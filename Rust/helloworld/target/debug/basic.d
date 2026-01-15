@@ -1,1 +1,1 @@
-/home/kenobi/Documenti/GitHub/UniDevPortfolio/Rust/basic/target/debug/basic: /home/kenobi/Documenti/GitHub/UniDevPortfolio/Rust/basic/src/main.rs
+/home/kenobi/Documenti/GitHub/UniDevPortfolio/Rust/helloworld/target/debug/basic: /home/kenobi/Documenti/GitHub/UniDevPortfolio/Rust/helloworld/src/main.rs
