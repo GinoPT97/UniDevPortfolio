@@ -9,7 +9,7 @@ Loop 		ADD.B   (A0)+,D1      Somma il numero al totale
      		SUB.B   #1,D0
       	BNE     Loop          Fino a sommare tutti i numeri
       	STOP    #$2700
-Table 	DC.B    1,2,3,4,5     Dati d’esempio
+Table 	DC.B    1,2,3,4,5     Dati di esempio
 
 		
 
