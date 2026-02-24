@@ -1,0 +1,4 @@
+casa mare sole
+python script bash
+linux awk sed
+hello world

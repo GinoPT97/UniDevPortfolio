@@ -27,3 +27,11 @@ result=$(echo "$tokens" | awk '
 }')
 
 echo "$result"
+
+#Esempi di esecuzione
+#./calcola.sh "Quanto fa 5 più 13?"
+# 18
+#./calcola.sh "Quanto fa 5 più 13 diviso 2?"
+# (5 + 13) / 2 = 9
+#./calcola.sh "cosa è 5?"
+# ERRORE
