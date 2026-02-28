@@ -1,0 +1,4 @@
+alfa,beta,gamma
+uno,due,tre
+rosso,verde,blu
+mela,pera,uva
