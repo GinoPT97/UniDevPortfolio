@@ -1,0 +1,4 @@
+Mela 10 1.50
+Rosa 5 3.00
+Banana 8 0.80
+Pera 6 1.20

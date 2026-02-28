@@ -1,0 +1,4 @@
+mario:rossi:ingegneria
+luigi:bianchi:42:informatica
+anna:verdi:medicina
+sara:neri:27:fisica
