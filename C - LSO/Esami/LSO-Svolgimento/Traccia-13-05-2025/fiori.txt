@@ -1,0 +1,6 @@
+rosa 10 2.50
+tulipano 5 3.00
+girasole 8 1.80
+rosa 6 2.50
+tulipano 3 3.00
+orchidea 2 7.50
