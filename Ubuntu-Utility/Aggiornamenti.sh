@@ -115,6 +115,8 @@ clean_apt_packages
 unblock_network_interfaces
 install_snapd
 enable_firewall
+sudo dpkg --purge $(dpkg -l | grep '^rc' | awk '{print $2}' | tr '\n' ' ') 2>/dev/null
+sudo rm -rf ~/.cache/thumbnails/*
 # apt modernize-sources -y  # Comando non standard, commentato
 
 # Aggiungi comandi per aggiornare il sistema Ubuntu 24.10
