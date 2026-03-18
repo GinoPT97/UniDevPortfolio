@@ -1,5 +1,9 @@
 autoinstall:
   version: 1
+
+  # ---------------------------------------------------------------------------
+  # Pacchetti APT installati durante la fase base dell'installazione
+  # ---------------------------------------------------------------------------
   packages:
     - ca-certificates
     - curl
@@ -25,11 +29,14 @@ autoinstall:
     - dos2unix
     - texlive-latex-base
     - texlive-latex-extra
+    - texlive-pictures        # [AGGIUNTO] presente in InstallApp.sh
+    - texlive-science         # [AGGIUNTO] presente in InstallApp.sh
     - git-lfs
     - cryptsetup
     - lvm2
     - synaptic
     - stacer
+    - bleachbit               # [AGGIUNTO] presente in InstallApp.sh
     - build-essential
     - libvips-dev
     - jest
@@ -42,25 +49,59 @@ autoinstall:
     - hplip-gui
     - redis
     - tor
+
+  # ---------------------------------------------------------------------------
+  # Comandi eseguiti dopo l'installazione base (chroot nel sistema target)
+  # ---------------------------------------------------------------------------
   late-commands:
+    # --- Aggiornamento sistema ---
     - curtin in-target -- apt update
     - curtin in-target -- apt upgrade -y
+
+    # --- Git LFS ---
     - curtin in-target -- apt install -y git-lfs
     - curtin in-target -- git lfs install
-    - curtin in-target -- bash -c "sudo -u postgres psql -c 'ALTER USER postgres WITH PASSWORD \'postgres\';'"
+
+    # --- Git config globale ---
+    # [AGGIUNTO] da InstallApp.sh
+    - curtin in-target -- git config --global user.email "g.pandozzitrani@studenti.unina.it"
+    - curtin in-target -- git config --global user.name "kenobi1797"
+
+    # --- PostgreSQL ---
+    - curtin in-target -- bash -c "sudo -u postgres psql -c \"ALTER USER postgres WITH PASSWORD 'postgres';\""
+
+    # --- Tor ---
     - curtin in-target -- systemctl start tor
     - curtin in-target -- systemctl enable tor
+
+    # --- Redis ---
     - curtin in-target -- systemctl start redis-server
     - curtin in-target -- systemctl enable redis-server
-    - curtin in-target -- bash -c 'wget -q --show-progress https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O google-chrome-stable_current_amd64.deb'
-    - curtin in-target -- dpkg -i google-chrome-stable_current_amd64.deb || apt-get install -f -y
-    - curtin in-target -- rm -f google-chrome-stable_current_amd64.deb
-    - curtin in-target -- bash -c 'wget -q --show-progress https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb -O GitHubDesktop-linux-2.8.1-linux2.deb'
-    - curtin in-target -- dpkg -i GitHubDesktop-linux-2.8.1-linux2.deb || apt-get install -f -y
-    - curtin in-target -- rm -f GitHubDesktop-linux-2.8.1-linux2.deb
+
+    # --- Google Chrome ---
+    - curtin in-target -- bash -c 'wget -q --show-progress https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome.deb'
+    - curtin in-target -- bash -c 'dpkg -i /tmp/google-chrome.deb || apt-get install -f -y'
+    - curtin in-target -- rm -f /tmp/google-chrome.deb
+
+    # --- GitHub Desktop ---
+    - curtin in-target -- bash -c 'wget -q --show-progress https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb -O /tmp/github-desktop.deb'
+    - curtin in-target -- bash -c 'dpkg -i /tmp/github-desktop.deb || apt-get install -f -y'
+    - curtin in-target -- rm -f /tmp/github-desktop.deb
+
+    # --- Visual Studio Code tramite APT (allineato a InstallApp.sh, migliore per aggiornamenti) ---
+    # [MODIFICATO] sostituisce "snap install --classic code"
+    - curtin in-target -- bash -c 'wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft.gpg'
+    - curtin in-target -- bash -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+    - curtin in-target -- apt update
+    - curtin in-target -- apt install -y code
+
+    # --- Rust (per l'utente con UID 1000) ---
+    # [AGGIUNTO] da InstallApp.sh
+    - curtin in-target -- bash -c 'USER_NAME=$(getent passwd 1000 | cut -d: -f1); su - "$USER_NAME" -c "curl --proto=https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"'
+
+    # --- Applicazioni Snap ---
     - curtin in-target -- snap install --classic dbeaver-ce
     - curtin in-target -- snap install --classic openjdk
-    - curtin in-target -- snap install --classic code
     - curtin in-target -- snap install --classic android-studio
     - curtin in-target -- snap install --classic eclipse
     - curtin in-target -- snap install intellij-idea-ultimate --classic
@@ -70,11 +111,20 @@ autoinstall:
     - curtin in-target -- snap install pgadmin4
     - curtin in-target -- snap install perplexity-desktop
     - curtin in-target -- snap install scrcpy
+
+    # --- Docker ---
     - curtin in-target -- snap install docker
     - curtin in-target -- snap start docker
-    - curtin in-target -- groupadd docker
-    - curtin in-target -- usermod -aG docker $USER
-    - curtin in-target -- bash -c 'gsettings set org.gnome.desktop.interface show-battery-percentage true'
+    # [FIX] groupadd fallisce se il gruppo esiste già → aggiunto "|| true"
+    - curtin in-target -- bash -c 'groupadd docker || true'
+    # [FIX] $USER in late-commands è root → si recupera l'utente reale tramite UID 1000
+    - curtin in-target -- bash -c 'usermod -aG docker "$(getent passwd 1000 | cut -d: -f1)"'
+
+    # NOTA: il comando gsettings (show-battery-percentage) è stato rimosso perché
+    # non funziona senza una sessione grafica attiva durante l'installazione.
+    # Per applicarlo al primo avvio, aggiungilo in ~/.profile o tramite un
+    # autostart script (es. ~/.config/autostart/).
+
   interactive-sections:
     - identity
 
