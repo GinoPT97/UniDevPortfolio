@@ -2,79 +2,122 @@ autoinstall:
   version: 1
 
   # ---------------------------------------------------------------------------
-  # Pacchetti APT installati durante la fase base dell'installazione
+  # Pacchetti APT
+  # Sincronizzato con i pacchetti installati manualmente sul PC (marzo 2026)
   # ---------------------------------------------------------------------------
   packages:
+    # --- Rete e certificati ---
     - ca-certificates
     - curl
     - gnupg
     - lsb-release
     - wget
     - apt-transport-https
+    - net-tools
+
+    # --- Ottimizzazione sistema ---
     - zram-config
     - preload
-    - flatpak
+
+
+    # --- Pacchetti base sviluppo ---
+    - build-essential
     - git
-    - gparted
-    - clamav
-    - clamtk
-    - postgresql
-    - vlc
+    - git-lfs
+    - git-filter-repo
+    - flatpak
     - cmake
     - aptitude
-    - doxygen
-    - graphviz
-    - net-tools
     - gdebi
     - dos2unix
-    - texlive-latex-base
-    - texlive-latex-extra
-    - texlive-pictures        # [AGGIUNTO] presente in InstallApp.sh
-    - texlive-science         # [AGGIUNTO] presente in InstallApp.sh
-    - git-lfs
     - cryptsetup
     - lvm2
-    - synaptic
-    - stacer
-    - bleachbit               # [AGGIUNTO] presente in InstallApp.sh
-    - build-essential
-    - libvips-dev
-    - jest
-    - linux-tools-common
-    - linux-tools-generic
-    - gnome-tweaks
-    - imagemagick
+    - zenity
+
+    # --- Java ---
     - default-jdk
-    - hplip
-    - hplip-gui
+    - openjdk-21-jdk
+
+    # --- Database ---
+    - postgresql
     - redis
+
+    # --- Rete anonima ---
     - tor
 
+    # --- Sicurezza ---
+    - clamav
+    - clamtk
+
+    # --- Grafica e multimedia ---
+    - vlc
+    - imagemagick
+    - inkscape
+    - gparted
+
+    # --- Documentazione e LaTeX ---
+    - doxygen
+    - graphviz
+    - pandoc
+    - latexmk
+    - texlive-latex-base
+    - texlive-latex-extra
+    - texlive-latex-recommended
+    - texlive-fonts-recommended
+    - texlive-pictures
+    - texlive-science
+    - texlive-lang-italian
+
+    # --- Driver ---
+    - hplip
+    - hplip-gui
+
+    # --- Strumenti sistema ---
+    - linux-tools-common
+    - linux-tools-generic
+    - libvips-dev
+    - jest
+
+    # --- Desktop GNOME ---
+    - gnome-tweaks
+    - ptyxis
+    - stacer
+    - bleachbit
+
+    # --- Android ---
+
+
+    # --- Localizzazione italiana ---
+    - language-pack-it
+    - language-pack-it-base
+    - language-pack-gnome-it
+    - language-pack-gnome-it-base
+    - texlive-lang-italian
+    - mythes-it
+    - hyphen-it
+    - libreoffice-l10n-it
+    - libreoffice-help-it
+
   # ---------------------------------------------------------------------------
-  # Comandi eseguiti dopo l'installazione base (chroot nel sistema target)
+  # Comandi post-installazione
   # ---------------------------------------------------------------------------
   late-commands:
     # --- Aggiornamento sistema ---
     - curtin in-target -- apt update
     - curtin in-target -- apt upgrade -y
 
-    # --- Git LFS ---
+    # --- Git ---
     - curtin in-target -- apt install -y git-lfs
     - curtin in-target -- git lfs install
-
-    # --- Git config globale ---
-    # [AGGIUNTO] da InstallApp.sh
     - curtin in-target -- git config --global user.email "g.pandozzitrani@studenti.unina.it"
     - curtin in-target -- git config --global user.name "kenobi1797"
 
     # --- PostgreSQL ---
     - curtin in-target -- bash -c "sudo -u postgres psql -c \"ALTER USER postgres WITH PASSWORD 'postgres';\""
 
-    # --- Tor ---
+    # --- Servizi ---
     - curtin in-target -- systemctl start tor
     - curtin in-target -- systemctl enable tor
-
-    # --- Redis ---
     - curtin in-target -- systemctl start redis-server
     - curtin in-target -- systemctl enable redis-server
 
@@ -88,42 +131,45 @@ autoinstall:
     - curtin in-target -- bash -c 'dpkg -i /tmp/github-desktop.deb || apt-get install -f -y'
     - curtin in-target -- rm -f /tmp/github-desktop.deb
 
-    # --- Visual Studio Code tramite APT (allineato a InstallApp.sh, migliore per aggiornamenti) ---
-    # [MODIFICATO] sostituisce "snap install --classic code"
+    # --- Visual Studio Code via APT ---
     - curtin in-target -- bash -c 'wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft.gpg'
     - curtin in-target -- bash -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
     - curtin in-target -- apt update
     - curtin in-target -- apt install -y code
 
-    # --- Rust (per l'utente con UID 1000) ---
-    # [AGGIUNTO] da InstallApp.sh
+    # --- Rust (per l'utente reale, non root) ---
     - curtin in-target -- bash -c 'USER_NAME=$(getent passwd 1000 | cut -d: -f1); su - "$USER_NAME" -c "curl --proto=https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"'
 
-    # --- Applicazioni Snap ---
-    - curtin in-target -- snap install --classic dbeaver-ce
+    # --- Snap: strumenti sviluppo ---
     - curtin in-target -- snap install --classic openjdk
     - curtin in-target -- snap install --classic android-studio
     - curtin in-target -- snap install --classic eclipse
     - curtin in-target -- snap install intellij-idea-ultimate --classic
     - curtin in-target -- snap install node --classic
+
+    # --- Snap: app desktop ---
     - curtin in-target -- snap install telegram-desktop
     - curtin in-target -- snap install teams-for-linux
-    - curtin in-target -- snap install pgadmin4
     - curtin in-target -- snap install perplexity-desktop
+    - curtin in-target -- snap install pgadmin4
+    - curtin in-target -- snap install firefox           # [AGGIUNTO] presente sul PC
+    - curtin in-target -- snap install thunderbird       # [AGGIUNTO] presente sul PC
+    - curtin in-target -- snap install steam             # [AGGIUNTO] presente sul PC
+
+    # --- Snap: utility ---
     - curtin in-target -- snap install scrcpy
 
     # --- Docker ---
     - curtin in-target -- snap install docker
     - curtin in-target -- snap start docker
-    # [FIX] groupadd fallisce se il gruppo esiste già → aggiunto "|| true"
     - curtin in-target -- bash -c 'groupadd docker || true'
-    # [FIX] $USER in late-commands è root → si recupera l'utente reale tramite UID 1000
     - curtin in-target -- bash -c 'usermod -aG docker "$(getent passwd 1000 | cut -d: -f1)"'
 
-    # NOTA: il comando gsettings (show-battery-percentage) è stato rimosso perché
-    # non funziona senza una sessione grafica attiva durante l'installazione.
-    # Per applicarlo al primo avvio, aggiungilo in ~/.profile o tramite un
-    # autostart script (es. ~/.config/autostart/).
+    # RIMOSSO: bleachbit (non presente sul PC)
+    # RIMOSSO: dbeaver-ce (non presente sul PC)
+    # RIMOSSO: android-studio snap (non presente sul PC)
+    # RIMOSSO: pgadmin4 (non presente sul PC)
+    # RIMOSSO: gsettings show-battery-percentage (non funziona senza sessione grafica)
 
   interactive-sections:
     - identity
