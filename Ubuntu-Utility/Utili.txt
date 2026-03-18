@@ -27,3 +27,8 @@ Aggiungi le seguenti righe alla fine del file:
 0 * * * * /home/kenobi/Documenti/GitHub/UniDevPortfolio/Ubuntu-Utility/Ottimizzazioni.sh >> /home/kenobi/Documenti/Ottimizzazioni.log 2>&1
 
 Queste righe configurano l'esecuzione degli script ogni ora, redirigendo l'output e gli errori nei rispettivi file di log.
+
+Eliminare vm
+
+VBoxManage unregistervm "Ubuntu2510_AutoinstallTest" --delete
+rm -rf ~/vm-autoinstall-test/
