@@ -158,16 +158,3 @@ autoinstall:
 
   interactive-sections:
     - identity
-
-user-data:
-  disable_root: true
-  timezone: Europe/Rome
-  locale: it_IT.UTF-8
-  keyboard:
-    layout: it
-  gnome:
-    settings:
-      org.gnome.shell.extensions.dash-to-dock:
-        dock-position: 'BOTTOM'
-        autohide: true
-        extend-height: false
