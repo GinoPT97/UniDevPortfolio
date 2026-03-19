@@ -2,6 +2,7 @@
 set -e
 
 echo "Aggiornamento del sistema..."
+
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y curl imagemagick \
   ca-certificates gnupg lsb-release wget apt-transport-https \
@@ -13,6 +14,7 @@ sudo apt install -y curl imagemagick \
   default-jdk redis tor hplip hplip-gui
 
 sudo apt install bleachbit
+sudo apt install texlive-pictures texlive-science
 
 git lfs install
 
@@ -45,8 +47,6 @@ install_deb "https://github.com/shiftkey/desktop/releases/download/release-2.8.1
 git config --global user.email "g.pandozzitrani@studenti.unina.it"                                  
 git config --global user.name "kenobi1797"
 
-sudo apt install texlive-pictures texlive-science
-
 #Installazione di code trmite apt
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
@@ -70,19 +70,11 @@ sudo snap install --classic android-studio
 sudo snap install --classic eclipse
 sudo snap install intellij-idea-ultimate --classic
 sudo snap install node --classic
-sudo snap install telegram-desktop
-sudo snap install teams-for-linux
-sudo snap install pgadmin4
-sudo snap install perplexity-desktop
-sudo snap install scrcpy
+sudo snap install telegram-desktop teams-for-linux pgadmin4 perplexity-desktop scrcpy docker
 
 echo "Installazione di Docker..."
-sudo snap install docker
 sudo snap start docker
 sudo groupadd docker || true
 sudo usermod -aG docker "$USER"
 
 echo "Installazione completata!"
-
-echo "Abilitazione della visualizzazione della percentuale della batteria..."
-gsettings set org.gnome.desktop.interface show-battery-percentage true
