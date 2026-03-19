@@ -4,17 +4,19 @@ set -e
 echo "Aggiornamento del sistema..."
 
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y curl imagemagick \
-  ca-certificates gnupg lsb-release wget apt-transport-https \
-  zram-config preload flatpak git gparted \
-  clamav clamtk postgresql vlc cmake aptitude doxygen graphviz net-tools \
-  gdebi dos2unix texlive-latex-base texlive-latex-extra git-lfs cryptsetup \
-  lvm2 synaptic stacer build-essential libvips-dev jest \
-  linux-tools-common linux-tools-generic gnome-tweaks \
-  default-jdk redis tor hplip hplip-gui
-
-sudo apt install bleachbit
-sudo apt install texlive-pictures texlive-science
+sudo apt install -y \
+  ca-certificates curl gnupg lsb-release wget apt-transport-https net-tools \
+  zram-config preload \
+  build-essential git git-lfs git-filter-repo cmake gdebi dos2unix \
+  openjdk-21-jdk \
+  postgresql redis tor \
+  vlc gparted \
+  graphviz latexmk \
+  texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-fonts-recommended texlive-pictures texlive-science \
+  hplip hplip-gui \
+  gnome-tweaks ptyxis stacer bleachbit \
+  language-pack-it language-pack-it-base language-pack-gnome-it language-pack-gnome-it-base \
+  mythes-it hyphen-it libreoffice-l10n-it libreoffice-help-it
 
 git lfs install
 
