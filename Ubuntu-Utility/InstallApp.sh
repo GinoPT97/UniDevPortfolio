@@ -27,23 +27,16 @@ sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
 sudo systemctl start tor && sudo systemctl enable tor
 sudo systemctl start redis-server && sudo systemctl enable redis-server
 
-# Funzione per scaricare, installare e pulire un pacchetto .deb
 install_deb() {
   local url=$1
-  local file=$(basename "$url")
-  echo "Scaricamento di $file..."
-  wget -q --show-progress "$url" -O "$file"
-  echo "Installazione di $file..."
+  local file="/tmp/$(basename "$url")"
+  echo ">>> Installazione $(basename "$url")..."
+  wget -q --show-progress "$url" -O "$file" || { echo "ERRORE: download fallito"; return 1; }
   sudo dpkg -i "$file" || sudo apt-get install -f -y
-  echo "Pulizia di $file..."
   rm -f "$file"
-  echo "$file installato correttamente."
 }
 
-echo "Installazione di Google Chrome..."
 install_deb "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-
-echo "Installazione di GitHub Desktop..."
 install_deb "https://github.com/shiftkey/desktop/releases/download/release-2.8.1-linux2/GitHubDesktop-linux-2.8.1-linux2.deb"
 
 git config --global user.email "g.pandozzitrani@studenti.unina.it"                                  
