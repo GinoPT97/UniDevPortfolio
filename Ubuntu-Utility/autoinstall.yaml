@@ -25,7 +25,6 @@ autoinstall:
     - git
     - git-lfs
     - git-filter-repo
-    - flatpak
     - cmake
     - aptitude
     - gdebi
@@ -35,7 +34,6 @@ autoinstall:
     - zenity
 
     # --- Java ---
-    - default-jdk
     - openjdk-21-jdk
 
     # --- Database ---
@@ -66,8 +64,6 @@ autoinstall:
     - texlive-fonts-recommended
     - texlive-pictures
     - texlive-science
-    - texlive-lang-italian
-
     # --- Driver ---
     - hplip
     - hplip-gui
@@ -84,15 +80,11 @@ autoinstall:
     - stacer
     - bleachbit
 
-    # --- Android ---
-
-
     # --- Localizzazione italiana ---
     - language-pack-it
     - language-pack-it-base
     - language-pack-gnome-it
     - language-pack-gnome-it-base
-    - texlive-lang-italian
     - mythes-it
     - hyphen-it
     - libreoffice-l10n-it
@@ -141,7 +133,6 @@ autoinstall:
     - curtin in-target -- bash -c 'USER_NAME=$(getent passwd 1000 | cut -d: -f1); su - "$USER_NAME" -c "curl --proto=https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"'
 
     # --- Snap: strumenti sviluppo ---
-    - curtin in-target -- snap install --classic openjdk
     - curtin in-target -- snap install --classic android-studio
     - curtin in-target -- snap install --classic eclipse
     - curtin in-target -- snap install intellij-idea-ultimate --classic
@@ -164,12 +155,6 @@ autoinstall:
     - curtin in-target -- snap start docker
     - curtin in-target -- bash -c 'groupadd docker || true'
     - curtin in-target -- bash -c 'usermod -aG docker "$(getent passwd 1000 | cut -d: -f1)"'
-
-    # RIMOSSO: bleachbit (non presente sul PC)
-    # RIMOSSO: dbeaver-ce (non presente sul PC)
-    # RIMOSSO: android-studio snap (non presente sul PC)
-    # RIMOSSO: pgadmin4 (non presente sul PC)
-    # RIMOSSO: gsettings show-battery-percentage (non funziona senza sessione grafica)
 
   interactive-sections:
     - identity
