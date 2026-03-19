@@ -24,12 +24,12 @@ step()    { echo -e "\n${CYAN}━━━ $1 ━━━${NC}"; }
 
 # --- Configurazione ---
 VM_NAME="Ubuntu2510_AutoinstallTest"
-VM_RAM=6144
+VM_RAM=2048
 VM_DISK=20480
 VM_CPUS=2
 WORK_DIR="$HOME/vm-autoinstall-test"
-UBUNTU_ISO_URL="https://releases.ubuntu.com/25.10/ubuntu-25.10-desktop-amd64.iso"
-UBUNTU_ISO="ubuntu-25.10-desktop-amd64.iso"
+UBUNTU_ISO_URL="https://releases.ubuntu.com/25.10/ubuntu-25.10-live-server-amd64.iso"
+UBUNTU_ISO="ubuntu-25.10-live-server-amd64.iso"
 SEED_ISO="seed.iso"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 AUTOINSTALL_SRC="$SCRIPT_DIR/autoinstall.yaml"
@@ -69,7 +69,7 @@ step "4. Download Ubuntu 25.10 Server"
 if [[ -f "$UBUNTU_ISO" ]]; then
   warning "ISO già presente, salto il download."
 else
-  info "Download in corso..."
+  info "Download in corso (~1.9GB)..."
   wget -q --show-progress "$UBUNTU_ISO_URL" -O "$UBUNTU_ISO"
 fi
 
@@ -80,7 +80,7 @@ fi
 # Questo è il metodo più affidabile — nessuna seed ISO separata necessaria.
 # =============================================================================
 step "5. Patch ISO Ubuntu (user-data + parametro GRUB)"
-PATCHED_ISO="ubuntu-25.10-desktop-autoinstall.iso"
+PATCHED_ISO="ubuntu-25.10-autoinstall.iso"
 
 rm -f "$WORK_DIR/$PATCHED_ISO"
 
@@ -145,11 +145,15 @@ VBoxManage createvm --name "$VM_NAME" --ostype Ubuntu_64 --register
 VBoxManage modifyvm "$VM_NAME" \
   --memory $VM_RAM \
   --cpus $VM_CPUS \
-  --vram 128 \
+  --vram 16 \
   --graphicscontroller vmsvga \
   --boot1 dvd --boot2 disk \
   --nic1 nat \
   --audio-driver none
+
+# Porta forward SSH: localhost:2222 → VM:22
+VBoxManage modifyvm "$VM_NAME" \
+  --nat-pf1 "ssh,tcp,,2222,,22"
 
 VBoxManage createmedium disk \
   --filename "$WORK_DIR/$VM_NAME.vdi" \
@@ -189,9 +193,29 @@ echo -e "${YELLOW}║  4. Controlla il report: ~/install_report.txt            �
 echo -e "${YELLOW}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-VBoxManage startvm "$VM_NAME" --type gui
+VBoxManage startvm "$VM_NAME" --type headless
 
-info "VM avviata. Segui il progresso nella finestra VirtualBox."
+info "VM avviata in modalità headless (nessuna finestra grafica)."
+echo ""
+echo -e "${YELLOW}╔══════════════════════════════════════════════════════════╗${NC}"
+echo -e "${YELLOW}║  L'installazione partirà automaticamente.                ║${NC}"
+echo -e "${YELLOW}║  Al termine la VM si RIAVVIERÀ automaticamente.          ║${NC}"
+echo -e "${YELLOW}║                                                          ║${NC}"
+echo -e "${YELLOW}║  Monitora il progresso con:                              ║${NC}"
+echo -e "${YELLOW}║    VBoxManage showvminfo Ubuntu2510_AutoinstallTest      ║${NC}"
+echo -e "${YELLOW}║                                                          ║${NC}"
+echo -e "${YELLOW}║  Dopo il riavvio, connettiti via SSH:                    ║${NC}"
+echo -e "${YELLOW}║    ssh -p 2222 TUO_UTENTE@localhost                      ║${NC}"
+echo -e "${YELLOW}║                                                          ║${NC}"
+echo -e "${YELLOW}║  Poi esegui la verifica:                                 ║${NC}"
+echo -e "${YELLOW}║    sudo mount /dev/sr0 /mnt                              ║${NC}"
+echo -e "${YELLOW}║    cp /mnt/verify_install.sh ~/                          ║${NC}"
+echo -e "${YELLOW}║    chmod +x ~/verify_install.sh && ~/verify_install.sh   ║${NC}"
+echo -e "${YELLOW}║    cat ~/install_report.txt                              ║${NC}"
+echo -e "${YELLOW}╚══════════════════════════════════════════════════════════╝${NC}"
+echo ""
+echo "Per spegnere la VM:"
+echo "  VBoxManage controlvm '$VM_NAME' poweroff"
 echo ""
 echo "Per eliminare tutto al termine dei test:"
 echo "  VBoxManage unregistervm '$VM_NAME' --delete"
