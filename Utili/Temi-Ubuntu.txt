@@ -1,7 +1,0 @@
-Settare il tema predefinito:
-
-gsettings reset org.gnome.desktop.interface gtk-theme && \
-gsettings reset org.gnome.desktop.interface icon-theme && \
-gsettings reset org.gnome.desktop.interface cursor-theme && \
-gsettings reset org.gnome.desktop.wm.preferences theme
-

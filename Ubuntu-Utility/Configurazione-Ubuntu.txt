@@ -1,0 +1,122 @@
+================================================================================
+                        CONFIGURAZIONE UBUNTU - RIFERIMENTO
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+1. ALIAS E VARIABILI IN ~/.bashrc
+────────────────────────────────────────────────────────────────────────────────
+
+Aprire il file di configurazione della shell:
+
+    nano ~/.bashrc
+
+Aggiungere le seguenti righe:
+
+    # Percorsi base delle repository
+    UNIDIR='/home/kenobi/Documenti/GitHub/UniDevPortfolio'
+
+    # Alias per la gestione di aggiornamenti e ottimizzazioni di sistema
+    alias aggiornamenti="sudo $UNIDIR/Ubuntu-Utility/Aggiornamenti.sh"
+    alias ottimizzazioni="sudo $UNIDIR/Ubuntu-Utility/Ottimizzazioni.sh"
+    alias completo='aggiornamenti && ottimizzazioni'
+
+NOTA: Senza eseguire "source ~/.bashrc", gli alias non vengono caricati
+      e il sistema non li riconosce (rilevante soprattutto per i cron job).
+
+
+────────────────────────────────────────────────────────────────────────────────
+2. PERMESSI SUDO SENZA PASSWORD (visudo)
+────────────────────────────────────────────────────────────────────────────────
+
+Aprire il file sudoers in modalità sicura:
+
+    sudo visudo
+
+Aggiungere le seguenti righe (sotto "# User privilege specification"):
+
+    kenobi ALL=(ALL) NOPASSWD: /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Aggiornamenti.sh
+    kenobi ALL=(ALL) NOPASSWD: /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/Ottimizzazioni.sh
+    kenobi ALL=(ALL) NOPASSWD: /bin/bash /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/SH-Personali/InstallApp.sh
+
+Salvare e chiudere: Ctrl+X → Y → Invio (se si usa nano).
+
+
+────────────────────────────────────────────────────────────────────────────────
+3. PERMESSI ESEGUIBILI DEGLI SCRIPT
+────────────────────────────────────────────────────────────────────────────────
+
+Rendere eseguibili gli script:
+
+    sudo chmod u+x InstallApp.sh
+    sudo chmod u+x Aggiornamenti.sh
+    sudo chmod u+x Ottimizzazioni.sh
+    sudo chmod u+x PermessiSSh.sh
+
+
+────────────────────────────────────────────────────────────────────────────────
+4. CRON JOB
+────────────────────────────────────────────────────────────────────────────────
+
+Aprire il file crontab:
+
+    sudo crontab -e
+
+Righe da inserire:
+
+    # Aggiornamenti ogni ora
+    0 * * * * sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/Aggiornamenti.sh >> /home/kenobi/Documenti/aggiornamenti_log.txt 2>&1
+
+    # Pull e poi Push ogni 30 minuti
+    */30 * * * * git -C /home/kenobi/Documenti/GitHub/CodicePersonale pull origin main >> /home/kenobi/Documenti/pull_log.txt 2>&1
+    */30 * * * * git -C /home/kenobi/Documenti/GitHub/CodicePersonale push origin main >> /home/kenobi/Documenti/push_log.txt 2>&1
+
+    # Ottimizzazioni ogni 2 ore
+    0 */2 * * * sudo /home/kenobi/Documenti/GitHub/CodicePersonale/Ubuntu-Utility/Ottimizzazioni.sh >> /home/kenobi/Documenti/ottimizzazioni_log.txt 2>&1
+
+
+────────────────────────────────────────────────────────────────────────────────
+5. PERMESSI CHIAVE SSH
+────────────────────────────────────────────────────────────────────────────────
+
+    # Imposta i permessi corretti sulla chiave privata
+    sudo chmod 600 ~/.ssh/id_rsa
+
+    # Aggiunge la chiave all'agente SSH
+    ssh-add ~/.ssh/id_rsa
+
+    # Verifica che la chiave sia stata aggiunta correttamente
+    ssh-add -l
+
+
+────────────────────────────────────────────────────────────────────────────────
+6. REPORT PACCHETTI E DRIVER INSTALLATI
+────────────────────────────────────────────────────────────────────────────────
+
+Genera un file di report completo con pacchetti APT, Snap, driver e hardware:
+
+    (echo "### Pacchetti APT installati ###" && dpkg-query -W -f='${binary:Package}\t${Version}\n' | sort && \
+    echo -e "\n### Pacchetti Snap installati ###" && snap list | column -t && \
+    echo -e "\n### Driver disponibili (APT e Snap) ###" && \
+    ubuntu-drivers devices | awk '/recommended|manual/ {print}' | sort && \
+    echo -e "\n### Moduli del Kernel (Driver caricati) ###" && \
+    lsmod | sort && \
+    echo -e "\n### Dettagli moduli NVIDIA (se presenti) ###" && \
+    modinfo nvidia 2>/dev/null && \
+    echo -e "\n### Dettagli moduli di rete ###" && \
+    lsmod | grep -i net && \
+    echo -e "\n### Informazioni hardware (inclusi driver) ###" && \
+    sudo lshw -short) > /home/kenobi/Documenti/pacchettidriver.txt
+
+Il report viene salvato in: /home/kenobi/Documenti/pacchettidriver.txt
+
+
+────────────────────────────────────────────────────────────────────────────────
+7. GESTIONE MACCHINE VIRTUALI (VirtualBox)
+────────────────────────────────────────────────────────────────────────────────
+
+Eliminare una VM e i suoi file associati:
+
+    VBoxManage unregistervm "Ubuntu2510_AutoinstallTest" --delete
+    rm -rf ~/vm-autoinstall-test/
+
+================================================================================
