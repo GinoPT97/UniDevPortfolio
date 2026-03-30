@@ -1,0 +1,23 @@
+Perfetto, il dispositivo è asus::kbd_backlight. Esegui direttamente questi due comandi:
+
+bashsudo tee /etc/systemd/system/kbd-backlight.service << 'EOF'
+[Unit]
+Description=Keyboard backlight
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'echo 2 > /sys/class/leds/asus::kbd_backlight/brightness'
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+avviare il servizio : 
+
+bashsudo systemctl enable --now kbd-backlight.service
+
+Il valore 2 è la luminosità — puoi verificare il massimo con:
+bashcat /sys/class/leds/asus::kbd_backlight/max_brightness
+
+E cambiarlo nel service se vuoi un livello diverso. Al prossimo avvio la retroilluminazione si attiverà automaticamente.

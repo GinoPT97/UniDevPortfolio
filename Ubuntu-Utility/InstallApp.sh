@@ -16,7 +16,7 @@ sudo apt install -y \
   hplip hplip-gui \
   gnome-tweaks ptyxis stacer bleachbit \
   language-pack-it language-pack-it-base language-pack-gnome-it language-pack-gnome-it-base \
-  mythes-it hyphen-it libreoffice-l10n-it libreoffice-help-it
+  mythes-it hyphen-it libreoffice-l10n-it libreoffice-help-it ripgrep
 
 git lfs install
 
