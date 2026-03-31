@@ -115,7 +115,14 @@ clean_apt_packages
 unblock_network_interfaces
 install_snapd
 enable_firewall
-sudo dpkg --purge $(dpkg -l | grep '^rc' | awk '{print $2}' | tr '\n' ' ') 2>/dev/null
+PKGS_RC=$(dpkg -l | grep '^rc' | awk '{print $2}' | tr '\n' ' ')
+if [ -n "$PKGS_RC" ]; then
+    log "INFO" "Rimozione pacchetti rc: $PKGS_RC"
+    dpkg --purge $PKGS_RC 2>/dev/null
+    log "INFO" "Pacchetti rc rimossi."
+else
+    log "INFO" "Nessun pacchetto rc da rimuovere. Salto."
+fi
 sudo rm -rf ~/.cache/thumbnails/*
 # apt modernize-sources -y  # Comando non standard, commentato
 
