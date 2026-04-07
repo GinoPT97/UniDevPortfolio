@@ -127,7 +127,7 @@ sudo rm -rf ~/.cache/thumbnails/*
 # apt modernize-sources -y  # Comando non standard, commentato
 
 # Aggiungi comandi per aggiornare il sistema Ubuntu 24.10
-log "INFO" "Aggiornamento del sistema Ubuntu 24.10..."
+log "INFO" "Aggiornamento del sistema Ubuntu..."
 update_apt_packages
 execute_command "apt-get full-upgrade -y" "Aggiornamento completo"
 execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
@@ -135,7 +135,7 @@ execute_command "apt-get autoremove -y" "Rimozione pacchetti non necessari"
 # Rimuove tutti gli oggetti inutilizzati (container, immagini, network) tranne i volumi
 if command_exists docker; then
     log "INFO" "Pulizia delle risorse Docker inutilizzate..."
-    docker system prune --filter "until=3h" -f
+    docker system prune --filter "until=24h" -f
     log "INFO" "Risorse Docker pulite."
 else
     log "INFO" "Docker non è installato. Salto la pulizia delle risorse Docker."
