@@ -18,6 +18,13 @@ sudo apt install -y \
   language-pack-it language-pack-it-base language-pack-gnome-it language-pack-gnome-it-base \
   mythes-it hyphen-it libreoffice-l10n-it libreoffice-help-it ripgrep
 
+echo "Installazione di VirtualBox e strumenti multimediali..."
+sudo apt install virtualbox -y
+sudo apt install mpv curl ffmpeg -y
+
+echo "Installazione di ani-cli per vedere anime dal terminale..."
+sudo apt install ani-cli -y
+
 git lfs install
 
 echo "Configurazione della password PostgreSQL..."
