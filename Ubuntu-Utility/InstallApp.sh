@@ -1,8 +1,44 @@
 #!/bin/bash
-set -e
+set -Eeuo pipefail
 
-echo "Aggiornamento del sistema..."
+export DEBIAN_FRONTEND=noninteractive
 
+log() {
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+}
+
+trap 'log "ERRORE alla riga $LINENO (exit code: $?)"' ERR
+
+wait_for_apt_locks() {
+  local locks=(
+    /var/lib/dpkg/lock-frontend
+    /var/lib/dpkg/lock
+    /var/cache/apt/archives/lock
+    /var/lib/apt/lists/lock
+  )
+
+  for lock in "${locks[@]}"; do
+    while sudo fuser "$lock" >/dev/null 2>&1; do
+      log "Lock rilevato su $lock, attesa di 5 secondi..."
+      sleep 5
+    done
+  done
+}
+
+install_snap_if_missing() {
+  local pkg="$1"
+  shift || true
+
+  if snap list "$pkg" >/dev/null 2>&1; then
+    log "Snap $pkg gia installato, salto."
+  else
+    sudo snap install "$pkg" "$@"
+  fi
+}
+
+log "Aggiornamento del sistema..."
+
+wait_for_apt_locks
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
   ca-certificates curl gnupg lsb-release wget apt-transport-https net-tools \
@@ -10,6 +46,7 @@ sudo apt install -y \
   build-essential git git-lfs git-filter-repo cmake gdebi dos2unix \
   openjdk-21-jdk \
   postgresql redis tor \
+  virtualbox mpv ffmpeg ani-cli \
   vlc gparted \
   graphviz latexmk \
   texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-fonts-recommended texlive-pictures texlive-science \
@@ -18,26 +55,21 @@ sudo apt install -y \
   language-pack-it language-pack-it-base language-pack-gnome-it language-pack-gnome-it-base \
   mythes-it hyphen-it libreoffice-l10n-it libreoffice-help-it ripgrep
 
-echo "Installazione di VirtualBox e strumenti multimediali..."
-sudo apt install virtualbox -y
-sudo apt install mpv curl ffmpeg -y
-
-echo "Installazione di ani-cli per vedere anime dal terminale..."
-sudo apt install ani-cli -y
+log "Installazione completata dei pacchetti APT principali."
 
 git lfs install
 
-echo "Configurazione della password PostgreSQL..."
+log "Configurazione della password PostgreSQL..."
 sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
 
 # Avvio e abilitazione servizi Tor e Redis
-sudo systemctl start tor && sudo systemctl enable tor
-sudo systemctl start redis-server && sudo systemctl enable redis-server
+sudo systemctl enable --now tor
+sudo systemctl enable --now redis-server
 
 install_deb() {
   local url=$1
   local file="/tmp/$(basename "$url")"
-  echo ">>> Installazione $(basename "$url")..."
+  log ">>> Installazione $(basename "$url")..."
   wget -q --show-progress "$url" -O "$file" || { echo "ERRORE: download fallito"; return 1; }
   sudo dpkg -i "$file" || sudo apt-get install -f -y
   rm -f "$file"
@@ -49,9 +81,10 @@ install_deb "https://github.com/shiftkey/desktop/releases/download/release-2.8.1
 git config --global user.email "g.pandozzitrani@studenti.unina.it"                                  
 git config --global user.name "kenobi1797"
 
-#Installazione di code trmite apt
+# Installazione di VS Code tramite apt
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
+rm -f microsoft.gpg
 
 sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] \
 https://packages.microsoft.com/repos/code stable main" \
@@ -60,23 +93,33 @@ https://packages.microsoft.com/repos/code stable main" \
 sudo apt update
 sudo apt install code
 
-#Installazione di Rust
-echo "Installazione di Rust..."
+# Installazione di Rust
+log "Installazione di Rust..."
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-source $HOME/.cargo/env
 
-echo "Installazione applicazioni Snap..."
-sudo snap install --classic openjdk
-#sudo snap install --classic code
-sudo snap install --classic android-studio
-sudo snap install --classic eclipse
-sudo snap install intellij-idea-ultimate --classic
-sudo snap install node --classic
-sudo snap install telegram-desktop teams-for-linux pgadmin4 perplexity-desktop scrcpy docker
+if [[ -f "$HOME/.cargo/env" ]]; then
+  # shellcheck disable=SC1090
+  source "$HOME/.cargo/env"
+fi
 
-echo "Installazione di Docker..."
+log "Installazione applicazioni Snap..."
+install_snap_if_missing openjdk --classic
+install_snap_if_missing android-studio --classic
+install_snap_if_missing eclipse --classic
+install_snap_if_missing intellij-idea-ultimate --classic
+install_snap_if_missing node --classic
+install_snap_if_missing telegram-desktop
+install_snap_if_missing teams-for-linux
+install_snap_if_missing pgadmin4
+install_snap_if_missing perplexity-desktop
+install_snap_if_missing scrcpy
+install_snap_if_missing docker
+
+log "Installazione di Docker..."
 sudo snap start docker
-sudo groupadd docker || true
+if ! getent group docker >/dev/null; then
+  sudo groupadd docker
+fi
 sudo usermod -aG docker "$USER"
 
-echo "Installazione completata!"
+log "Installazione completata!"
