@@ -30,8 +30,22 @@ update_apt_packages() {
 clean_apt_packages() {
     log "INFO" "Pulizia dei pacchetti inutili e della cache..."
     apt-get autoremove --purge -y
+    apt-get autoclean -y
     apt-get clean -y
     log "INFO" "Pacchetti inutili rimossi e cache pulita."
+}
+
+# Funzione per pulire il journal di systemd
+clean_systemd_journal() {
+    log "INFO" "Verifica spazio occupato dal journal di systemd..."
+    journalctl --disk-usage
+    
+    log "INFO" "Pulizia journal di systemd..."
+    sudo journalctl --flush
+    sudo journalctl --vacuum-time=7d
+    sudo journalctl --vacuum-size=100M
+    
+    log "INFO" "Journal di systemd pulito."
 }
 
 # Funzione per sbloccare tutte le interfacce di rete
@@ -52,6 +66,14 @@ install_snapd() {
 
     log "INFO" "Aggiornamento dei pacchetti Snap..."
     snap refresh
+}
+
+# Funzione per rimuovere gli snap disabilitati
+remove_disabled_snaps() {
+    log "INFO" "Rimozione snap disabilitati..."
+    snap list --all | awk '/disabilitato/{print $1, $3}' | \
+      while read name rev; do sudo snap remove "$name" --revision="$rev"; done
+    log "INFO" "Snap disabilitati rimossi."
 }
 
 # Funzione per gestire i potenziali blocchi di dpkg
@@ -112,8 +134,10 @@ log "INFO" "Inizio aggiornamenti..."
 reload_systemd_and_dpkg
 update_apt_packages
 clean_apt_packages
+clean_systemd_journal
 unblock_network_interfaces
 install_snapd
+remove_disabled_snaps
 enable_firewall
 PKGS_RC=$(dpkg -l | grep '^rc' | awk '{print $2}' | tr '\n' ' ')
 if [ -n "$PKGS_RC" ]; then
