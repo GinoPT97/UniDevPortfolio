@@ -52,17 +52,18 @@ services:
       - "19002:19002"
     environment:
       EXPO_NO_TELEMETRY: "1"
+      EXPO_NO_TYPESCRIPT_SETUP: "1"
       API_BASE_URL: http://server:8080
       CHOKIDAR_USEPOLLING: "true"
     volumes:
       - ./Client:/app
-    command: sh -c "rm -rf node_modules && npm config set fetch-timeout 120000 && npm config set fetch-retry-mintimeout 20000 && npm config set fetch-retry-maxtimeout 120000 && npm install --legacy-peer-deps && npx expo start --host lan --port 8081"
+    command: sh -c "rm -rf node_modules && npm config set fetch-timeout 180000 && npm config set fetch-retry-mintimeout 30000 && npm config set fetch-retry-maxtimeout 180000 && npm install && npx expo start --host lan --port 8081"
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 4G
         reservations:
-          memory: 1G
+          memory: 2G
     restart: unless-stopped
     networks:
       - app-net
