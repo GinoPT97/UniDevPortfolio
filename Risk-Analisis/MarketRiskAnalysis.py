@@ -20,9 +20,12 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
 from pathlib import Path
+import argparse
 from scipy import stats
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.ensemble import IsolationForest
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -389,9 +392,148 @@ def geo_risk_map(df, ax, k=5):
 
 
 # ══════════════════════════════════════════════════════════════
+# 9. COMPOSITE RISK SCORE + ANALISI AVANZATE
+# ══════════════════════════════════════════════════════════════
+def add_composite_risk_score(df):
+    out = df.copy()
+    out["risk_score"] = (
+        (-out["gdp_growth"]).clip(lower=0) * 0.4 +
+        out["inflation"].clip(upper=50) / 50 * 0.35 +
+        out["unemployment"].clip(upper=40) / 40 * 0.25
+    ).round(3)
+    return out
+
+
+def regional_risk_heatmap(df, ax):
+    risk = add_composite_risk_score(df)
+    top_regions = risk["region"].value_counts().head(10).index
+    risk = risk[risk["region"].isin(top_regions)]
+    pv = risk.pivot_table(index="region", columns="year", values="risk_score", aggfunc="mean")
+    im = ax.imshow(pv.values, cmap="YlOrRd", aspect="auto")
+    ax.set_title("Risk Score Medio per Regione/Anno", fontweight="bold")
+    ax.set_xticks(range(len(pv.columns))); ax.set_xticklabels(pv.columns, fontsize=8, rotation=25)
+    ax.set_yticks(range(len(pv.index))); ax.set_yticklabels(pv.index, fontsize=7)
+    plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+
+
+def income_risk_boxplot(df, ax):
+    latest = add_composite_risk_score(df)
+    latest = latest[latest["year"] == latest["year"].max()]
+    order = ["High", "Upper-Mid", "Lower-Mid", "Low"]
+    vals = [latest.loc[latest["income"] == k, "risk_score"].values for k in order if k in latest["income"].values]
+    labels = [k for k in order if k in latest["income"].values]
+    bp = ax.boxplot(vals, labels=labels, patch_artist=True)
+    palette = ["#2980b9", "#27ae60", "#e67e22", "#e74c3c"]
+    for i, patch in enumerate(bp["boxes"]):
+        patch.set_facecolor(palette[i % len(palette)])
+        patch.set_alpha(0.55)
+    ax.set_title(f"Distribuzione Risk Score per Income Group ({latest['year'].max()})", fontweight="bold")
+    ax.set_ylabel("Risk Score")
+    ax.grid(True, axis="y", alpha=0.3)
+
+
+def monte_carlo_global_risk(df, ax, n_sims=8000):
+    X = df[["gdp_growth", "inflation", "unemployment"]].dropna().values
+    mu = X.mean(axis=0)
+    cov = np.cov(X, rowvar=False)
+    sims = np.random.default_rng(42).multivariate_normal(mu, cov, size=n_sims)
+
+    gdp_sim = sims[:, 0]
+    inf_sim = np.clip(sims[:, 1], 0, 80)
+    uem_sim = np.clip(sims[:, 2], 0, 60)
+    risk_sim = ((-gdp_sim).clip(min=0) * 0.4 + (inf_sim / 50) * 0.35 + (uem_sim / 40) * 0.25)
+
+    ax.hist(risk_sim, bins=45, color="#8e44ad", alpha=0.65, edgecolor="white", lw=0.3)
+    q95 = np.percentile(risk_sim, 95)
+    q99 = np.percentile(risk_sim, 99)
+    ax.axvline(q95, color="#e67e22", lw=2, label=f"P95={q95:.2f}")
+    ax.axvline(q99, color="#e74c3c", lw=2, label=f"P99={q99:.2f}")
+    ax.set_title("Monte Carlo — Distribuzione Global Risk Score", fontweight="bold")
+    ax.set_xlabel("Risk Score simulato")
+    ax.set_ylabel("Frequenza")
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+
+    print("\n[Monte Carlo Global Risk]")
+    print(f"  Media: {risk_sim.mean():.3f}  |  P95: {q95:.3f}  |  P99: {q99:.3f}")
+
+
+def pca_anomaly_diagnostics(df, ax):
+    latest = df[df["year"] == df["year"].max()].copy()
+    X = latest[["gdp_growth", "inflation", "unemployment"]].ffill().bfill()
+    Xs = StandardScaler().fit_transform(X)
+
+    pca = PCA(n_components=2, random_state=42)
+    z = pca.fit_transform(Xs)
+
+    iso = IsolationForest(contamination=0.14, random_state=42)
+    pred = iso.fit_predict(Xs)
+    latest["is_anomaly"] = pred == -1
+
+    colors = np.where(latest["is_anomaly"], "#e74c3c", "#3498db")
+    ax.scatter(z[:, 0], z[:, 1], c=colors, alpha=0.8, s=45, edgecolors="white", linewidths=0.4)
+    ax.set_title("PCA + Anomaly Detection (ultimo anno)", fontweight="bold")
+    ax.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)")
+    ax.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)")
+    ax.grid(True, alpha=0.25)
+
+    outliers = latest[latest["is_anomaly"]].nlargest(8, "inflation")
+    for _, r in outliers.iterrows():
+        idx = latest.index.get_loc(r.name)
+        ax.annotate(r["iso"], (z[idx, 0], z[idx, 1]), fontsize=7,
+                    xytext=(3, 3), textcoords="offset points")
+
+    print("\n[PCA + Anomaly Detection]")
+    print(f"  Varianza spiegata PC1+PC2: {(pca.explained_variance_ratio_.sum()*100):.2f}%")
+    print("  Paesi anomali (top per inflazione):")
+    for _, r in outliers.iterrows():
+        print(f"    {r['iso']}: PIL {r['gdp_growth']:+.1f}% | Inf {r['inflation']:.1f}% | Uem {r['unemployment']:.1f}%")
+
+
+def stress_test_summary(df):
+    latest = add_composite_risk_score(df)
+    latest = latest[latest["year"] == latest["year"].max()].copy()
+
+    scenarios = {
+        "Base": dict(gdp=0.0, inf=0.0, uem=0.0),
+        "Recessione": dict(gdp=-2.5, inf=1.0, uem=1.5),
+        "Inflazione": dict(gdp=-0.5, inf=5.0, uem=0.5),
+        "Shock Severo": dict(gdp=-4.0, inf=7.0, uem=2.5),
+    }
+
+    print("\n[Stress Test — Risk Score medio per scenario]")
+    print(f"  {'Scenario':<14} {'Score Medio':>11}  {'Top 3 paesi più rischiosi':>30}")
+    for name, s in scenarios.items():
+        tmp = latest.copy()
+        tmp["gdp_growth"] += s["gdp"]
+        tmp["inflation"] = (tmp["inflation"] + s["inf"]).clip(lower=0)
+        tmp["unemployment"] = (tmp["unemployment"] + s["uem"]).clip(lower=0)
+        tmp = add_composite_risk_score(tmp)
+        top3 = ", ".join(tmp.nlargest(3, "risk_score")["iso"].tolist())
+        print(f"  {name:<14} {tmp['risk_score'].mean():>11.3f}  {top3:>30}")
+
+
+def risk_change_analysis(df):
+    r = add_composite_risk_score(df)
+    first_y, last_y = r["year"].min(), r["year"].max()
+    first = r[r["year"] == first_y][["iso", "risk_score"]].rename(columns={"risk_score": "risk_first"})
+    last = r[r["year"] == last_y][["iso", "risk_score"]].rename(columns={"risk_score": "risk_last"})
+    d = first.merge(last, on="iso", how="inner")
+    d["delta"] = (d["risk_last"] - d["risk_first"]).round(3)
+
+    print(f"\n[Variazione rischio {first_y} → {last_y}]")
+    print("  Peggioramenti top 5:")
+    for _, row in d.sort_values("delta", ascending=False).head(5).iterrows():
+        print(f"    {row['iso']}: +{row['delta']:.3f}")
+    print("  Miglioramenti top 5:")
+    for _, row in d.sort_values("delta", ascending=True).head(5).iterrows():
+        print(f"    {row['iso']}: {row['delta']:.3f}")
+
+
+# ══════════════════════════════════════════════════════════════
 # MAIN
 # ══════════════════════════════════════════════════════════════
-def main(use_real_data=False):
+def main(use_real_data=False, show_plots=True, save_png=True, k_clusters=5):
     if use_real_data:
         try:
             print("[+] Fetch World Bank API...")
@@ -415,8 +557,8 @@ def main(use_real_data=False):
 
     df = eda(df)
 
-    # ── Dashboard 2×3 ─────────────────────────────────────────
-    fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+    # ── Dashboard 3×3 ─────────────────────────────────────────
+    fig, axes = plt.subplots(3, 3, figsize=(19, 14))
     fig.suptitle("Market Risk Analysis — Indicatori Macroeconomici Globali 2015–2023\n"
                  "(Parametri calibrati su World Bank Open Data)",
                  fontsize=13, fontweight="bold", y=1.01)
@@ -455,27 +597,59 @@ def main(use_real_data=False):
         print(f"  {r['iso']:>4}  {r['gdp_growth']:>6.1f}  {r['inflation']:>6.1f}"
               f"  {r['unemployment']:>6.1f}  {r['risk_score']:>7.3f}")
 
-    plt.tight_layout()
-    plt.show()
+    regional_risk_heatmap(df, axes[2,0])
+    pca_anomaly_diagnostics(df, axes[2,1])
+    monte_carlo_global_risk(df, axes[2,2])
+    stress_test_summary(df)
+    risk_change_analysis(df)
 
-    base_dir = Path(__file__).resolve().parent
-    out_dir = base_dir / "outputs" / "market_risk_analysis"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out1 = out_dir / "market_risk_dashboard.png"
-    plt.savefig(out1, dpi=150, bbox_inches="tight")
-    print(f"\n[✓] Dashboard → {out1}")
+    plt.tight_layout()
+    out_dir = None
+    if save_png:
+        base_dir = Path(__file__).resolve().parent
+        out_dir = base_dir / "outputs" / "market_risk_analysis"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out1 = out_dir / "market_risk_dashboard.png"
+        plt.savefig(out1, dpi=150, bbox_inches="tight")
+        print(f"\n[✓] Dashboard → {out1}")
+    if show_plots:
+        plt.show()
 
     # ── Mappa geografica ──────────────────────────────────────
     fig2, ax2 = plt.subplots(figsize=(16, 8))
     fig2.patch.set_facecolor("#0d1117")
-    geo_risk_map(df, ax2)
+    geo_risk_map(df, ax2, k=k_clusters)
     plt.tight_layout()
-    plt.show()
-    out2 = out_dir / "market_risk_map.png"
-    plt.savefig(out2, dpi=150, bbox_inches="tight")
-    print(f"[✓] Mappa → {out2}")
+    if save_png and out_dir is not None:
+        out2 = out_dir / "market_risk_map.png"
+        plt.savefig(out2, dpi=150, bbox_inches="tight")
+        print(f"[✓] Mappa → {out2}")
+    if show_plots:
+        plt.show()
+
+    # ── Figura avanzata aggiuntiva ───────────────────────────
+    fig3, ax3 = plt.subplots(figsize=(10, 6))
+    fig3.patch.set_facecolor("#f0f2f5")
+    ax3.set_facecolor("#fff")
+    income_risk_boxplot(df, ax3)
+    plt.tight_layout()
+    if save_png and out_dir is not None:
+        out3 = out_dir / "market_risk_income_boxplot.png"
+        plt.savefig(out3, dpi=150, bbox_inches="tight")
+        print(f"[✓] Figura avanzata → {out3}")
+    if show_plots:
+        plt.show()
     print("\n  ANALISI COMPLETATA ✓")
 
 
 if __name__ == "__main__":
-    main(use_real_data=False)  # ← cambia a True per dati World Bank reali
+    parser = argparse.ArgumentParser(description="Market Risk Analysis")
+    parser.add_argument("--real-data", action="store_true", help="Usa dati reali World Bank")
+    parser.add_argument("--no-show", action="store_true", help="Non mostrare le figure")
+    parser.add_argument("--no-save-png", action="store_true", help="Non salvare PNG in outputs")
+    parser.add_argument("--clusters", type=int, default=5, help="Numero cluster KMeans per mappa")
+    args = parser.parse_args()
+    main(use_real_data=args.real_data,
+         show_plots=not args.no_show,
+         save_png=not args.no_save_png,
+         k_clusters=max(2, args.clusters))
