@@ -80,6 +80,7 @@ void CreateTablesIfNotExist(PGconn *conn) {
          "NumeroCopieDisponibili SMALLINT NOT NULL CHECK (NumeroCopieDisponibili >= 0),"
          "NumeroCopieInPrestito SMALLINT NOT NULL DEFAULT 0 CHECK (NumeroCopieInPrestito >= 0),"
          "Stato VARCHAR(20) DEFAULT 'disponibile');", "FILM"},
+        {"ALTER TABLE FILM ADD COLUMN IF NOT EXISTS Stato VARCHAR(20) DEFAULT 'disponibile';", "FILM.Stato"},
         {"CREATE INDEX IF NOT EXISTS idx_titolo ON FILM (Titolo);", "idx_titolo"},
         {"CREATE INDEX IF NOT EXISTS idx_genere ON FILM (Genere);", "idx_genere"},
         {"CREATE TABLE IF NOT EXISTS UTENTE ("

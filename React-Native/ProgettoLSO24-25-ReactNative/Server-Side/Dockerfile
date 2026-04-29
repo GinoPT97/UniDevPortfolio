@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc libcurl4-openssl-dev libjson-c-dev libpq-dev && \
+    build-essential libcurl4-openssl-dev libjson-c-dev libpq-dev && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
