@@ -1,0 +1,188 @@
+services:
+  # Servizio server
+  server:
+    build: ./Server-Side
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: LSO-24-25
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    init: true
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-net
+    restart: on-failure
+
+  # Servizio database
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: LSO-24-25
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d LSO-24-25"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # Servizio emulatore Android (Ottimizzato per performance)
+  android-emulator:
+    container_name: android-container
+    image: budtmo/docker-android:emulator_14.0  # Versione più recente e ottimizzata
+    privileged: true
+    devices:
+      - /dev/kvm:/dev/kvm
+    ports:
+      - "5555:5555"   # Solo ADB
+      - "6080:6080"   # VNC web
+    environment:
+      EMULATOR_DEVICE: "Nexus 5"
+      EMULATOR_MEMORY: "512"           # RAM aumentata per prestazioni migliori
+      EMULATOR_INTERNAL_STORAGE: "512" # Memoria interna aumentata
+      EMULATOR_RESOLUTION: "480x800"   # Risoluzione più bilanciata
+      WEB_VNC: "true"                  # Abilita VNC
+      DISABLE_ANIMATIONS: "true"       # Disabilita animazioni
+      GOOGLE_APPS: "false"             # Disabilita servizi Google
+      GPU_MODE: "host"                 # Abilita accelerazione GPU
+      HWACCEL: "true"                  # Accelerazione hardware
+    command: ["/bin/bash", "-c", "emulator -avd Nexus_5 -no-window -no-audio -no-boot-anim -gpu host -memory 512 -partition-size 512 -skin 480x800 -no-snapshot -camera-back none -camera-front none -no-sensors -no-keyboard -accel on -no-skin -netfast"]
+    restart: always
+    networks:
+      - app-net
+    healthcheck:
+      test: ["CMD", "adb", "shell", "getprop", "sys.boot_completed"]
+      interval: 20s  # Controlli più frequenti
+      timeout: 10s
+      retries: 3
+    shm_size: 2gb  # Memoria condivisa per prestazioni migliori
+
+  android-emulator-2:
+    container_name: android-container-2
+    image: budtmo/docker-android:emulator_14.0  # Versione più recente e ottimizzata
+    privileged: true
+    devices:
+      - /dev/kvm:/dev/kvm
+    ports:
+      - "5556:5555"   # Solo ADB, porta host diversa
+      - "6081:6080"   # VNC web
+    environment:
+      EMULATOR_DEVICE: "Nexus 5"
+      EMULATOR_MEMORY: "512"
+      EMULATOR_INTERNAL_STORAGE: "512"
+      EMULATOR_RESOLUTION: "480x800"
+      WEB_VNC: "true"
+      DISABLE_ANIMATIONS: "true"
+      GOOGLE_APPS: "false"
+      GPU_MODE: "host"                 # Abilita accelerazione GPU
+      HWACCEL: "true"                  # Accelerazione hardware
+    command: ["/bin/bash", "-c", "emulator -avd Nexus_5 -no-window -no-audio -no-boot-anim -gpu host -memory 512 -partition-size 512 -skin 480x800 -no-snapshot -camera-back none -camera-front none -no-sensors -no-keyboard -accel on -no-skin -netfast"]
+    restart: always
+    networks:
+      - app-net
+    healthcheck:
+      test: ["CMD", "adb", "shell", "getprop", "sys.boot_completed"]
+      interval: 20s  # Controlli più frequenti
+      timeout: 10s
+      retries: 3
+    shm_size: 2gb  # Memoria condivisa per prestazioni migliori
+
+  # Servizio client
+  client:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+    container_name: android-client
+    depends_on:
+      android-emulator:
+        condition: service_healthy
+      android-emulator-2:
+        condition: service_healthy
+      server:
+        condition: service_started
+    volumes:
+      - gradle-cache:/home/gradle/.gradle
+      - ./Client:/home/gradle/project
+      - android-sdk-cache:/opt/android-sdk
+    networks:
+      - app-net
+    environment:
+      SERVER_URL: http://server:8080
+      SERIAL1: android-container:5555
+      SERIAL2: android-container-2:5555
+      GRADLE_OPTS: "-Xmx512m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true"
+      JAVA_TOOL_OPTIONS: "-Xmx512m"
+    command: |
+      bash -lc "
+        set -e
+
+        log() { echo \"[$(date '+%H:%M:%S')] $1\"; }
+
+        # Primo emulatore
+        until adb connect android-container:5555; do
+          log \"ADB1 non ancora disponibile, ritento tra 3 secondi...\"
+          sleep 3
+        done
+        adb -s android-container:5555 wait-for-device
+        until adb -s android-container:5555 shell getprop sys.boot_completed | tr -d '\r' | grep -q '^1$'; do
+          log \"Attendo boot completo su emulatore 1...\"
+          sleep 2
+        done
+
+        # Secondo emulatore
+        until adb connect android-container-2:5555; do
+          log \"ADB2 non ancora disponibile, ritento tra 3 secondi...\"
+          sleep 3
+        done
+        adb -s android-container-2:5555 wait-for-device
+        until adb -s android-container-2:5555 shell getprop sys.boot_completed | tr -d '\r' | grep -q '^1$'; do
+          log \"Attendo boot completo su emulatore 2...\"
+          sleep 2
+        done
+
+        # Installazione APK su entrambi
+        log \"Install APK su emulatore 1…\"
+        adb -s android-container:5555 install -r /app/app-debug.apk
+        log \"Install APK su emulatore 2…\"
+        adb -s android-container-2:5555 install -r /app/app-debug.apk
+
+        # Avvio app su entrambi
+        log \"Avvio app su emulatore 1…\"
+        adb -s android-container:5555 shell am start -n com.LSO.cinebox/.LoginActivity
+        log \"Avvio app su emulatore 2…\"
+        adb -s android-container-2:5555 shell am start -n com.LSO.cinebox/.LoginActivity
+
+        # Logcat su entrambi (solo crash, nessun processo in background)
+        log \"Avvio adb logcat filtrato per crash su emulatore 1...\"
+        adb -s android-container:5555 logcat AndroidRuntime:E *:S &
+        log \"Avvio adb logcat filtrato per crash su emulatore 2...\"
+        adb -s android-container-2:5555 logcat AndroidRuntime:E *:S &
+
+        wait
+      "
+    restart: on-failure
+
+volumes:
+  db-data:
+    driver: local
+  android-sdk-cache:
+    driver: local
+  gradle-cache:
+    driver: local
+
+networks:
+  app-net:
+    driver: bridge
