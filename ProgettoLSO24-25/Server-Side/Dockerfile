@@ -24,7 +24,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     TINI_SUBREAPER=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates libcurl4 libjson-c5 libpq5 locales tini && \
+    ca-certificates libcurl4 libjson-c5 libpq5 libssl3 locales tini && \
     locale-gen en_US.UTF-8 && \
     rm -rf /var/lib/apt/lists/*
 
