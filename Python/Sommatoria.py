@@ -13,21 +13,21 @@ def calcola_stagione_2024_25():
     Calcola i rimborsi per la stagione 2024/2025.
     :return: tuple (rimborsi_totali, pagato_totale, da_ricevere)
     """
-    Rimborso = [37, 57, 79, 63, 61, 57, 61, 70, 63, 61, 79, 63, 63, 63, 63, 61, 63, 70, 63, 79, 
+    rimborso = [37, 57, 79, 63, 61, 57, 61, 70, 63, 61, 79, 63, 63, 63, 63, 61, 63, 70, 63, 79, 
                 61, 63, 57, 61, 63, 70, 70, 57, 61, 61, 63, 61, 63, 37, 61, 89, 63, 63, 61, 57, 
                 63, 57, 61, 57, 61, 63, 70, 63, 70, 63, 70, 89, 63, 63, 63, 57, 61, 63]
     
-    Pagato = [573, 173, 118, 63, 131, 205, 124, 372, 142, 57, 127, 61, 63, 98, 89, 183, 114, 63,
+    pagato = [573, 173, 118, 63, 131, 205, 124, 372, 142, 57, 127, 61, 63, 98, 89, 183, 114, 63,
               194, 203, 152, 120, 250]
     
-    somma_rimborso = somma_lista(Rimborso)
-    somma_pagato = somma_lista(Pagato)
+    somma_rimborso = somma_lista(rimborso)
+    somma_pagato = somma_lista(pagato)
     differenza = somma_rimborso - somma_pagato
     
     print("\n STAGIONE 2024/2025")
     print("-" * 60)
-    print(f"Rimborsi totali: {len(Rimborso)} gare = €{somma_rimborso}")
-    print(f"Pagato: {len(Pagato)} pagamenti = €{somma_pagato}")
+    print(f"Rimborsi totali: {len(rimborso)} gare = €{somma_rimborso}")
+    print(f"Pagato: {len(pagato)} pagamenti = €{somma_pagato}")
     print(f"Da ricevere: €{differenza}")
     
     return somma_rimborso, somma_pagato, differenza
@@ -38,18 +38,18 @@ def calcola_stagione_2025_26():
     Calcola i rimborsi per la stagione 2025/2026.
     :return: tuple (rimborsi_totali, pagato_totale, da_ricevere)
     """
-    Rimborso = [63, 79, 70, 61, 63, 63, 63, 70, 70, 61, 70, 79, 63, 70, 63, 63, 70, 61, 61, 70, 63, 63, 70, 61, 70, 70, 63, 61, 70, 54, 37, 63, 70, 63, 79, 63, 63, 61, 61, 37, 63, 63, 63, 63]
+    rimborso = [63, 79, 70, 61, 63, 63, 63, 70, 70, 61, 70, 79, 63, 70, 63, 63, 70, 61, 61, 70, 63, 63, 70, 61, 70, 70, 63, 61, 70, 54, 37, 63, 70, 63, 79, 63, 63, 61, 61, 37, 63, 63, 63, 63]
     
-    Pagato = [63, 140, 259, 350, 133, 131, 257, 133, 107, 196, 142, 61, 37]
+    pagato = [63, 140, 259, 350, 133, 131, 257, 133, 107, 196, 142, 61, 37]
     
-    somma_rimborso = somma_lista(Rimborso)
-    somma_pagato = somma_lista(Pagato)
+    somma_rimborso = somma_lista(rimborso)
+    somma_pagato = somma_lista(pagato)
     differenza = somma_rimborso - somma_pagato
     
     print("\n STAGIONE 2025/2026")
     print("-" * 60)
-    print(f"Rimborsi totali: {len(Rimborso)} gare = €{somma_rimborso}")
-    print(f"Pagato: {len(Pagato)} pagamenti = €{somma_pagato}")
+    print(f"Rimborsi totali: {len(rimborso)} gare = €{somma_rimborso}")
+    print(f"Pagato: {len(pagato)} pagamenti = €{somma_pagato}")
     print(f"Da ricevere: €{differenza}")
     
     return somma_rimborso, somma_pagato, differenza
