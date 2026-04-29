@@ -56,7 +56,13 @@ services:
       CHOKIDAR_USEPOLLING: "true"
     volumes:
       - ./Client:/app
-    command: sh -c "rm -rf node_modules && npm install && npx expo start --host lan --port 8081"
+    command: sh -c "rm -rf node_modules && npm config set fetch-timeout 120000 && npm config set fetch-retry-mintimeout 20000 && npm config set fetch-retry-maxtimeout 120000 && npm install --legacy-peer-deps && npx expo start --host lan --port 8081"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
     restart: unless-stopped
     networks:
       - app-net
