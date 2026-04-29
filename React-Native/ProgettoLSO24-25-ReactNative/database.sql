@@ -11,7 +11,8 @@ CREATE TABLE FILM (
   Popularita DECIMAL(10, 2) CHECK (Popularita >= 0),
   Prezzo DECIMAL(10, 2) NOT NULL CHECK (Prezzo >= 0),
   NumeroCopieDisponibili SMALLINT NOT NULL CHECK (NumeroCopieDisponibili >= 0),
-  NumeroCopieInPrestito SMALLINT NOT NULL DEFAULT 0 CHECK (NumeroCopieInPrestito >= 0)
+  NumeroCopieInPrestito SMALLINT NOT NULL DEFAULT 0 CHECK (NumeroCopieInPrestito >= 0),
+  Stato VARCHAR(20) DEFAULT 'disponibile'
 );
 
 CREATE INDEX idx_titolo ON FILM (Titolo);
