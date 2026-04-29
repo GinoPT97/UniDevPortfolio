@@ -55,10 +55,9 @@ services:
       API_BASE_URL: http://server:8080
       CHOKIDAR_USEPOLLING: "true"
     volumes:
-      - ../:/app
+      - ./Client:/app
       - rn-node-modules:/app/node_modules
-    command: >
-      sh -lc "npm ci && npx expo start --host lan --port 8081"
+    command: sh -c "npm install && npx expo start --host lan --port 8081"
     restart: unless-stopped
     networks:
       - app-net
