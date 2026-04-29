@@ -220,18 +220,59 @@ def compute_var(df, ax):
     ax.set(xlabel="Magnitudo", ylabel="Densità", title="Distribuzione Magnitudo & VaR")
     ax.legend(fontsize=8); ax.grid(True,alpha=0.3)
 
+def _likelihood_from_frequency(freq):
+    if freq > 0.40:
+        return 5
+    if freq > 0.20:
+        return 4
+    if freq > 0.08:
+        return 3
+    if freq > 0.02:
+        return 2
+    return 1
+
+def _build_risk_rows(df, cls_def):
+    total = len(df)
+    rows = []
+    for label, (lo, hi, sev) in cls_def.items():
+        count = len(df[(df["magnitude"] >= lo) & (df["magnitude"] < hi)])
+        freq = count / total if total else 0
+        likelihood = _likelihood_from_frequency(freq)
+        rows.append({
+            "cls": label,
+            "n": count,
+            "fr": freq,
+            "lik": likelihood,
+            "sev": sev,
+            "sc": likelihood * sev,
+        })
+    return rows
+
+def _annotate_risk_matrix(ax, matrix):
+    for i in range(5):
+        for j in range(5):
+            value = matrix[i, j]
+            if value <= 0:
+                continue
+            text_color = "white" if value > 12 else "black"
+            ax.text(
+                j,
+                i,
+                f"{value:.0f}",
+                ha="center",
+                va="center",
+                fontweight="bold",
+                fontsize=10,
+                color=text_color,
+            )
+
 # ══════════════════════════════════════════════════════════════
 # 6. RISK MATRIX 5×5
 # ══════════════════════════════════════════════════════════════
 def risk_matrix(df, ax):
     cls_def = {"Minor\n4–4.9":(4,4.9,1),"Moderate\n5–5.9":(5,5.9,2),
                "Strong\n6–6.9":(6,6.9,3),"Major\n7–7.9":(7,7.9,4),"Great\n8+":(8,12,5)}
-    total = len(df); rows = []
-    for lbl,(lo,hi,sev) in cls_def.items():
-        cnt = len(df[(df["magnitude"]>=lo)&(df["magnitude"]<hi)])
-        fr  = cnt/total if total else 0
-        lik = 5 if fr>.40 else 4 if fr>.20 else 3 if fr>.08 else 2 if fr>.02 else 1
-        rows.append(dict(cls=lbl,n=cnt,fr=fr,lik=lik,sev=sev,sc=lik*sev))
+    rows = _build_risk_rows(df, cls_def)
     mat = np.zeros((5,5))
     for r in rows:
         mat[5-r["lik"], r["sev"]-1] = r["sc"]
@@ -241,11 +282,7 @@ def risk_matrix(df, ax):
     ax.set_yticks(range(5)); ax.set_yticklabels(["V.Likely","Likely","Possible","Unlikely","Rare"],fontsize=8)
     ax.set(xlabel="Severity →",ylabel="← Likelihood",title="Risk Matrix (5×5)")
     plt.colorbar(im,ax=ax,label="Risk Score")
-    for i in range(5):
-        for j in range(5):
-            v=mat[i,j]
-            if v>0: ax.text(j,i,f"{v:.0f}",ha="center",va="center",
-                            fontweight="bold",fontsize=10,color="white" if v>12 else "black")
+    _annotate_risk_matrix(ax, mat)
     print("\n[Risk Matrix — Likelihood × Severity]")
     print(f"  {'Classe':<18}  {'N':>5}  {'Freq%':>6}  {'Lik':>4}  {'Sev':>4}  {'Score':>6}")
     for r in sorted(rows,key=lambda x:-x["sc"]):
@@ -256,9 +293,9 @@ def risk_matrix(df, ax):
 # ══════════════════════════════════════════════════════════════
 def geo_clustering(df, ax, k=6):
     X  = df[["lat","lon","magnitude"]].dropna()
-    Xs = StandardScaler().fit_transform(X)
+    scaled_features = StandardScaler().fit_transform(X)
     km = KMeans(n_clusters=k, random_state=42, n_init=10)
-    df2 = X.copy(); df2["cluster"] = km.fit_predict(Xs)
+    df2 = X.copy(); df2["cluster"] = km.fit_predict(scaled_features)
     cs = df2.groupby("cluster").agg(n=("magnitude","size"),
                                     mm=("magnitude","mean"),
                                     mx=("magnitude","max")).reset_index()
@@ -278,9 +315,7 @@ def geo_clustering(df, ax, k=6):
         bar="█"*int(r["rs"]*20)
         print(f"  {int(r['cluster']):>8}  {r['n']:>5}  {r['mm']:>9.2f}  {r['mx']:>7.2f}  {r['rs']:>7.3f}  {bar}")
 
-# ══════════════════════════════════════════════════════════════
-# MAIN
-# ══════════════════════════════════════════════════════════════
+# Main entry point
 def main(use_real_data=True):
     if use_real_data:
         try:
