@@ -1,0 +1,21 @@
+API Read Access Token:
+
+eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NzFiMzdhNWUyMjZmZDg0M2Q5NDYwZmUzM2M0MTQxMiIsIm5iZiI6MTczNTQ2MjM2OC4xODksInN1YiI6IjY3NzEwZGUwNmNjNGNhZjhmYjkyYjA5ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.po48WVaIx3zHdkZDglJPbOk8Uf4tcOjr7ayJGkXhqzE
+
+Chiave API :
+
+771b37a5e226fd843d9460fe33c41412
+
+scrcpy : (Installazione sudo snap scrcpy)
+
+Emulatori Android (ADB & scrcpy):
+
+# Emulatore 1
+adb connect localhost:5555 && scrcpy -s localhost:5555 --window-title "Emulatore 1"
+
+# Emulatore 2
+adb connect localhost:5556 && scrcpy -s localhost:5556 --window-title "Emulatore 2"
+
+Accesso VNC via browser:
+- Emulatore 1: http://localhost:6080
+- Emulatore 2: http://localhost:6081

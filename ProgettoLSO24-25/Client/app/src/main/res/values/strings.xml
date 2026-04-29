@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">CineBox</string>
+    <string name="nav_header_title">CineBox</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="switch_layout">Cambia Layout</string>
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_notification">Notifiche</string>
+    <string name="dashboard_title">Benvenuto</string>
+    <string name="menu_catalogo">Catalogo</string>
+    <string name="menu_carrello">Carrello</string>
+    <string name="film_poster">Locandina film</string>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_dashboard">
+
+    <fragment
+        android:id="@+id/nav_catalogo"
+        android:name="com.LSO.cinebox.UI.catalogo.CatalogoFragment"
+        android:label="Catalogo"
+        tools:layout="@layout/fragment_catalogo" />
+
+    <fragment
+        android:id="@+id/nav_carrello"
+        android:name="com.LSO.cinebox.UI.carrello.CarrelloFragment"
+        android:label="Carrello"
+        tools:layout="@layout/fragment_carrello" />
+
+    <fragment
+        android:id="@+id/nav_dashboard"
+        android:name="com.LSO.cinebox.UI.dashboard.DashBoardFragment"
+        android:label="@string/menu_dashboard"
+        tools:layout="@layout/fragment_dash_board" />
+
+    <fragment
+        android:id="@+id/nav_notification"
+        android:name="com.LSO.cinebox.UI.notification.NotificationFragment"
+        android:label="@string/menu_notification"
+        tools:layout="@layout/fragment_notification" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.LSO.cinebox.UI.settings.SettingsFragment"
+        android:label="Impostazioni"
+        tools:layout="@layout/fragment_settings" />
+</navigation>

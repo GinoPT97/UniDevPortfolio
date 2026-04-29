@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".UI.carrello.CarrelloFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCarrello"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:background="@drawable/spinner_background" />
+
+    <TextView
+        android:id="@+id/total_price_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:gravity="end"
+        android:text="Totale: €0.00"
+        android:textColor="@color/accent"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <Button
+            android:id="@+id/buttonClearCart"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            style="@style/Widget.CineBox.Button"
+            android:layout_marginEnd="12dp"
+            android:backgroundTint="@color/secondary"
+            android:text="Svuota Carrello"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:elevation="2dp" />
+
+        <Button
+            android:id="@+id/buttonCheckout"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            style="@style/Widget.CineBox.Button"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="Checkout"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:elevation="2dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/admin_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="18dp"
+        android:background="@drawable/spinner_background"
+        android:layout_marginTop="12dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Imposta massimo noleggi per utente"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/max_rentals_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="Numero massimo di noleggi"
+            android:background="@android:drawable/edit_text"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/set_max_rentals_button"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Imposta"
+            android:layout_gravity="end"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:elevation="2dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/empty_cart_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Il carrello è vuoto"
+        android:textSize="18sp"
+        android:textColor="@color/primary"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="32dp"/>
+</LinearLayout>
