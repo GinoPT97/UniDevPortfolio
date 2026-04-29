@@ -31,7 +31,7 @@ COPY app/src /home/gradle/project/app/src
 
 RUN gradle assembleDebug --no-daemon
 
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends adb && rm -rf /var/lib/apt/lists/*

@@ -1,0 +1,74 @@
+services:
+  db:
+    image: postgres:16
+    pull_policy: missing
+    environment:
+      POSTGRES_DB: LSO-24-25
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./database.sql:/docker-entrypoint-initdb.d/01-database.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d LSO-24-25"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - app-net
+
+  server:
+    build: ./Server-Side
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: LSO-24-25
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    init: true
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - app-net
+
+  react-native-client:
+    image: node:20-bookworm
+    working_dir: /app
+    depends_on:
+      server:
+        condition: service_started
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+    environment:
+      EXPO_NO_TELEMETRY: "1"
+      API_BASE_URL: http://server:8080
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ../:/app
+      - rn-node-modules:/app/node_modules
+    command: >
+      sh -lc "npm ci && npx expo start --host lan --port 8081"
+    restart: unless-stopped
+    networks:
+      - app-net
+
+volumes:
+  db-data:
+    driver: local
+  rn-node-modules:
+    driver: local
+
+networks:
+  app-net:
+    driver: bridge
