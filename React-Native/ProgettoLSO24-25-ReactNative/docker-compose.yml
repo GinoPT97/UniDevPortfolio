@@ -56,16 +56,13 @@ services:
       CHOKIDAR_USEPOLLING: "true"
     volumes:
       - ./Client:/app
-      - rn-node-modules:/app/node_modules
-    command: sh -c "npm install && npx expo start --host lan --port 8081"
+    command: sh -c "rm -rf node_modules && npm install && npx expo start --host lan --port 8081"
     restart: unless-stopped
     networks:
       - app-net
 
 volumes:
   db-data:
-    driver: local
-  rn-node-modules:
     driver: local
 
 networks:
