@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">CineBox</string>
+    <string name="app_logo">Logo CineBox</string>
     <string name="nav_header_title">CineBox</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="switch_layout">Cambia Layout</string>
@@ -9,4 +10,15 @@
     <string name="menu_catalogo">Catalogo</string>
     <string name="menu_carrello">Carrello</string>
     <string name="film_poster">Locandina film</string>
+    <string name="login_title">Accedi a CineBox</string>
+    <string name="register_title">Crea il tuo account</string>
+    <string name="login_subtitle">Noleggia i tuoi film preferiti in pochi tap</string>
+    <string name="register_subtitle">Registrati e inizia subito a esplorare il catalogo</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm_password">Conferma password</string>
+    <string name="login_button">Login</string>
+    <string name="register_button">Registrati</string>
+    <string name="register_link">Non hai un account? Registrati qui</string>
+    <string name="back_to_login">Hai già un account? Torna al login</string>
 </resources>

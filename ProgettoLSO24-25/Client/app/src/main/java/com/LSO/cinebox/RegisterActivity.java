@@ -6,6 +6,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.LSO.cinebox.Infrastructure.ServerConnect;
 public class RegisterActivity extends AppCompatActivity {
     private EditText usernameField, passwordField, confirmPasswordField;
     private Button registerButton, togglePasswordVisibilityButton, toggleConfirmPasswordVisibilityButton;
+    private TextView backToLoginLink;
     private ServerConnect serverConnect;
 
     @Override
@@ -28,12 +30,17 @@ public class RegisterActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.register_button);
         togglePasswordVisibilityButton = findViewById(R.id.toggle_password_visibility);
         toggleConfirmPasswordVisibilityButton = findViewById(R.id.toggle_confirm_password_visibility);
+        backToLoginLink = findViewById(R.id.back_to_login_link);
         serverConnect = new ServerConnect();
 
         togglePasswordVisibilityButton.setOnClickListener(v -> togglePasswordVisibility(passwordField));
         toggleConfirmPasswordVisibilityButton.setOnClickListener(v -> togglePasswordVisibility(confirmPasswordField));
 
         registerButton.setOnClickListener(v -> performRegistration());
+        backToLoginLink.setOnClickListener(v -> {
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            finish();
+        });
     }
 
     private void togglePasswordVisibility(EditText editText) {
