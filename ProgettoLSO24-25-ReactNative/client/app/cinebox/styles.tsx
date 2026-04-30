@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f6fb',
+    backgroundColor: '#eef3f9',
   },
   content: {
     padding: 16,
@@ -16,32 +16,32 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#0e2f5a',
+    color: '#17375f',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#19355d',
+    color: '#1f426f',
     marginBottom: 8,
   },
   muted: {
-    color: '#5d6c85',
+    color: '#5a6f8e',
   },
   small: {
-    color: '#465269',
+    color: '#425976',
     fontSize: 12,
   },
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: 12,
+    borderRadius: 14,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#d8dfec',
+    borderColor: '#cfd9e8',
     gap: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#bac6dc',
+    borderColor: '#b8c8e0',
     backgroundColor: '#fff',
     borderRadius: 10,
     paddingHorizontal: 12,
@@ -63,18 +63,18 @@ export const styles = StyleSheet.create({
   },
   chip: {
     borderWidth: 1,
-    borderColor: '#a8b8d6',
+    borderColor: '#8da4cb',
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: '#fff',
+    backgroundColor: '#f7faff',
   },
   chipActive: {
-    backgroundColor: '#174ea8',
-    borderColor: '#174ea8',
+    backgroundColor: '#1f5fb8',
+    borderColor: '#1f5fb8',
   },
   chipText: {
-    color: '#174ea8',
+    color: '#1d4f9c',
   },
   chipTextActive: {
     color: '#fff',
@@ -87,18 +87,18 @@ export const styles = StyleSheet.create({
   },
   tabBtn: {
     borderWidth: 1,
-    borderColor: '#adc0df',
+    borderColor: '#9eb6d8',
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#f7faff',
   },
   tabBtnActive: {
-    backgroundColor: '#0f4cb5',
-    borderColor: '#0f4cb5',
+    backgroundColor: '#1c5ab3',
+    borderColor: '#1c5ab3',
   },
   tabText: {
-    color: '#0f4cb5',
+    color: '#1c5ab3',
     fontWeight: '600',
   },
   tabTextActive: {
@@ -106,37 +106,80 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
   },
   primaryButton: {
-    backgroundColor: '#0f4cb5',
+    backgroundColor: '#1f5fb8',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
     alignItems: 'center',
   },
   removeButton: {
-    backgroundColor: '#8a2330',
+    backgroundColor: '#a23345',
   },
   primaryButtonText: {
     color: '#fff',
     fontWeight: '700',
   },
   secondaryButton: {
-    backgroundColor: '#e8edf7',
+    backgroundColor: '#e6eefb',
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
     alignItems: 'center',
   },
   secondaryButtonText: {
-    color: '#234b86',
+    color: '#234f91',
     fontWeight: '700',
   },
   flexGrow: {
     flexGrow: 1,
   },
   filmTitle: {
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: '700',
-    color: '#1d3557',
+    color: '#1d3f68',
+  },
+  filmCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#cfd9e8',
+    overflow: 'hidden',
+    marginBottom: 2,
+  },
+  filmPoster: {
+    width: '100%',
+    height: 220,
+    backgroundColor: '#d9e3f2',
+  },
+  filmPosterFallback: {
+    width: '100%',
+    height: 180,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#d9e3f2',
+    paddingHorizontal: 12,
+  },
+  filmPosterFallbackText: {
+    color: '#37567f',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  filmContent: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 6,
+  },
+  filmMetaGrid: {
+    marginTop: 4,
+    gap: 3,
+  },
+  filmMetaItem: {
+    color: '#2f4768',
+    fontSize: 13,
+  },
+  filmStateRow: {
+    flexDirection: 'row',
+    marginTop: 6,
   },
   listItem: {
     flexDirection: 'row',
@@ -145,25 +188,25 @@ export const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#edf1f7',
+    borderBottomColor: '#e5ecf7',
   },
   listItemColumn: {
     gap: 4,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#edf1f7',
+    borderBottomColor: '#e5ecf7',
   },
   listText: {
-    color: '#1f2b3e',
+    color: '#253752',
     flexShrink: 1,
   },
   link: {
-    color: '#0f4cb5',
+    color: '#1f5fb8',
     fontWeight: '700',
   },
   badge: {
     color: '#fff',
-    backgroundColor: '#335ea8',
+    backgroundColor: '#2f67b9',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 14,
@@ -171,11 +214,11 @@ export const styles = StyleSheet.create({
   },
   loading: {
     textAlign: 'center',
-    color: '#0f4cb5',
+    color: '#1f5fb8',
     fontWeight: '700',
   },
   status: {
     textAlign: 'center',
-    color: '#1f2b3e',
+    color: '#253752',
   },
 });

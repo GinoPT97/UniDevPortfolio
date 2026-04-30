@@ -1,6 +1,6 @@
 import React from 'react';
+import { Image } from 'expo-image';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
-import { BRIDGE_URL } from './api';
 import { styles } from './styles';
 import { AppNotification, Film, UserRow } from './types';
 
@@ -20,7 +20,6 @@ export function AuthSection(props: Readonly<AuthSectionProps>) {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>CiNEBOX Login</Text>
-      <Text style={styles.muted}>Bridge API: {BRIDGE_URL}</Text>
       <TextInput
         style={styles.input}
         placeholder="Username"
@@ -143,6 +142,31 @@ type CatalogSectionProps = {
 };
 
 export function CatalogSection(props: Readonly<CatalogSectionProps>) {
+  const getPosterUri = (locandina: string) => {
+    const value = locandina.trim();
+    if (!value) {
+      return null;
+    }
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      return value;
+    }
+    if (value.startsWith('/')) {
+      return `https://image.tmdb.org/t/p/w500${value}`;
+    }
+    return null;
+  };
+
+  const formatDate = (value: string) => {
+    if (!value) {
+      return '-';
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+    return date.toLocaleDateString('it-IT');
+  };
+
   return (
     <>
       <View style={styles.card}>
@@ -191,13 +215,43 @@ export function CatalogSection(props: Readonly<CatalogSectionProps>) {
 
       {props.filteredFilms.map((film) => {
         const inCart = props.cart.some((f) => f.idFilm === film.idFilm);
+        const posterUri = getPosterUri(film.locandina);
         return (
-          <View key={film.idFilm} style={styles.card}>
-            <Text style={styles.filmTitle}>{film.titolo}</Text>
-            <Text style={styles.muted}>{film.genere}</Text>
-            <Text style={styles.listText}>Prezzo: € {film.prezzo.toFixed(2)}</Text>
-            <Text style={styles.listText}>Disponibili: {film.numeroCopieDisponibili}</Text>
-            <Text style={styles.small}>{film.descrizione}</Text>
+          <View key={film.idFilm} style={styles.filmCard}>
+            {posterUri ? (
+              <Image
+                source={{ uri: posterUri }}
+                style={styles.filmPoster}
+                contentFit="cover"
+                transition={160}
+              />
+            ) : (
+              <View style={styles.filmPosterFallback}>
+                <Text style={styles.filmPosterFallbackText}>Locandina non disponibile</Text>
+              </View>
+            )}
+
+            <View style={styles.filmContent}>
+              <Text style={styles.filmTitle}>{film.titolo}</Text>
+              <Text style={styles.muted}>{film.genere}</Text>
+              <Text style={styles.small}>{film.descrizione || 'Descrizione non disponibile'}</Text>
+
+              <View style={styles.filmMetaGrid}>
+                <Text style={styles.filmMetaItem}>Lingua: {film.linguaOriginale || '-'}</Text>
+                <Text style={styles.filmMetaItem}>Data rilascio: {formatDate(film.dataRilascio)}</Text>
+                <Text style={styles.filmMetaItem}>Voto medio: {film.votoMedio.toFixed(1)}</Text>
+                <Text style={styles.filmMetaItem}>Numero voti: {film.numeroVoti}</Text>
+                <Text style={styles.filmMetaItem}>Popolarita: {film.popolarita.toFixed(1)}</Text>
+                <Text style={styles.filmMetaItem}>Prezzo: € {film.prezzo.toFixed(2)}</Text>
+                <Text style={styles.filmMetaItem}>Copie disponibili: {film.numeroCopieDisponibili}</Text>
+                <Text style={styles.filmMetaItem}>In prestito: {film.numeroCopieInPrestito}</Text>
+              </View>
+
+              <View style={styles.filmStateRow}>
+                <Text style={styles.badge}>Stato: {film.stato || '-'}</Text>
+              </View>
+            </View>
+
             {!props.isAdmin && (
               <Pressable
                 style={[styles.primaryButton, inCart && styles.removeButton]}
