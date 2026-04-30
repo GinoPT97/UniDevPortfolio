@@ -110,9 +110,6 @@ public class MainActivity extends AppCompatActivity {
             navHostFragment.getNavController().addOnDestinationChangedListener((controller, destination, arguments) -> {
                 if (destination.getId() == R.id.nav_catalogo) {
                     Fragment fragment = navHostFragment.getChildFragmentManager().getFragments().get(0);
-                    if (fragment instanceof CatalogoFragment) {
-                        ((CatalogoFragment) fragment).setServerConnect(serverConnect);
-                    }
                 }
             });
         }

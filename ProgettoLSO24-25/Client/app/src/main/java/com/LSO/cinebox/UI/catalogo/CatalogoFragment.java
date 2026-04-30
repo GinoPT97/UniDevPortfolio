@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.LSO.cinebox.Entity.Film;
-import com.LSO.cinebox.Infrastructure.ServerConnect;
 import com.LSO.cinebox.MainActivity;
 import com.LSO.cinebox.Model.FilmAdapter;
 import com.LSO.cinebox.R;
@@ -41,7 +40,6 @@ public class CatalogoFragment extends Fragment {
     private FilmAdapter filmAdapter;
     private List<Film> filmList = new ArrayList<>();
     private List<Film> filteredList = new ArrayList<>();
-    private ServerConnect serverConnect;
     private CatalogoViewModel catalogoViewModel;
     private TextView filmCountBadge;
     private TextView textViewNoResults;
@@ -60,10 +58,6 @@ public class CatalogoFragment extends Fragment {
             if (savedFilmList != null) filmList = savedFilmList;
             if (savedFilteredList != null) filteredList = savedFilteredList;
         }
-    }
-
-    public void setServerConnect(ServerConnect serverConnect) {
-        this.serverConnect = serverConnect;
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,

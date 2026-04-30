@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 
 public class ServerConnect {
     private static final String TAG = "ServerConnect";
+    private static final String SEND_MESSAGE_ERROR = "Errore durante l'invio del messaggio";
 
     private static final int UDP_PORT = 5000;
     private static final String DISCOVERY_MESSAGE = "DISCOVER_SERVER";
@@ -116,50 +117,90 @@ public class ServerConnect {
     }
 
     private void reconnectPersistent() {
-        if (!shouldMaintainConnection) return;
-        
-        synchronized (connectionLock) {
-            if (connecting) return;
-            connecting = true;
+        if (!beginReconnect()) {
+            return;
         }
 
         try {
             closeConnection();
-            Thread.sleep(2000); // Wait before reconnecting
-            
+            waitBeforeRetry(2000, "Riconnessione interrotta");
             if (shouldMaintainConnection) {
-                attemptConnection(new ConnectionCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "Riconnessione riuscita");
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        Log.e(TAG, "Riconnessione fallita: " + e.getMessage(), e);
-                        // Try again after delay
-                        executorService.execute(() -> {
-                            try {
-                                Thread.sleep(5000);
-                                if (shouldMaintainConnection) {
-                                    reconnectPersistent();
-                                }
-                            } catch (InterruptedException ie) {
-                                Thread.currentThread().interrupt();
-                            }
-                        });
-                    }
-                }, discoveredAddress != null ? discoveredAddress : getDefaultAddress(), 
-                   discoveredPort != 0 ? discoveredPort : DEFAULT_SERVER_PORT);
+                attemptPersistentReconnect();
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            Log.e(TAG, "Riconnessione interrotta", e);
+            handleInterruptedReconnect(e, "Riconnessione interrotta");
         } catch (Exception e) {
             Log.e(TAG, "Errore durante la riconnessione: " + e.getMessage(), e);
         } finally {
             connecting = false;
         }
+    }
+
+    private boolean beginReconnect() {
+        if (!shouldMaintainConnection) {
+            return false;
+        }
+        synchronized (connectionLock) {
+            if (connecting) {
+                return false;
+            }
+            connecting = true;
+            return true;
+        }
+    }
+
+    private void attemptPersistentReconnect() {
+        attemptConnection(createReconnectCallback(), getReconnectAddress(), getReconnectPort());
+    }
+
+    private ConnectionCallback createReconnectCallback() {
+        return new ConnectionCallback() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Riconnessione riuscita");
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e(TAG, "Riconnessione fallita: " + e.getMessage(), e);
+                scheduleReconnectAttempt();
+            }
+        };
+    }
+
+    private void scheduleReconnectAttempt() {
+        executorService.execute(() -> {
+            try {
+                waitBeforeRetry(5000, "Riconnessione posticipata interrotta");
+                if (shouldMaintainConnection) {
+                    reconnectPersistent();
+                }
+            } catch (InterruptedException e) {
+                handleInterruptedReconnect(e, "Riconnessione posticipata interrotta");
+            }
+        });
+    }
+
+    private void waitBeforeRetry(int delayMillis, String logMessage) throws InterruptedException {
+        try {
+            Thread.sleep(delayMillis);
+        } catch (InterruptedException e) {
+            handleInterruptedReconnect(e, logMessage);
+            throw e;
+        }
+    }
+
+    private void handleInterruptedReconnect(InterruptedException e, String logMessage) {
+        Thread.currentThread().interrupt();
+        Log.e(TAG, logMessage, e);
+    }
+
+    private InetAddress getReconnectAddress() {
+        return discoveredAddress != null ? discoveredAddress : getDefaultAddress();
+    }
+
+    private int getReconnectPort() {
+        return discoveredPort != 0 ? discoveredPort : DEFAULT_SERVER_PORT;
     }
 
     private InetAddress getDefaultAddress() {
@@ -218,17 +259,25 @@ public class ServerConnect {
     private void attemptConnection(ConnectionCallback callback, InetAddress address, int port) {
         executorService.execute(() -> {
             for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+                Socket tempSocket = null;
                 try {
                     TrafficStats.setThreadStatsTag(1000);
                     SocketAddress socketAddress = new InetSocketAddress(address, port);
-                    socket = new Socket();
-                    socket.connect(socketAddress);
-                    TrafficStats.tagSocket(socket);
-                    out = new PrintWriter(socket.getOutputStream(), true);
-                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    tempSocket = new Socket();
+                    tempSocket.connect(socketAddress);
+                    TrafficStats.tagSocket(tempSocket);
+
+                    PrintWriter tempOut = new PrintWriter(tempSocket.getOutputStream(), true);
+                    BufferedReader tempIn = new BufferedReader(new InputStreamReader(tempSocket.getInputStream()));
+
+                    socket = tempSocket;
+                    out = tempOut;
+                    in = tempIn;
                     Log.d(TAG, "Connessione al server su: " + address.getHostAddress() + ":" + port);
                     callback.onSuccess();
+                    return;
                 } catch (IOException e) {
+                    closeQuietly(tempSocket);
                     Log.e(TAG, "Tentativo " + attempt + " fallito: " + e.getMessage(), e);
                     if (attempt == MAX_RETRIES) {
                         handleError("Errore durante la connessione al server", e, callback);
@@ -248,11 +297,21 @@ public class ServerConnect {
         });
     }
 
+    private void closeQuietly(Socket candidateSocket) {
+        if (candidateSocket == null) {
+            return;
+        }
+
+        try {
+            candidateSocket.close();
+        } catch (IOException closeException) {
+            Log.w(TAG, "Chiusura socket temporaneo fallita", closeException);
+        }
+    }
+
     public void discoverServer(DiscoveryCallback callback) {
         executorService.execute(() -> {
-            DatagramSocket ds = null;
-            try {
-                ds = new DatagramSocket();
+            try (DatagramSocket ds = new DatagramSocket()) {
                 ds.setBroadcast(true);
 
                 byte[] sendData = DISCOVERY_MESSAGE.getBytes();
@@ -279,10 +338,6 @@ public class ServerConnect {
             } catch (Exception e) {
                 Log.e(TAG, "Errore in discoverServer: " + e.getMessage(), e);
                 callback.onDiscoveryFailure(e);
-            } finally {
-                if (ds != null) {
-                    ds.close();
-                }
             }
         });
     }
@@ -317,73 +372,108 @@ public class ServerConnect {
     }
 
     public void sendMessage(String message, MessageCallback callback) {
-        if (message.equals("GET_FILMS")) {
-            synchronized (filmsLock) {
-                if (fetchingFilms) return;
-                fetchingFilms = true;
-            }
-            executorService.execute(() -> {
-                try {
-                    sendMessageInternal(message, new MessageCallback() {
-                        @Override
-                        public void onSuccess(String response) {
-                            synchronized (filmsLock) { fetchingFilms = false; }
-                            callback.onSuccess(response);
-                        }
-                        @Override
-                        public void onFailure(Exception e) {
-                            synchronized (filmsLock) { fetchingFilms = false; }
-                            callback.onFailure(e);
-                        }
-                    });
-                } catch (Exception e) {
-                    synchronized (filmsLock) { fetchingFilms = false; }
-                    handleError("Errore durante l'invio del messaggio", e, callback);
-                }
-            });
-        } else {
-            executorService.execute(() -> {
-                try {
-                    if (!isConnected()) {
-                        if (persistentConnection && shouldMaintainConnection) {
-                            // If persistent connection is enabled but not connected, try to reconnect
-                            reconnectPersistent();
-                            // Wait a bit for reconnection
-                            for (int i = 0; i < 10 && !isConnected(); i++) {
-                                Thread.sleep(500);
-                            }
-                            if (!isConnected()) {
-                                callback.onFailure(new IOException("Connessione persistente non disponibile"));
-                                return;
-                            }
-                        } else if (!persistentConnection) {
-                            // Only open new connection if not in persistent mode
-                            synchronized (connectionLock) {
-                                if (!isConnected()) {
-                                    openConnection(new ConnectionCallback() {
-                                        @Override
-                                        public void onSuccess() {
-                                            sendMessageInternal(message, callback);
-                                        }
+        if ("GET_FILMS".equals(message)) {
+            handleFilmsRequest(message, callback);
+            return;
+        }
+        executorService.execute(() -> executeMessageSend(message, callback));
+    }
 
-                                        @Override
-                                        public void onFailure(Exception e) {
-                                            handleError("Errore durante l'invio del messaggio", e, callback);
-                                        }
-                                    });
-                                    return;
-                                } else {
-                                    sendMessageInternal(message, callback);
-                                }
-                            }
-                        } else {
-                            callback.onFailure(new IOException("Connessione non disponibile"));
-                            return;
-                        }
-                    }
+    private void handleFilmsRequest(String message, MessageCallback callback) {
+        synchronized (filmsLock) {
+            if (fetchingFilms) {
+                return;
+            }
+            fetchingFilms = true;
+        }
+        executorService.execute(() -> {
+            MessageCallback wrappedCallback = createFilmsCallback(callback);
+            try {
+                sendMessageInternal(message, wrappedCallback);
+            } catch (Exception e) {
+                synchronized (filmsLock) {
+                    fetchingFilms = false;
+                }
+                handleError(SEND_MESSAGE_ERROR, e, callback);
+            }
+        });
+    }
+
+    private MessageCallback createFilmsCallback(MessageCallback callback) {
+        return new MessageCallback() {
+            @Override
+            public void onSuccess(String response) {
+                synchronized (filmsLock) {
+                    fetchingFilms = false;
+                }
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                synchronized (filmsLock) {
+                    fetchingFilms = false;
+                }
+                callback.onFailure(e);
+            }
+        };
+    }
+
+    private void executeMessageSend(String message, MessageCallback callback) {
+        try {
+            if (ensureConnectionForMessage(message, callback)) {
+                sendMessageInternal(message, callback);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            handleError(SEND_MESSAGE_ERROR, e, callback);
+        } catch (Exception e) {
+            handleError(SEND_MESSAGE_ERROR, e, callback);
+        }
+    }
+
+    private boolean ensureConnectionForMessage(String message, MessageCallback callback) throws InterruptedException {
+        if (isConnected()) {
+            return true;
+        }
+        if (persistentConnection && shouldMaintainConnection) {
+            return awaitPersistentReconnect(callback);
+        }
+        if (!persistentConnection) {
+            openConnectionForMessage(message, callback);
+            return false;
+        }
+        callback.onFailure(new IOException("Connessione non disponibile"));
+        return false;
+    }
+
+    private boolean awaitPersistentReconnect(MessageCallback callback) throws InterruptedException {
+        reconnectPersistent();
+        for (int i = 0; i < 10 && !isConnected(); i++) {
+            Thread.sleep(500);
+        }
+        if (isConnected()) {
+            return true;
+        }
+        callback.onFailure(new IOException("Connessione persistente non disponibile"));
+        return false;
+    }
+
+    private void openConnectionForMessage(String message, MessageCallback callback) {
+        synchronized (connectionLock) {
+            if (isConnected()) {
+                sendMessageInternal(message, callback);
+                return;
+            }
+            openConnection(new ConnectionCallback() {
+                @Override
+                public void onSuccess() {
                     sendMessageInternal(message, callback);
-                } catch (Exception e) {
-                    handleError("Errore durante l'invio del messaggio", e, callback);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    handleError(SEND_MESSAGE_ERROR, e, callback);
                 }
             });
         }
@@ -392,99 +482,131 @@ public class ServerConnect {
     private void sendMessageInternal(String message, MessageCallback callback) {
         try {
             synchronized (ioLock) {
-                    Log.d(TAG, "Invio messaggio: " + message);
+                Log.d(TAG, "Invio messaggio: " + message);
                 out.println(message);
-                if (message.startsWith("LIST_USERS") || message.startsWith("GET_NOTIFICATIONS") || message.startsWith("GET_FILMS") || message.startsWith("GET_ACTIVE_RENTALS_BY_USER") || message.startsWith("GET_LAST_5_RENTALS_BY_USER") || message.startsWith("GET_TOP_5_RENTED_FILMS") || message.startsWith("GET_ALL_RENTALS_OVERVIEW")) {
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = in.readLine()) != null) {
-                        if ("PONG".equalsIgnoreCase(line.trim())) {
-                            continue;
-                        }
-                        if (line.equals("END")) break;
-                        response.append(line).append("\n");
-                    }
-                    String res = response.toString().trim();
-                    Log.d(TAG, "Risposta ricevuta: " + res);
-                    callback.onSuccess(res);
-                } else {
-                    String responseLine = readNextBusinessLine();
-                    Log.d(TAG, "Risposta ricevuta: " + responseLine);
-                    callback.onSuccess(responseLine);
-                }
+                String response = isMultiLineCommand(message) ? readMultiLineResponse() : readNextBusinessLine();
+                Log.d(TAG, "Risposta ricevuta: " + response);
+                callback.onSuccess(response);
             }
         } catch (IOException e) {
             Log.e(TAG, "Errore durante l'invio del messaggio: " + e.getMessage(), e);
-            handleError("Errore durante l'invio del messaggio", e, callback);
+            handleError(SEND_MESSAGE_ERROR, e, callback);
         } catch (Exception e) {
             Log.e(TAG, "Errore generico durante l'invio del messaggio: " + e.getMessage(), e);
-            handleError("Errore durante l'invio del messaggio", e, callback);
+            handleError(SEND_MESSAGE_ERROR, e, callback);
         }
+    }
+
+    private boolean isMultiLineCommand(String message) {
+        return message.startsWith("LIST_USERS")
+                || message.startsWith("GET_NOTIFICATIONS")
+                || message.startsWith("GET_FILMS")
+                || message.startsWith("GET_ACTIVE_RENTALS_BY_USER")
+                || message.startsWith("GET_LAST_5_RENTALS_BY_USER")
+                || message.startsWith("GET_TOP_5_RENTED_FILMS")
+                || message.startsWith("GET_ALL_RENTALS_OVERVIEW");
+    }
+
+    private String readMultiLineResponse() throws IOException {
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null && !line.equals("END")) {
+            if (!isHeartbeatResponse(line)) {
+                response.append(line).append("\n");
+            }
+        }
+        return response.toString().trim();
     }
 
     private String readNextBusinessLine() throws IOException {
         String responseLine;
         while ((responseLine = in.readLine()) != null) {
-            if (!"PONG".equalsIgnoreCase(responseLine.trim())) {
+            if (!isHeartbeatResponse(responseLine)) {
                 return responseLine;
             }
         }
         throw new IOException("Connessione chiusa dal server");
     }
 
+    private boolean isHeartbeatResponse(String line) {
+        return "PONG".equalsIgnoreCase(line.trim());
+    }
+
     public void fetchDataFromServer(DataCallback callback) {
         executorService.execute(() -> {
             try {
-                StringBuilder response = new StringBuilder();
-                InetAddress httpAddress = (discoveredAddress != null)
-                        ? discoveredAddress
-                        : InetAddress.getByName(DEFAULT_SERVER_ADDRESS);
-                int httpPort = (discoveredPort != 0)
-                        ? discoveredPort
-                        : DEFAULT_SERVER_PORT;
-
-                for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-                    HttpURLConnection connection = null;
-                    try {
-                        TrafficStats.setThreadStatsTag(1000);
-                        URI uri = new URI("http", null, httpAddress.getHostAddress(), httpPort, "/", null, null);
-                        connection = (HttpURLConnection) uri.toURL().openConnection();
-                        connection.setRequestMethod("GET");
-
-                        int responseCode = connection.getResponseCode();
-                        if (responseCode == HttpURLConnection.HTTP_OK) {
-                            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                                String line;
-                                while ((line = reader.readLine()) != null) {
-                                    response.append(line);
-                                }
-                            }
-                            callback.onSuccess(response.toString());
-                            return;
-                        } else {
-                            Log.e(TAG, "Errore: risposta del server " + responseCode);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Tentativo " + attempt + " fallito: " + e.getMessage(), e);
-                        if (attempt < MAX_RETRIES) {
-                            try {
-                                Thread.sleep(RETRY_DELAY_MS);
-                            } catch (InterruptedException ie) {
-                                Thread.currentThread().interrupt();
-                            }
-                        }
-                    } finally {
-                        if (connection != null) {
-                            connection.disconnect();
-                        }
-                        TrafficStats.clearThreadStatsTag();
-                    }
-                }
-                callback.onFailure(new IOException("Failed to fetch data from server after " + MAX_RETRIES + " attempts"));
+                String response = fetchHttpData();
+                callback.onSuccess(response);
             } catch (UnknownHostException e) {
                 callback.onFailure(e);
+            } catch (IOException e) {
+                callback.onFailure(new IOException("Failed to fetch data from server after " + MAX_RETRIES + " attempts"));
             }
         });
+    }
+
+    private String fetchHttpData() throws IOException {
+        InetAddress httpAddress = discoveredAddress != null
+                ? discoveredAddress
+                : InetAddress.getByName(DEFAULT_SERVER_ADDRESS);
+        int httpPort = discoveredPort != 0 ? discoveredPort : DEFAULT_SERVER_PORT;
+
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                return executeHttpFetch(httpAddress, httpPort);
+            } catch (IOException e) {
+                Log.e(TAG, "Tentativo " + attempt + " fallito: " + e.getMessage(), e);
+                if (attempt < MAX_RETRIES) {
+                    sleepAfterHttpFailure();
+                }
+            }
+        }
+        throw new IOException("HTTP fetch failed");
+    }
+
+    private String executeHttpFetch(InetAddress httpAddress, int httpPort) throws IOException {
+        HttpURLConnection connection = null;
+        try {
+            TrafficStats.setThreadStatsTag(1000);
+            URI uri = new URI("http", null, httpAddress.getHostAddress(), httpPort, "/", null, null);
+            connection = (HttpURLConnection) uri.toURL().openConnection();
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e(TAG, "Errore: risposta del server " + responseCode);
+                throw new IOException("Unexpected HTTP response: " + responseCode);
+            }
+            return readHttpResponse(connection);
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IOException("HTTP fetch failed", e);
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+            TrafficStats.clearThreadStatsTag();
+        }
+    }
+
+    private String readHttpResponse(HttpURLConnection connection) throws IOException {
+        StringBuilder response = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        }
+        return response.toString();
+    }
+
+    private void sleepAfterHttpFailure() {
+        try {
+            Thread.sleep(RETRY_DELAY_MS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void fetchDataFromServerWithCommand(String command, DataCallback callback) {
@@ -492,16 +614,7 @@ public class ServerConnect {
             try {
                 synchronized (ioLock) {
                     out.println(command);
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = in.readLine()) != null) {
-                        if ("PONG".equalsIgnoreCase(line.trim())) {
-                            continue;
-                        }
-                        response.append(line).append("\n");
-                        if (line.equals("END")) break;
-                    }
-                    callback.onSuccess(response.toString());
+                    callback.onSuccess(readMultiLineResponse());
                 }
             } catch (Exception e) {
                 callback.onFailure(e);

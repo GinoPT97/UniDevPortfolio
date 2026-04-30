@@ -155,9 +155,15 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.FilmViewHolder
     @Override public int getItemCount() { return filmList.size(); }
 
     public static class FilmViewHolder extends RecyclerView.ViewHolder {
-        final TextView textViewTitolo, textViewPrezzo, textViewBadgeDisponibilita, textViewAnno, textViewVotoMedio;
+        final TextView textViewTitolo;
+        final TextView textViewPrezzo;
+        final TextView textViewBadgeDisponibilita;
+        final TextView textViewAnno;
+        final TextView textViewVotoMedio;
         final ImageView imageViewLocandina;
-        final Button buttonAddToCart, buttonRemoveFromCart;
+        final Button buttonAddToCart;
+        final Button buttonRemoveFromCart;
+
         public FilmViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTitolo = itemView.findViewById(R.id.textViewTitolo);

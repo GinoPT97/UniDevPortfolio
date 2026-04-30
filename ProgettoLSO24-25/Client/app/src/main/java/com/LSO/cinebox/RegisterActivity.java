@@ -14,9 +14,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.LSO.cinebox.Infrastructure.ServerConnect;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText usernameField, passwordField, confirmPasswordField;
-    private Button registerButton, togglePasswordVisibilityButton, toggleConfirmPasswordVisibilityButton;
-    private TextView backToLoginLink;
+    private static final String TAG = "RegisterActivity";
+
+    private EditText usernameField;
+    private EditText passwordField;
+    private EditText confirmPasswordField;
     private ServerConnect serverConnect;
 
     @Override
@@ -27,10 +29,10 @@ public class RegisterActivity extends AppCompatActivity {
         usernameField = findViewById(R.id.username);
         passwordField = findViewById(R.id.password);
         confirmPasswordField = findViewById(R.id.confirm_password);
-        registerButton = findViewById(R.id.register_button);
-        togglePasswordVisibilityButton = findViewById(R.id.toggle_password_visibility);
-        toggleConfirmPasswordVisibilityButton = findViewById(R.id.toggle_confirm_password_visibility);
-        backToLoginLink = findViewById(R.id.back_to_login_link);
+        Button registerButton = findViewById(R.id.register_button);
+        Button togglePasswordVisibilityButton = findViewById(R.id.toggle_password_visibility);
+        Button toggleConfirmPasswordVisibilityButton = findViewById(R.id.toggle_confirm_password_visibility);
+        TextView backToLoginLink = findViewById(R.id.back_to_login_link);
         serverConnect = new ServerConnect();
 
         togglePasswordVisibilityButton.setOnClickListener(v -> togglePasswordVisibility(passwordField));
@@ -71,18 +73,18 @@ public class RegisterActivity extends AppCompatActivity {
                         return;
                     }
                     if (response.equals("SUCCESS")) {
-                        Log.d("RegisterActivity", "Registration successful, starting LoginActivity...");
+                        Log.d(TAG, "Registration successful, starting LoginActivity...");
                         Toast.makeText(getApplicationContext(), "Registrazione riuscita!", Toast.LENGTH_SHORT).show();
 
                         try {
                             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            Log.d("RegisterActivity", "Intent created: " + intent);
+                            Log.d(TAG, "Intent created: " + intent);
                             startActivity(intent);
-                            Log.d("RegisterActivity", "LoginActivity started");
+                            Log.d(TAG, "LoginActivity started");
                             finish();
                         } catch (Exception e) {
-                            Log.e("RegisterActivity", "Error starting LoginActivity: " + e.getMessage(), e);
+                            Log.e(TAG, "Error starting LoginActivity: " + e.getMessage(), e);
                             Toast.makeText(getApplicationContext(), "Failed to start LoginActivity", Toast.LENGTH_SHORT).show();
                         }
                     } else if (response != null && response.contains("username already exists")) {

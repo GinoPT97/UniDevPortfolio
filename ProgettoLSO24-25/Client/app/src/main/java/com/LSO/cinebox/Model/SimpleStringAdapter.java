@@ -70,7 +70,9 @@ public class SimpleStringAdapter extends RecyclerView.Adapter<SimpleStringAdapte
                 try {
                     Date returnDate = sdf.parse(dateStr);
                     if (returnDate != null && returnDate.before(new Date())) color = R.color.red;
-                } catch (ParseException ignored) {}
+                } catch (ParseException ignored) {
+                    // Keep the default color when the date cannot be parsed.
+                }
             }
             textColors.add(color);
         }
@@ -78,8 +80,9 @@ public class SimpleStringAdapter extends RecyclerView.Adapter<SimpleStringAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public Button deleteButton;
+        private final TextView textView;
+        private final Button deleteButton;
+
         public ViewHolder(View view) {
             super(view);
             textView = view.findViewById(R.id.textView);
