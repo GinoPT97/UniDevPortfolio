@@ -256,14 +256,6 @@ public class CatalogoFragment extends Fragment {
         }
     }
 
-    private Film getSelectedFilm() {
-        int selectedPosition = recyclerView.getChildAdapterPosition(recyclerView.getFocusedChild());
-        if (selectedPosition != RecyclerView.NO_POSITION) {
-            return filmAdapter.getFilmAtPosition(selectedPosition);
-        }
-        return null;
-    }
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

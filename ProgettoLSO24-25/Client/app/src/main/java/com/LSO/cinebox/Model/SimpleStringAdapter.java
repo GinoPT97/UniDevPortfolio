@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.LSO.cinebox.R;
@@ -41,7 +42,7 @@ public class SimpleStringAdapter extends RecyclerView.Adapter<SimpleStringAdapte
         holder.textView.setText(data.get(position));
         int colorRes = R.color.primary;
         if (position < textColors.size()) colorRes = textColors.get(position);
-        holder.textView.setTextColor(holder.textView.getContext().getResources().getColor(colorRes));
+        holder.textView.setTextColor(ContextCompat.getColor(holder.textView.getContext(), colorRes));
         if (onDeleteClickListener != null) {
             holder.deleteButton.setVisibility(View.VISIBLE);
             holder.deleteButton.setOnClickListener(v -> onDeleteClickListener.onDeleteClick(data.get(position)));
