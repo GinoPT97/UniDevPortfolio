@@ -53,11 +53,11 @@ services:
       - "6080:6080"   # VNC web
     environment:
       EMULATOR_DEVICE: "Nexus 5"
-      EMULATOR_MEMORY: "2000"           # RAM aumentata per prestazioni migliori
+      EMULATOR_MEMORY: "4096"           # RAM aumentata per prestazioni migliori
       EMULATOR_INTERNAL_STORAGE: "512" # Memoria interna aumentata
       EMULATOR_RESOLUTION: "480x800"   # Risoluzione più bilanciata
       WEB_VNC: "true"                  # Abilita VNC
-      DISABLE_ANIMATIONS: "true"       # Disabilita animazioni
+      DISABLE_ANIMATIONS: "false"       # Disabilita animazioni
       GOOGLE_APPS: "false"             # Disabilita servizi Google
       GPU_MODE: "host"                 # Abilita accelerazione GPU
       HWACCEL: "true"                  # Accelerazione hardware
