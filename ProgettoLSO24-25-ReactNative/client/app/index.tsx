@@ -10,7 +10,7 @@ import {
   DashboardSection,
   NotificationsSection,
 } from './cinebox/sections';
-import { styles } from './cinebox/styles.tsx';
+import { styles } from './cinebox/styles';
 import { AppNotification, Film, Session, TabKey, UserRow } from './cinebox/types';
 
 export default function CineboxScreen() {

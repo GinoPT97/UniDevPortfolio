@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { BRIDGE_URL } from './api';
-import { styles } from './styles.tsx';
+import { styles } from './styles';
 import { AppNotification, Film, UserRow } from './types';
 
 type AuthSectionProps = {
@@ -16,7 +16,7 @@ type AuthSectionProps = {
   onToggleMode: () => void;
 };
 
-export function AuthSection(props: AuthSectionProps) {
+export function AuthSection(props: Readonly<AuthSectionProps>) {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>CiNEBOX Login</Text>
@@ -67,7 +67,7 @@ type DashboardSectionProps = {
   onMarkReturned: (line: string) => void;
 };
 
-export function DashboardSection(props: DashboardSectionProps) {
+export function DashboardSection(props: Readonly<DashboardSectionProps>) {
   if (props.isAdmin) {
     return (
       <View style={styles.card}>
@@ -142,7 +142,7 @@ type CatalogSectionProps = {
   onToggleCartFilm: (film: Film) => void;
 };
 
-export function CatalogSection(props: CatalogSectionProps) {
+export function CatalogSection(props: Readonly<CatalogSectionProps>) {
   return (
     <>
       <View style={styles.card}>
@@ -226,7 +226,7 @@ type CartSectionProps = {
   onClearCart: () => void;
 };
 
-export function CartSection(props: CartSectionProps) {
+export function CartSection(props: Readonly<CartSectionProps>) {
   if (props.isAdmin) {
     return (
       <View style={styles.card}>
@@ -288,7 +288,7 @@ type NotificationsSectionProps = {
   onDeleteNotification: (id: number) => void;
 };
 
-export function NotificationsSection(props: NotificationsSectionProps) {
+export function NotificationsSection(props: Readonly<NotificationsSectionProps>) {
   if (props.isAdmin) {
     return (
       <View style={styles.card}>
