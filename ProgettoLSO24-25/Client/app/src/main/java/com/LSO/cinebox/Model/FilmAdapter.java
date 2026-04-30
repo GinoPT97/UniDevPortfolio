@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,7 +60,8 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.FilmViewHolder
         if (isGrid) {
             holder.textViewBadgeDisponibilita.setText(film.getNumeroCopieDisponibili() > 0 ? "Disponibile" : "Non disponibile");
             holder.textViewBadgeDisponibilita.setBackgroundResource(R.drawable.badge_bg);
-            holder.textViewBadgeDisponibilita.setBackgroundTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(
+            holder.textViewBadgeDisponibilita.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ContextCompat.getColor(
+                holder.itemView.getContext(),
                 film.getNumeroCopieDisponibili() > 0 ? R.color.primary : R.color.red
             )));
             holder.buttonRemoveFromCart.setVisibility(View.VISIBLE);
@@ -77,13 +79,14 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmAdapter.FilmViewHolder
             holder.textViewAnno.setText(anno);
             holder.textViewBadgeDisponibilita.setText(film.getNumeroCopieDisponibili() > 0 ? "Disponibile" : "Non disponibile");
             holder.textViewBadgeDisponibilita.setBackgroundResource(R.drawable.badge_bg);
-            holder.textViewBadgeDisponibilita.setBackgroundTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(
+            holder.textViewBadgeDisponibilita.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ContextCompat.getColor(
+                holder.itemView.getContext(),
                 film.getNumeroCopieDisponibili() > 0 ? R.color.primary : R.color.red
             )));
             holder.textViewVotoMedio.setText("★ " + String.format("%.1f", film.getVotoMedio()) + "/10");
-            holder.textViewVotoMedio.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.white));
+            holder.textViewVotoMedio.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.white));
             holder.textViewVotoMedio.setBackgroundResource(R.drawable.badge_bg);
-            holder.textViewVotoMedio.setBackgroundTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(R.color.orange)));
+            holder.textViewVotoMedio.setBackgroundTintList(android.content.res.ColorStateList.valueOf(ContextCompat.getColor(holder.itemView.getContext(), R.color.orange)));
             Picasso.get().load(film.getLocandinaUrl()).placeholder(R.drawable.generic_image).fit().centerCrop().into(holder.imageViewLocandina);
 
             int userId = mainActivity.getUserId();

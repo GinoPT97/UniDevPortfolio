@@ -25,6 +25,9 @@ import com.LSO.cinebox.R;
 import com.LSO.cinebox.UI.carrello.CarrelloViewModel;
 import com.LSO.cinebox.databinding.FragmentCatalogoBinding;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -41,7 +44,9 @@ public class CatalogoFragment extends Fragment {
     private ServerConnect serverConnect;
     private CatalogoViewModel catalogoViewModel;
     private TextView filmCountBadge;
-    private View noResultsView;
+    private TextView textViewNoResults;
+    private final Handler searchHandler = new Handler(Looper.getMainLooper());
+    private Runnable searchRunnable;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,8 +76,10 @@ public class CatalogoFragment extends Fragment {
 
         recyclerView = binding.recyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(true);
 
         filmCountBadge = root.findViewById(R.id.filmCountBadge);
+        textViewNoResults = root.findViewById(R.id.textViewNoResults);
 
         filmAdapter = new FilmAdapter(
             new ArrayList<>(),
@@ -138,7 +145,11 @@ public class CatalogoFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                applyFilters(newText, spinnerGenre.getSelectedItem() != null ? spinnerGenre.getSelectedItem().toString() : "", spinnerSort.getSelectedItem() != null ? spinnerSort.getSelectedItem().toString() : "");
+                if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
+                searchRunnable = () -> applyFilters(newText,
+                    spinnerGenre.getSelectedItem() != null ? spinnerGenre.getSelectedItem().toString() : "",
+                    spinnerSort.getSelectedItem() != null ? spinnerSort.getSelectedItem().toString() : "");
+                searchHandler.postDelayed(searchRunnable, 300);
                 return false;
             }
         });
@@ -169,7 +180,6 @@ public class CatalogoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        CatalogoViewModel catalogoViewModel = new ViewModelProvider(requireActivity()).get(CatalogoViewModel.class);
         catalogoViewModel.getFilmList().observe(getViewLifecycleOwner(), films -> {
             if (films == null) return;
             if (filmList.equals(films)) return;
@@ -231,22 +241,10 @@ public class CatalogoFragment extends Fragment {
                 updateFilmCountBadge(filteredList.size());
                 if (filteredList.isEmpty()) {
                     binding.recyclerView.setVisibility(View.GONE);
-                    if (noResultsView == null) {
-                        TextView noResults = new TextView(getContext());
-                        noResults.setText("Nessun film trovato");
-                        noResults.setTextSize(18);
-                        noResults.setTextColor(0xFF888888);
-                        noResults.setPadding(32, 100, 32, 32);
-                        noResults.setGravity(android.view.Gravity.CENTER);
-                        binding.getRoot().addView(noResults);
-                        noResultsView = noResults;
-                    }
-                    noResultsView.setVisibility(View.VISIBLE);
+                    if (textViewNoResults != null) textViewNoResults.setVisibility(View.VISIBLE);
                 } else {
                     binding.recyclerView.setVisibility(View.VISIBLE);
-                    if (noResultsView != null) {
-                        noResultsView.setVisibility(View.GONE);
-                    }
+                    if (textViewNoResults != null) textViewNoResults.setVisibility(View.GONE);
                 }
             });
         }).start();
@@ -276,6 +274,7 @@ public class CatalogoFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
         binding = null;
         recyclerView.setAdapter(null);
     }
