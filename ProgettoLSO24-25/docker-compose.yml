@@ -61,15 +61,15 @@ services:
       GOOGLE_APPS: "false"             # Disabilita servizi Google
       GPU_MODE: "host"                 # Abilita accelerazione GPU
       HWACCEL: "true"                  # Accelerazione hardware
-    command: ["/bin/bash", "-c", "emulator -avd Nexus_5 -no-window -no-audio -no-boot-anim -gpu host -memory 512 -partition-size 512 -skin 480x800 -no-snapshot -camera-back none -camera-front none -no-sensors -no-keyboard -accel on -no-skin -netfast"]
     restart: always
     networks:
       - app-net
     healthcheck:
-      test: ["CMD", "adb", "shell", "getprop", "sys.boot_completed"]
-      interval: 20s  # Controlli più frequenti
-      timeout: 10s
-      retries: 3
+      test: ["CMD-SHELL", "adb shell getprop sys.boot_completed 2>/dev/null | grep -q '^1$'"]
+      interval: 30s
+      timeout: 15s
+      retries: 15
+      start_period: 120s
     shm_size: 2gb  # Memoria condivisa per prestazioni migliori
 
   # Servizio client
