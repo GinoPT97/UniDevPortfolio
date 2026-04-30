@@ -1,6 +1,7 @@
 package com.LSO.cinebox.Infrastructure;
 
 import android.net.TrafficStats;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,17 +9,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.URI;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerConnect {
+    private static final String TAG = "ServerConnect";
 
     private static final int UDP_PORT = 5000;
     private static final String DISCOVERY_MESSAGE = "DISCOVER_SERVER";
@@ -26,8 +28,8 @@ public class ServerConnect {
     private static final String DEFAULT_SERVER_ADDRESS = "server";
     private static final int DEFAULT_SERVER_PORT = 8080;
 
-    private static final int maxRetries = 3;
-    private static final int retryDelay = 2000;
+    private static final int MAX_RETRIES = 3;
+    private static final int RETRY_DELAY_MS = 2000;
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private Socket socket;
@@ -38,6 +40,7 @@ public class ServerConnect {
     private int discoveredPort;
 
     private final Object connectionLock = new Object();
+    private final Object ioLock = new Object();
     private volatile boolean connecting = false;
     private volatile boolean persistentConnection = false;
     private volatile boolean shouldMaintainConnection = false;
@@ -79,7 +82,7 @@ public class ServerConnect {
                         // Send heartbeat to test connection
                         sendHeartbeat();
                     } else if (shouldMaintainConnection && !isConnected()) {
-                        System.out.println("Riconnessione automatica...");
+                        Log.d(TAG, "Riconnessione automatica...");
                         reconnectPersistent();
                     }
                 } catch (InterruptedException e) {
@@ -92,12 +95,20 @@ public class ServerConnect {
 
     private void sendHeartbeat() {
         try {
-            if (out != null && isConnected()) {
-                out.println("PING");
-                // Non aspettiamo la risposta PONG per non bloccare
+            synchronized (ioLock) {
+                if (out != null && in != null && isConnected()) {
+                    out.println("PING");
+                    String response = in.readLine();
+                    if (response == null) {
+                        throw new IOException("Heartbeat senza risposta dal server");
+                    }
+                    if (!"PONG".equalsIgnoreCase(response.trim())) {
+                        Log.w(TAG, "Heartbeat inatteso: " + response);
+                    }
+                }
             }
         } catch (Exception e) {
-            System.err.println("Errore durante l'invio dell'heartbeat: " + e.getMessage());
+            Log.e(TAG, "Errore durante l'invio dell'heartbeat: " + e.getMessage(), e);
             if (shouldMaintainConnection) {
                 reconnectPersistent();
             }
@@ -120,12 +131,12 @@ public class ServerConnect {
                 attemptConnection(new ConnectionCallback() {
                     @Override
                     public void onSuccess() {
-                        System.out.println("Riconnessione riuscita");
+                        Log.d(TAG, "Riconnessione riuscita");
                     }
 
                     @Override
                     public void onFailure(Exception e) {
-                        System.err.println("Riconnessione fallita: " + e.getMessage());
+                        Log.e(TAG, "Riconnessione fallita: " + e.getMessage(), e);
                         // Try again after delay
                         executorService.execute(() -> {
                             try {
@@ -141,8 +152,11 @@ public class ServerConnect {
                 }, discoveredAddress != null ? discoveredAddress : getDefaultAddress(), 
                    discoveredPort != 0 ? discoveredPort : DEFAULT_SERVER_PORT);
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Log.e(TAG, "Riconnessione interrotta", e);
         } catch (Exception e) {
-            System.err.println("Errore durante la riconnessione: " + e.getMessage());
+            Log.e(TAG, "Errore durante la riconnessione: " + e.getMessage(), e);
         } finally {
             connecting = false;
         }
@@ -165,7 +179,12 @@ public class ServerConnect {
             if (connecting) {
                 executorService.execute(() -> {
                     while (connecting) {
-                        try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
                     }
                     if (isConnected()) callback.onSuccess();
                     else callback.onFailure(new IOException("Connessione non riuscita"));
@@ -185,7 +204,7 @@ public class ServerConnect {
 
             @Override
             public void onDiscoveryFailure(Exception e) {
-                System.err.println("Discovery fallita: " + e.getMessage());
+                Log.e(TAG, "Discovery fallita: " + e.getMessage(), e);
                 try {
                     attemptConnection(callback, InetAddress.getByName(DEFAULT_SERVER_ADDRESS), DEFAULT_SERVER_PORT);
                 } catch (UnknownHostException unknownHostException) {
@@ -198,7 +217,7 @@ public class ServerConnect {
 
     private void attemptConnection(ConnectionCallback callback, InetAddress address, int port) {
         executorService.execute(() -> {
-            for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
                 try {
                     TrafficStats.setThreadStatsTag(1000);
                     SocketAddress socketAddress = new InetSocketAddress(address, port);
@@ -207,16 +226,16 @@ public class ServerConnect {
                     TrafficStats.tagSocket(socket);
                     out = new PrintWriter(socket.getOutputStream(), true);
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    System.out.println("Connessione al server su: " + address.getHostAddress() + ":" + port);
+                    Log.d(TAG, "Connessione al server su: " + address.getHostAddress() + ":" + port);
                     callback.onSuccess();
                 } catch (IOException e) {
-                    System.err.println("Tentativo " + attempt + " fallito: " + e.getMessage());
-                    if (attempt == maxRetries) {
+                    Log.e(TAG, "Tentativo " + attempt + " fallito: " + e.getMessage(), e);
+                    if (attempt == MAX_RETRIES) {
                         handleError("Errore durante la connessione al server", e, callback);
                         closeConnection();
                     } else {
                         try {
-                            Thread.sleep(retryDelay);
+                            Thread.sleep(RETRY_DELAY_MS);
                         } catch (InterruptedException ie) {
                             Thread.currentThread().interrupt();
                         }
@@ -240,14 +259,14 @@ public class ServerConnect {
                 InetAddress broadcastAddress = InetAddress.getByName("255.255.255.255");
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcastAddress, UDP_PORT);
                 ds.send(sendPacket);
-                System.out.println("Messaggio di discovery inviato in broadcast.");
+                Log.d(TAG, "Messaggio di discovery inviato in broadcast.");
 
                 ds.setSoTimeout(3000);
                 byte[] recvBuf = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(recvBuf, recvBuf.length);
                 ds.receive(receivePacket);
                 String response = new String(receivePacket.getData(), 0, receivePacket.getLength());
-                System.out.println("Risposta di discovery ricevuta: " + response);
+                Log.d(TAG, "Risposta di discovery ricevuta: " + response);
 
                 String[] parts = response.split(":");
                 if (parts.length < 2) {
@@ -255,10 +274,10 @@ public class ServerConnect {
                 }
                 int port = Integer.parseInt(parts[1].trim());
                 InetAddress address = receivePacket.getAddress();
-                System.out.println("Server scoperto: " + address.getHostAddress() + ":" + port);
+                Log.d(TAG, "Server scoperto: " + address.getHostAddress() + ":" + port);
                 callback.onDiscoverySuccess(address, port);
             } catch (Exception e) {
-                System.err.println("Errore in discoverServer: " + e.getMessage());
+                Log.e(TAG, "Errore in discoverServer: " + e.getMessage(), e);
                 callback.onDiscoveryFailure(e);
             } finally {
                 if (ds != null) {
@@ -276,13 +295,11 @@ public class ServerConnect {
                 }
                 if (out != null) out.close();
                 if (in != null) in.close();
-                System.out.println("Connessione al server chiusa.");
+                Log.d(TAG, "Connessione al server chiusa.");
             } catch (IOException e) {
-                System.err.println("Errore durante la chiusura della connessione.");
-                e.printStackTrace();
+                Log.e(TAG, "Errore durante la chiusura della connessione.", e);
             } catch (Exception e) {
-                System.err.println("Errore generico durante la chiusura della connessione: " + e.getMessage());
-                e.printStackTrace();
+                Log.e(TAG, "Errore generico durante la chiusura della connessione: " + e.getMessage(), e);
             } finally {
                 socket = null;
                 out = null;
@@ -374,32 +391,45 @@ public class ServerConnect {
 
     private void sendMessageInternal(String message, MessageCallback callback) {
         try {
-            System.out.println("Invio messaggio: " + message);
-            out.println(message);
-            if (message.startsWith("LIST_USERS") || message.startsWith("GET_NOTIFICATIONS") || message.startsWith("GET_FILMS") || message.startsWith("GET_ACTIVE_RENTALS_BY_USER") || message.startsWith("GET_LAST_5_RENTALS_BY_USER") || message.startsWith("GET_TOP_5_RENTED_FILMS") || message.startsWith("GET_ALL_RENTALS_OVERVIEW")) {
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = in.readLine()) != null) {
-                    if (line.equals("END")) break;
-                    response.append(line).append("\n");
+            synchronized (ioLock) {
+                    Log.d(TAG, "Invio messaggio: " + message);
+                out.println(message);
+                if (message.startsWith("LIST_USERS") || message.startsWith("GET_NOTIFICATIONS") || message.startsWith("GET_FILMS") || message.startsWith("GET_ACTIVE_RENTALS_BY_USER") || message.startsWith("GET_LAST_5_RENTALS_BY_USER") || message.startsWith("GET_TOP_5_RENTED_FILMS") || message.startsWith("GET_ALL_RENTALS_OVERVIEW")) {
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        if ("PONG".equalsIgnoreCase(line.trim())) {
+                            continue;
+                        }
+                        if (line.equals("END")) break;
+                        response.append(line).append("\n");
+                    }
+                    String res = response.toString().trim();
+                    Log.d(TAG, "Risposta ricevuta: " + res);
+                    callback.onSuccess(res);
+                } else {
+                    String responseLine = readNextBusinessLine();
+                    Log.d(TAG, "Risposta ricevuta: " + responseLine);
+                    callback.onSuccess(responseLine);
                 }
-                String res = response.toString().trim();
-                System.out.println("Risposta ricevuta: " + res);
-                callback.onSuccess(res);
-            } else {
-                String responseLine = in.readLine();
-                System.out.println("Risposta ricevuta: " + responseLine);
-                callback.onSuccess(responseLine);
             }
         } catch (IOException e) {
-            System.err.println("Errore durante l'invio del messaggio: " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Errore durante l'invio del messaggio: " + e.getMessage(), e);
             handleError("Errore durante l'invio del messaggio", e, callback);
         } catch (Exception e) {
-            System.err.println("Errore generico durante l'invio del messaggio: " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Errore generico durante l'invio del messaggio: " + e.getMessage(), e);
             handleError("Errore durante l'invio del messaggio", e, callback);
         }
+    }
+
+    private String readNextBusinessLine() throws IOException {
+        String responseLine;
+        while ((responseLine = in.readLine()) != null) {
+            if (!"PONG".equalsIgnoreCase(responseLine.trim())) {
+                return responseLine;
+            }
+        }
+        throw new IOException("Connessione chiusa dal server");
     }
 
     public void fetchDataFromServer(DataCallback callback) {
@@ -413,12 +443,12 @@ public class ServerConnect {
                         ? discoveredPort
                         : DEFAULT_SERVER_PORT;
 
-                for (int attempt = 1; attempt <= maxRetries; attempt++) {
+                for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
                     HttpURLConnection connection = null;
                     try {
                         TrafficStats.setThreadStatsTag(1000);
-                        URL url = new URL("http", httpAddress.getHostAddress(), httpPort, "");
-                        connection = (HttpURLConnection) url.openConnection();
+                        URI uri = new URI("http", null, httpAddress.getHostAddress(), httpPort, "/", null, null);
+                        connection = (HttpURLConnection) uri.toURL().openConnection();
                         connection.setRequestMethod("GET");
 
                         int responseCode = connection.getResponseCode();
@@ -432,14 +462,13 @@ public class ServerConnect {
                             callback.onSuccess(response.toString());
                             return;
                         } else {
-                            System.err.println("Errore: risposta del server " + responseCode);
+                            Log.e(TAG, "Errore: risposta del server " + responseCode);
                         }
                     } catch (Exception e) {
-                        System.err.println("Tentativo " + attempt + " fallito: " + e.getMessage());
-                        e.printStackTrace();
-                        if (attempt < maxRetries) {
+                        Log.e(TAG, "Tentativo " + attempt + " fallito: " + e.getMessage(), e);
+                        if (attempt < MAX_RETRIES) {
                             try {
-                                Thread.sleep(retryDelay);
+                                Thread.sleep(RETRY_DELAY_MS);
                             } catch (InterruptedException ie) {
                                 Thread.currentThread().interrupt();
                             }
@@ -451,7 +480,7 @@ public class ServerConnect {
                         TrafficStats.clearThreadStatsTag();
                     }
                 }
-                callback.onFailure(new IOException("Failed to fetch data from server after " + maxRetries + " attempts"));
+                callback.onFailure(new IOException("Failed to fetch data from server after " + MAX_RETRIES + " attempts"));
             } catch (UnknownHostException e) {
                 callback.onFailure(e);
             }
@@ -461,11 +490,14 @@ public class ServerConnect {
     public void fetchDataFromServerWithCommand(String command, DataCallback callback) {
         executorService.execute(() -> {
             try {
-                synchronized (this) {
+                synchronized (ioLock) {
                     out.println(command);
                     StringBuilder response = new StringBuilder();
                     String line;
                     while ((line = in.readLine()) != null) {
+                        if ("PONG".equalsIgnoreCase(line.trim())) {
+                            continue;
+                        }
                         response.append(line).append("\n");
                         if (line.equals("END")) break;
                     }
@@ -478,14 +510,12 @@ public class ServerConnect {
     }
 
     private void handleError(String message, Exception e, ConnectionCallback callback) {
-        System.err.println(message + ": " + e.getMessage());
-        e.printStackTrace();
+        Log.e(TAG, message + ": " + e.getMessage(), e);
         callback.onFailure(e);
     }
 
     private void handleError(String message, Exception e, MessageCallback callback) {
-        System.err.println(message + ": " + e.getMessage());
-        e.printStackTrace();
+        Log.e(TAG, message + ": " + e.getMessage(), e);
         callback.onFailure(e);
     }
 
