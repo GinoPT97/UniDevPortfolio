@@ -19,7 +19,7 @@
             android:layout_margin="8dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="3dp"
-            app:cardBackgroundColor="@color/white">
+            app:cardBackgroundColor="@color/surface">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -98,7 +98,26 @@
             android:layout_weight="1"
             android:padding="4dp"
             android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical"
+            android:nestedScrollingEnabled="true"
             />
+
+        <TextView
+            android:id="@+id/textViewNoResults"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="Nessun film trovato\nProva con un altro titolo o cambia filtro"
+            android:textSize="18sp"
+            android:textColor="?attr/colorOnSurface"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:paddingTop="40dp"
+            android:drawableTop="@drawable/ic_movie"
+            android:drawablePadding="10dp"
+            android:drawableTint="@color/teal_700"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

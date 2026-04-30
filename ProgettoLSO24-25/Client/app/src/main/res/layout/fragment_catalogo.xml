@@ -74,7 +74,7 @@
         android:layout_marginBottom="4dp"
         app:cardCornerRadius="14dp"
         app:cardElevation="4dp"
-        app:cardBackgroundColor="@color/white">
+        app:cardBackgroundColor="@color/surface">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -135,11 +135,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="Nessun film trovato"
+        android:text="Nessun film trovato\nProva con un altro titolo o cambia filtro"
         android:textSize="18sp"
-        android:textColor="#888888"
+        android:textColor="?attr/colorOnSurface"
         android:gravity="center"
-        android:paddingTop="60dp"
+        android:lineSpacingExtra="4dp"
+        android:paddingTop="40dp"
+        android:drawableTop="@drawable/ic_movie"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/teal_700"
         android:visibility="gone"/>
 
 </LinearLayout>
