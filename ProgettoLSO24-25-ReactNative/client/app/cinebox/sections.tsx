@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image } from 'expo-image';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { styles } from './styles';
@@ -17,6 +17,9 @@ type AuthSectionProps = {
 };
 
 export function AuthSection(props: Readonly<AuthSectionProps>) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   return (
     <View style={styles.card}>
       <Text style={styles.title}>CiNEBOX Login</Text>
@@ -27,21 +30,34 @@ export function AuthSection(props: Readonly<AuthSectionProps>) {
         onChangeText={props.setUsername}
         autoCapitalize="none"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={props.password}
-        onChangeText={props.setPassword}
-        secureTextEntry
-      />
-      {props.authMode === 'register' && (
+      <View style={styles.inputRow}>
         <TextInput
-          style={styles.input}
-          placeholder="Conferma password"
-          value={props.confirmPassword}
-          onChangeText={props.setConfirmPassword}
-          secureTextEntry
+          style={styles.inputField}
+          placeholder="Password"
+          value={props.password}
+          onChangeText={props.setPassword}
+          secureTextEntry={!showPassword}
         />
+        <Pressable style={styles.toggleButton} onPress={() => setShowPassword((prev) => !prev)}>
+          <Text style={styles.toggleButtonText}>{showPassword ? 'Nascondi' : 'Mostra'}</Text>
+        </Pressable>
+      </View>
+      {props.authMode === 'register' && (
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.inputField}
+            placeholder="Conferma password"
+            value={props.confirmPassword}
+            onChangeText={props.setConfirmPassword}
+            secureTextEntry={!showConfirmPassword}
+          />
+          <Pressable
+            style={styles.toggleButton}
+            onPress={() => setShowConfirmPassword((prev) => !prev)}
+          >
+            <Text style={styles.toggleButtonText}>{showConfirmPassword ? 'Nascondi' : 'Mostra'}</Text>
+          </Pressable>
+        </View>
       )}
 
       <Pressable style={styles.primaryButton} onPress={props.onSubmit}>
@@ -234,16 +250,21 @@ export function CatalogSection(props: Readonly<CatalogSectionProps>) {
             <View style={styles.filmContent}>
               <Text style={styles.filmTitle}>{film.titolo}</Text>
               <Text style={styles.muted}>{film.genere}</Text>
-              <Text style={styles.small}>{film.descrizione || 'Descrizione non disponibile'}</Text>
+
+              <View style={styles.filmQuickStats}>
+                <Text style={styles.filmQuickChip}>⭐ {film.votoMedio.toFixed(1)} ({film.numeroVoti})</Text>
+                <Text style={styles.filmQuickChip}>€ {film.prezzo.toFixed(2)}</Text>
+                <Text style={styles.filmQuickChip}>Disponibili {film.numeroCopieDisponibili}</Text>
+              </View>
+
+              <Text numberOfLines={4} style={styles.small}>
+                {film.descrizione || 'Descrizione non disponibile'}
+              </Text>
 
               <View style={styles.filmMetaGrid}>
                 <Text style={styles.filmMetaItem}>Lingua: {film.linguaOriginale || '-'}</Text>
                 <Text style={styles.filmMetaItem}>Data rilascio: {formatDate(film.dataRilascio)}</Text>
-                <Text style={styles.filmMetaItem}>Voto medio: {film.votoMedio.toFixed(1)}</Text>
-                <Text style={styles.filmMetaItem}>Numero voti: {film.numeroVoti}</Text>
                 <Text style={styles.filmMetaItem}>Popolarita: {film.popolarita.toFixed(1)}</Text>
-                <Text style={styles.filmMetaItem}>Prezzo: € {film.prezzo.toFixed(2)}</Text>
-                <Text style={styles.filmMetaItem}>Copie disponibili: {film.numeroCopieDisponibili}</Text>
                 <Text style={styles.filmMetaItem}>In prestito: {film.numeroCopieInPrestito}</Text>
               </View>
 

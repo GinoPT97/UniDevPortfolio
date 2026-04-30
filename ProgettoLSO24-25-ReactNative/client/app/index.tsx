@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   AuthSection,
@@ -15,6 +15,13 @@ import { useCineboxController } from './cinebox/use-cinebox-controller';
 export default function CineboxScreen() {
   const controller = useCineboxController();
 
+  const confirmAction = (title: string, message: string, onConfirm: () => void) => {
+    Alert.alert(title, message, [
+      { text: 'Annulla', style: 'cancel' },
+      { text: 'Conferma', style: 'destructive', onPress: onConfirm },
+    ]);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -25,9 +32,6 @@ export default function CineboxScreen() {
               <Text style={styles.muted}>
                 {controller.session.username} ({controller.isAdmin ? 'admin' : `id ${controller.session.userId}`})
               </Text>
-              <Pressable style={styles.secondaryButton} onPress={controller.logout}>
-                <Text style={styles.secondaryButtonText}>Logout</Text>
-              </Pressable>
             </View>
 
             <View style={styles.tabs}>
@@ -85,8 +89,20 @@ export default function CineboxScreen() {
                 cart={controller.cart}
                 cartTotal={controller.cartTotal}
                 onToggleCartFilm={controller.toggleCartFilm}
-                onCheckout={controller.checkout}
-                onClearCart={controller.clearCart}
+                onCheckout={() =>
+                  confirmAction(
+                    'Conferma checkout',
+                    'Procedere con il checkout dei film nel carrello?',
+                    controller.checkout
+                  )
+                }
+                onClearCart={() =>
+                  confirmAction(
+                    'Svuota carrello',
+                    'Vuoi rimuovere tutti i film dal carrello?',
+                    controller.clearCart
+                  )
+                }
               />
             )}
             {controller.activeTab === 'notifiche' && (
@@ -97,9 +113,21 @@ export default function CineboxScreen() {
                 setSelectedUserId={controller.setSelectedUserId}
                 notificationMessage={controller.notificationMessage}
                 setNotificationMessage={controller.setNotificationMessage}
-                onSendAdminNotification={controller.sendAdminNotification}
+                onSendAdminNotification={() =>
+                  confirmAction(
+                    'Invia notifica',
+                    'Inviare la notifica all\'utente selezionato?',
+                    controller.sendAdminNotification
+                  )
+                }
                 notifications={controller.notifications}
-                onDeleteNotification={controller.deleteNotification}
+                onDeleteNotification={(id: number) =>
+                  confirmAction(
+                    'Elimina notifica',
+                    'Confermi l\'eliminazione della notifica?',
+                    () => controller.deleteNotification(id)
+                  )
+                }
               />
             )}
           </>
