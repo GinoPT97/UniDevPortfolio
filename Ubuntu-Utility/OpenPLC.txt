@@ -1,0 +1,23 @@
+Apri il terminale e vai:
+1. Clona il repository
+bashgit clone https://github.com/thiagoralves/OpenPLC_v3.git
+cd OpenPLC_v3
+2. Avvia l'installer (ci vuole 10-15 minuti)
+bash./install.sh linux
+Installa tutte le dipendenze da solo, non devi fare nient'altro.
+3. Avvia il runtime
+bash./start_openplc.sh
+4. Apri il browser
+http://localhost:8080
+Credenziali di default:
+
+utente: openplc
+password: openplc
+
+
+Una volta dentro:
+Vedrai una dashboard web da cui carichi i programmi PLC. Per scrivere il codice usi OpenPLC Editor — scaricalo separatamente dalla stessa pagina del sito, ha un installer .AppImage che gira su Ubuntu senza installazione:
+bashchmod +x OpenPLC_Editor.AppImage
+./OpenPLC_Editor.AppImage
+
+Fammi sapere quando sei dentro la dashboard — ti guido passo passo a creare il primo progetto Start/Stop.
