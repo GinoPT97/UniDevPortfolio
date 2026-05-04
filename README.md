@@ -1,403 +1,244 @@
 # 🎓 UniDevPortfolio
 
-Benvenuto nel mio **UniDevPortfolio**, una raccolta completa e strutturata di progetti accademici e personali sviluppati durante il mio percorso di studi in **Informatica** presso l'**Università degli Studi di Napoli Federico II**. 
+Benvenuto nel mio **UniDevPortfolio**, una raccolta completa e strutturata di progetti accademici e personali sviluppati durante il mio percorso di studi in **Informatica** presso l'**Università degli Studi di Napoli Federico II**.
 
-Questo repository rappresenta un compendio di soluzioni innovative e implementazioni tecniche realizzate per i corsi di **Laboratorio di Programmazione**, **Laboratorio di Algoritmi e Strutture Dati (LASD)**, **Laboratorio di Sistemi Operativi (LSO)**, **Basi di Dati**, **Programmazione Orientata agli Oggetti**, **Tecnologie Web**, **Architettura degli Elaboratori**, **Machine Learning** e progetti di ricerca personali.
-
-Ogni progetto testimonia un approccio metodico alla risoluzione di problemi complessi, con particolare attenzione all'efficienza algoritmica, alla qualità del codice e all'applicazione di best practices industriali.
+Questo repository comprende soluzioni e implementazioni realizzate per i corsi di **Laboratorio di Programmazione**, **Laboratorio di Algoritmi e Strutture Dati (LASD)**, **Laboratorio di Sistemi Operativi (LSO)**, **Basi di Dati**, **Tecnologie Web**, **Architettura degli Elaboratori**, **Machine Learning** e progetti personali di ricerca.
 
 ## 🛠️ Stack Tecnologico
 
-Il portfolio abbraccia un ampio spettro di tecnologie moderne e paradigmi di programmazione:
-
-**Linguaggi di Programmazione:** C, C++, Java, JavaScript, Python, SQL, Prolog, Standard ML, Assembly x86, Bash  
-**Framework e Librerie:** Angular, Vite.js, JCalendar, PostgreSQL JDBC  
-**Strumenti di Sviluppo:** Android Studio, VS Code, Git, CMake, Makefile  
-**Database:** PostgreSQL, SQL Server  
-**Architetture:** MVC, Client-Server, Single Page Applications (SPA)
+**Linguaggi di Programmazione:** C, C++, Java, Kotlin, JavaScript, TypeScript, Python, Rust, SQL, Prolog, Standard ML, Assembly Motorola 68000, Bash  
+**Framework e Librerie:** React Native (Expo), Angular, Vite.js, Node.js/Express, JCalendar, PostgreSQL JDBC  
+**Strumenti di Sviluppo:** Android Studio, VS Code, Git, Docker, CMake, Makefile, Gradle  
+**Database:** PostgreSQL  
+**Architetture:** Client-Server (TCP socket), MVC, REST API, Single Page Applications (SPA), Mobile (Android/React Native)
 
 ## 📂 Struttura del Repository
 
 ### 🔧 Programmazione Sistemistica e Algoritmi
 
 #### **C - Generico**
-Implementazioni fondamentali di algoritmi e strutture dati in linguaggio C:
-- **File Management**: Manipolazione avanzata di file e stream I/O
-- **Ricorsione**: Algoritmi ricorsivi per risoluzione di problemi complessi
-- **Strutture Dati**: Implementazioni custom di liste, stack e code
-- **Algoritmi di Ordinamento**: Bubble sort, merge sort, quick sort con analisi della complessità
+Implementazioni fondamentali in linguaggio C organizzate per argomento:
+- **File / File e liste**: Manipolazione di file e liste su file (multi-file)
+- **Ricorsione Basilare / Ricorsione su stringhe**: Algoritmi ricorsivi
+- **Sort Multi-File**: Algoritmi di ordinamento (bubble, merge, quick sort)
+- **Vettori e matrici**: Operazioni su array e matrici dinamiche
+- **Primo Progetto Stack**: Implementazione di stack in C multi-file
 
 #### **C - LAB (Laboratorio di Programmazione)**
-Soluzioni a tracce d'esame e progetti di laboratorio:
-- **Tracce d'Esame**: Soluzioni complete con documentazione e test case
-- **Cubo Magico**: Algoritmi per la generazione e verifica di cubi magici
-- **Gestione Studenti**: Sistema di gestione anagrafica con matrici dinamiche
-- **Elaborazione Dati**: Parsing e analisi di dataset complessi
+Soluzioni a tracce d'esame universitarie:
+- **Tracce d'Esame**: soluzioni complete (esami 2019–2021)
+- **Cubo Magico 1 & 2**: generazione e verifica di cubi magici
+- **Studente con Matrice**: gestione anagrafica con matrici dinamiche
+- **Traccia partite / targa / giugno**: elaborazione dati su domini specifici
 
 #### **C - LASD (Laboratorio di Algoritmi e Strutture Dati)**
-Implementazioni avanzate con focus su performance e ottimizzazione:
-- **Alberi Binari di Ricerca**: BST con operazioni di inserimento, ricerca e cancellazione
-- **Grafi**: Rappresentazione con liste di adiacenza e matrici
-- **Algoritmi di Visita**: BFS, DFS con implementazione iterativa e ricorsiva
-- **Strutture Dati Avanzate**: Hash tables, heap binari e code di priorità
+Libreria e tracce d'esame per il corso LASD:
+- Implementazione in `funzioni.c` / `libreria.h` / `main.c`
+- `Soluzione-06-23/`: tre esercizi d'esame (giugno 2023)
 
 #### **C - LSO (Laboratorio di Sistemi Operativi)**
-Progetti di programmazione di sistema e networking:
-- **Server Multi-Client**: Implementazione di server TCP/UDP con gestione concorrente
-- **Inter-Process Communication**: Pipe, semafori e memoria condivisa
-- **Thread Management**: Sincronizzazione e coordinamento di thread
-- **Socket Programming**: Client-server applications con protocolli personalizzati
+Programmazione di sistema Linux:
+- **Esami-Svolti**: 12 tracce d'esame risolte (2020–2026) con socket, fork, pipe, thread
+- **Esercizi LSO 21-22**: pipe, fork/exec, bash scripting, thread POSIX
+- **Socket-Esempi**: implementazioni complete di client/server TCP e UDP (iterativo, concorrente, multi-thread)
 
 #### **Librerie-C**
-Librerie personalizzate e modulari:
-- **BST Library**: Implementazione completa di alberi binari di ricerca
-- **Graph Library**: Algoritmi per grafi pesati e non pesati  
-- **Data Structures**: Stack, code, liste circolari e doppie
-- **Utility Functions**: Funzioni di supporto per input/output e manipolazione dati
+Librerie dati custom, ciascuna con header + sorgente + main di test:
+- **BST**: albero binario di ricerca
+- **Grafi / MatrixGraph**: grafi con lista di adiacenza e matrice di adiacenza
+- **Heap**: heap binario
+- **Stack / Code**: stack e coda
+- **List / Double-List / Circle-List**: liste semplici, doppie e circolari
+- **Input**: lettore di input generico
 
-### ☕ Programmazione Object-Oriented
+### 🚀 Progetti LSO — Applicazioni Complete
+
+#### **ProgettoLSO24-25**
+Applicazione completa con architettura **Client Android (Kotlin/Gradle) + Server C + PostgreSQL**:
+- `Server-Side/`: server C con socket TCP, operazioni su DB, cron job e utilità (`server.c`, `Socket`, `DBOperation`, `CronJobDB`, `Utils`)
+- `Client/`: app Android nativa in Kotlin con Gradle
+- `database.sql`: schema PostgreSQL
+- `docker-compose.yml`: orchestrazione server + database
+
+#### **ProgettoLSO24-25-ReactNative**
+Versione del progetto con client **React Native (Expo, TypeScript)**:
+- `Server-Side/`: stesso server C del progetto precedente
+- `client/`: app Expo con routing (`app/`), componenti, hooks, bridge HTTP→TCP, costanti, asset
+- `database.sql` e `docker-compose.yml` aggiornati per il nuovo client
+
+### ☕ Programmazione Java
 
 #### **Java - Personale**
-Progetti esplorativi e sperimentazioni:
-- **Design Patterns**: Implementazione di pattern MVC, Observer, Strategy
-- **Concurrency**: Gestione di thread e sincronizzazione
-- **GUI Development**: Interfacce grafiche con Swing e JavaFX
+Progetto Eclipse con materiale di studio e sperimentazione:
+- **Java-Varie**: 22 capitoli di studio progressivo + Termostato MVC
+- **Prove MVC**: implementazione pattern Model-View-Controller
+- **ProveElementari**: esercizi elementari
+- **Padding**: esercizi sul padding/formattazione
 
-#### **Progetto-OO (Programmazione Orientata agli Oggetti)**
-Sistema completo di gestione con architettura MVC:
-- **Model**: Entità del dominio con relazioni JPA
-- **View**: Interfacce grafiche reattive e intuitive
-- **Controller**: Logica di business e coordinamento
-- **DAO Pattern**: Accesso ai dati con PostgreSQL
-- **Service Layer**: Logica di business incapsulata
-
-### 🌐 Sviluppo Web e Tecnologie Frontend
+### 🌐 Sviluppo Web
 
 #### **Tech-Web**
-Applicazioni web moderne con tecnologie all'avanguardia:
-- **Angular Applications**: SPA con routing, componenti reattivi e servizi
-- **Todo List SPA**: Gestione stato con RxJS e pattern reattivi
-- **Vite.js Projects**: Build tool moderna per sviluppo frontend veloce
-- **Responsive Design**: Layout adattivi con CSS Grid e Flexbox
-- **WEBTECH'S STREETCATS**: Progetto completo di social network per animali
+Esercitazioni e progetti per il corso Tecnologie Web:
+- **Esercitazioni/**: 6 assignment + esercizi con Node.js/Express, Angular, Vite.js
+  - REST API con Express (`controllers/`, `models/`, `routes/`, `middleware/`)
+  - Todo List SPA con Angular
+  - Hello World con Vite.js
+  - Applicazioni to-do con gestione cookies e sessioni
+- **todo-list-spa/**: SPA frontend + backend Express separati
 
-### 🗄️ Database e Gestione Dati
+### 🗄️ Database
 
 #### **SQL**
-Progettazione e implementazione di database relazionali:
-- **Database Design**: Normalizzazione e ottimizzazione schema
-- **Query Avanzate**: Join complessi, subquery e funzioni window
-- **Stored Procedures**: Logica di business a livello database
-- **Performance Tuning**: Ottimizzazione query e indici
+Script e tracce d'esame SQL:
+- `Eliminazione-Righe.sql`: script di utilità
+- `Esami/`: 3 tracce d'esame (2019–2021) con query, join, funzioni
 
 ### 🔬 Linguaggi Funzionali e Logici
 
 #### **ML (Standard ML)**
-Programmazione funzionale avanzata:
-- **Funzioni Higher-Order**: Map, filter, reduce con funzioni personalizzate
-- **Pattern Matching**: Destrutturazione di tipi di dati complessi
-- **Algoritmi su Alberi**: Traversal e manipolazione di strutture ad albero
-- **Type System**: Utilizzo avanzato del sistema di tipi di ML
+Programmazione funzionale:
+- `FunGeneric.sml`, `FunMap.sml`, `FunExam.sml`: funzioni higher-order, map/reduce
+- `Alberi.sml`: algoritmi su alberi
+- `reduce.sml`, `prova.sml`: esercizi vari
 
 #### **Prolog**
-Programmazione logica e sistemi esperti:
-- **Knowledge Base**: Rappresentazione di conoscenza e regole
-- **Inference Engine**: Algoritmi di backtracking e unificazione
-- **Constraint Logic Programming**: Risoluzione di problemi con vincoli
-- **Graph Algorithms**: Implementazione di algoritmi su grafi in logica
+Programmazione logica con 30+ file `.pl`:
+- Algoritmi su liste, grafi, puzzle constraint
+- `TicTacToe.pl` / `tic-tac-toe/`: gioco completo
+- `sudoku.pl`: risolutore Sudoku
+- `birds.pl`, `Grafo.pl`, `tipi-java.pl`
 
 ### ⚙️ Programmazione di Sistema
 
-#### **Assembly**
-Programmazione a basso livello per architettura x86:
-- **Gestione Memoria**: Allocazione e deallocazione dinamica
-- **Ottimizzazione**: Tecniche di ottimizzazione a livello assembly
-- **Interfacciamento**: Chiamate di sistema e interfacce hardware
-- **Strutture Dati**: Implementazione di stack e array a basso livello
+#### **Assembly (Motorola 68000)**
+Programmazione a basso livello per architettura M68000 con file `.a68`:
+- **Operazioni**: MIN/MAX, fattoriale, prodotto scalare, potenza, somme
+- **Stringhe**: ricerca, tokenizzazione, conversione maiuscole
+- **Strutture Dati**: stack, array, operazioni bit
+- **Indirizzamenti**: modalità di indirizzamento M68000
+- **Esami**: tracce d'esame 2014–2015
 
 #### **Ubuntu-Utility**
-Script di automazione per ambiente Linux:
-- **System Administration**: Script per manutenzione sistema
-- **Process Management**: Monitoring e gestione processi
-- **File System Operations**: Operazioni batch su filesystem
-- **Network Utilities**: Tool per diagnostica e monitoraggio rete
+Script e configurazioni per ambienti Ubuntu/Linux:
+- `Aggiornamenti.sh`, `InstallApp.sh`, `Ottimizzazioni.sh`: manutenzione sistema
+- `dumpdir.sh`, `dumphere.sh`: dump del filesystem
+- `autoinstall.yaml`: configurazione autoinstall
+- `Utils-SH/ImageToPDF.sh`: conversione immagini in PDF
+- `Utils-TXT/`: note su configurazione, alias e retroilluminazione
+- `Virtual-Machine/`: script di setup e verifica VM
 
-### 🐍 Sviluppo Moderno e Ricerca
+### 🦀 Rust
+
+#### **Rust**
+6 progetti Cargo indipendenti per l'apprendimento del linguaggio:
+- `basic/`: esercizi base
+- `helloworld/`: primo programma
+- `fattoriale/`, `fibonacci/`, `NumeriPrimi/`: algoritmi matematici
+- `CalcolatriceInterattiva/`: calcolatrice da terminale con input interattivo
+
+### 🐍 Python
 
 #### **Python**
-Progetti di ricerca e analisi dati:
-- **Algoritmi e Strutture Dati**: Implementazioni Pythonic di algoritmi classici
-- **Data Analysis**: Elaborazione e visualizzazione dati
-- **Machine Learning**: Algoritmi di apprendimento automatico
-- **Utility Scripts**: Strumenti di automazione e elaborazione
+Progetti di ricerca, analisi dati e scripting:
+- **Esercizi-Vari**: 25+ file con plotting (matplotlib/numpy), FFT, statistiche, client/server TCP
+- **ASD**: implementazioni di algoritmi di ricerca (`RIC-IT.py`)
+- **Progetto-Ricerca**: `CodeToImage.py` (conversione codice→immagine), analisi numeri primi
+- **Risk-Analisis**: `EarthquakeRiskAnalysis.py` e `MarketRiskAnalysis.py` con ambiente virtuale dedicato
+- `Ripristino-Google.py`, `Sommatoria.py`: script di utilità
+
+### ⚡ C++
 
 #### **C++**
-Programmazione avanzata con focus su performance:
-- **Template Programming**: Metaprogramming e generic programming
-- **STL Usage**: Utilizzo avanzato della Standard Template Library
-- **Memory Management**: RAII e smart pointers
-- **Concurrent Programming**: Multithreading con C++11/14/17
-
-## 🚀 Competenze Tecniche Dimostrate
-
-### **Paradigmi di Programmazione**
-- **Programmazione Imperativa**: C, C++, Assembly con focus su efficienza e controllo memoria
-- **Programmazione Object-Oriented**: Java con implementazione completa di principi OOP
-- **Programmazione Funzionale**: Standard ML con higher-order functions e pattern matching
-- **Programmazione Logica**: Prolog per sistemi esperti e reasoning automatico
-- **Programmazione Web**: JavaScript, HTML5, CSS3 con framework moderni
-
-### **Architetture Software**
-- **Model-View-Controller (MVC)**: Separazione responsabilità e maintainability
-- **Data Access Object (DAO)**: Astrazione accesso dati e portabilità
-- **Service Layer**: Incapsulamento logica business e transazioni
-- **Client-Server**: Comunicazione distribuita con protocolli personalizzati
-- **Single Page Applications**: Architetture reattive con routing client-side
-
-### **Gestione Dati e Persistenza**
-- **Database Relazionali**: PostgreSQL con progettazione schema avanzata
-- **Query Optimization**: Analisi performance e tuning database
-- **JDBC Programming**: Connettività Java-Database con prepared statements
-- **Transaction Management**: Gestione ACID e controllo concorrenza
-
-### **Algoritmi e Complessità**
-- **Analisi Asintotica**: Valutazione Big-O e ottimizzazione algoritmica
-- **Strutture Dati Avanzate**: Hash tables, heap, alberi bilanciati
-- **Algoritmi su Grafi**: BFS, DFS, algoritmi di shortest path
-- **Algoritmi di Ordinamento**: Implementazione e comparazione performance
-
-## 💡 Metodologie di Sviluppo
-
-### **Version Control**
-Utilizzo professionale di Git per:
-- Branching strategies e workflow collaborativi
-- Commit semantici e documentazione changes
-- Merge conflict resolution e code review
-
-### **Testing e Quality Assurance**
-- Unit testing per validazione componenti individuali
-- Integration testing per verifica interazioni sistema
-- Code coverage analysis e performance profiling
-- Static code analysis per identificazione code smells
-
-### **Documentation**
-- Documentazione tecnica completa per ogni progetto
-- Commenti inline seguendo standard industriali
-- README dettagliati con istruzioni setup e usage
-- Diagrammi UML per architetture complesse
+Esercizi C++ organizzati per argomento:
+- **funzioni/**: 12 file (`codice01.cpp`…`codice12.cpp`) con header libreria
+- **strutture dati/**: 42 file (`codice01.cpp`…`codice42.cpp`) su strutture dati avanzate con STL
 
 ## ⚙️ Setup e Installazione
+
+### **Clone Repository**
+```bash
+git clone https://github.com/GinoPT97/UniDevPortfolio.git
+cd UniDevPortfolio
+```
 
 ### **Prerequisiti Sistema**
 ```bash
 # Ubuntu/Debian
 sudo apt update && sudo apt install -y \
-  build-essential \
+  build-essential gcc g++ gdb valgrind \
   default-jdk \
   postgresql-client \
   nodejs npm \
   python3 python3-pip \
+  rustup \
   git cmake make
-
-# Compilatori specifici
-sudo apt install -y gcc g++ nasm gdb valgrind
 ```
 
-### **Clone Repository**
+### **Compilazione C / C - LSO**
 ```bash
-git clone https://github.com/kenobi/UniDevPortfolio.git
-cd UniDevPortfolio
+# Esempio: compilare un esercizio LSO
+cd "C - LSO/Socket-Esempi"
+gcc -o serverTCP ServerTCP.c
+gcc -o clientTCP ClientTCP.c
 ```
 
-### **Setup Progetti Java**
+### **Progetti LSO con Docker**
 ```bash
-# Compilazione progetto OO con dipendenze
-cd Progetto-OO
-javac -cp ".:jcalendar-1.4.jar:postgresql-42.7.3.jar" -d bin src/**/*.java
+# Avvio completo server C + PostgreSQL
+cd ProgettoLSO24-25
+docker compose up --build
 
-# Esecuzione con classpath
-java -cp "bin:jcalendar-1.4.jar:postgresql-42.7.3.jar" main.MainClass
+# Versione React Native
+cd ProgettoLSO24-25-ReactNative
+docker compose up --build
 ```
 
-### **Setup Progetti Web**
+### **Progetti Web (Node.js/Express)**
 ```bash
-# Setup Angular projects
-cd Tech-Web/Esercitazioni/Angular-ToDo/angular-todo-list
+cd "Tech-Web/Esercitazioni/express-todo-list-rest"
 npm install
-ng serve
-
-# Setup Vite projects  
-cd ../../../hello-vite
-npm install
-npm run dev
+node index.js
 ```
 
-### **Setup Database PostgreSQL**
-```sql
--- Creazione database per progetti
-CREATE DATABASE unidev_portfolio;
-CREATE USER portfolio_user WITH PASSWORD 'secure_password';
-GRANT ALL PRIVILEGES ON DATABASE unidev_portfolio TO portfolio_user;
-```
-
-## 🎯 Valore Professionale
-
-### **Applicazione Pratica della Teoria Informatica**
-Ogni progetto rappresenta l'implementazione concreta di concetti teorici avanzati:
-- **Teoria dei Grafi**: Implementazioni efficienti di algoritmi classici (Dijkstra, BFS, DFS)
-- **Complessità Computazionale**: Analisi e ottimizzazione con focus su Big-O notation
-- **Design Patterns**: Applicazione di pattern architetturali industry-standard
-- **Database Theory**: Normalizzazione, ACID properties, e query optimization
-
-### **Crescita Tecnica Documentata**
-Il repository testimonia un percorso di crescita professionale strutturato:
-- **Evoluzione Coding Style**: Da implementazioni basic a codice production-ready
-- **Mastery Progressiva**: Dalla programmazione procedurale agli paradigmi avanzati
-- **Problem Solving Skills**: Approccio metodico a problemi di complessità crescente
-- **Technology Adoption**: Capacità di apprendimento e adozione di nuove tecnologie
-
-### **Best Practices Industriali**
-Applicazione consistente di standard professionali:
-- **Code Quality**: Naming conventions, code organization, e maintainability
-- **Error Handling**: Gestione robusta di eccezioni e edge cases
-- **Performance Optimization**: Profiling, benchmarking, e ottimizzazione mirata
-- **Security Awareness**: Implementazione di pratiche secure coding
-
-### **Competenze Trasversali**
-- **System Design**: Capacità di progettare architetture scalabili e maintainable
-- **Cross-Platform Development**: Esperienza su multiple piattaforme e ambienti
-- **Integration Skills**: Capacità di integrare tecnologie diverse in soluzioni coerenti
-- **Technical Communication**: Documentazione tecnica chiara e completa
-
-## 🔍 Guida all'Esplorazione
-
-### **Per Recruiters e Technical Reviewers**
-1. **Progetti Flagship**: 
-   - `Progetto-OO/` - Architettura MVC completa con database integration
-   - `C - LASD/` - Algoritmi avanzati con analisi complessità
-   - `Tech-Web/WEBTECH'S STREETCATS/` - Full-stack web application
-
-2. **Competenze Specifiche**:
-   - **System Programming**: `C - LSO/` per socket programming e IPC
-   - **Data Structures**: `Librerie-C/` per implementazioni custom
-   - **Web Development**: `Tech-Web/` per tecnologie moderne
-
-3. **Code Quality Indicators**:
-   - Consistent coding standards across projects
-   - Comprehensive error handling
-   - Well-documented APIs and interfaces
-   - Performance-conscious implementations
-
-### **Per Sviluppatori e Studenti**
-- Ogni cartella contiene README specifici con setup instructions
-- Codice commentato con spiegazioni algoritmi e design choices
-- Examples di utilizzo e test cases disponibili
-- References a risorse di approfondimento teorico
-
-### **Navigazione Consigliata**
-```
-📁 Inizio Consigliato:
-├── C - Generico/          # Fondamenti programmazione
-├── C - LASD/              # Algoritmi avanzati  
-├── Progetto-OO/           # Architetture enterprise
-├── Tech-Web/              # Modern web development
-└── Librerie-C/            # Custom implementations
-```
-
-## 🤝 Contributi e Collaborazione
-
-### **Contributi Welcome**
-Il repository accoglie contributi per:
-- **Ottimizzazioni algoritmiche** e performance improvements
-- **Code refactoring** seguendo modern best practices  
-- **Documentazione** e tutorial aggiuntivi
-- **Test cases** e validation scripts
-- **Bug fixes** e security improvements
-
-### **Processo di Contribuzione**
+### **Rust**
 ```bash
-# 1. Fork del repository
-git clone https://github.com/[your-username]/UniDevPortfolio.git
-
-# 2. Crea feature branch
-git checkout -b feature/awesome-improvement
-
-# 3. Implementa changes con commit semantici
-git commit -m "feat: add advanced graph traversal algorithm"
-git commit -m "docs: update API documentation for BST library"
-git commit -m "perf: optimize hash table collision handling"
-
-# 4. Push e Pull Request
-git push origin feature/awesome-improvement
-# Apri PR con descrizione dettagliata delle modifiche
+cd Rust/CalcolatriceInterattiva
+cargo run
 ```
 
-### **Coding Standards**
-- **C/C++**: Segui Google C++ Style Guide
-- **Java**: Applica Oracle Java Conventions
-- **JavaScript**: Utilizza ESLint con Airbnb config
-- **Python**: Aderisci a PEP 8 standard
-- **SQL**: Utilizza uppercase per keywords, lowercase per identifiers
+### **Python (Risk Analysis)**
+```bash
+cd Python/Risk-Analisis
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python3 EarthquakeRiskAnalysis.py
+```
 
-### **Review Process**
-- Code review obbligatoria per tutti i PR
-- Testing automatico su multiple platforms
-- Performance benchmarking per algoritmi critici
-- Security scanning per identificare vulnerabilità
+## 🔍 Navigazione Consigliata
 
-## 📊 Metriche e Statistiche
+```
+📁 Punti di ingresso suggeriti:
+├── C - Generico/              # Fondamenti C
+├── C - LASD/                  # Algoritmi e strutture dati
+├── C - LSO/                   # Sistemi operativi e socket
+├── ProgettoLSO24-25/          # Progetto completo Android + C + PostgreSQL
+├── ProgettoLSO24-25-ReactNative/  # Progetto React Native + C + PostgreSQL
+├── Tech-Web/                  # Sviluppo web moderno
+├── Librerie-C/                # Librerie dati custom
+├── Rust/                      # Apprendimento Rust
+└── Python/Risk-Analisis/      # Analisi dati e ricerca
+```
 
-### **Repository Stats**
-- **Languages**: 10+ linguaggi di programmazione
-- **Projects**: 50+ progetti accademici e personali  
-- **Lines of Code**: 15,000+ LOC across all projects
-- **Commits**: 200+ commit con storia completa
-- **Documentation**: 100+ file di documentazione
+## 📞 Contatti
 
-### **Technical Complexity**
-- **Algoritmi Implementati**: 30+ algoritmi classici
-- **Strutture Dati**: 15+ implementazioni custom
-- **Design Patterns**: 10+ pattern utilizzati
-- **Frameworks**: 8+ framework/librerie integrate
-
-## 📞 Contatti e Professional Network
-
-### **Collegamenti Professionali**
-- **GitHub**: [@kenobi](https://github.com/kenobi) - Portfolio completo e open source projects
-- **LinkedIn**: [Profilo LinkedIn](https://linkedin.com/in/kenobi) - Network professionale e endorsements
-- **Email**: [professional.email@domain.com](mailto:professional.email@domain.com) - Comunicazioni professionali
-
-### **Academic References**
-- **Università**: Università degli Studi di Napoli Federico II
-- **Dipartimento**: Dipartimento di Ingegneria Elettrica e delle Tecnologie dell'Informazione
-- **Corso di Laurea**: Informatica
+- **GitHub**: [@GinoPT97](https://github.com/GinoPT97)
+- **Università**: Università degli Studi di Napoli Federico II — Dipartimento di Ingegneria Elettrica e delle Tecnologie dell'Informazione
 
 ---
 
-## 📄 Licenza e Utilizzo
+## 📄 Licenza
 
-Questo progetto è rilasciato sotto **MIT License**, garantendo:
-- ✅ **Uso commerciale** - Utilizzabile in progetti commerciali
-- ✅ **Modifica** - Modificabile e personalizzabile
-- ✅ **Distribuzione** - Ridistribuibile liberamente  
-- ✅ **Uso privato** - Utilizzabile per scopi personali
-- ❗ **Limitazioni**: Fornito "AS IS" senza garanzie
-
-```
-MIT License - Copyright (c) 2025 UniDevPortfolio
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
-Consulta il file [LICENSE](LICENSE) per i dettagli completi della licenza.
+Questo progetto è rilasciato sotto **MIT License**. Consulta il file [LICENSE](LICENSE) per i dettagli completi.
 
 ---
 

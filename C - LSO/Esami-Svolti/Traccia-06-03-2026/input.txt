@@ -1,0 +1,5 @@
+Ciao 42 mondo 7
+Ho comprato 3 mele e 12 arance
+La temperatura è 25 gradi
+Testo senza numeri qui
+Giovanni ha 99 problemi ma bash non è uno
