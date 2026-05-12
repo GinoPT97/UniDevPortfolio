@@ -1,253 +1,178 @@
-# 🎓 UniDevPortfolio
+# UniDevPortfolio
 
-Benvenuto nel mio **UniDevPortfolio**, una raccolta completa e strutturata di progetti accademici e personali sviluppati durante il mio percorso di studi in **Informatica** presso l'**Università degli Studi di Napoli Federico II**.
+Raccolta strutturata di progetti, esercizi e materiali sviluppati durante il percorso universitario e in attività personali di approfondimento.
 
-Questo repository comprende soluzioni e implementazioni realizzate per i corsi di **Laboratorio di Programmazione**, **Laboratorio di Algoritmi e Strutture Dati (LASD)**, **Laboratorio di Sistemi Operativi (LSO)**, **Basi di Dati**, **Tecnologie Web**, **Architettura degli Elaboratori**, **Machine Learning** e progetti personali di ricerca.
+La repository non rappresenta un singolo prodotto, ma un archivio tecnico organizzato per corso, linguaggio e area tematica: algoritmi, sistemi operativi, sviluppo web, basi di dati, programmazione mobile, linguaggi logici e funzionali.
 
-## 🛠️ Stack Tecnologico
+Nel portfolio i progetti piu forti da usare come vetrina sono soprattutto quelli completi e multi-componente; alcune cartelle, come Tech-Web, restano invece utili soprattutto come archivio didattico e tracciamento del percorso formativo.
 
-**Linguaggi di Programmazione:** C, C++, Java, Kotlin, JavaScript, TypeScript, Python, Rust, SQL, Prolog, Standard ML, Assembly Motorola 68000, Bash  
-**Framework e Librerie:** React Native (Expo), Angular, Vite.js, Node.js/Express, JCalendar, PostgreSQL JDBC  
-**Strumenti di Sviluppo:** Android Studio, VS Code, Git, Docker, CMake, Makefile, Gradle  
-**Database:** PostgreSQL  
-**Architetture:** Client-Server (TCP socket), MVC, REST API, Single Page Applications (SPA), Mobile (Android/React Native)
+## Panoramica
 
-## 📂 Struttura del Repository
+- Ambiti coperti: programmazione in C e C++, strutture dati, sistemi operativi, socket TCP/UDP, sviluppo web, SQL, mobile, scripting e linguaggi dichiarativi.
+- Linguaggi presenti: C, C++, Java, Kotlin, JavaScript, TypeScript, Python, Rust, SQL, Prolog, Standard ML, Assembly Motorola 68000, Bash.
+- Tecnologie presenti nella repo: Docker, PostgreSQL, Node.js/Express, Angular, Vite, Expo/React Native, Gradle, CMake, Makefile.
+- Organizzazione: quasi ogni cartella è autonoma e ha prerequisiti propri; non esiste un build unico per tutta la repo.
 
-### 🔧 Programmazione Sistemistica e Algoritmi
+## Struttura del Repository
 
-#### **C - Generico**
-Implementazioni fondamentali in linguaggio C organizzate per argomento:
-- **File / File e liste**: Manipolazione di file e liste su file (multi-file)
-- **Ricorsione Basilare / Ricorsione su stringhe**: Algoritmi ricorsivi
-- **Sort Multi-File**: Algoritmi di ordinamento (bubble, merge, quick sort)
-- **Vettori e matrici**: Operazioni su array e matrici dinamiche
-- **Primo Progetto Stack**: Implementazione di stack in C multi-file
+| Percorso | Contenuto |
+| --- | --- |
+| `Assembly/` | Esercizi e tracce su Assembly Motorola 68000: operazioni, stringhe, indirizzamenti, strutture dati ed esami. |
+| `C - Generico/` | Fondamenti del C: file, ricorsione, vettori, matrici, ordinamenti, stack e progetti multi-file. |
+| `C - LAB/` | Soluzioni a tracce di laboratorio ed esercizi d'esame in C. |
+| `C - LASD/` | Materiale per algoritmi e strutture dati, con sorgenti C, CMake e una soluzione d'esame dedicata. |
+| `C - LSO/` | Esercizi ed esami su sistemi operativi: fork, pipe, thread, socket e client/server concorrenti. |
+| `Librerie-C/` | Implementazioni riutilizzabili di stack, code, heap, liste, BST, grafi e utilità di input. |
+| `C++/` | Esercizi organizzati per funzioni e strutture dati. |
+| `Java - Personale/` | Materiale Java di studio, prove MVC, esercizi elementari e piccoli progetti locali. |
+| `Python/` | Script, esercizi numerici, plotting, piccoli esempi TCP e progetti di analisi. |
+| `Rust/` | Progetti Cargo indipendenti per l'apprendimento del linguaggio. |
+| `ML/` | Esercizi in Standard ML su funzioni, alberi, map/reduce e tracce d'esame. |
+| `Prolog/` | Esercizi di logica su liste, grafi, puzzle, sudoku e giochi. |
+| `SQL/` | Script SQL e tracce d'esame con query e operazioni su database. |
+| `Tech-Web/` | Esercitazioni e mini-progetti web del corso di Tecnologie Web, mantenuti come materiale didattico e storico. |
+| `ProgettoLSO24-25/` | Progetto completo con server C, database PostgreSQL e client Android Kotlin. |
+| `ProgettoLSO24-25-ReactNative/` | Variante del progetto con client Expo/React Native e bridge HTTP verso il server C. |
+| `Ubuntu-Utility/` | Script shell e appunti pratici per ambienti Ubuntu/Linux. |
+| `FileProgrammi/` | File di configurazione e materiale di supporto non centrale rispetto ai progetti principali. |
 
-#### **C - LAB (Laboratorio di Programmazione)**
-Soluzioni a tracce d'esame universitarie:
-- **Tracce d'Esame**: soluzioni complete (esami 2019–2021)
-- **Cubo Magico 1 & 2**: generazione e verifica di cubi magici
-- **Studente con Matrice**: gestione anagrafica con matrici dinamiche
-- **Traccia partite / targa / giugno**: elaborazione dati su domini specifici
+## Aree Principali
 
-#### **C - LASD (Laboratorio di Algoritmi e Strutture Dati)**
-Libreria e tracce d'esame per il corso LASD:
-- Implementazione in `funzioni.c` / `libreria.h` / `main.c`
-- `Soluzione-06-23/`: tre esercizi d'esame (giugno 2023)
+### Programmazione di Sistema e Algoritmi
 
-#### **C - LSO (Laboratorio di Sistemi Operativi)**
-Programmazione di sistema Linux:
-- **Esami-Svolti**: 12 tracce d'esame risolte (2020–2026) con socket, fork, pipe, thread
-- **Esercizi LSO 21-22**: pipe, fork/exec, bash scripting, thread POSIX
-- **Socket-Esempi**: implementazioni complete di client/server TCP e UDP (iterativo, concorrente, multi-thread)
+- `C - Generico/`, `C - LAB/`, `C - LASD/` e `Librerie-C/` raccolgono il nucleo del materiale su C, strutture dati, algoritmi e preparazione a prove pratiche.
+- `C - LSO/` contiene la parte più orientata a processi, thread, pipe e networking, con esempi client/server immediatamente leggibili.
+- `Assembly/` completa il materiale più vicino all'hardware con esercizi su architettura M68000.
 
-#### **Librerie-C**
-Librerie dati custom, ciascuna con header + sorgente + main di test:
-- **BST**: albero binario di ricerca
-- **Grafi / MatrixGraph**: grafi con lista di adiacenza e matrice di adiacenza
-- **Heap**: heap binario
-- **Stack / Code**: stack e coda
-- **List / Double-List / Circle-List**: liste semplici, doppie e circolari
-- **Input**: lettore di input generico
+### Progetti Completi
 
-### 🚀 Progetti LSO — Applicazioni Complete
+- `ProgettoLSO24-25/` include backend C, schema database e client Android. È utile come esempio di architettura multi-componente con Docker.
+- `ProgettoLSO24-25-ReactNative/` porta lo stesso dominio applicativo su stack Expo/React Native, mantenendo il backend C e introducendo un bridge applicativo.
 
-#### **ProgettoLSO24-25**
-Applicazione completa con architettura **Client Android (Kotlin/Gradle) + Server C + PostgreSQL**:
-- `Server-Side/`: server C con socket TCP, operazioni su DB, cron job e utilità (`server.c`, `Socket`, `DBOperation`, `CronJobDB`, `Utils`)
-- `Client/`: app Android nativa in Kotlin con Gradle
-- `database.sql`: schema PostgreSQL
-- `docker-compose.yml`: orchestrazione server + database
+### Materiale Web Di Supporto
 
-#### **ProgettoLSO24-25-ReactNative**
-Versione del progetto con client **React Native (Expo, TypeScript)**:
-- `Server-Side/`: stesso server C del progetto precedente
-- `client/`: app Expo con routing (`app/`), componenti, hooks, bridge HTTP→TCP, costanti, asset
-- `database.sql` e `docker-compose.yml` aggiornati per il nuovo client
+- `Tech-Web/` raccoglie esercitazioni, assignment e mini-progetti utili a documentare il percorso sul web, ma non è la sezione più rappresentativa della repo se l'obiettivo è mostrare i progetti migliori.
+- Per una presentazione portfolio conviene considerarla complementare ai progetti più maturi, non il punto di accesso principale.
 
-### ☕ Programmazione Java
+### Linguaggi e Paradigmi
 
-#### **Java - Personale**
-Progetto Eclipse con materiale di studio e sperimentazione:
-- **Java-Varie**: 22 capitoli di studio progressivo + Termostato MVC
-- **Prove MVC**: implementazione pattern Model-View-Controller
-- **ProveElementari**: esercizi elementari
-- **Padding**: esercizi sul padding/formattazione
+- `Python/` e `Rust/` raccolgono esercizi e sperimentazioni più moderne o orientate all'analisi.
+- `ML/` e `Prolog/` coprono paradigmi funzionali e logici.
+- `Java - Personale/` documenta materiale di studio e pattern classici come MVC.
 
-### 🌐 Sviluppo Web
+## Da Dove Iniziare
 
-#### **Tech-Web**
-Esercitazioni e progetti per il corso Tecnologie Web:
-- **Esercitazioni/**: 6 assignment + esercizi con Node.js/Express, Angular, Vite.js
-  - REST API con Express (`controllers/`, `models/`, `routes/`, `middleware/`)
-  - Todo List SPA con Angular
-  - Hello World con Vite.js
-  - Applicazioni to-do con gestione cookies e sessioni
-- **todo-list-spa/**: SPA frontend + backend Express separati
+Se vuoi esplorare la repo in modo mirato, questi sono i punti di ingresso più utili:
 
-### 🗄️ Database
+| Obiettivo | Cartella consigliata |
+| --- | --- |
+| Fondamenti di C | `C - Generico/` |
+| Tracce pratiche in C | `C - LAB/` |
+| Strutture dati e algoritmi | `C - LASD/` oppure `Librerie-C/` |
+| Socket, processi e thread | `C - LSO/Socket-Esempi/` oppure `C - LSO/Esami-Svolti/` |
+| Web e frontend applicativo | `ProgettoLSO24-25-ReactNative/` |
+| Mobile e backend con Docker | `ProgettoLSO24-25/` oppure `ProgettoLSO24-25-ReactNative/` |
+| Analisi e scripting Python | `Python/` |
+| Esercizi Rust | `Rust/CalcolatriceInterattiva/` oppure `Rust/basic/` |
+| Logica e programmazione dichiarativa | `Prolog/` e `ML/` |
 
-#### **SQL**
-Script e tracce d'esame SQL:
-- `Eliminazione-Righe.sql`: script di utilità
-- `Esami/`: 3 tracce d'esame (2019–2021) con query, join, funzioni
+## Avvio Rapido
 
-### 🔬 Linguaggi Funzionali e Logici
+### Clonazione
 
-#### **ML (Standard ML)**
-Programmazione funzionale:
-- `FunGeneric.sml`, `FunMap.sml`, `FunExam.sml`: funzioni higher-order, map/reduce
-- `Alberi.sml`: algoritmi su alberi
-- `reduce.sml`, `prova.sml`: esercizi vari
-
-#### **Prolog**
-Programmazione logica con 30+ file `.pl`:
-- Algoritmi su liste, grafi, puzzle constraint
-- `TicTacToe.pl` / `tic-tac-toe/`: gioco completo
-- `sudoku.pl`: risolutore Sudoku
-- `birds.pl`, `Grafo.pl`, `tipi-java.pl`
-
-### ⚙️ Programmazione di Sistema
-
-#### **Assembly (Motorola 68000)**
-Programmazione a basso livello per architettura M68000 con file `.a68`:
-- **Operazioni**: MIN/MAX, fattoriale, prodotto scalare, potenza, somme
-- **Stringhe**: ricerca, tokenizzazione, conversione maiuscole
-- **Strutture Dati**: stack, array, operazioni bit
-- **Indirizzamenti**: modalità di indirizzamento M68000
-- **Esami**: tracce d'esame 2014–2015
-
-#### **Ubuntu-Utility**
-Script e configurazioni per ambienti Ubuntu/Linux:
-- `Aggiornamenti.sh`, `InstallApp.sh`, `Ottimizzazioni.sh`: manutenzione sistema
-- `dumpdir.sh`, `dumphere.sh`: dump del filesystem
-- `autoinstall.yaml`: configurazione autoinstall
-- `Utils-SH/ImageToPDF.sh`: conversione immagini in PDF
-- `Utils-TXT/`: note su configurazione, alias e retroilluminazione
-- `Virtual-Machine/`: script di setup e verifica VM
-
-### 🦀 Rust
-
-#### **Rust**
-6 progetti Cargo indipendenti per l'apprendimento del linguaggio:
-- `basic/`: esercizi base
-- `helloworld/`: primo programma
-- `fattoriale/`, `fibonacci/`, `NumeriPrimi/`: algoritmi matematici
-- `CalcolatriceInterattiva/`: calcolatrice da terminale con input interattivo
-
-### 🐍 Python
-
-#### **Python**
-Progetti di ricerca, analisi dati e scripting:
-- **Esercizi-Vari**: 25+ file con plotting (matplotlib/numpy), FFT, statistiche, client/server TCP
-- **ASD**: implementazioni di algoritmi di ricerca (`RIC-IT.py`)
-- **Progetto-Ricerca**: `CodeToImage.py` (conversione codice→immagine), analisi numeri primi
-- **Risk-Analisis**: `EarthquakeRiskAnalysis.py` e `MarketRiskAnalysis.py` con ambiente virtuale dedicato
-- `Ripristino-Google.py`, `Sommatoria.py`: script di utilità
-
-### ⚡ C++
-
-#### **C++**
-Esercizi C++ organizzati per argomento:
-- **funzioni/**: 12 file (`codice01.cpp`…`codice12.cpp`) con header libreria
-- **strutture dati/**: 42 file (`codice01.cpp`…`codice42.cpp`) su strutture dati avanzate con STL
-
-## ⚙️ Setup e Installazione
-
-### **Clone Repository**
 ```bash
 git clone https://github.com/GinoPT97/UniDevPortfolio.git
 cd UniDevPortfolio
 ```
 
-### **Prerequisiti Sistema**
+### Prerequisiti Generali
+
+Per lavorare con la maggior parte del materiale è utile avere disponibili:
+
 ```bash
-# Ubuntu/Debian
-sudo apt update && sudo apt install -y \
-  build-essential gcc g++ gdb valgrind \
-  default-jdk \
-  postgresql-client \
-  nodejs npm \
-  python3 python3-pip \
-  rustup \
-  git cmake make
+sudo apt update
+sudo apt install -y build-essential gcc g++ make cmake default-jdk \
+  nodejs npm python3 python3-pip postgresql-client docker-compose
 ```
 
-### **Compilazione C / C - LSO**
+Per Rust:
+
 ```bash
-# Esempio: compilare un esercizio LSO
-cd "C - LSO/Socket-Esempi"
-gcc -o serverTCP ServerTCP.c
-gcc -o clientTCP ClientTCP.c
+rustup default stable
 ```
 
-### **Progetti LSO con Docker**
+### Esempi di Esecuzione
+
+Progetto LSO con Android e server C:
+
 ```bash
-# Avvio completo server C + PostgreSQL
 cd ProgettoLSO24-25
 docker compose up --build
+```
 
-# Versione React Native
+Versione React Native:
+
+```bash
 cd ProgettoLSO24-25-ReactNative
+docker compose down --remove-orphans
 docker compose up --build
 ```
 
-### **Progetti Web (Node.js/Express)**
+Esempio Express dal materiale didattico:
+
 ```bash
-cd "Tech-Web/Esercitazioni/express-todo-list-rest"
+cd "Tech-Web/Esercitazioni/express-hello-world"
 npm install
-node index.js
+npm start
 ```
 
-### **Rust**
+Esempio Python con dipendenze:
+
+```bash
+cd Python/Risk-Analisis
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 EarthquakeRiskAnalysis.py
+```
+
+Esempio Rust:
+
 ```bash
 cd Rust/CalcolatriceInterattiva
 cargo run
 ```
 
-### **Python (Risk Analysis)**
+Esempio C su socket:
+
 ```bash
-cd Python/Risk-Analisis
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-python3 EarthquakeRiskAnalysis.py
+cd "C - LSO/Socket-Esempi"
+gcc -o serverTCP ServerTCP.c
+gcc -o clientTCP ClientTCP.c
 ```
 
-## 🔍 Navigazione Consigliata
+## README Specifici
 
-```
-📁 Punti di ingresso suggeriti:
-├── C - Generico/              # Fondamenti C
-├── C - LASD/                  # Algoritmi e strutture dati
-├── C - LSO/                   # Sistemi operativi e socket
-├── ProgettoLSO24-25/          # Progetto completo Android + C + PostgreSQL
-├── ProgettoLSO24-25-ReactNative/  # Progetto React Native + C + PostgreSQL
-├── Tech-Web/                  # Sviluppo web moderno
-├── Librerie-C/                # Librerie dati custom
-├── Rust/                      # Apprendimento Rust
-└── Python/Risk-Analisis/      # Analisi dati e ricerca
-```
+Le cartelle più articolate hanno documentazione dedicata. In particolare:
 
-## 📞 Contatti
+- `ProgettoLSO24-25/README.md`
+- `ProgettoLSO24-25-ReactNative/README.md`
+- `Tech-Web/Esercitazioni/Assignment-01-solution/README.md`
 
-- **GitHub**: [@GinoPT97](https://github.com/GinoPT97)
-- **Università**: Università degli Studi di Napoli Federico II — Dipartimento di Ingegneria Elettrica e delle Tecnologie dell'Informazione
+Per questi progetti è preferibile seguire prima la documentazione locale e usare il README principale come mappa di orientamento.
 
----
+## Note Sulla Repository
 
-## 📄 Licenza
+- La repo è pensata come portfolio tecnico e archivio di studio, quindi convivono esercizi piccoli, librerie didattiche e progetti più completi.
+- Alcune cartelle sono storiche o dipendono dall'ambiente usato durante il corso; i progetti complessi hanno setup propri.
+- Alcuni materiali non sono codice eseguibile in senso stretto, ma configurazioni, documenti o appunti di supporto.
+- `Tech-Web/` è mantenuta perché utile a mostrare continuità e varietà del percorso, ma nel README resta volutamente in secondo piano rispetto ai progetti completi.
 
-Questo progetto è rilasciato sotto **MIT License**. Consulta il file [LICENSE](LICENSE) per i dettagli completi.
+## Contatti
 
----
+- GitHub: [@GinoPT97](https://github.com/GinoPT97)
+- Ateneo: Università degli Studi di Napoli Federico II
 
-<div align="center">
+## Licenza
 
-**⭐ Se questo repository ti è stato utile, considera di lasciare una stella!**
-
-**🔄 Fork it, improve it, share it - contribuisci alla community!**
-
-*Sviluppato con ❤️ per la comunità developer e academic*
-
-</div>
+Il repository è distribuito sotto licenza MIT. Vedi `LICENSE` per i dettagli.
