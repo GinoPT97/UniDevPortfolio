@@ -1,9 +1,0 @@
-Fu-Tzu: The Legendary Programmer
-
-With a long beard and robes adorned with clever coding jokes, 
-Fu-Tzu was a legend among programmers.
-
-It is said his first word was printf. 
-Some of his wisdom was trascribed in the Book of Programming.
-
-(insert a picture of Fu-Tzu here)

@@ -2,15 +2,13 @@
 
 Raccolta strutturata di progetti, esercizi e materiali sviluppati durante il percorso universitario e in attività personali di approfondimento.
 
-La repository non rappresenta un singolo prodotto, ma un archivio tecnico organizzato per corso, linguaggio e area tematica: algoritmi, sistemi operativi, sviluppo web, basi di dati, programmazione mobile, linguaggi logici e funzionali.
-
-Nel portfolio i progetti piu forti da usare come vetrina sono soprattutto quelli completi e multi-componente; alcune cartelle, come Tech-Web, restano invece utili soprattutto come archivio didattico e tracciamento del percorso formativo.
+La repository non rappresenta un singolo prodotto, ma un archivio tecnico organizzato per corso, linguaggio e area tematica: algoritmi, sistemi operativi, basi di dati, programmazione mobile, linguaggi logici e funzionali.
 
 ## Panoramica
 
-- Ambiti coperti: programmazione in C e C++, strutture dati, sistemi operativi, socket TCP/UDP, sviluppo web, SQL, mobile, scripting e linguaggi dichiarativi.
+- Ambiti coperti: programmazione in C e C++, strutture dati, sistemi operativi, socket TCP/UDP, SQL, mobile, scripting e linguaggi dichiarativi.
 - Linguaggi presenti: C, C++, Java, Kotlin, JavaScript, TypeScript, Python, Rust, SQL, Prolog, Standard ML, Assembly Motorola 68000, Bash.
-- Tecnologie presenti nella repo: Docker, PostgreSQL, Node.js/Express, Angular, Vite, Expo/React Native, Gradle, CMake, Makefile.
+- Tecnologie presenti nella repo: Docker, PostgreSQL, Expo/React Native, Gradle, CMake, Makefile.
 - Organizzazione: quasi ogni cartella è autonoma e ha prerequisiti propri; non esiste un build unico per tutta la repo.
 
 ## Struttura del Repository
@@ -30,7 +28,6 @@ Nel portfolio i progetti piu forti da usare come vetrina sono soprattutto quelli
 | `ML/` | Esercizi in Standard ML su funzioni, alberi, map/reduce e tracce d'esame. |
 | `Prolog/` | Esercizi di logica su liste, grafi, puzzle, sudoku e giochi. |
 | `SQL/` | Script SQL e tracce d'esame con query e operazioni su database. |
-| `Tech-Web/` | Esercitazioni e mini-progetti web del corso di Tecnologie Web, mantenuti come materiale didattico e storico. |
 | `ProgettoLSO24-25/` | Progetto completo con server C, database PostgreSQL e client Android Kotlin. |
 | `ProgettoLSO24-25-ReactNative/` | Variante del progetto con client Expo/React Native e bridge HTTP verso il server C. |
 | `Ubuntu-Utility/` | Script shell e appunti pratici per ambienti Ubuntu/Linux. |
@@ -48,11 +45,6 @@ Nel portfolio i progetti piu forti da usare come vetrina sono soprattutto quelli
 
 - `ProgettoLSO24-25/` include backend C, schema database e client Android. È utile come esempio di architettura multi-componente con Docker.
 - `ProgettoLSO24-25-ReactNative/` porta lo stesso dominio applicativo su stack Expo/React Native, mantenendo il backend C e introducendo un bridge applicativo.
-
-### Materiale Web Di Supporto
-
-- `Tech-Web/` raccoglie esercitazioni, assignment e mini-progetti utili a documentare il percorso sul web, ma non è la sezione più rappresentativa della repo se l'obiettivo è mostrare i progetti migliori.
-- Per una presentazione portfolio conviene considerarla complementare ai progetti più maturi, non il punto di accesso principale.
 
 ### Linguaggi e Paradigmi
 
@@ -118,14 +110,6 @@ docker compose down --remove-orphans
 docker compose up --build
 ```
 
-Esempio Express dal materiale didattico:
-
-```bash
-cd "Tech-Web/Esercitazioni/express-hello-world"
-npm install
-npm start
-```
-
 Esempio Python con dipendenze:
 
 ```bash
@@ -157,7 +141,6 @@ Le cartelle più articolate hanno documentazione dedicata. In particolare:
 
 - `ProgettoLSO24-25/README.md`
 - `ProgettoLSO24-25-ReactNative/README.md`
-- `Tech-Web/Esercitazioni/Assignment-01-solution/README.md`
 
 Per questi progetti è preferibile seguire prima la documentazione locale e usare il README principale come mappa di orientamento.
 
@@ -166,7 +149,6 @@ Per questi progetti è preferibile seguire prima la documentazione locale e usar
 - La repo è pensata come portfolio tecnico e archivio di studio, quindi convivono esercizi piccoli, librerie didattiche e progetti più completi.
 - Alcune cartelle sono storiche o dipendono dall'ambiente usato durante il corso; i progetti complessi hanno setup propri.
 - Alcuni materiali non sono codice eseguibile in senso stretto, ma configurazioni, documenti o appunti di supporto.
-- `Tech-Web/` è mantenuta perché utile a mostrare continuità e varietà del percorso, ma nel README resta volutamente in secondo piano rispetto ai progetti completi.
 
 ## Contatti
 
