@@ -2,85 +2,90 @@
 
 # Dati per i mesi estivi 2026
 # Struttura: locale con tarifa fissa e numero di turni/servizi per mese
-# etichette come costanti (possono essere usate nelle tuple senza virgolette)
-VP = "VP"
-MudJ = "MudJ"
+# Esempio di voci di pagamento e mancia:
+# - pagamenti: [20, 40, (15, VP), "30 (Saldo VP)"]
+# - mance: [10, (20, MudJ), {"importo": 5, "fonte": "Bar"}]
+
+LOCALE_VP = "VP"
+LOCALE_MUDJ = "MudJ"
+LOCALE_CARICO_SCARICO = "CaricoScarico"
+
+KEY_PAGAMENTI = "pagamenti"
+KEY_MANCE = "mance"
+RESERVED_KEYS = {KEY_PAGAMENTI, KEY_MANCE}
 
 MESI = {
     "MAGGIO": {
-        "VP": {"tarifa": 120, "turni": 1},
-        "MudJ": {"tarifa": 40, "turni": 9},
-        "aricoScarico": {"tarifa": 0, "turni": 0},
-        "pagamenti": [],
-        "mance": ["20 (VP)", (15,VP)]
+        LOCALE_VP: {"tarifa": 120, "turni": 1},
+        LOCALE_MUDJ: {"tarifa": 40, "turni": 9},
+        LOCALE_CARICO_SCARICO: {"tarifa": 0, "turni": 0},
+        KEY_PAGAMENTI: [],
+        KEY_MANCE: [
+            20,
+            40,
+            (15, LOCALE_VP),
+        ],
     },
     "GIUGNO": {
-        "VP": {"tarifa": 120, "turni": 0},
-        "MudJ": {"tarifa": 40, "turni": 0},
-        "CaricoScarico": {"tarifa": 0, "turni": 0},
-        "pagamenti": [],
-        "mance": []
+        LOCALE_VP: {"tarifa": 120, "turni": 0},
+        LOCALE_MUDJ: {"tarifa": 40, "turni": 0},
+        LOCALE_CARICO_SCARICO: {"tarifa": 0, "turni": 0},
+        KEY_PAGAMENTI: [],
+        KEY_MANCE: [],
     },
     "LUGLIO": {
-        "VP": {"tarifa": 120, "turni": 0},
-        "MudJ": {"tarifa": 40, "turni": 0},
-        "CaricoScarico": {"tarifa": 0, "turni": 0},
-        "pagamenti": [],
-        "mance": []
+        LOCALE_VP: {"tarifa": 120, "turni": 0},
+        LOCALE_MUDJ: {"tarifa": 40, "turni": 0},
+        LOCALE_CARICO_SCARICO: {"tarifa": 0, "turni": 0},
+        KEY_PAGAMENTI: [],
+        KEY_MANCE: [],
     },
     "AGOSTO": {
-        "VP": {"tarifa": 120, "turni": 0},
-        "MudJ": {"tarifa": 40, "turni": 0},
-        "CaricoScarico": {"tarifa": 0, "turni": 0},
-        "pagamenti": [],
-        "mance": []
+        LOCALE_VP: {"tarifa": 120, "turni": 0},
+        LOCALE_MUDJ: {"tarifa": 40, "turni": 0},
+        LOCALE_CARICO_SCARICO: {"tarifa": 0, "turni": 0},
+        KEY_PAGAMENTI: [],
+        KEY_MANCE: [],
     },
 }
 
-RISERVATI = {"pagamenti", "mance"}
 
 def parse_importo(entry):
-    """Estrae importo e descrizione da dict, numero o stringa."""
+    """Estrae importo e descrizione da dict, numero, stringa o tuple/lista."""
     if isinstance(entry, dict):
         return entry.get("importo", 0), entry.get("desc", "")
-    # supporto tuple/lista del tipo (importo, descrizione)
+
     if isinstance(entry, (list, tuple)) and len(entry) >= 1:
         importo = entry[0] if isinstance(entry[0], (int, float)) else 0
-        desc = str(entry[1]) if len(entry) > 1 else ""
-        return importo, desc
+        descrizione = str(entry[1]) if len(entry) > 1 else ""
+        return importo, descrizione
+
     if isinstance(entry, (int, float)):
         return entry, ""
+
     if isinstance(entry, str):
         try:
             valore = float(entry.split()[0])
-            desc = entry[entry.find("(")+1:entry.find(")")] if "(" in entry else ""
-            return valore, desc
+            descrizione = entry[entry.find("(")+1:entry.find(")")] if "(" in entry and ")" in entry else ""
+            return valore, descrizione
         except ValueError:
             return 0, ""
+
     return 0, ""
+
 
 def parse_mance(mance):
     """Normalizza le voci di mancia in lista di dict {importo, fonte}."""
     risultato = []
     for voce in mance:
-        # supporto tuple/lista (importo, descrizione) e riusa parse_importo
-        if isinstance(voce, (list, tuple)):
-            importo, fonte = parse_importo(voce)
-            if importo:
-                risultato.append({"importo": importo, "fonte": fonte or "Mancia"})
+        importo, fonte = parse_importo(voce)
+        if not importo:
             continue
-        if isinstance(voce, str):
-            importo, fonte = parse_importo(voce)
-            if importo:
-                risultato.append({"importo": importo, "fonte": fonte or "Mancia"})
-        elif isinstance(voce, dict):
-            risultato.append({
-                "importo": voce.get("importo", 0),
-                "fonte": voce.get("fonte", voce.get("desc", "Mancia"))
-            })
-        elif isinstance(voce, (int, float)):
-            risultato.append({"importo": voce, "fonte": "Mancia"})
+        if isinstance(voce, dict):
+            fonte = voce.get("fonte", voce.get("desc", fonte or "Mancia"))
+        risultato.append({"importo": importo, "fonte": fonte or "Mancia"})
     return risultato
+
 
 def format_euro(valore):
     """Formatta un numero in euro con due decimali."""
@@ -88,6 +93,7 @@ def format_euro(valore):
         return f"€{valore:.2f}"
     except (TypeError, ValueError):
         return f"€{valore}"
+
 
 def calcola_locale(nome, dati_locale):
     """Calcola compenso per un singolo locale."""
@@ -97,16 +103,17 @@ def calcola_locale(nome, dati_locale):
     descrizione = f"{nome}: {tariffa}€ x {turni} = {format_euro(totale)}" if turni else ""
     return totale, descrizione
 
+
 def calcola_mese(mese):
     """Calcola compensi, pagamenti e mance per un mese."""
     dati = MESI[mese]
-    pagamenti = dati.get("pagamenti", [])
-    mance = parse_mance(dati.get("mance", []))
+    pagamenti = dati.get(KEY_PAGAMENTI, [])
+    mance = parse_mance(dati.get(KEY_MANCE, []))
 
     compensi_totali = 0
     dettagli = []
     for nome, dati_locale in dati.items():
-        if nome in RISERVATI:
+        if nome in RESERVED_KEYS:
             continue
         totale_locale, descrizione = calcola_locale(nome, dati_locale)
         compensi_totali += totale_locale
@@ -142,6 +149,7 @@ def calcola_mese(mese):
     print(f"Da ricevere: {format_euro(differenza)}")
 
     return compensi_totali, somma_pagato, somma_mance, differenza
+
 
 if __name__ == "__main__":
     print("=" * 60)
