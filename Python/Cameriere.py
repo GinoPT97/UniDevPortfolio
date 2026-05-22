@@ -9,7 +9,7 @@ MudJ = "MudJ"
 MESI = {
     "MAGGIO": {
         "VP": {"tarifa": 120, "turni": 1},
-        "MudJ": {"tarifa": 40, "turni": 6},
+        "MudJ": {"tarifa": 40, "turni": is 9},
         "aricoScarico": {"tarifa": 0, "turni": 0},
         "pagamenti": [],
         "mance": ["20 (VP)", (15,VP)]
