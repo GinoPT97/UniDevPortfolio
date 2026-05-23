@@ -10,12 +10,27 @@
 #   mancia(20, "VP")            →  mancia da VP
 #   mancia(5)                   →  mancia generica
 #   pagamento(120, "VP")        →  pagamento da VP
+#
+# Per aggiungere un nuovo locale: aggiungilo a LOCALI con la tariffa,
+# poi aggiungi "NomeLocale": {"turni": 0} nei mesi che ti interessano.
 
 import csv
 import argparse
-import sys
 
 RESERVED_KEYS = {"pagamenti", "mance"}
+
+
+# ---------------------------------------------------------------------------
+# Registro centrale dei locali
+# ---------------------------------------------------------------------------
+# Aggiungi qui ogni locale con la sua tariffa a turno.
+# Nei MESI basta indicare solo i turni — la tariffa viene presa da qui.
+
+LOCALI = {
+    "VP":            {"tariffa": 120},
+    "MudJ":          {"tariffa": 40},
+    "CaricoScarico": {"tariffa": 0},
+}
 
 
 # ---------------------------------------------------------------------------
@@ -32,39 +47,47 @@ def pagamento(importo: float, desc: str = "Pagamento") -> dict:
     return {"importo": importo, "desc": desc}
 
 
-
 # ---------------------------------------------------------------------------
-# Dati
+# Dati mensili
 # ---------------------------------------------------------------------------
+# Per ogni mese indica solo i turni per locale.
+# Se un locale non compare in un mese, viene semplicemente ignorato.
 
 MESI = {
     "MAGGIO": {
-        "VP":            {"tariffa": 120, "turni": 1},
-        "MudJ":          {"tariffa": 40,  "turni": 9},
-        "CaricoScarico": {"tariffa": 0,   "turni": 0},
+        "VP":            {"turni": 1},
+        "MudJ":          {"turni": 9},
+        "CaricoScarico": {"turni": 0},
         "pagamenti": [],
         "mance": [
             mancia(20, "VP"),
         ],
     },
     "GIUGNO": {
-        "VP":            {"tariffa": 120, "turni": 0},
-        "MudJ":          {"tariffa": 40,  "turni": 0},
-        "CaricoScarico": {"tariffa": 0,   "turni": 0},
+        "VP":            {"turni": 0},
+        "MudJ":          {"turni": 0},
+        "CaricoScarico": {"turni": 0},
         "pagamenti": [],
         "mance": [],
     },
     "LUGLIO": {
-        "VP":            {"tariffa": 120, "turni": 0},
-        "MudJ":          {"tariffa": 40,  "turni": 0},
-        "CaricoScarico": {"tariffa": 0,   "turni": 0},
+        "VP":            {"turni": 0},
+        "MudJ":          {"turni": 0},
+        "CaricoScarico": {"turni": 0},
         "pagamenti": [],
         "mance": [],
     },
     "AGOSTO": {
-        "VP":            {"tariffa": 120, "turni": 0},
-        "MudJ":          {"tariffa": 40,  "turni": 0},
-        "CaricoScarico": {"tariffa": 0,   "turni": 0},
+        "VP":            {"turni": 0},
+        "MudJ":          {"turni": 0},
+        "CaricoScarico": {"turni": 0},
+        "pagamenti": [],
+        "mance": [],
+    },
+    "SETTEMBRE": {
+        "VP":            {"turni": 0},
+        "MudJ":          {"turni": 0},
+        "CaricoScarico": {"turni": 0},
         "pagamenti": [],
         "mance": [],
     },
@@ -82,12 +105,14 @@ def valida_dati() -> list[str]:
         for nome, dati_locale in dati.items():
             if nome in RESERVED_KEYS:
                 continue
-            tariffa = dati_locale.get("tariffa", 0)
-            turni   = dati_locale.get("turni", 0)
-            if tariffa < 0:
-                avvisi.append(f"[{mese}] {nome}: tariffa negativa ({tariffa}€)")
+            if nome not in LOCALI:
+                avvisi.append(f"[{mese}] '{nome}' non è presente in LOCALI — aggiungilo con la sua tariffa")
+                continue
+            turni = dati_locale.get("turni", 0)
             if turni < 0:
                 avvisi.append(f"[{mese}] {nome}: turni negativi ({turni})")
+            if LOCALI[nome]["tariffa"] < 0:
+                avvisi.append(f"{nome}: tariffa negativa in LOCALI")
 
         for m in dati.get("mance", []):
             if isinstance(m, dict) and m.get("importo", 0) <= 0:
@@ -141,13 +166,24 @@ def format_euro(valore: float) -> str:
         return f"€{valore}"
 
 
+def stato_pagamento(compensi: float, pagato: float) -> str:
+    """Restituisce un'etichetta testuale sullo stato del pagamento."""
+    if compensi == 0:
+        return "— nessun lavoro"
+    if pagato <= 0:
+        return "✗ Non pagato"
+    if pagato >= compensi:
+        return "✓ Saldato"
+    return "⚠ Parzialmente pagato"
+
+
 # ---------------------------------------------------------------------------
 # Calcolo (puro, senza stampa)
 # ---------------------------------------------------------------------------
 
 def calcola_locale(nome: str, dati_locale: dict) -> tuple[float, int, str]:
-    """Calcola il compenso per un singolo locale. Restituisce (totale, n_turni, descrizione)."""
-    tariffa = dati_locale.get("tariffa", 0)
+    """Calcola il compenso per un singolo locale leggendo la tariffa da LOCALI."""
+    tariffa = LOCALI.get(nome, {}).get("tariffa", 0)
     turni   = dati_locale.get("turni", 0)
     totale  = tariffa * turni
     desc    = f"{nome}: {tariffa}€ x {turni} = {format_euro(totale)}" if turni else ""
@@ -155,19 +191,22 @@ def calcola_locale(nome: str, dati_locale: dict) -> tuple[float, int, str]:
 
 
 def calcola_mese(mese: str) -> dict:
-    """Calcola compensi, pagamenti e mance per un mese. Restituisce un dict con tutti i dati."""
+    """Calcola compensi, pagamenti e mance per un mese."""
     dati      = MESI[mese]
     pagamenti = dati.get("pagamenti", [])
     mance     = parse_mance(dati.get("mance", []))
 
-    compensi_totali  = 0
-    dettagli_locali  = []
+    compensi_totali    = 0
+    dettagli_locali    = []
     dettagli_pagamenti = []
+    per_locale         = {}  # {nome: {"compensi": x, "turni": y}}
+
     for nome, dati_locale in dati.items():
         if nome in RESERVED_KEYS:
             continue
         totale_locale, n_turni, descrizione = calcola_locale(nome, dati_locale)
         compensi_totali += totale_locale
+        per_locale[nome] = {"compensi": totale_locale, "turni": n_turni}
         if descrizione:
             dettagli_locali.append(descrizione)
 
@@ -177,17 +216,18 @@ def calcola_mese(mese: str) -> dict:
 
     somma_pagato = sum(v["importo"] for v in dettagli_pagamenti)
     somma_mance  = sum(v["importo"] for v in mance)
-    differenza   = compensi_totali - somma_pagato
+    da_ricevere  = compensi_totali - somma_pagato
 
     return {
-        "mese":               mese,
-        "compensi_totali":    compensi_totali,
-        "dettagli_locali":    dettagli_locali,
-        "pagamenti":          dettagli_pagamenti,
-        "somma_pagato":       somma_pagato,
-        "mance":              mance,
-        "somma_mance":        somma_mance,
-        "da_ricevere":        differenza,
+        "mese":            mese,
+        "compensi_totali": compensi_totali,
+        "dettagli_locali": dettagli_locali,
+        "per_locale":      per_locale,
+        "pagamenti":       dettagli_pagamenti,
+        "somma_pagato":    somma_pagato,
+        "mance":           mance,
+        "somma_mance":     somma_mance,
+        "da_ricevere":     da_ricevere,
     }
 
 
@@ -196,8 +236,9 @@ def calcola_mese(mese: str) -> dict:
 # ---------------------------------------------------------------------------
 
 def stampa_mese(r: dict) -> None:
-    """Stampa il riepilogo di un mese dato il risultato di calcola_mese."""
-    print(f"\n{r['mese']} 2026")
+    """Stampa il riepilogo di un mese."""
+    stato = stato_pagamento(r["compensi_totali"], r["somma_pagato"])
+    print(f"\n{r['mese']} 2026  [{stato}]")
     print("-" * 60)
     for dettaglio in r["dettagli_locali"]:
         print(f"  {dettaglio}")
@@ -220,11 +261,11 @@ def stampa_mese(r: dict) -> None:
 
 
 def stampa_riepilogo(risultati: list[dict]) -> None:
-    """Stampa il riepilogo generale di tutti i mesi."""
-    tot_compensi  = sum(r["compensi_totali"] for r in risultati)
-    tot_pagato    = sum(r["somma_pagato"]     for r in risultati)
-    tot_mance     = sum(r["somma_mance"]      for r in risultati)
-    tot_ricevere  = sum(r["da_ricevere"]      for r in risultati)
+    """Stampa il riepilogo generale per mese e per locale."""
+    tot_compensi = sum(r["compensi_totali"] for r in risultati)
+    tot_pagato   = sum(r["somma_pagato"]    for r in risultati)
+    tot_mance    = sum(r["somma_mance"]     for r in risultati)
+    tot_ricevere = sum(r["da_ricevere"]     for r in risultati)
 
     print("\n" + "=" * 60)
     print(" RIEPILOGO GENERALE - ESTATE 2026")
@@ -233,6 +274,24 @@ def stampa_riepilogo(risultati: list[dict]) -> None:
     print(f"Totale pagato:            {format_euro(tot_pagato)}")
     print(f"Totale mance ricevute:    {format_euro(tot_mance)}")
     print(f"Totale da ricevere:       {format_euro(tot_ricevere)}")
+
+    # Riepilogo per locale
+    riepilogo_locali: dict[str, dict] = {}
+    for r in risultati:
+        for nome, dati in r["per_locale"].items():
+            if nome not in riepilogo_locali:
+                riepilogo_locali[nome] = {"turni": 0, "compensi": 0.0}
+            riepilogo_locali[nome]["turni"]    += dati["turni"]
+            riepilogo_locali[nome]["compensi"] += dati["compensi"]
+
+    print("\n" + "-" * 60)
+    print(" PER LOCALE")
+    print("-" * 60)
+    for nome, dati in riepilogo_locali.items():
+        if dati["turni"] == 0:
+            continue
+        tariffa = LOCALI.get(nome, {}).get("tariffa", 0)
+        print(f"  {nome:<16} {dati['turni']} turni  →  {format_euro(dati['compensi'])}")
     print("=" * 60)
 
 
@@ -244,7 +303,7 @@ def esporta_csv(risultati: list[dict], filepath: str = "riepilogo.csv") -> None:
     """Salva il riepilogo mensile in un file CSV."""
     with open(filepath, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["Mese", "Compensi", "Pagato", "Mance", "Da ricevere"])
+        writer.writerow(["Mese", "Compensi", "Pagato", "Mance", "Da ricevere", "Stato"])
         for r in risultati:
             writer.writerow([
                 r["mese"],
@@ -252,14 +311,15 @@ def esporta_csv(risultati: list[dict], filepath: str = "riepilogo.csv") -> None:
                 f"{r['somma_pagato']:.2f}",
                 f"{r['somma_mance']:.2f}",
                 f"{r['da_ricevere']:.2f}",
+                stato_pagamento(r["compensi_totali"], r["somma_pagato"]),
             ])
-        # Riga totali
         writer.writerow([
             "TOTALE",
             f"{sum(r['compensi_totali'] for r in risultati):.2f}",
             f"{sum(r['somma_pagato']    for r in risultati):.2f}",
             f"{sum(r['somma_mance']     for r in risultati):.2f}",
             f"{sum(r['da_ricevere']     for r in risultati):.2f}",
+            "",
         ])
     print(f"\nExport salvato in: {filepath}")
 
@@ -284,7 +344,6 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    # Validazione dati
     avvisi = valida_dati()
     if avvisi:
         print("⚠️  AVVISI NEI DATI:")
