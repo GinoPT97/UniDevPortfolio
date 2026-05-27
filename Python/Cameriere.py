@@ -48,6 +48,21 @@ def pagamento(importo: float, desc: str = "Pagamento") -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Mesi completati / Mesi ancora in corso
+# ---------------------------------------------------------------------------
+# Usa questa struttura per tenere traccia dei mesi già completati.
+# Ad esempio, MAGGIO è ancora in corso, quindi i mesi completati sono vuoti ora.
+# Quando un mese è chiuso, spostalo qui e lascialo fuori da MESI.
+
+MESI_COMPLETATI: dict[str, dict] = {
+    "APRILE": {
+        "MudJ": {"turni": 2},
+        "pagamenti": [pagamento(80, "MudJ")],
+        "mance": [],
+    },
+}
+
+# ---------------------------------------------------------------------------
 # Dati mensili
 # ---------------------------------------------------------------------------
 # Per ogni mese indica solo i turni per locale.
@@ -98,10 +113,19 @@ MESI = {
 # Validazione
 # ---------------------------------------------------------------------------
 
+def get_mesi() -> dict[str, dict]:
+    """Restituisce tutti i mesi disponibili, unendo completati e in corso."""
+    return {**MESI_COMPLETATI, **MESI}
+
+
+def mese_stato(mese: str) -> str:
+    return "COMPLETATO" if mese in MESI_COMPLETATI else "IN CORSO"
+
+
 def valida_dati() -> list[str]:
     """Controlla i dati e restituisce una lista di avvisi. Lista vuota = tutto ok."""
     avvisi = []
-    for mese, dati in MESI.items():
+    for mese, dati in get_mesi().items():
         for nome, dati_locale in dati.items():
             if nome in RESERVED_KEYS:
                 continue
@@ -192,7 +216,7 @@ def calcola_locale(nome: str, dati_locale: dict) -> tuple[float, int, str]:
 
 def calcola_mese(mese: str) -> dict:
     """Calcola compensi, pagamenti e mance per un mese."""
-    dati      = MESI[mese]
+    dati      = get_mesi()[mese]
     pagamenti = dati.get("pagamenti", [])
     mance     = parse_mance(dati.get("mance", []))
 
@@ -238,7 +262,8 @@ def calcola_mese(mese: str) -> dict:
 def stampa_mese(r: dict) -> None:
     """Stampa il riepilogo di un mese."""
     stato = stato_pagamento(r["compensi_totali"], r["somma_pagato"])
-    print(f"\n{r['mese']} 2026  [{stato}]")
+    fase = mese_stato(r["mese"])
+    print(f"\n{r['mese']} 2026  [{fase}]  [{stato}]")
     print("-" * 60)
     for dettaglio in r["dettagli_locali"]:
         print(f"  {dettaglio}")
@@ -333,9 +358,9 @@ def main() -> None:
     parser.add_argument(
         "--mese",
         type=str,
-        choices=list(MESI.keys()),
+        choices=list(get_mesi().keys()),
         metavar="MESE",
-        help=f"Filtra per un mese specifico: {', '.join(MESI.keys())}",
+        help=f"Filtra per un mese specifico: {', '.join(get_mesi().keys())}",
     )
     parser.add_argument(
         "--export",
@@ -355,7 +380,7 @@ def main() -> None:
     print("CALCOLO COMPENSI CAMERIERE - ESTATE 2026")
     print("=" * 60)
 
-    mesi_da_calcolare = [args.mese] if args.mese else list(MESI.keys())
+    mesi_da_calcolare = [args.mese] if args.mese else list(get_mesi().keys())
     risultati = []
     for mese in mesi_da_calcolare:
         r = calcola_mese(mese)
