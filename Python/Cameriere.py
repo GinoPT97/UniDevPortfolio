@@ -138,19 +138,12 @@ MESI_COMPLETATI: dict[str, dict] = data.get("MESI_COMPLETATI", {})
 MESI: dict[str, dict] = data.get("MESI", {})
 
 # ---------------------------------------------------------------------------
-# Dati mensili
-# ---------------------------------------------------------------------------
-# I dati dei mesi sono mantenuti in `cameriere_data.json`.
-# È il file modificabile da telefono per aggiungere turni, pagamenti e mance.
-
-
-# ---------------------------------------------------------------------------
 # Validazione
 # ---------------------------------------------------------------------------
 
 def get_mesi() -> dict[str, dict]:
     """Restituisce tutti i mesi disponibili, unendo completati e in corso."""
-    return {**MESI_COMPLETATI, **MESI}
+    return MESI_COMPLETATI | MESI
 
 
 def mese_stato(mese: str) -> str:
@@ -399,6 +392,8 @@ def esporta_csv(risultati: list[dict], filepath: str = "riepilogo.csv") -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
+    aggiungi_mese_corrente_se_manca()
+
     parser = argparse.ArgumentParser(description="Calcolo compensi cameriere - Estate 2026")
     parser.add_argument(
         "--mese",
@@ -414,8 +409,6 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    sposta_mesi_completati()
-    aggiungi_mese_corrente_se_manca()
     sposta_mesi_completati()
     avvisi = valida_dati()
     if avvisi:
