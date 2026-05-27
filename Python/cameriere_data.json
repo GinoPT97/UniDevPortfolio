@@ -1,0 +1,50 @@
+{
+  "MESI_COMPLETATI": {
+    "APRILE": {
+      "MudJ": {"turni": 2},
+      "pagamenti": [
+        {"importo": 80, "desc": "MudJ"}
+      ],
+      "mance": []
+    }
+  },
+  "MESI": {
+    "MAGGIO": {
+      "VP": {"turni": 1},
+      "MudJ": {"turni": 9},
+      "CaricoScarico": {"turni": 0},
+      "pagamenti": [],
+      "mance": [
+        {"importo": 20, "fonte": "VP"}
+      ]
+    },
+    "GIUGNO": {
+      "VP": {"turni": 0},
+      "MudJ": {"turni": 0},
+      "CaricoScarico": {"turni": 0},
+      "pagamenti": [],
+      "mance": []
+    },
+    "LUGLIO": {
+      "VP": {"turni": 0},
+      "MudJ": {"turni": 0},
+      "CaricoScarico": {"turni": 0},
+      "pagamenti": [],
+      "mance": []
+    },
+    "AGOSTO": {
+      "VP": {"turni": 0},
+      "MudJ": {"turni": 0},
+      "CaricoScarico": {"turni": 0},
+      "pagamenti": [],
+      "mance": []
+    },
+    "SETTEMBRE": {
+      "VP": {"turni": 0},
+      "MudJ": {"turni": 0},
+      "CaricoScarico": {"turni": 0},
+      "pagamenti": [],
+      "mance": []
+    }
+  }
+}

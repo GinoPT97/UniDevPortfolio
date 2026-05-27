@@ -16,8 +16,12 @@
 
 import csv
 import argparse
+import json
+from pathlib import Path
 
 RESERVED_KEYS = {"pagamenti", "mance"}
+
+DATA_FILE = Path(__file__).with_name("cameriere_data.json")
 
 
 # ---------------------------------------------------------------------------
@@ -50,63 +54,30 @@ def pagamento(importo: float, desc: str = "Pagamento") -> dict:
 # ---------------------------------------------------------------------------
 # Mesi completati / Mesi ancora in corso
 # ---------------------------------------------------------------------------
-# Usa questa struttura per tenere traccia dei mesi già completati.
-# Ad esempio, MAGGIO è ancora in corso, quindi i mesi completati sono vuoti ora.
-# Quando un mese è chiuso, spostalo qui e lascialo fuori da MESI.
+# I dati dei mesi sono caricati da un file esterno `cameriere_data.json`
+# in modo da poterli modificare facilmente anche dal telefono.
 
-MESI_COMPLETATI: dict[str, dict] = {
-    "APRILE": {
-        "MudJ": {"turni": 2},
-        "pagamenti": [pagamento(80, "MudJ")],
-        "mance": [],
-    },
-}
+
+def load_dati() -> dict:
+    """Carica i dati mensili dal file JSON esterno."""
+    try:
+        with DATA_FILE.open("r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"File dati non trovato: {DATA_FILE}. Crea il file o ripristinalo dal repository."
+        )
+
+
+data = load_dati()
+MESI_COMPLETATI: dict[str, dict] = data.get("MESI_COMPLETATI", {})
+MESI: dict[str, dict] = data.get("MESI", {})
 
 # ---------------------------------------------------------------------------
 # Dati mensili
 # ---------------------------------------------------------------------------
-# Per ogni mese indica solo i turni per locale.
-# Se un locale non compare in un mese, viene semplicemente ignorato.
-
-MESI = {
-    "MAGGIO": {
-        "VP":            {"turni": 1},
-        "MudJ":          {"turni": 9},
-        "CaricoScarico": {"turni": 0},
-        "pagamenti": [],
-        "mance": [
-            mancia(20, "VP"),
-        ],
-    },
-    "GIUGNO": {
-        "VP":            {"turni": 0},
-        "MudJ":          {"turni": 0},
-        "CaricoScarico": {"turni": 0},
-        "pagamenti": [],
-        "mance": [],
-    },
-    "LUGLIO": {
-        "VP":            {"turni": 0},
-        "MudJ":          {"turni": 0},
-        "CaricoScarico": {"turni": 0},
-        "pagamenti": [],
-        "mance": [],
-    },
-    "AGOSTO": {
-        "VP":            {"turni": 0},
-        "MudJ":          {"turni": 0},
-        "CaricoScarico": {"turni": 0},
-        "pagamenti": [],
-        "mance": [],
-    },
-    "SETTEMBRE": {
-        "VP":            {"turni": 0},
-        "MudJ":          {"turni": 0},
-        "CaricoScarico": {"turni": 0},
-        "pagamenti": [],
-        "mance": [],
-    },
-}
+# I dati dei mesi sono mantenuti in `cameriere_data.json`.
+# È il file modificabile da telefono per aggiungere turni, pagamenti e mance.
 
 
 # ---------------------------------------------------------------------------
