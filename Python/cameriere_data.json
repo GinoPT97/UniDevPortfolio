@@ -1,50 +1,90 @@
 {
   "MESI_COMPLETATI": {
     "APRILE": {
-      "MudJ": {"turni": 2},
+      "MudJ": {
+        "turni": 2
+      },
       "pagamenti": [
-        [80, "MudJ"]
+        [80,"MudJ"]
       ],
-      "mance": []
+      "mance": [],
+      "arbitraggi": []
     }
   },
   "MESI": {
     "MAGGIO": {
-      "VP": {"turni": 1},
-      "MudJ": {"turni": 10},
-      "CaricoScarico": {"turni": 0},
+      "VP": {
+        "turni": 1
+      },
+      "MudJ": {
+        "turni": 10
+      },
+      "CaricoScarico": {
+        "turni": 0
+      },
       "pagamenti": [],
       "mance": [
-        [20, "VP"]
+        [20, "MudJ"]
+      ],
+      "arbitraggi": [
+        [150, "Torneo di calcio a 5, 1,5 g"]
       ]
     },
     "GIUGNO": {
-      "VP": {"turni": 0},
-      "MudJ": {"turni": 0},
-      "CaricoScarico": {"turni": 0},
+      "VP": {
+        "turni": 0
+      },
+      "MudJ": {
+        "turni": 0
+      },
+      "CaricoScarico": {
+        "turni": 0
+      },
       "pagamenti": [],
-      "mance": []
+      "mance": [],
+      "arbitraggi": []
     },
     "LUGLIO": {
-      "VP": {"turni": 0},
-      "MudJ": {"turni": 0},
-      "CaricoScarico": {"turni": 0},
+      "VP": {
+        "turni": 0
+      },
+      "MudJ": {
+        "turni": 0
+      },
+      "CaricoScarico": {
+        "turni": 0
+      },
       "pagamenti": [],
-      "mance": []
+      "mance": [],
+      "arbitraggi": []
     },
     "AGOSTO": {
-      "VP": {"turni": 0},
-      "MudJ": {"turni": 0},
-      "CaricoScarico": {"turni": 0},
+      "VP": {
+        "turni": 0
+      },
+      "MudJ": {
+        "turni": 0
+      },
+      "CaricoScarico": {
+        "turni": 0
+      },
       "pagamenti": [],
-      "mance": []
+      "mance": [],
+      "arbitraggi": []
     },
     "SETTEMBRE": {
-      "VP": {"turni": 0},
-      "MudJ": {"turni": 0},
-      "CaricoScarico": {"turni": 0},
+      "VP": {
+        "turni": 0
+      },
+      "MudJ": {
+        "turni": 0
+      },
+      "CaricoScarico": {
+        "turni": 0
+      },
       "pagamenti": [],
-      "mance": []
+      "mance": [],
+      "arbitraggi": []
     }
   }
 }

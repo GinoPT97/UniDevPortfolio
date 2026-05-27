@@ -20,7 +20,7 @@ import json
 from datetime import date
 from pathlib import Path
 
-RESERVED_KEYS = {"pagamenti", "mance"}
+RESERVED_KEYS = {"pagamenti", "mance", "arbitraggi"}
 
 DATA_FILE = Path(__file__).with_name("cameriere_data.json")
 
@@ -66,6 +66,11 @@ def mancia(importo: float, fonte: str = "Mancia") -> dict:
 
 def pagamento(importo: float, desc: str = "Pagamento") -> dict:
     """Crea una voce pagamento. Uso: pagamento(120, 'VP')"""
+    return {"importo": importo, "desc": desc}
+
+
+def arbitraggio(importo: float, desc: str = "Arbitraggio") -> dict:
+    """Crea una voce arbitraggio. Uso: arbitraggio(35, 'Partita U17')"""
     return {"importo": importo, "desc": desc}
 
 
@@ -169,6 +174,11 @@ def valida_dati() -> list[str]:
         for m in dati.get("mance", []):
             if isinstance(m, dict) and m.get("importo", 0) <= 0:
                 avvisi.append(f"[{mese}] mancia con importo non valido: {m}")
+
+        for a in dati.get("arbitraggi", []):
+            importo, desc = parse_amount_entry(a, "Arbitraggio", "desc")
+            if importo <= 0:
+                avvisi.append(f"[{mese}] arbitraggio con importo non valido: {a}")
 
         for p in dati.get("pagamenti", []):
             importo, desc = parse_pagamento(p)
@@ -280,16 +290,26 @@ def calcola_mese(mese: str) -> dict:
     somma_mance  = sum(v["importo"] for v in mance)
     da_ricevere  = compensi_totali - somma_pagato
 
+    arbitraggi_raw = dati.get("arbitraggi", [])
+    arbitraggi = []
+    for entry in arbitraggi_raw:
+        importo, desc = parse_amount_entry(entry, "Arbitraggio", "desc")
+        if importo > 0:
+            arbitraggi.append({"importo": importo, "desc": desc})
+    somma_arbitraggi = sum(v["importo"] for v in arbitraggi)
+
     return {
-        "mese":            mese,
-        "compensi_totali": compensi_totali,
-        "dettagli_locali": dettagli_locali,
-        "per_locale":      per_locale,
-        "pagamenti":       dettagli_pagamenti,
-        "somma_pagato":    somma_pagato,
-        "mance":           mance,
-        "somma_mance":     somma_mance,
-        "da_ricevere":     da_ricevere,
+        "mese":             mese,
+        "compensi_totali":  compensi_totali,
+        "dettagli_locali":  dettagli_locali,
+        "per_locale":       per_locale,
+        "pagamenti":        dettagli_pagamenti,
+        "somma_pagato":     somma_pagato,
+        "mance":            mance,
+        "somma_mance":      somma_mance,
+        "arbitraggi":       arbitraggi,
+        "somma_arbitraggi": somma_arbitraggi,
+        "da_ricevere":      da_ricevere,
     }
 
 
@@ -320,6 +340,13 @@ def stampa_mese(r: dict) -> None:
     else:
         print("  Nessuna mancia ricevuta")
     print(f"Totale mance:     {format_euro(r['somma_mance'])}")
+
+    if r["arbitraggi"]:
+        for a in r["arbitraggi"]:
+            print(f"  Arbitraggio ({a['desc']}): {format_euro(a['importo'])}")
+    else:
+        print("  Nessun arbitraggio")
+    print(f"Totale arbitraggi:{format_euro(r['somma_arbitraggi'])}")
     print(f"Da ricevere:      {format_euro(r['da_ricevere'])}")
 
 
@@ -328,6 +355,7 @@ def stampa_riepilogo(risultati: list[dict]) -> None:
     tot_compensi = sum(r["compensi_totali"] for r in risultati)
     tot_pagato   = sum(r["somma_pagato"]    for r in risultati)
     tot_mance    = sum(r["somma_mance"]     for r in risultati)
+    tot_arbitraggi = sum(r["somma_arbitraggi"] for r in risultati)
     tot_ricevere = sum(r["da_ricevere"]     for r in risultati)
 
     print("\n" + "=" * 60)
@@ -336,6 +364,7 @@ def stampa_riepilogo(risultati: list[dict]) -> None:
     print(f"Totale compensi maturati: {format_euro(tot_compensi)}")
     print(f"Totale pagato:            {format_euro(tot_pagato)}")
     print(f"Totale mance ricevute:    {format_euro(tot_mance)}")
+    print(f"Totale arbitraggi:        {format_euro(tot_arbitraggi)}")
     print(f"Totale da ricevere:       {format_euro(tot_ricevere)}")
 
     # Riepilogo per locale
@@ -366,22 +395,24 @@ def esporta_csv(risultati: list[dict], filepath: str = "riepilogo.csv") -> None:
     """Salva il riepilogo mensile in un file CSV."""
     with open(filepath, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["Mese", "Compensi", "Pagato", "Mance", "Da ricevere", "Stato"])
+        writer.writerow(["Mese", "Compensi", "Pagato", "Mance", "Arbitraggi", "Da ricevere", "Stato"])
         for r in risultati:
             writer.writerow([
                 r["mese"],
                 f"{r['compensi_totali']:.2f}",
                 f"{r['somma_pagato']:.2f}",
                 f"{r['somma_mance']:.2f}",
+                f"{r['somma_arbitraggi']:.2f}",
                 f"{r['da_ricevere']:.2f}",
                 stato_pagamento(r["compensi_totali"], r["somma_pagato"]),
             ])
         writer.writerow([
             "TOTALE",
-            f"{sum(r['compensi_totali'] for r in risultati):.2f}",
-            f"{sum(r['somma_pagato']    for r in risultati):.2f}",
-            f"{sum(r['somma_mance']     for r in risultati):.2f}",
-            f"{sum(r['da_ricevere']     for r in risultati):.2f}",
+            f"{sum(r['compensi_totali']    for r in risultati):.2f}",
+            f"{sum(r['somma_pagato']       for r in risultati):.2f}",
+            f"{sum(r['somma_mance']        for r in risultati):.2f}",
+            f"{sum(r['somma_arbitraggi']   for r in risultati):.2f}",
+            f"{sum(r['da_ricevere']        for r in risultati):.2f}",
             "",
         ])
     print(f"\nExport salvato in: {filepath}")
