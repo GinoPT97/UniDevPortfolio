@@ -3,7 +3,7 @@
     "APRILE": {
       "MudJ": {"turni": 2},
       "pagamenti": [
-        {"importo": 80, "desc": "MudJ"}
+        [80, "MudJ"]
       ],
       "mance": []
     }
@@ -15,7 +15,7 @@
       "CaricoScarico": {"turni": 0},
       "pagamenti": [],
       "mance": [
-        {"importo": 20, "fonte": "VP"}
+        [20, "VP"]
       ]
     },
     "GIUGNO": {

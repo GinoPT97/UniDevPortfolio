@@ -189,29 +189,39 @@ def valida_dati() -> list[str]:
 # Parsing
 # ---------------------------------------------------------------------------
 
-def parse_pagamento(entry) -> tuple[float, str]:
-    """Estrae importo e descrizione da una voce pagamento."""
+def parse_amount_entry(entry, default_label: str, label_key: str) -> tuple[float, str]:
+    """Estrae importo e descrizione/fonte da un pagamento o una mancia."""
     if isinstance(entry, dict):
-        return entry.get("importo", 0), entry.get("desc", "Pagamento")
+        return entry.get("importo", 0), entry.get(label_key, default_label)
     if isinstance(entry, (list, tuple)) and len(entry) >= 1:
         importo = entry[0] if isinstance(entry[0], (int, float)) else 0
-        desc    = str(entry[1]) if len(entry) > 1 else "Pagamento"
-        return importo, desc
+        label = str(entry[1]) if len(entry) > 1 else default_label
+        return importo, label
     if isinstance(entry, (int, float)):
-        return entry, "Pagamento"
+        return entry, default_label
     if isinstance(entry, str):
         try:
-            valore = float(entry.split()[0])
-            desc   = entry[entry.find("(")+1:entry.find(")")] if "(" in entry else "Pagamento"
-            return valore, desc
+            importo = float(entry.split()[0])
+            label = entry[entry.find("(")+1:entry.find(")")] if "(" in entry else default_label
+            return importo, label
         except ValueError:
-            return 0, ""
-    return 0, ""
+            return 0, default_label
+    return 0, default_label
 
 
-def parse_mance(mance: list[dict]) -> list[dict]:
+def parse_pagamento(entry) -> tuple[float, str]:
+    """Estrae importo e descrizione da una voce pagamento."""
+    return parse_amount_entry(entry, "Pagamento", "desc")
+
+
+def parse_mance(mance: list) -> list[dict]:
     """Restituisce le mance valide (importo > 0)."""
-    return [v for v in mance if isinstance(v, dict) and v.get("importo", 0) > 0]
+    valid = []
+    for entry in mance:
+        importo, fonte = parse_amount_entry(entry, "Mancia", "fonte")
+        if importo > 0:
+            valid.append({"importo": importo, "fonte": fonte})
+    return valid
 
 
 # ---------------------------------------------------------------------------
