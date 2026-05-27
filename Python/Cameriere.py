@@ -17,11 +17,29 @@
 import csv
 import argparse
 import json
+from datetime import date
 from pathlib import Path
 
 RESERVED_KEYS = {"pagamenti", "mance"}
 
 DATA_FILE = Path(__file__).with_name("cameriere_data.json")
+
+MESE_ORDINE = [
+    "GENNAIO",
+    "FEBBRAIO",
+    "MARZO",
+    "APRILE",
+    "MAGGIO",
+    "GIUGNO",
+    "LUGLIO",
+    "AGOSTO",
+    "SETTEMBRE",
+    "OTTOBRE",
+    "NOVEMBRE",
+    "DICEMBRE",
+]
+
+MESE_NUMERI = {mese: index + 1 for index, mese in enumerate(MESE_ORDINE)}
 
 
 # ---------------------------------------------------------------------------
@@ -67,6 +85,52 @@ def load_dati() -> dict:
         raise FileNotFoundError(
             f"File dati non trovato: {DATA_FILE}. Crea il file o ripristinalo dal repository."
         )
+
+
+def save_dati() -> None:
+    """Salva i dati mensili nel file JSON esterno."""
+    with DATA_FILE.open("w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "MESI_COMPLETATI": MESI_COMPLETATI,
+                "MESI": MESI,
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
+
+
+def get_mese_corrente() -> str:
+    """Restituisce il nome del mese corrente in italiano."""
+    return MESE_ORDINE[date.today().month - 1]
+
+
+def aggiungi_mese_corrente_se_manca() -> None:
+    """Aggiunge il mese corrente in MESI se MESI è vuoto e non esiste già."""
+    mese_corrente = get_mese_corrente()
+    if MESI:
+        return
+    if mese_corrente in MESI_COMPLETATI:
+        return
+
+    MESI[mese_corrente] = {
+        "pagamenti": [],
+        "mance": [],
+    }
+    save_dati()
+
+
+def sposta_mesi_completati() -> None:
+    """Sposta nei mesi completati tutti i mesi anteriori al mese corrente."""
+    oggi = date.today()
+    mesi_da_spostare = [mese for mese in MESI if MESE_NUMERI.get(mese, 99) < oggi.month]
+    if not mesi_da_spostare:
+        return
+
+    for mese in mesi_da_spostare:
+        MESI_COMPLETATI[mese] = MESI.pop(mese)
+    save_dati()
 
 
 data = load_dati()
@@ -340,6 +404,9 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    sposta_mesi_completati()
+    aggiungi_mese_corrente_se_manca()
+    sposta_mesi_completati()
     avvisi = valida_dati()
     if avvisi:
         print("⚠️  AVVISI NEI DATI:")
