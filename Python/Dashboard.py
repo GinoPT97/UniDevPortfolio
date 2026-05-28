@@ -1,10 +1,10 @@
 # Dashboard.py
-# GUI unificata per Cameriere e Arbitraggio.
+# GUI unificata per Cameriere e Sommatoria (rimborsi arbitraggio).
 #
 # Uso:
 #   python Dashboard.py
 #
-# Importa i dati da Cameriere.py e Arbitraggio.py,
+# Importa i dati da Cameriere.py e Sommatoria.py,
 # entrambi devono trovarsi nella stessa cartella.
 
 import tkinter as tk
@@ -330,7 +330,7 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
 
 
 # ---------------------------------------------------------------------------
-# Sezione Arbitraggio
+# Sezione Sommatoria (rimborsi arbitraggio)
 # ---------------------------------------------------------------------------
 
 def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
@@ -338,7 +338,7 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
     LBL_DA_RIC = "Da ricevere"
 
     tab_root = ttk.Frame(notebook)
-    notebook.add(tab_root, text="  🏆  Arbitraggio  ")
+    notebook.add(tab_root, text="  🏆  Rimborsi Arbitraggio  ")
 
     sub = ttk.Notebook(tab_root)
     sub.pack(fill="both", expand=True, padx=4, pady=4)
@@ -605,7 +605,7 @@ def build_riepilogo(notebook: ttk.Notebook,
 
 def avvia() -> None:
     import Cameriere
-    import Arbitraggio
+    import Python.Arbitraggio as Arbitraggio
 
     # prepara dati cameriere
     Cameriere.aggiungi_mese_corrente_se_manca()
@@ -614,7 +614,7 @@ def avvia() -> None:
     cam_ris   = [Cameriere.calcola_mese(m) for m in Cameriere.get_mesi()]
 
     # prepara dati arbitraggio
-    arb_ris   = [Arbitraggio.calcola(s) for s in Arbitraggio.STAGIONI]
+    arb_ris   = Arbitraggio.calcola_tutte()
 
     root = tk.Tk()
     root.title("UniDevPortfolio — Dashboard Lavori")
