@@ -26,9 +26,7 @@
       "mance": [
         [20, "MudJ"]
       ],
-      "arbitraggi": [
-        [150, "Torneo di calcio a 5, 1,5 g"]
-      ]
+      "arbitraggi": []
     },
     "GIUGNO": {
       "VP": {
@@ -42,7 +40,9 @@
       },
       "pagamenti": [],
       "mance": [],
-      "arbitraggi": []
+      "arbitraggi": [
+        [150, "Torneo di calcio a 5, 1,5 g"]
+      ]
     },
     "LUGLIO": {
       "VP": {

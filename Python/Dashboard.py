@@ -2,10 +2,14 @@
 # GUI unificata per Cameriere e Sommatoria (rimborsi arbitraggio).
 #
 # Uso:
-#   python Dashboard.py
+#   python Dashboard.py          (da qualsiasi directory)
 #
 # Importa i dati da Cameriere.py e Sommatoria.py,
-# entrambi devono trovarsi nella stessa cartella.
+# entrambi devono trovarsi nella stessa cartella dello script.
+
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import tkinter as tk
 from tkinter import ttk
@@ -330,7 +334,7 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
 
 
 # ---------------------------------------------------------------------------
-# Sezione Sommatoria (rimborsi arbitraggio)
+# Sezione Sommatoria
 # ---------------------------------------------------------------------------
 
 def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
@@ -605,7 +609,7 @@ def build_riepilogo(notebook: ttk.Notebook,
 
 def avvia() -> None:
     import Cameriere
-    import Python.Arbitraggio as Arbitraggio
+    import Arbitraggio
 
     # prepara dati cameriere
     Cameriere.aggiungi_mese_corrente_se_manca()
