@@ -8,7 +8,7 @@
     "APRILE": {
       "turni":      {"MudJ": 2},
       "pagamenti":  [[80, "MudJ"]],
-      "mance":      [],
+      "mance":      [[10, "MudJ" ] ],
       "arbitraggi": []
     }
   },
@@ -16,7 +16,7 @@
     "MAGGIO": {
       "turni":      {"VP": 3, "MudJ": 11, "CaricoScarico": 0},
       "pagamenti":  [],
-      "mance":      [[20, "MudJ"]],
+      "mance":      [[10, "MudJ"]],
       "arbitraggi": []
     },
     "GIUGNO": {
