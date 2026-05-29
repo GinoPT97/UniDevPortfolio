@@ -1,89 +1,46 @@
 {
+  "locali": {
+    "VP":            {"tariffa": 120},
+    "MudJ":          {"tariffa": 40},
+    "CaricoScarico": {"tariffa": 0}
+  },
   "MESI_COMPLETATI": {
     "APRILE": {
-      "MudJ": {
-        "turni": 2
-      },
-      "pagamenti": [
-        [80,"MudJ"]
-      ],
-      "mance": [],
+      "turni":      {"MudJ": 2},
+      "pagamenti":  [[80, "MudJ"]],
+      "mance":      [],
       "arbitraggi": []
     }
   },
   "MESI": {
     "MAGGIO": {
-      "VP": {
-        "turni": 3
-      },
-      "MudJ": {
-        "turni": 11
-      },
-      "CaricoScarico": {
-        "turni": 0
-      },
-      "pagamenti": [],
-      "mance": [
-        [20, "MudJ"]
-      ],
+      "turni":      {"VP": 3, "MudJ": 11, "CaricoScarico": 0},
+      "pagamenti":  [],
+      "mance":      [[20, "MudJ"]],
       "arbitraggi": []
     },
     "GIUGNO": {
-      "VP": {
-        "turni": 0
-      },
-      "MudJ": {
-        "turni": 0
-      },
-      "CaricoScarico": {
-        "turni": 0
-      },
-      "pagamenti": [],
-      "mance": [],
-      "arbitraggi": [
-        [150, "Torneo di calcio a 5, 1,5 g"]
-      ]
+      "turni":      {"VP": 0, "MudJ": 0, "CaricoScarico": 0},
+      "pagamenti":  [],
+      "mance":      [],
+      "arbitraggi": [[150, "Torneo di calcio a 5, 1,5 g"]]
     },
     "LUGLIO": {
-      "VP": {
-        "turni": 0
-      },
-      "MudJ": {
-        "turni": 0
-      },
-      "CaricoScarico": {
-        "turni": 0
-      },
-      "pagamenti": [],
-      "mance": [],
+      "turni":      {"VP": 0, "MudJ": 0, "CaricoScarico": 0},
+      "pagamenti":  [],
+      "mance":      [],
       "arbitraggi": []
     },
     "AGOSTO": {
-      "VP": {
-        "turni": 0
-      },
-      "MudJ": {
-        "turni": 0
-      },
-      "CaricoScarico": {
-        "turni": 0
-      },
-      "pagamenti": [],
-      "mance": [],
+      "turni":      {"VP": 0, "MudJ": 0, "CaricoScarico": 0},
+      "pagamenti":  [],
+      "mance":      [],
       "arbitraggi": []
     },
     "SETTEMBRE": {
-      "VP": {
-        "turni": 0
-      },
-      "MudJ": {
-        "turni": 0
-      },
-      "CaricoScarico": {
-        "turni": 0
-      },
-      "pagamenti": [],
-      "mance": [],
+      "turni":      {"VP": 0, "MudJ": 0, "CaricoScarico": 0},
+      "pagamenti":  [],
+      "mance":      [],
       "arbitraggi": []
     }
   }

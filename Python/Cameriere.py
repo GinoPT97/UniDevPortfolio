@@ -5,21 +5,14 @@
 #   python Cameriere.py --export          →  salva riepilogo.csv (senza GUI)
 #   python Cameriere.py --mese MAGGIO     →  solo maggio (senza GUI, stampa a schermo)
 #
-# Helper disponibili nel JSON:
-#   mancia(20, "VP")            →  mancia da VP
-#   pagamento(120, "VP")        →  pagamento da VP
-#   arbitraggio(35, "Partita")  →  voce arbitraggio
-#
-# Per aggiungere un nuovo locale: aggiungilo a LOCALI con la tariffa,
-# poi aggiungi "NomeLocale": {"turni": 0} nei mesi che ti interessano.
+# Per aggiungere un nuovo locale: aggiungilo a "locali" nel JSON con la tariffa,
+# poi comparirà automaticamente nei nuovi mesi creati dal programma.
 
 import csv
 import argparse
 import json
 from datetime import date
 from pathlib import Path
-
-RESERVED_KEYS = {"pagamenti", "mance", "arbitraggi"}
 
 DATA_FILE = Path(__file__).with_name("cameriere_data.json")
 
@@ -29,12 +22,6 @@ MESE_ORDINE = [
 ]
 
 MESE_NUMERI = {mese: index + 1 for index, mese in enumerate(MESE_ORDINE)}
-
-LOCALI = {
-    "VP":            {"tariffa": 120},
-    "MudJ":          {"tariffa": 40},
-    "CaricoScarico": {"tariffa": 0},
-}
 
 # ---------------------------------------------------------------------------
 # Helper
@@ -64,32 +51,54 @@ def load_dati() -> dict:
 
 def save_dati() -> None:
     with DATA_FILE.open("w", encoding="utf-8") as f:
-        json.dump({"MESI_COMPLETATI": MESI_COMPLETATI, "MESI": MESI},
-                  f, indent=2, ensure_ascii=False)
+        json.dump(
+            {"locali": LOCALI, "MESI_COMPLETATI": MESI_COMPLETATI, "MESI": MESI},
+            f, indent=2, ensure_ascii=False,
+        )
 
 def get_mese_corrente() -> str:
     return MESE_ORDINE[date.today().month - 1]
 
-def aggiungi_mese_corrente_se_manca() -> None:
-    mese_corrente = get_mese_corrente()
-    if MESI:
-        return
-    if mese_corrente in MESI_COMPLETATI:
-        return
-    MESI[mese_corrente] = {"pagamenti": [], "mance": [], "arbitraggi": []}
-    save_dati()
+def mese_vuoto() -> dict:
+    """Restituisce un mese con tutti i campi azzerati, usando i locali dal JSON."""
+    return {
+        "turni":      {nome: 0 for nome in LOCALI},
+        "pagamenti":  [],
+        "mance":      [],
+        "arbitraggi": [],
+    }
 
-def sposta_mesi_completati() -> None:
-    oggi = date.today()
-    mesi_da_spostare = [m for m in MESI if MESE_NUMERI.get(m, 99) < oggi.month]
-    for mese in mesi_da_spostare:
+def sincronizza_mesi() -> None:
+    """
+    All'avvio:
+    - sposta in MESI_COMPLETATI tutti i mesi di MESI precedenti al mese corrente
+    - aggiunge il mese corrente a MESI se non è già presente né in MESI_COMPLETATI
+    """
+    mese_corrente = get_mese_corrente()
+    num_corrente  = MESE_NUMERI[mese_corrente]
+    modificato    = False
+
+    # 1. sposta i mesi passati
+    da_spostare = [
+        m for m in list(MESI.keys())
+        if MESE_NUMERI.get(m, 99) < num_corrente
+    ]
+    for mese in da_spostare:
         MESI_COMPLETATI[mese] = MESI.pop(mese)
-    if mesi_da_spostare:
+        modificato = True
+
+    # 2. aggiungi il mese corrente se manca
+    if mese_corrente not in MESI and mese_corrente not in MESI_COMPLETATI:
+        MESI[mese_corrente] = mese_vuoto()
+        modificato = True
+
+    if modificato:
         save_dati()
 
 data = load_dati()
-MESI_COMPLETATI: dict[str, dict] = data.get("MESI_COMPLETATI", {})
-MESI: dict[str, dict] = data.get("MESI", {})
+LOCALI:           dict[str, dict] = data.get("locali", {})
+MESI_COMPLETATI:  dict[str, dict] = data.get("MESI_COMPLETATI", {})
+MESI:             dict[str, dict] = data.get("MESI", {})
 
 # ---------------------------------------------------------------------------
 # Validazione
@@ -104,13 +113,11 @@ def mese_stato(mese: str) -> str:
 def valida_dati() -> list[str]:
     avvisi = []
     for mese, dati in get_mesi().items():
-        for nome, dati_locale in dati.items():
-            if nome in RESERVED_KEYS:
-                continue
+        for nome, n_turni in dati.get("turni", {}).items():
             if nome not in LOCALI:
                 avvisi.append(f"[{mese}] '{nome}' non è in LOCALI")
                 continue
-            if dati_locale.get("turni", 0) < 0:
+            if n_turni < 0:
                 avvisi.append(f"[{mese}] {nome}: turni negativi")
         for m in dati.get("mance", []):
             if isinstance(m, dict) and m.get("importo", 0) <= 0:
@@ -134,14 +141,14 @@ def parse_amount_entry(entry, default_label: str, label_key: str) -> tuple[float
         return entry.get("importo", 0), entry.get(label_key, default_label)
     if isinstance(entry, (list, tuple)) and len(entry) >= 1:
         importo = entry[0] if isinstance(entry[0], (int, float)) else 0
-        label = str(entry[1]) if len(entry) > 1 else default_label
+        label   = str(entry[1]) if len(entry) > 1 else default_label
         return importo, label
     if isinstance(entry, (int, float)):
         return entry, default_label
     if isinstance(entry, str):
         try:
             importo = float(entry.split()[0])
-            label = entry[entry.find("(")+1:entry.find(")")] if "(" in entry else default_label
+            label   = entry[entry.find("(")+1:entry.find(")")] if "(" in entry else default_label
             return importo, label
         except ValueError:
             return 0, default_label
@@ -181,12 +188,11 @@ def stato_pagamento(compensi: float, pagato: float) -> str:
 # Calcolo
 # ---------------------------------------------------------------------------
 
-def calcola_locale(nome: str, dati_locale: dict) -> tuple[float, int, str]:
+def calcola_locale(nome: str, n_turni: int) -> tuple[float, int, str]:
     tariffa = LOCALI.get(nome, {}).get("tariffa", 0)
-    turni   = dati_locale.get("turni", 0)
-    totale  = tariffa * turni
-    desc    = f"{nome}: {tariffa}€ x {turni} = {format_euro(totale)}" if turni else ""
-    return totale, turni, desc
+    totale  = tariffa * n_turni
+    desc    = f"{nome}: {tariffa}€ x {n_turni} = {format_euro(totale)}" if n_turni else ""
+    return totale, n_turni, desc
 
 def calcola_mese(mese: str) -> dict:
     dati      = get_mesi()[mese]
@@ -198,12 +204,10 @@ def calcola_mese(mese: str) -> dict:
     dettagli_pagamenti = []
     per_locale         = {}
 
-    for nome, dati_locale in dati.items():
-        if nome in RESERVED_KEYS:
-            continue
-        totale_locale, n_turni, descrizione = calcola_locale(nome, dati_locale)
+    for nome, n_turni in dati.get("turni", {}).items():
+        totale_locale, turni, descrizione = calcola_locale(nome, n_turni)
         compensi_totali += totale_locale
-        per_locale[nome] = {"compensi": totale_locale, "turni": n_turni}
+        per_locale[nome] = {"compensi": totale_locale, "turni": turni}
         if descrizione:
             dettagli_locali.append(descrizione)
 
@@ -215,8 +219,8 @@ def calcola_mese(mese: str) -> dict:
     somma_mance  = sum(v["importo"] for v in mance)
     da_ricevere  = compensi_totali - somma_pagato
 
-    arbitraggi_raw = dati.get("arbitraggi", [])
-    arbitraggi = []
+    arbitraggi_raw  = dati.get("arbitraggi", [])
+    arbitraggi      = []
     for entry in arbitraggi_raw:
         importo, desc = parse_amount_entry(entry, "Arbitraggio", "desc")
         if importo > 0:
@@ -278,20 +282,20 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
     matplotlib.use("TkAgg")
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-    import matplotlib.patches as mpatches
+    import numpy as np
 
     # ---- palette colori ----
-    C_BG       = "#1e1e2e"
-    C_PANEL    = "#2a2a3e"
-    C_ACCENT   = "#7c6af7"
-    C_GREEN    = "#50fa7b"
-    C_YELLOW   = "#f1fa8c"
-    C_RED      = "#ff5555"
-    C_ORANGE   = "#ffb86c"
-    C_CYAN     = "#8be9fd"
-    C_TEXT     = "#cdd6f4"
-    C_SUBTEXT  = "#a6adc8"
-    C_GRID     = "#313244"
+    C_BG      = "#1e1e2e"
+    C_PANEL   = "#2a2a3e"
+    C_ACCENT  = "#7c6af7"
+    C_GREEN   = "#50fa7b"
+    C_YELLOW  = "#f1fa8c"
+    C_RED     = "#ff5555"
+    C_ORANGE  = "#ffb86c"
+    C_CYAN    = "#8be9fd"
+    C_TEXT    = "#cdd6f4"
+    C_SUBTEXT = "#a6adc8"
+    C_GRID    = "#313244"
 
     mesi_attivi = [r for r in risultati if r["compensi_totali"] > 0 or r["somma_arbitraggi"] > 0]
 
@@ -355,27 +359,25 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
     tab1 = ttk.Frame(notebook)
     notebook.add(tab1, text="  📊 Panoramica  ")
 
-    tot_compensi    = sum(r["compensi_totali"]  for r in risultati)
-    tot_pagato      = sum(r["somma_pagato"]      for r in risultati)
-    tot_mance       = sum(r["somma_mance"]       for r in risultati)
-    tot_arbitraggi  = sum(r["somma_arbitraggi"]  for r in risultati)
-    tot_ricevere    = sum(r["da_ricevere"]        for r in risultati)
-    tot_entrate     = tot_compensi + tot_mance + tot_arbitraggi
+    tot_compensi   = sum(r["compensi_totali"]  for r in risultati)
+    tot_pagato     = sum(r["somma_pagato"]      for r in risultati)
+    tot_mance      = sum(r["somma_mance"]       for r in risultati)
+    tot_arbitraggi = sum(r["somma_arbitraggi"]  for r in risultati)
+    tot_ricevere   = sum(r["da_ricevere"]       for r in risultati)
+    tot_entrate    = tot_compensi + tot_mance + tot_arbitraggi
 
-    # cards
     cards_frame = tk.Frame(tab1, bg=C_BG)
     cards_frame.pack(fill="x", padx=8, pady=(10, 4))
     for i in range(5):
         cards_frame.columnconfigure(i, weight=1)
 
-    card(cards_frame, "Entrate totali",      format_euro(tot_entrate),    C_CYAN,   col=0)
-    card(cards_frame, "Compensi cameriere",  format_euro(tot_compensi),   C_ACCENT, col=1)
-    card(cards_frame, "Arbitraggi",          format_euro(tot_arbitraggi), C_ORANGE, col=2)
-    card(cards_frame, "Mance",               format_euro(tot_mance),      C_GREEN,  col=3)
-    card(cards_frame, "Da ricevere",         format_euro(tot_ricevere),
+    card(cards_frame, "Entrate totali",     format_euro(tot_entrate),    C_CYAN,   col=0)
+    card(cards_frame, "Compensi cameriere", format_euro(tot_compensi),   C_ACCENT, col=1)
+    card(cards_frame, "Arbitraggi",         format_euro(tot_arbitraggi), C_ORANGE, col=2)
+    card(cards_frame, "Mance",              format_euro(tot_mance),      C_GREEN,  col=3)
+    card(cards_frame, "Da ricevere",        format_euro(tot_ricevere),
          C_RED if tot_ricevere > 0 else C_GREEN, col=4)
 
-    # tabella mensile
     ttk.Label(tab1, text="Dettaglio mensile", style="Header.TLabel").pack(
         anchor="w", padx=20, pady=(10, 4))
 
@@ -384,14 +386,14 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
     for c in cols:
         tree.heading(c, text=c)
         tree.column(c, anchor="center", width=110)
-    tree.column("Mese",        width=90)
-    tree.column("Pagamento",   width=150)
+    tree.column("Mese",      width=90)
+    tree.column("Pagamento", width=150)
 
     COLOR_MAP = {
-        "✓ Saldato":              C_GREEN,
-        "⚠ Parzialmente pagato":  C_YELLOW,
-        "✗ Non pagato":           C_RED,
-        "— nessun lavoro":        C_SUBTEXT,
+        "✓ Saldato":             C_GREEN,
+        "⚠ Parzialmente pagato": C_YELLOW,
+        "✗ Non pagato":          C_RED,
+        "— nessun lavoro":       C_SUBTEXT,
     }
     for tag, color in COLOR_MAP.items():
         tree.tag_configure(tag, foreground=color)
@@ -414,7 +416,6 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
     tree.pack(side="left", fill="both", expand=True, padx=(20, 0), pady=4)
     sb.pack(side="left", fill="y", pady=4)
 
-    # avvisi
     if avvisi:
         warn_frame = tk.Frame(tab1, bg="#3a2a2a", padx=10, pady=6)
         warn_frame.pack(fill="x", padx=20, pady=6, side="bottom")
@@ -431,21 +432,19 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
     notebook.add(tab2, text="  📅 Guadagni mensili  ")
 
     etichette = [r["mese"].capitalize()[:3] for r in risultati]
-    v_comp   = [r["compensi_totali"]  for r in risultati]
-    v_arb    = [r["somma_arbitraggi"] for r in risultati]
-    v_man    = [r["somma_mance"]      for r in risultati]
-    v_pag    = [r["somma_pagato"]     for r in risultati]
+    v_comp    = [r["compensi_totali"]  for r in risultati]
+    v_arb     = [r["somma_arbitraggi"] for r in risultati]
+    v_man     = [r["somma_mance"]      for r in risultati]
+    v_pag     = [r["somma_pagato"]     for r in risultati]
 
     fig2, ax2 = mpl_fig(figsize=(10, 4.8))
-    x = range(len(etichette))
-    w = 0.22
-    import numpy as np
     xs = np.arange(len(etichette))
+    w  = 0.22
 
-    ax2.bar(xs - w*1.5, v_comp, w, label="Compensi",   color=C_ACCENT,  alpha=0.9)
-    ax2.bar(xs - w*0.5, v_arb,  w, label="Arbitraggi", color=C_ORANGE,  alpha=0.9)
-    ax2.bar(xs + w*0.5, v_man,  w, label="Mance",      color=C_GREEN,   alpha=0.9)
-    ax2.bar(xs + w*1.5, v_pag,  w, label="Pagato",     color=C_CYAN,    alpha=0.9)
+    ax2.bar(xs - w*1.5, v_comp, w, label="Compensi",   color=C_ACCENT, alpha=0.9)
+    ax2.bar(xs - w*0.5, v_arb,  w, label="Arbitraggi", color=C_ORANGE, alpha=0.9)
+    ax2.bar(xs + w*0.5, v_man,  w, label="Mance",      color=C_GREEN,  alpha=0.9)
+    ax2.bar(xs + w*1.5, v_pag,  w, label="Pagato",     color=C_CYAN,   alpha=0.9)
 
     ax2.set_xticks(xs)
     ax2.set_xticklabels(etichette, color=C_SUBTEXT)
@@ -453,8 +452,7 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
     ax2.set_title("Guadagni per mese", color=C_TEXT, pad=10)
     ax2.legend(facecolor=C_PANEL, edgecolor=C_GRID, labelcolor=C_TEXT, fontsize=9)
 
-    # etichette sui bar > 0
-    for bars in [ax2.containers[0], ax2.containers[1], ax2.containers[2], ax2.containers[3]]:
+    for bars in ax2.containers:
         for bar in bars:
             h = bar.get_height()
             if h > 0:
@@ -532,7 +530,6 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
 
     fig4, (ax4a, ax4b) = plt.subplots(1, 2, figsize=(10, 4.5), facecolor=C_BG)
 
-    # torta stato
     slice_labels, slice_values, slice_colors = [], [], []
     for label, val, col in [("Saldato", saldati, C_GREEN),
                               ("Parziale", parziali, C_YELLOW),
@@ -553,7 +550,6 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
             at.set_color(C_BG)
     ax4a.set_title("Stato pagamenti (mesi con lavoro)", color=C_TEXT, pad=10)
 
-    # barre compensi vs pagato per mese attivo
     ax4b.set_facecolor(C_BG)
     ax4b.tick_params(colors=C_SUBTEXT, labelsize=8)
     for spine in ax4b.spines.values():
@@ -600,11 +596,10 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
         for w in detail_frame.winfo_children():
             w.destroy()
 
-        r = next(x for x in risultati if x["mese"] == mese_var.get())
-        sp = stato_pagamento(r["compensi_totali"], r["somma_pagato"])
+        r      = next(x for x in risultati if x["mese"] == mese_var.get())
+        sp     = stato_pagamento(r["compensi_totali"], r["somma_pagato"])
         col_sp = COLOR_MAP.get(sp, C_TEXT)
 
-        # intestazione
         hf = tk.Frame(detail_frame, bg=C_BG)
         hf.pack(fill="x", pady=(0, 8))
         tk.Label(hf, text=f"{r['mese'].capitalize()} 2026",
@@ -648,7 +643,6 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
                 r["somma_arbitraggi"],
                 col_tot=C_ORANGE, vuoto="Nessun arbitraggio")
 
-        # da ricevere
         dr_col = C_RED if r["da_ricevere"] > 0 else C_GREEN
         df = tk.Frame(detail_frame, bg=C_BG)
         df.pack(fill="x", pady=(8, 0))
@@ -667,7 +661,7 @@ def mostra_gui(risultati: list[dict], avvisi: list[str]) -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    aggiungi_mese_corrente_se_manca()
+    sincronizza_mesi()
 
     parser = argparse.ArgumentParser(description="Compensi cameriere - Estate 2026")
     parser.add_argument("--mese", type=str, choices=list(get_mesi().keys()),
@@ -676,7 +670,6 @@ def main() -> None:
                         help="Salva riepilogo.csv (modalità testo)")
     args = parser.parse_args()
 
-    sposta_mesi_completati()
     avvisi = valida_dati()
 
     mesi_da_calcolare = [args.mese] if args.mese else list(get_mesi().keys())
