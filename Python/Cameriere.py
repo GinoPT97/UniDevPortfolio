@@ -56,7 +56,7 @@ def save_dati() -> None:
     with DATA_FILE.open("w", encoding="utf-8") as f:
         json.dump(
             {"locali": LOCALI, "MESI_COMPLETATI": MESI_COMPLETATI, "MESI": MESI},
-            f, indent=2, ensure_ascii=False,
+            f, separators=(",", ":"), ensure_ascii=False,
         )
 
 def get_mese_corrente() -> str:
