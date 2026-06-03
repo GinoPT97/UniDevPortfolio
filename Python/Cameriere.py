@@ -58,6 +58,10 @@ def save_dati() -> None:
     with DATA_FILE.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
+    collapse_array_keys(DATA_FILE, "pagamenti")
+    collapse_array_keys(DATA_FILE, "mance")
+    collapse_simple_array(DATA_FILE, "straordinario")
+
 def get_mese_corrente() -> str:
     return MESE_ORDINE[date.today().month - 1]
 
@@ -189,6 +193,37 @@ def format_euro(valore: float) -> str:
     except (TypeError, ValueError):
         return f"€{valore}"
 
+
+def collapse_array_keys(filepath: Path, key: str) -> None:
+    import re
+
+    text = filepath.read_text(encoding="utf-8")
+    pattern = rf'("{key}"\s*:\s*)\[\s*((?:\[\s*[^\]]*?\]\s*,\s*)*(?:\[\s*[^\]]*?\]\s*))\s*\]'
+
+    def replace(match: re.Match[str]) -> str:
+        content = match.group(2)
+        compact = re.sub(r"\s+", " ", content).strip()
+        return f'{match.group(1)}[{compact}]'
+
+    result = re.sub(pattern, replace, text, flags=re.DOTALL)
+    if result != text:
+        filepath.write_text(result, encoding="utf-8")
+
+
+def collapse_simple_array(filepath: Path, key: str) -> None:
+    import re
+
+    text = filepath.read_text(encoding="utf-8")
+    pattern = rf'("{key}"\s*:\s*)\[\s*([^\]]*?)\s*\]'
+
+    def replace(match: re.Match[str]) -> str:
+        content = match.group(2)
+        compact = re.sub(r"\s+", " ", content).strip()
+        return f'{match.group(1)}[{compact}]'
+
+    result = re.sub(pattern, replace, text, flags=re.DOTALL)
+    if result != text:
+        filepath.write_text(result, encoding="utf-8")
 
 
 def stato_pagamento(compensi: float, pagato: float) -> str:
