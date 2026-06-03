@@ -53,11 +53,16 @@ def load_dati() -> dict:
         )
 
 def save_dati() -> None:
+    data["locali"] = LOCALI
+    data["straordinario"] = STRAORDINARIO_TARIFFE
+    data["MESI_COMPLETATI"] = MESI_COMPLETATI
+    data["MESI"] = MESI
+
     with DATA_FILE.open("w", encoding="utf-8") as f:
-        json.dump(
-            {"locali": LOCALI, "MESI_COMPLETATI": MESI_COMPLETATI, "MESI": MESI},
-            f, indent=2, ensure_ascii=False,
-        )
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+    collapse_array_keys(DATA_FILE, "pagamenti")
+    collapse_array_keys(DATA_FILE, "mance")
 
 def get_mese_corrente() -> str:
     return MESE_ORDINE[date.today().month - 1]
@@ -100,6 +105,7 @@ def sincronizza_mesi() -> None:
 
 data = load_dati()
 LOCALI:           dict[str, dict] = data.get("locali", {})
+STRAORDINARIO_TARIFFE: dict[str, float] = data.get("straordinario", {})
 MESI_COMPLETATI:  dict[str, dict] = data.get("MESI_COMPLETATI", {})
 MESI:             dict[str, dict] = data.get("MESI", {})
 
@@ -188,6 +194,22 @@ def format_euro(valore: float) -> str:
         return f"€{valore:.2f}"
     except (TypeError, ValueError):
         return f"€{valore}"
+
+
+def collapse_array_keys(filepath: Path, key: str) -> None:
+    import re
+
+    text = filepath.read_text(encoding="utf-8")
+    pattern = rf'("{key}"\s*:\s*)\[\s*((?:\[\s*[^\]]*?\]\s*,\s*)*(?:\[\s*[^\]]*?\]\s*)?)\s*\]'
+
+    def replace(match: re.Match[str]) -> str:
+        content = match.group(2)
+        compact = re.sub(r"\s+", " ", content).strip()
+        return f'{match.group(1)}[{compact}]'
+
+    result = re.sub(pattern, replace, text, flags=re.DOTALL)
+    if result != text:
+        filepath.write_text(result, encoding="utf-8")
 
 def stato_pagamento(compensi: float, pagato: float) -> str:
     if compensi == 0:

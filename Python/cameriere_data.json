@@ -10,24 +10,17 @@
       "tariffa": 0
     }
   },
+  "straordinario": {
+    "VP": 10
+  },
   "MESI_COMPLETATI": {
     "APRILE": {
       "turni": {
         "MudJ": 2
       },
       "arbitraggi": [],
-      "pagamenti": [
-        [
-          80,
-          "MudJ"
-        ]
-      ],
-      "mance": [
-        [
-          10,
-          "MudJ"
-        ]
-      ]
+      "pagamenti": [[ 80, "MudJ" ]],
+      "mance": [[ 10, "MudJ" ]]
     },
     "MAGGIO": {
       "turni": {
@@ -37,12 +30,7 @@
       },
       "arbitraggi": [],
       "pagamenti": [],
-      "mance": [
-        [
-          10,
-          "MudJ"
-        ]
-      ]
+      "mance": [[ 10, "MudJ" ]]
     }
   },
   "MESI": {
@@ -52,19 +40,17 @@
         "MudJ": 0,
         "CaricoScarico": 0
       },
-      "straordinario": ["VP", 4],
+      "straordinario": [
+        "VP",
+        4
+      ],
       "arbitraggi": [
         [
           150,
           "Torneo 1,5 g"
         ]
       ],
-      "pagamenti": [
-        [
-          150,
-          "Torneo 1,5 g"
-        ]
-      ],
+      "pagamenti": [[ 150, "Torneo 1,5 g" ]],
       "mance": []
     },
     "LUGLIO": {
