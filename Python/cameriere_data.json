@@ -19,8 +19,18 @@
         "MudJ": 2
       },
       "arbitraggi": [],
-      "pagamenti": [[ 80, "MudJ" ]],
-      "mance": [[ 10, "MudJ" ]]
+      "pagamenti": [
+        [
+          80,
+          "MudJ"
+        ]
+      ],
+      "mance": [
+        [
+          10,
+          "MudJ"
+        ]
+      ]
     },
     "MAGGIO": {
       "turni": {
@@ -30,7 +40,12 @@
       },
       "arbitraggi": [],
       "pagamenti": [],
-      "mance": [[ 10, "MudJ" ]]
+      "mance": [
+        [
+          10,
+          "MudJ"
+        ]
+      ]
     }
   },
   "MESI": {
@@ -50,7 +65,12 @@
           "Torneo 1,5 g"
         ]
       ],
-      "pagamenti": [[ 150, "Torneo 1,5 g" ]],
+      "pagamenti": [
+        [
+          150,
+          "Torneo 1,5 g"
+        ]
+      ],
       "mance": []
     },
     "LUGLIO": {
