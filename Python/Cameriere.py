@@ -133,37 +133,66 @@ def get_mesi() -> dict[str, dict]:
 def mese_stato(mese: str) -> str:
     return "COMPLETATO" if mese in MESI_COMPLETATI else "IN CORSO"
 
+def valida_turni(mese: str, turni: dict) -> list[str]:
+    avvisi = []
+    for nome, n_turni in turni.items():
+        if nome not in LOCALI:
+            avvisi.append(f"[{mese}] '{nome}' non è in LOCALI")
+            continue
+        if n_turni < 0:
+            avvisi.append(f"[{mese}] {nome}: turni negativi")
+    return avvisi
+
+
+def valida_mance(mese: str, mance: list) -> list[str]:
+    return [
+        f"[{mese}] mancia non valida: {m}"
+        for m in mance
+        if isinstance(m, dict) and m.get("importo", 0) <= 0
+    ]
+
+
+def valida_arbitraggi(mese: str, arbitraggi: list) -> list[str]:
+    avvisi = []
+    for a in arbitraggi:
+        importo, _ = parse_amount_entry(a, "Arbitraggio", "desc")
+        if importo <= 0:
+            avvisi.append(f"[{mese}] arbitraggio non valido: {a}")
+    return avvisi
+
+
+def valida_pagamenti(mese: str, pagamenti: list) -> list[str]:
+    avvisi = []
+    for p in pagamenti:
+        importo, desc = parse_pagamento(p)
+        if importo < 0:
+            avvisi.append(f"[{mese}] pagamento negativo ({desc}: {importo}€)")
+    return avvisi
+
+
+def valida_straordinario(mese: str, straordinario) -> list[str]:
+    if straordinario is None:
+        return []
+    if not isinstance(straordinario, (list, tuple)) or len(straordinario) != 2:
+        return [f"[{mese}] straordinario non valido: {straordinario}"]
+
+    locale, ore = straordinario
+    avvisi = []
+    if locale not in LOCALI:
+        avvisi.append(f"[{mese}] straordinario: locale sconosciuto '{locale}'")
+    if not isinstance(ore, (int, float)) or ore <= 0:
+        avvisi.append(f"[{mese}] straordinario: ore non valide {ore}")
+    return avvisi
+
+
 def valida_dati() -> list[str]:
     avvisi = []
     for mese, dati in get_mesi().items():
-        for nome, n_turni in dati.get("turni", {}).items():
-            if nome not in LOCALI:
-                avvisi.append(f"[{mese}] '{nome}' non è in LOCALI")
-                continue
-            if n_turni < 0:
-                avvisi.append(f"[{mese}] {nome}: turni negativi")
-        for m in dati.get("mance", []):
-            if isinstance(m, dict) and m.get("importo", 0) <= 0:
-                avvisi.append(f"[{mese}] mancia non valida: {m}")
-        for a in dati.get("arbitraggi", []):
-            importo, _ = parse_amount_entry(a, "Arbitraggio", "desc")
-            if importo <= 0:
-                avvisi.append(f"[{mese}] arbitraggio non valido: {a}")
-        for p in dati.get("pagamenti", []):
-            importo, desc = parse_pagamento(p)
-            if importo < 0:
-                avvisi.append(f"[{mese}] pagamento negativo ({desc}: {importo}€)")
-        straordinario = dati.get("straordinario")
-        if straordinario is not None:
-            if (not isinstance(straordinario, (list, tuple)) or
-                    len(straordinario) != 2):
-                avvisi.append(f"[{mese}] straordinario non valido: {straordinario}")
-            else:
-                locale, ore = straordinario
-                if locale not in LOCALI:
-                    avvisi.append(f"[{mese}] straordinario: locale sconosciuto '{locale}'")
-                if not isinstance(ore, (int, float)) or ore <= 0:
-                    avvisi.append(f"[{mese}] straordinario: ore non valide {ore}")
+        avvisi.extend(valida_turni(mese, dati.get("turni", {})))
+        avvisi.extend(valida_mance(mese, dati.get("mance", [])))
+        avvisi.extend(valida_arbitraggi(mese, dati.get("arbitraggi", [])))
+        avvisi.extend(valida_pagamenti(mese, dati.get("pagamenti", [])))
+        avvisi.extend(valida_straordinario(mese, dati.get("straordinario")))
     return avvisi
 
 # ---------------------------------------------------------------------------
@@ -198,6 +227,33 @@ def parse_mance(mance: list) -> list[dict]:
         if importo > 0:
             valid.append({"importo": importo, "fonte": fonte})
     return valid
+
+
+def calcola_straordinario(dati: dict) -> tuple[dict, float]:
+    straordinario_dati = {}
+    importo_straord = 0.0
+    straordinario_item = dati.get("straordinario")
+    if isinstance(straordinario_item, (list, tuple)) and len(straordinario_item) == 2:
+        locale, ore = straordinario_item
+        if isinstance(locale, str) and isinstance(ore, (int, float)) and ore > 0:
+            tariffa = STRAORDINARIO_TARIFFE.get(locale, 0)
+            importo_straord = tariffa * ore
+            straordinario_dati = {
+                "locale": locale,
+                "ore": ore,
+                "tariffa": tariffa,
+                "importo": importo_straord,
+            }
+    return straordinario_dati, importo_straord
+
+
+def calcola_arbitraggi(arbitraggi_raw: list) -> tuple[list[dict], float]:
+    arbitraggi = []
+    for entry in arbitraggi_raw:
+        importo, desc = parse_amount_entry(entry, "Arbitraggio", "desc")
+        if importo > 0:
+            arbitraggi.append({"importo": importo, "desc": desc})
+    return arbitraggi, sum(v["importo"] for v in arbitraggi)
 
 # ---------------------------------------------------------------------------
 # Formattazione
@@ -246,23 +302,13 @@ def calcola_mese(mese: str) -> dict:
         if descrizione:
             dettagli_locali.append(descrizione)
 
-    straordinario_dati = {}
-    straordinario_item = dati.get("straordinario")
-    if isinstance(straordinario_item, (list, tuple)) and len(straordinario_item) == 2:
-        locale, ore = straordinario_item
-        if isinstance(locale, str) and isinstance(ore, (int, float)) and ore > 0:
-            tariffa = STRAORDINARIO_TARIFFE.get(locale, 0)
-            importo_straord = tariffa * ore
-            compensi_totali += importo_straord
-            straordinario_dati = {
-                "locale": locale,
-                "ore": ore,
-                "tariffa": tariffa,
-                "importo": importo_straord,
-            }
-            dettagli_locali.append(
-                f"Straordinario {locale}: {ore} ore x {format_euro(tariffa)} = {format_euro(importo_straord)}"
-            )
+    straordinario_dati, importo_straord = calcola_straordinario(dati)
+    if straordinario_dati:
+        compensi_totali += importo_straord
+        dettagli_locali.append(
+            f"Straordinario {straordinario_dati['locale']}: {straordinario_dati['ore']} ore x "
+            f"{format_euro(straordinario_dati['tariffa'])} = {format_euro(importo_straord)}"
+        )
 
     for p in pagamenti:
         importo, desc = parse_pagamento(p)
@@ -272,13 +318,7 @@ def calcola_mese(mese: str) -> dict:
     somma_mance  = sum(v["importo"] for v in mance)
     da_ricevere  = compensi_totali - somma_pagato
 
-    arbitraggi_raw  = dati.get("arbitraggi", [])
-    arbitraggi      = []
-    for entry in arbitraggi_raw:
-        importo, desc = parse_amount_entry(entry, "Arbitraggio", "desc")
-        if importo > 0:
-            arbitraggi.append({"importo": importo, "desc": desc})
-    somma_arbitraggi = sum(v["importo"] for v in arbitraggi)
+    arbitraggi, somma_arbitraggi = calcola_arbitraggi(dati.get("arbitraggi", []))
 
     return {
         "mese":             mese,
@@ -332,6 +372,35 @@ def esporta_csv(risultati: list[dict], filepath: str = "riepilogo.csv") -> None:
 # Entry point
 # ---------------------------------------------------------------------------
 
+def print_risultati(risultati: list[dict], avvisi: list[str]) -> None:
+    if avvisi:
+        print("⚠️  AVVISI:")
+        for a in avvisi:
+            print(f"  - {a}")
+    for r in risultati:
+        sp = stato_pagamento(r["compensi_totali"], r["somma_pagato"])
+        print(f"\n{r['mese']} [{r['stato']}] [{sp}]")
+        print("-" * 50)
+        if r["dettagli_locali"]:
+            print("Turni:")
+            for d in r["dettagli_locali"]:
+                print(f"  {d}")
+        else:
+            print("Nessun turno registrato.")
+        if r.get("straordinario"):
+            s = r["straordinario"]
+            print(f"Straordinario: {s['locale']} - {s['ore']} ore = {format_euro(s['importo'])}")
+        print(f"Compensi:   {format_euro(r['compensi_totali'])}")
+        print(f"Pagato:     {format_euro(r['somma_pagato'])}")
+        print(f"Mance:      {format_euro(r['somma_mance'])}")
+        print(f"Arbitraggi: {format_euro(r['somma_arbitraggi'])}")
+        print(f"Da ricevere:{format_euro(r['da_ricevere'])}")
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+
 def main() -> None:
     sincronizza_mesi()
 
@@ -347,31 +416,6 @@ def main() -> None:
     mesi_da_calcolare = [args.mese] if args.mese else list(get_mesi().keys())
     risultati = [calcola_mese(m) for m in mesi_da_calcolare]
 
-    def print_risultati(risultati: list[dict], avvisi: list[str]) -> None:
-        if avvisi:
-            print("⚠️  AVVISI:")
-            for a in avvisi:
-                print(f"  - {a}")
-        for r in risultati:
-            sp = stato_pagamento(r["compensi_totali"], r["somma_pagato"])
-            print(f"\n{r['mese']} [{r['stato']}] [{sp}]")
-            print("-" * 50)
-            if r["dettagli_locali"]:
-                print("Turni:")
-                for d in r["dettagli_locali"]:
-                    print(f"  {d}")
-            else:
-                print("Nessun turno registrato.")
-            if r.get("straordinario"):
-                s = r["straordinario"]
-                print(f"Straordinario: {s['locale']} - {s['ore']} ore = {format_euro(s['importo'])}")
-            print(f"Compensi:   {format_euro(r['compensi_totali'])}")
-            print(f"Pagato:     {format_euro(r['somma_pagato'])}")
-            print(f"Mance:      {format_euro(r['somma_mance'])}")
-            print(f"Arbitraggi: {format_euro(r['somma_arbitraggi'])}")
-            print(f"Da ricevere:{format_euro(r['da_ricevere'])}")
-
-    # Sempre modalità testuale in questo modulo; la GUI è in Dashboard.py
     print_risultati(risultati, avvisi)
     if args.export:
         esporta_csv(risultati)

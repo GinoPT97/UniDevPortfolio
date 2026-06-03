@@ -17,6 +17,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 
@@ -36,6 +37,7 @@ C_TEXT    = "#cdd6f4"
 C_SUBTEXT = "#a6adc8"
 C_GRID    = "#313244"
 FONT_UI   = "Segoe UI"
+LBL_DA_RIC = "Da ricevere"
 
 # ---------------------------------------------------------------------------
 # Utility grafiche condivise
@@ -50,7 +52,7 @@ def style_ax(ax: Axes) -> None:
     ax.set_axisbelow(True)
 
 
-def embed(fig: plt.Figure, parent: tk.Widget) -> None:
+def embed(fig: Figure, parent: tk.Widget) -> None:
     canvas = FigureCanvasTkAgg(fig, master=parent)
     canvas.draw()
     canvas.get_tk_widget().pack(fill="both", expand=True, padx=12, pady=8)
@@ -89,13 +91,21 @@ def apply_treeview_style(style: ttk.Style) -> None:
 # ---------------------------------------------------------------------------
 
 def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[str]) -> None:
-    from Cameriere import stato_pagamento, format_euro
-
     tab_root = ttk.Frame(notebook)
     notebook.add(tab_root, text="  🍽️  Cameriere  ")
 
     sub = ttk.Notebook(tab_root)
     sub.pack(fill="both", expand=True, padx=4, pady=4)
+
+    build_cameriere_overview(sub, risultati, avvisi)
+    build_cameriere_monthly_chart(sub, risultati)
+    build_cameriere_per_locale(sub, risultati)
+    build_cameriere_pagamenti(sub, risultati)
+    build_cameriere_detail(sub, risultati)
+
+
+def build_cameriere_overview(sub: ttk.Notebook, risultati: list[dict], avvisi: list[str]) -> None:
+    from Cameriere import stato_pagamento, format_euro
 
     COLOR_MAP = {
         "✓ Saldato":             C_GREEN,
@@ -104,12 +114,10 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
         "— nessun lavoro":       C_SUBTEXT,
     }
 
-    # ---- TAB C1: Panoramica ----
     c1 = ttk.Frame(sub)
     sub.add(c1, text="  📊 Panoramica  ")
 
     tot_compensi   = sum(r["compensi_totali"]  for r in risultati)
-    tot_pagato     = sum(r["somma_pagato"]      for r in risultati)
     tot_mance      = sum(r["somma_mance"]       for r in risultati)
     tot_arbitraggi = sum(r["somma_arbitraggi"]  for r in risultati)
     tot_ricevere   = sum(r["da_ricevere"]       for r in risultati)
@@ -122,10 +130,9 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
     card(cf, "Compensi cameriere", format_euro(tot_compensi),   C_ACCENT, col=1)
     card(cf, "Arbitraggi (cam.)",  format_euro(tot_arbitraggi), C_ORANGE, col=2)
     card(cf, "Mance",              format_euro(tot_mance),      C_GREEN,  col=3)
-    card(cf, "Da ricevere",        format_euro(tot_ricevere),
-         C_RED if tot_ricevere > 0 else C_GREEN, col=4)
+    card(cf, LBL_DA_RIC,            format_euro(tot_ricevere),   C_RED if tot_ricevere > 0 else C_GREEN, col=4)
 
-    cols = ("Mese", "Stato", "Compensi", "Arbitraggi", "Mance", "Pagato", "Da ricevere", "Saldo")
+    cols = ("Mese", "Stato", "Compensi", "Arbitraggi", "Mance", "Pagato", LBL_DA_RIC, "Saldo")
     tree = ttk.Treeview(c1, columns=cols, show="headings", height=9)
     for c in cols:
         tree.heading(c, text=c)
@@ -158,7 +165,8 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
             tk.Label(wf, text=f"  • {a}", bg="#3a2a2a",
                      fg=C_YELLOW, font=(FONT_UI, 9)).pack(anchor="w")
 
-    # ---- TAB C2: Guadagni mensili ----
+
+def build_cameriere_monthly_chart(sub: ttk.Notebook, risultati: list[dict]) -> None:
     c2 = ttk.Frame(sub)
     sub.add(c2, text="  📅 Guadagni mensili  ")
 
@@ -184,11 +192,13 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
     fig_c2.tight_layout()
     embed(fig_c2, c2)
 
-    # ---- TAB C3: Per locale ----
+
+def build_cameriere_per_locale(sub: ttk.Notebook, risultati: list[dict]) -> None:
+    from Cameriere import LOCALI
+
     c3 = ttk.Frame(sub)
     sub.add(c3, text="  🏢 Per locale  ")
 
-    from Cameriere import LOCALI
     riepilogo_locali: dict[str, dict] = {}
     for r in risultati:
         for nome, d in r["per_locale"].items():
@@ -231,7 +241,8 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
         tk.Label(c3, text="Nessun turno registrato.", fg=C_SUBTEXT,
                  font=(FONT_UI, 12)).pack(expand=True)
 
-    # ---- TAB C4: Pagamenti ----
+
+def build_cameriere_pagamenti(sub: ttk.Notebook, risultati: list[dict]) -> None:
     c4 = ttk.Frame(sub)
     sub.add(c4, text="  💰 Pagamenti  ")
 
@@ -269,7 +280,17 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
     fig_c4.tight_layout()
     embed(fig_c4, c4)
 
-    # ---- TAB C5: Dettaglio ----
+
+def build_cameriere_detail(sub: ttk.Notebook, risultati: list[dict]) -> None:
+    from Cameriere import stato_pagamento, format_euro
+
+    COLOR_MAP = {
+        "✓ Saldato":             C_GREEN,
+        "⚠ Parzialmente pagato": C_YELLOW,
+        "✗ Non pagato":          C_RED,
+        "— nessun lavoro":       C_SUBTEXT,
+    }
+
     c5 = ttk.Frame(sub)
     sub.add(c5, text="  🔍 Dettaglio  ")
 
@@ -286,7 +307,8 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
     detail5.pack(fill="both", expand=True, padx=16, pady=4)
 
     def aggiorna_cam(*_: object) -> None:
-        for w in detail5.winfo_children(): w.destroy()
+        for w in detail5.winfo_children():
+            w.destroy()
         r = next(x for x in risultati if x["mese"] == mese_var.get())
         sp = stato_pagamento(r["compensi_totali"], r["somma_pagato"])
 
@@ -334,12 +356,13 @@ def build_cameriere(notebook: ttk.Notebook, risultati: list[dict], avvisi: list[
 
 
 # ---------------------------------------------------------------------------
+# Riepilogo Generale (tab di primo livello)
+# ---------------------------------------------------------------------------
 # Sezione Sommatoria
 # ---------------------------------------------------------------------------
 
 def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
     PALETTE = [C_ACCENT, C_ORANGE]
-    LBL_DA_RIC = "Da ricevere"
 
     tab_root = ttk.Frame(notebook)
     notebook.add(tab_root, text="  🏆  Rimborsi Arbitraggio  ")
@@ -347,14 +370,21 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
     sub = ttk.Notebook(tab_root)
     sub.pack(fill="both", expand=True, padx=4, pady=4)
 
-    tot_rimborsi = sum(r["tot_rimborso"] for r in risultati)
-    tot_pagato   = sum(r["tot_pagato"]   for r in risultati)
-    tot_ricevere = sum(r["da_ricevere"]  for r in risultati)
-    tot_gare     = sum(r["n_gare"]       for r in risultati)
+    build_arbitraggio_overview(sub, risultati)
+    build_arbitraggio_maturato_vs_pagato(sub, risultati)
+    build_arbitraggio_distribution(sub, risultati, PALETTE)
+    build_arbitraggio_trend(sub, risultati, PALETTE)
+    build_arbitraggio_detail(sub, risultati)
 
-    # ---- TAB A1: Panoramica ----
+
+def build_arbitraggio_overview(sub: ttk.Notebook, risultati: list[dict]) -> None:
     a1 = ttk.Frame(sub)
     sub.add(a1, text="  📊 Panoramica  ")
+
+    tot_rimborsi = sum(r["tot_rimborso"] for r in risultati)
+    tot_ricevere = sum(r["da_ricevere"]  for r in risultati)
+    tot_gare     = sum(r["n_gare"]       for r in risultati)
+    tot_pagato   = sum(r["tot_pagato"]   for r in risultati)
 
     cf = tk.Frame(a1, bg=C_BG)
     cf.pack(fill="x", padx=8, pady=(10, 4))
@@ -368,8 +398,11 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
     cols = ("Stagione", "Gare", "Rimborsi", "Pagamenti", "Totale pagato", LBL_DA_RIC, "Media/gara")
     tree = ttk.Treeview(a1, columns=cols, show="headings", height=4)
     for c in cols:
-        tree.heading(c, text=c); tree.column(c, anchor="center", width=130)
+        tree.heading(c, text=c)
+        tree.column(c, anchor="center", width=130)
     tree.column("Stagione", width=100)
+    tree.tag_configure("rosso", foreground=C_RED)
+    tree.tag_configure("verde", foreground=C_GREEN)
     for r in risultati:
         tag = "rosso" if r["da_ricevere"] > 0 else "verde"
         tree.insert("", "end", values=(
@@ -377,8 +410,6 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
             r["n_pagamenti"], f"€{r['tot_pagato']}",
             f"€{r['da_ricevere']}", f"€{r['media_gara']:.1f}",
         ), tags=(tag,))
-    tree.tag_configure("rosso", foreground=C_RED)
-    tree.tag_configure("verde", foreground=C_GREEN)
     tree.pack(fill="x", padx=20, pady=4)
 
     sf = tk.Frame(a1, bg=C_BG)
@@ -401,7 +432,8 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
             tk.Label(row, text=val, bg=C_PANEL, fg=C_TEXT,
                      font=(FONT_UI, 9, "bold")).pack(side="left")
 
-    # ---- TAB A2: Maturato vs Pagato ----
+
+def build_arbitraggio_maturato_vs_pagato(sub: ttk.Notebook, risultati: list[dict]) -> None:
     a2 = ttk.Frame(sub)
     sub.add(a2, text="  💳 Maturato vs Pagato  ")
 
@@ -431,13 +463,14 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
                   fontsize=10, color=C_TEXT, fontweight="bold")
     fig_a2.tight_layout(); embed(fig_a2, a2)
 
-    # ---- TAB A3: Distribuzione gare ----
+
+def build_arbitraggio_distribution(sub: ttk.Notebook, risultati: list[dict], palette: list[str]) -> None:
     a3 = ttk.Frame(sub)
     sub.add(a3, text="  📈 Distribuzione gare  ")
 
     fig_a3, (ax3a, ax3b) = plt.subplots(1, 2, figsize=(10, 4.5), facecolor=C_BG)
     style_ax(ax3a); style_ax(ax3b)
-    for ax, r, color in zip((ax3a, ax3b), risultati, PALETTE):
+    for ax, r, color in zip((ax3a, ax3b), risultati, palette):
         vals   = r["rimborso"]
         unique = sorted(set(vals))
         counts = [vals.count(v) for v in unique]
@@ -448,13 +481,14 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
             ax.text(j, cnt + 0.1, str(cnt), ha="center", va="bottom", fontsize=8.5, color=C_TEXT)
     fig_a3.tight_layout(); embed(fig_a3, a3)
 
-    # ---- TAB A4: Andamento ----
+
+def build_arbitraggio_trend(sub: ttk.Notebook, risultati: list[dict], palette: list[str]) -> None:
     a4 = ttk.Frame(sub)
     sub.add(a4, text="  📉 Andamento  ")
 
     fig_a4, ax4 = plt.subplots(figsize=(10, 4.5), facecolor=C_BG)
     style_ax(ax4)
-    for r, color in zip(risultati, PALETTE):
+    for r, color in zip(risultati, palette):
         cum = r["cumulativo"]
         xs4 = range(1, len(cum) + 1)
         ax4.plot(xs4, cum, color=color, linewidth=2, label=r["stagione"])
@@ -467,7 +501,8 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
     ax4.legend(facecolor=C_PANEL, edgecolor=C_GRID, labelcolor=C_TEXT, fontsize=9)
     fig_a4.tight_layout(); embed(fig_a4, a4)
 
-    # ---- TAB A5: Dettaglio stagione ----
+
+def build_arbitraggio_detail(sub: ttk.Notebook, risultati: list[dict]) -> None:
     a5 = ttk.Frame(sub)
     sub.add(a5, text="  🔍 Dettaglio  ")
 
@@ -483,8 +518,27 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
     detail_a5 = tk.Frame(a5, bg=C_BG)
     detail_a5.pack(fill="both", expand=True, padx=16, pady=4)
 
+    def build_arbitraggio_detail_list_section(parent: tk.Widget,
+                                              items: list[tuple[int, float]],
+                                              label_txt: str,
+                                              fg: str) -> None:
+        pane = tk.Frame(parent, bg=C_BG)
+        pane.pack(side="left", fill="both", expand=True, padx=(0, 6))
+        tk.Label(pane, text=label_txt, bg=C_BG, fg=C_SUBTEXT,
+                 font=(FONT_UI, 9, "bold")).pack(anchor="w")
+        lb = tk.Listbox(pane, bg=C_PANEL, fg=fg, selectbackground=C_ACCENT,
+                        font=(FONT_UI, 10), relief="flat", borderwidth=0)
+        sb_lb = ttk.Scrollbar(pane, orient="vertical", command=lb.yview)
+        lb.configure(yscrollcommand=sb_lb.set)
+        lb.pack(side="left", fill="both", expand=True)
+        sb_lb.pack(side="left", fill="y")
+        prefix = "Gara" if fg == C_TEXT else "Pagamento"
+        for idx, val in items:
+            lb.insert("end", f"  {prefix} {idx:>3}:  €{val}")
+
     def aggiorna_arb(*_: object) -> None:
-        for w in detail_a5.winfo_children(): w.destroy()
+        for w in detail_a5.winfo_children():
+            w.destroy()
         r = next(x for x in risultati if x["stagione"] == stag_var.get())
 
         cf5 = tk.Frame(detail_a5, bg=C_BG)
@@ -501,31 +555,21 @@ def build_arbitraggio(notebook: ttk.Notebook, risultati: list[dict]) -> None:
 
         lf = tk.Frame(detail_a5, bg=C_BG)
         lf.pack(fill="both", expand=True)
-        for side_data, label_txt, fg in [
-            (list(enumerate(r["rimborso"], 1)),  f"Rimborsi ({r['n_gare']} gare)",          C_TEXT),
-            (list(enumerate(r["pagato"],   1)),  f"Pagamenti ricevuti ({r['n_pagamenti']})", C_GREEN),
-        ]:
-            pane = tk.Frame(lf, bg=C_BG)
-            pane.pack(side="left", fill="both", expand=True, padx=(0, 6))
-            tk.Label(pane, text=label_txt, bg=C_BG, fg=C_SUBTEXT,
-                     font=(FONT_UI, 9, "bold")).pack(anchor="w")
-            lb = tk.Listbox(pane, bg=C_PANEL, fg=fg, selectbackground=C_ACCENT,
-                            font=(FONT_UI, 10), relief="flat", borderwidth=0)
-            sb_lb = ttk.Scrollbar(pane, orient="vertical", command=lb.yview)
-            lb.configure(yscrollcommand=sb_lb.set)
-            lb.pack(side="left", fill="both", expand=True)
-            sb_lb.pack(side="left", fill="y")
-            prefix = "Gara" if fg == C_TEXT else "Pagamento"
-            for idx, val in side_data:
-                lb.insert("end", f"  {prefix} {idx:>3}:  €{val}")
+        build_arbitraggio_detail_list_section(
+            lf,
+            list(enumerate(r["rimborso"], 1)),
+            f"Rimborsi ({r['n_gare']} gare)",
+            C_TEXT,
+        )
+        build_arbitraggio_detail_list_section(
+            lf,
+            list(enumerate(r["pagato"], 1)),
+            f"Pagamenti ricevuti ({r['n_pagamenti']})",
+            C_GREEN,
+        )
 
     combo_a5.bind("<<ComboboxSelected>>", aggiorna_arb)
     aggiorna_arb()
-
-
-# ---------------------------------------------------------------------------
-# Riepilogo Generale (tab di primo livello)
-# ---------------------------------------------------------------------------
 
 def build_riepilogo(notebook: ttk.Notebook,
                     cam_risultati: list[dict],
@@ -543,7 +587,6 @@ def build_riepilogo(notebook: ttk.Notebook,
 
     # totali arbitraggio stagioni
     arb_rim   = sum(r["tot_rimborso"] for r in arb_risultati)
-    arb_pag   = sum(r["tot_pagato"]   for r in arb_risultati)
     arb_rec   = sum(r["da_ricevere"]  for r in arb_risultati)
 
     totale_entrate  = cam_comp + cam_mance + cam_arb + arb_rim
@@ -612,8 +655,7 @@ def avvia() -> None:
     import Arbitraggio
 
     # prepara dati cameriere
-    Cameriere.aggiungi_mese_corrente_se_manca()
-    Cameriere.sposta_mesi_completati()
+    Cameriere.sincronizza_mesi()
     avvisi    = Cameriere.valida_dati()
     cam_ris   = [Cameriere.calcola_mese(m) for m in Cameriere.get_mesi()]
 
