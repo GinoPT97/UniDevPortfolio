@@ -1,47 +1,101 @@
 {
   "locali": {
-    "VP":            {"tariffa": 120},
-    "MudJ":          {"tariffa": 40},
-    "CaricoScarico": {"tariffa": 0}
+    "VP": {
+      "tariffa": 120
+    },
+    "MudJ": {
+      "tariffa": 40
+    },
+    "CaricoScarico": {
+      "tariffa": 0
+    }
   },
   "MESI_COMPLETATI": {
     "APRILE": {
-      "turni":      {"MudJ": 2},
-      "pagamenti":  [[80, "MudJ"]],
-      "mance":      [[10, "MudJ" ] ],
-      "arbitraggi": []
+      "turni": {
+        "MudJ": 2
+      },
+      "arbitraggi": [],
+      "pagamenti": [
+        [
+          80,
+          "MudJ"
+        ]
+      ],
+      "mance": [
+        [
+          10,
+          "MudJ"
+        ]
+      ]
+    },
+    "MAGGIO": {
+      "turni": {
+        "VP": 3,
+        "MudJ": 11,
+        "CaricoScarico": 0
+      },
+      "arbitraggi": [],
+      "pagamenti": [],
+      "mance": [
+        [
+          10,
+          "MudJ"
+        ]
+      ]
     }
   },
   "MESI": {
-    "MAGGIO": {
-      "turni":      {"VP": 3, "MudJ": 11, "CaricoScarico": 0},
-      "pagamenti":  [],
-      "mance":      [[10, "MudJ"]],
-      "arbitraggi": []
-    },
     "GIUGNO": {
-      "turni":      {"VP": 0, "MudJ": 0, "CaricoScarico": 0},
-      "pagamenti":  [],
-      "mance":      [],
-      "arbitraggi": [[150, "Torneo 1,5 g"]]
+      "turni": {
+        "VP": 0,
+        "MudJ": 0,
+        "CaricoScarico": 0
+      },
+      "straordinario": ["VP", 4],
+      "arbitraggi": [
+        [
+          150,
+          "Torneo 1,5 g"
+        ]
+      ],
+      "pagamenti": [
+        [
+          150,
+          "Torneo 1,5 g"
+        ]
+      ],
+      "mance": []
     },
     "LUGLIO": {
-      "turni":      {"VP": 0, "MudJ": 0, "CaricoScarico": 0},
-      "pagamenti":  [],
-      "mance":      [],
-      "arbitraggi": []
+      "turni": {
+        "VP": 0,
+        "MudJ": 0,
+        "CaricoScarico": 0
+      },
+      "arbitraggi": [],
+      "pagamenti": [],
+      "mance": []
     },
     "AGOSTO": {
-      "turni":      {"VP": 0, "MudJ": 0, "CaricoScarico": 0},
-      "pagamenti":  [],
-      "mance":      [],
-      "arbitraggi": []
+      "turni": {
+        "VP": 0,
+        "MudJ": 0,
+        "CaricoScarico": 0
+      },
+      "arbitraggi": [],
+      "pagamenti": [],
+      "mance": []
     },
     "SETTEMBRE": {
-      "turni":      {"VP": 0, "MudJ": 0, "CaricoScarico": 0},
-      "pagamenti":  [],
-      "mance":      [],
-      "arbitraggi": []
+      "turni": {
+        "VP": 0,
+        "MudJ": 0,
+        "CaricoScarico": 0
+      },
+      "arbitraggi": [],
+      "pagamenti": [],
+      "mance": []
     }
   }
 }
