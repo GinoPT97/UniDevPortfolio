@@ -49,6 +49,26 @@ def load_dati() -> dict:
             f"File dati non trovato: {DATA_FILE}. Crea il file o ripristinalo dal repository."
         )
 
+def dump_json_with_compact_arrays(value, indent: int = 2, level: int = 0) -> str:
+    if isinstance(value, dict):
+        if not value:
+            return "{}"
+        lines = []
+        indent_str = " " * (level * indent)
+        child_indent = " " * ((level + 1) * indent)
+        for key, val in value.items():
+            lines.append(
+                f'{child_indent}{json.dumps(key, ensure_ascii=False)}: '
+                f'{dump_json_with_compact_arrays(val, indent, level + 1)}'
+            )
+        return "{\n" + ",\n".join(lines) + "\n" + indent_str + "}"
+    if isinstance(value, (list, tuple)):
+        return "[" + ", ".join(
+            dump_json_with_compact_arrays(item, indent, 0) for item in value
+        ) + "]"
+    return json.dumps(value, ensure_ascii=False)
+
+
 def save_dati() -> None:
     data["locali"] = LOCALI
     data["straordinario"] = STRAORDINARIO_TARIFFE
@@ -56,11 +76,7 @@ def save_dati() -> None:
     data["MESI"] = MESI
 
     with DATA_FILE.open("w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-
-    collapse_array_keys(DATA_FILE, "pagamenti")
-    collapse_array_keys(DATA_FILE, "mance")
-    collapse_simple_array(DATA_FILE, "straordinario")
+        f.write(dump_json_with_compact_arrays(data) + "\n")
 
 def get_mese_corrente() -> str:
     return MESE_ORDINE[date.today().month - 1]
@@ -68,7 +84,7 @@ def get_mese_corrente() -> str:
 def mese_vuoto() -> dict:
     """Restituisce un mese con tutti i campi azzerati, usando i locali dal JSON."""
     return {
-        "turni":      {nome: 0 for nome in LOCALI},
+        "turni":      dict.fromkeys(LOCALI, 0),
         "pagamenti":  [],
         "mance":      [],
         "arbitraggi": [],
@@ -86,7 +102,7 @@ def sincronizza_mesi() -> None:
 
     # 1. sposta i mesi passati
     da_spostare = [
-        m for m in list(MESI.keys())
+        m for m in MESI
         if MESE_NUMERI.get(m, 99) < num_corrente
     ]
     for mese in da_spostare:
@@ -192,38 +208,6 @@ def format_euro(valore: float) -> str:
         return f"€{valore:.2f}"
     except (TypeError, ValueError):
         return f"€{valore}"
-
-
-def collapse_array_keys(filepath: Path, key: str) -> None:
-    import re
-
-    text = filepath.read_text(encoding="utf-8")
-    pattern = rf'("{key}"\s*:\s*)\[\s*((?:\[\s*[^\]]*?\]\s*,\s*)*(?:\[\s*[^\]]*?\]\s*))\s*\]'
-
-    def replace(match: re.Match[str]) -> str:
-        content = match.group(2)
-        compact = re.sub(r"\s+", " ", content).strip()
-        return f'{match.group(1)}[{compact}]'
-
-    result = re.sub(pattern, replace, text, flags=re.DOTALL)
-    if result != text:
-        filepath.write_text(result, encoding="utf-8")
-
-
-def collapse_simple_array(filepath: Path, key: str) -> None:
-    import re
-
-    text = filepath.read_text(encoding="utf-8")
-    pattern = rf'("{key}"\s*:\s*)\[\s*([^\]]*?)\s*\]'
-
-    def replace(match: re.Match[str]) -> str:
-        content = match.group(2)
-        compact = re.sub(r"\s+", " ", content).strip()
-        return f'{match.group(1)}[{compact}]'
-
-    result = re.sub(pattern, replace, text, flags=re.DOTALL)
-    if result != text:
-        filepath.write_text(result, encoding="utf-8")
 
 
 def stato_pagamento(compensi: float, pagato: float) -> str:
