@@ -1,74 +1,100 @@
 # UniDevPortfolio
 
-Raccolta strutturata di progetti, esercizi e materiali sviluppati durante il percorso universitario e in attività personali di approfondimento.
+Portfolio tecnico universitario: raccolta strutturata di progetti, esercizi e soluzioni sviluppate durante il percorso accademico e attività di approfondimento personale presso l'Università degli Studi di Napoli Federico II.
 
-La repository non rappresenta un singolo prodotto, ma un archivio tecnico organizzato per corso, linguaggio e area tematica: algoritmi, sistemi operativi, basi di dati, programmazione mobile, linguaggi logici e funzionali.
+La repository funge da **archivio didattico organizzato** per corso, linguaggio e area tematica — non è un singolo prodotto, ma un'ampia collezione di esperienze di apprendimento che spaziano da algoritmi e strutture dati a sistemi operativi, programmazione mobile e paradigmi dichiarativi.
 
-## Panoramica
+---
 
-- Ambiti coperti: programmazione in C e C++, strutture dati, sistemi operativi, socket TCP/UDP, SQL, mobile, scripting e linguaggi dichiarativi.
-- Linguaggi presenti: C, C++, Java, Kotlin, JavaScript, TypeScript, Python, Rust, SQL, Prolog, Standard ML, Assembly Motorola 68000, Bash.
-- Tecnologie presenti nella repo: Docker, PostgreSQL, Expo/React Native, Gradle, CMake, Makefile.
-- Organizzazione: quasi ogni cartella è autonoma e ha prerequisiti propri; non esiste un build unico per tutta la repo.
+## 📚 Contenuti Principali
 
-## Struttura del Repository
+### Linguaggi e Tecnologie
 
-| Percorso | Contenuto |
+| Categoria | Contenuto |
 | --- | --- |
-| `Assembly/` | Esercizi e tracce su Assembly Motorola 68000: operazioni, stringhe, indirizzamenti, strutture dati ed esami. |
-| `C - Generico/` | Fondamenti del C: file, ricorsione, vettori, matrici, ordinamenti, stack e progetti multi-file. |
-| `C - LAB/` | Soluzioni a tracce di laboratorio ed esercizi d'esame in C. |
-| `C - LASD/` | Materiale per algoritmi e strutture dati, con sorgenti C, CMake e una soluzione d'esame dedicata. |
-| `C - LSO/` | Esercizi ed esami su sistemi operativi: fork, pipe, thread, socket e client/server concorrenti. |
-| `Librerie-C/` | Implementazioni riutilizzabili di stack, code, heap, liste, BST, grafi e utilità di input. |
-| `C++/` | Esercizi organizzati per funzioni e strutture dati. |
-| `Java - Personale/` | Materiale Java di studio, prove MVC, esercizi elementari e piccoli progetti locali. |
-| `Python/` | Script, esercizi numerici, plotting, piccoli esempi TCP e progetti di analisi. |
-| `Rust/` | Progetti Cargo indipendenti per l'apprendimento del linguaggio. |
-| `ML/` | Esercizi in Standard ML su funzioni, alberi, map/reduce e tracce d'esame. |
-| `Prolog/` | Esercizi di logica su liste, grafi, puzzle, sudoku e giochi. |
-| `SQL/` | Script SQL e tracce d'esame con query e operazioni su database. |
-| `ProgettoLSO24-25/` | Progetto completo con server C, database PostgreSQL e client Android Kotlin. |
-| `ProgettoLSO24-25-ReactNative/` | Variante del progetto con client Expo/React Native e bridge HTTP verso il server C. |
-| `Ubuntu-Utility/` | Script shell e appunti pratici per ambienti Ubuntu/Linux. |
-| `FileProgrammi/` | File di configurazione e materiale di supporto non centrale rispetto ai progetti principali. |
+| **Linguaggi imperativi** | C, C++, Java, Kotlin, JavaScript, TypeScript, Python, Rust, Bash |
+| **Linguaggi dichiarativi** | Prolog, Standard ML |
+| **Basso livello** | Assembly Motorola 68000 |
+| **Database** | SQL, PostgreSQL |
+| **Tecnologie e framework** | Docker, Gradle, CMake, Makefile, React Native/Expo, Android |
 
-## Aree Principali
+### Aree Tematiche Coperte
 
-### Programmazione di Sistema e Algoritmi
+- **Programmazione di sistema**: processi, thread, socket TCP/UDP, pipe, concorrenza
+- **Algoritmi e strutture dati**: liste, stack, code, heap, BST, grafi, ricerca e ordinamento
+- **Sistemi operativi**: fork, gestione memoria, sincronizzazione
+- **Programmazione mobile**: Android Kotlin, React Native
+- **Database**: SQL, query, schema relazionali
+- **Scripting e automation**: Shell script, Python per analisi dati
+- **Logica computazionale**: Prolog, programmazione funzionale (ML)
 
-- `C - Generico/`, `C - LAB/`, `C - LASD/` e `Librerie-C/` raccolgono il nucleo del materiale su C, strutture dati, algoritmi e preparazione a prove pratiche.
-- `C - LSO/` contiene la parte più orientata a processi, thread, pipe e networking, con esempi client/server immediatamente leggibili.
-- `Assembly/` completa il materiale più vicino all'hardware con esercizi su architettura M68000.
+---
 
-### Progetti Completi
+## 📁 Struttura della Repository
 
-- `ProgettoLSO24-25/` include backend C, schema database e client Android. È utile come esempio di architettura multi-componente con Docker.
-- `ProgettoLSO24-25-ReactNative/` porta lo stesso dominio applicativo su stack Expo/React Native, mantenendo il backend C e introducendo un bridge applicativo.
+### Fondamenti e Programmazione Procedurale
 
-### Linguaggi e Paradigmi
-
-- `Python/` e `Rust/` raccolgono esercizi e sperimentazioni più moderne o orientate all'analisi.
-- `ML/` e `Prolog/` coprono paradigmi funzionali e logici.
-- `Java - Personale/` documenta materiale di studio e pattern classici come MVC.
-
-## Da Dove Iniziare
-
-Se vuoi esplorare la repo in modo mirato, questi sono i punti di ingresso più utili:
-
-| Obiettivo | Cartella consigliata |
+| Percorso | Descrizione |
 | --- | --- |
-| Fondamenti di C | `C - Generico/` |
-| Tracce pratiche in C | `C - LAB/` |
-| Strutture dati e algoritmi | `C - LASD/` oppure `Librerie-C/` |
-| Socket, processi e thread | `C - LSO/Socket-Esempi/` oppure `C - LSO/Esami-Svolti/` |
-| Web e frontend applicativo | `ProgettoLSO24-25-ReactNative/` |
-| Mobile e backend con Docker | `ProgettoLSO24-25/` oppure `ProgettoLSO24-25-ReactNative/` |
-| Analisi e scripting Python | `Python/` |
-| Esercizi Rust | `Rust/CalcolatriceInterattiva/` oppure `Rust/basic/` |
-| Logica e programmazione dichiarativa | `Prolog/` e `ML/` |
+| `C - Generico/` | Fondamenti del C: ricorsione, vettori, matrici, ordinamenti, file, stack e progetti multi-file |
+| `C - LAB/` | Tracce di laboratorio ed esercizi d'esame in C con soluzioni complete |
+| `C - LASD/` | Algoritmi e strutture dati in C: implementazioni con CMake e soluzioni d'esame |
+| `Librerie-C/` | Librerie riutilizzabili: stack, code, heap, liste, BST, grafi e funzioni di input |
+| `C++/` | Esercizi organizzati per funzioni e strutture dati in C++ |
+| `Java - Personale/` | Studio Java: pattern MVC, esercizi elementari, piccoli progetti didattici |
 
-## Avvio Rapido
+### Sistemi Operativi e Networking
+
+| Percorso | Descrizione |
+| --- | --- |
+| `C - LSO/` | Esercizi e soluzioni d'esame su sistemi operativi: fork, pipe, thread, socket, client/server concorrenti |
+| `Assembly/` | Programmi su Assembly Motorola 68000: operazioni, stringhe, indirizzamenti, strutture dati |
+
+### Progetti Completi e Applicazioni
+
+| Percorso | Descrizione |
+| --- | --- |
+| `ProgettoLSO24-25/` | **Progetto capstone**: server C concorrente + database PostgreSQL + client Android Kotlin. Include Docker compose per ambiente completo. |
+| `ProgettoLSO24-25-ReactNative/` | **Variante moderna**: stessa architettura backend C + PostgreSQL, ma con client Expo/React Native. Bridge HTTP verso il server. |
+| `Python/` | Script, analisi numerica, data science, plotting, piccoli esempi di rete TCP e progetti di analisi dati |
+| `Rust/` | Progetti Cargo per apprendimento del linguaggio: calcolatrici, esercizi di base, esperimenti di sicurezza memoria |
+
+### Paradigmi Dichiarativi e Funzionali
+
+| Percorso | Descrizione |
+| --- | --- |
+| `ML/` | Esercizi in Standard ML: funzioni, alberi, map/reduce, pattern matching, tracce d'esame |
+| `Prolog/` | Logica e programmazione dichiarativa: liste, grafi, puzzle, sudoku, giochi |
+| `SQL/` | Script SQL, tracce d'esame con query complesse, operazioni di normalizzazione e join |
+
+### Utility e Supporto
+
+| Percorso | Descrizione |
+| --- | --- |
+| `Ubuntu-Utility/` | Script shell e appunti pratici per ambienti Ubuntu/Linux |
+| `FileProgrammi/` | Configurazioni e materiale di supporto secondario |
+
+---
+
+## 🚀 Punti di Ingresso Consigliati
+
+Scegli in base ai tuoi obiettivi di apprendimento:
+
+| Obiettivo | Dove iniziare |
+| --- | --- |
+| **Imparare C da zero** | `C - Generico/` |
+| **Strutture dati e algoritmi** | `C - LASD/` o `Librerie-C/` |
+| **Sistemi operativi: processi, thread, socket** | `C - LSO/Socket-Esempi/` o `C - LSO/Esami-Svolti/` |
+| **Architettura multi-tier completa** | `ProgettoLSO24-25/` o `ProgettoLSO24-25-ReactNative/` |
+| **Mobile e frontend web** | `ProgettoLSO24-25-ReactNative/` |
+| **Backend con Docker** | `ProgettoLSO24-25/` |
+| **Analisi dati e scripting** | `Python/` |
+| **Imparare Rust** | `Rust/CalcolatriceInterattiva/` o `Rust/basic/` |
+| **Logica e programmazione dichiarativa** | `Prolog/` e `ML/` |
+
+---
+
+## ⚡ Quick Start
 
 ### Clonazione
 
@@ -79,7 +105,7 @@ cd UniDevPortfolio
 
 ### Prerequisiti Generali
 
-Per lavorare con la maggior parte del materiale è utile avere disponibili:
+Per lavorare con la maggior parte del materiale:
 
 ```bash
 sudo apt update
@@ -87,31 +113,27 @@ sudo apt install -y build-essential gcc g++ make cmake default-jdk \
   nodejs npm python3 python3-pip postgresql-client docker-compose
 ```
 
-Per Rust:
-
+Per **Rust**:
 ```bash
 rustup default stable
 ```
 
 ### Esempi di Esecuzione
 
-Progetto LSO con Android e server C:
-
+**Progetto LSO (Android + server C + PostgreSQL):**
 ```bash
 cd ProgettoLSO24-25
 docker compose up --build
 ```
 
-Versione React Native:
-
+**Progetto LSO (React Native + server C):**
 ```bash
 cd ProgettoLSO24-25-ReactNative
 docker compose down --remove-orphans
 docker compose up --build
 ```
 
-Esempio Python con dipendenze:
-
+**Script Python con virtual environment:**
 ```bash
 cd Python/Risk-Analisis
 python3 -m venv .venv
@@ -120,41 +142,63 @@ pip install -r requirements.txt
 python3 EarthquakeRiskAnalysis.py
 ```
 
-Esempio Rust:
-
+**Progetto Rust:**
 ```bash
 cd Rust/CalcolatriceInterattiva
 cargo run
 ```
 
-Esempio C su socket:
-
+**Esempio C con socket TCP:**
 ```bash
 cd "C - LSO/Socket-Esempi"
 gcc -o serverTCP ServerTCP.c
 gcc -o clientTCP ClientTCP.c
+./serverTCP &
+./clientTCP
 ```
 
-## README Specifici
+---
 
-Le cartelle più articolate hanno documentazione dedicata. In particolare:
+## 📖 Documentazione Specifica
 
-- `ProgettoLSO24-25/README.md`
-- `ProgettoLSO24-25-ReactNative/README.md`
+Le cartelle più complesse hanno **README dedicati**:
 
-Per questi progetti è preferibile seguire prima la documentazione locale e usare il README principale come mappa di orientamento.
+- [`ProgettoLSO24-25/README.md`](ProgettoLSO24-25/README.md) — Setup Docker, architettura Android
+- [`ProgettoLSO24-25-ReactNative/README.md`](ProgettoLSO24-25-ReactNative/README.md) — Setup React Native, bridge HTTP
 
-## Note Sulla Repository
+**Consiglio**: per i progetti completi, leggi prima il README locale, poi usa questo file come mappa di orientamento generale.
 
-- La repo è pensata come portfolio tecnico e archivio di studio, quindi convivono esercizi piccoli, librerie didattiche e progetti più completi.
-- Alcune cartelle sono storiche o dipendono dall'ambiente usato durante il corso; i progetti complessi hanno setup propri.
-- Alcuni materiali non sono codice eseguibile in senso stretto, ma configurazioni, documenti o appunti di supporto.
+---
 
-## Contatti
+## 📋 Informazioni Utili
 
-- GitHub: [@GinoPT97](https://github.com/GinoPT97)
+### Organizzazione della Repository
+
+- **Quasi ogni cartella è autonoma**: non esiste una build unica. Ogni progetto ha prerequisiti e setup propri.
+- **Ampia varietà didattica**: convivono esercizi piccoli, librerie riutilizzabili e progetti enterprise-like.
+- **Materiale eterogeneo**: oltre a codice eseguibile, contiene configurazioni, script e appunti di supporto.
+- **Storicità**: alcune cartelle riflettono le piattaforme o ambienti usati durante il corso; alcuni progetti sono evoluti nel tempo.
+
+### Dimensione e Natura
+
+- Repository size: ~500 MB
+- Creato: Settembre 2023
+- Licenza: **MIT** (vedi [`LICENSE`](LICENSE))
 - Ateneo: Università degli Studi di Napoli Federico II
 
-## Licenza
+---
 
-Il repository è distribuito sotto licenza MIT. Vedi `LICENSE` per i dettagli.
+## 👤 Contatti
+
+- **GitHub**: [@GinoPT97](https://github.com/GinoPT97)
+- **Università**: Università degli Studi di Napoli Federico II
+
+---
+
+## 📄 Licenza
+
+Questo repository è distribuito sotto licenza **MIT**. Consulta [`LICENSE`](LICENSE) per i dettagli completi.
+
+---
+
+**Nota**: Questo portfolio riflette un percorso accademico ricco e variegato. È pensato sia come riferimento tecnico per chi apprende che come documentazione dell'evoluzione didattica in informatica.
