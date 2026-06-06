@@ -28,6 +28,7 @@
         "MudJ": 11,
         "CaricoScarico": 0
       },
+      "straordinario": ["VP", 4], 
       "arbitraggi": [],
       "pagamenti": [],
       "mance": [[10, "MudJ"]]
@@ -40,7 +41,6 @@
         "MudJ": 2,
         "CaricoScarico": 0
       },
-      "straordinario": ["VP", 4],
       "arbitraggi": [[150, "Torneo 1,5 g"]],
       "pagamenti": [[150, "Torneo 1,5 g"]],
       "mance": []
