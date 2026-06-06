@@ -37,7 +37,7 @@
     "GIUGNO": {
       "turni": {
         "VP": 0,
-        "MudJ": 0,
+        "MudJ": 2,
         "CaricoScarico": 0
       },
       "straordinario": ["VP", 4],
