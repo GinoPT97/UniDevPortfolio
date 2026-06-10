@@ -1,7 +1,7 @@
 {
   "locali": {
     "VP": {
-      "tariffa": 100
+      "tariffa": 10
     },
     "MudJ": {
       "tariffa": 40
@@ -24,13 +24,13 @@
     },
     "MAGGIO": {
       "turni": {
-        "VP": 3,
+        "VP": 38,
         "MudJ": 11,
         "CaricoScarico": 0
       },
       "straordinario": ["VP", 4], 
       "arbitraggi": [],
-      "pagamenti": [],
+      "pagamenti": [[380, "VP"]],
       "mance": [[10, "MudJ"]]
     }
   },
@@ -43,7 +43,7 @@
       },
       "arbitraggi": [[150, "Torneo 1,5 g"]],
       "pagamenti": [[150, "Torneo 1,5 g"]],
-      "mance": []
+      "mance": [[10, "MudJ"]]
     },
     "LUGLIO": {
       "turni": {
