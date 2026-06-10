@@ -10,9 +10,6 @@
       "tariffa": 0
     }
   },
-  "straordinario": {
-    "VP": 10
-  },
   "MESI_COMPLETATI": {
     "APRILE": {
       "turni": {
@@ -25,11 +22,11 @@
     "MAGGIO": {
       "turni": {
         "VP": 38,
-        "MudJ": 11,
+        "MudJ": 12,
         "CaricoScarico": 0
       },
       "arbitraggi": [],
-      "pagamenti": [[380, "VP"]],
+      "pagamenti": [[380, "VP"], [480, "MudJ"] ],
       "mance": [[10, "MudJ"]]
     }
   },
