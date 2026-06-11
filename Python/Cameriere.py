@@ -316,9 +316,11 @@ def calcola_mese(mese: str) -> dict:
 
     somma_pagato = sum(v["importo"] for v in dettagli_pagamenti)
     somma_mance  = sum(v["importo"] for v in mance)
-    da_ricevere  = compensi_totali - somma_pagato
-
     arbitraggi, somma_arbitraggi = calcola_arbitraggi(dati.get("arbitraggi", []))
+
+    # Pagamenti può includere rimborsi da arbitraggio già registrati in `arbitraggi`.
+    # In tal caso non devono ridurre il `da_ricevere` relativo ai compensi del cameriere.
+    da_ricevere  = compensi_totali - somma_pagato + somma_arbitraggi
 
     return {
         "mese":             mese,
