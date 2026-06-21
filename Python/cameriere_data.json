@@ -37,8 +37,8 @@
         "MudJ": 15,
         "CaricoScarico": 0
       },
-      "arbitraggi": [[150, "Torneo 1,5 g"]],
-      "pagamenti": [[150, "Torneo 1,5 g"]],
+      "arbitraggi": [[150, "Torneo 1,5 g"], [100,"Torneo disabili"] ],
+      "pagamenti": [[150, "Torneo 1,5 g"], [100,"Torneo disabili"]],
       "mance": [[10, "MudJ"]]
     },
     "LUGLIO": {
