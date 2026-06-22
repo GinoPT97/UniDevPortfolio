@@ -39,7 +39,7 @@
       },
       "arbitraggi": [[150, "Torneo 1,5 g"], [100,"Torneo disabili"] ],
       "pagamenti": [[150, "Torneo 1,5 g"], [100,"Torneo disabili"]],
-      "mance": [[10, "MudJ"]]
+      "mance": [[10, "MudJ"],[20, "MudJ"]]
     },
     "LUGLIO": {
       "turni": {
