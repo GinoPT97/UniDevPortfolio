@@ -26,21 +26,21 @@
         "CaricoScarico": 0
       },
       "arbitraggi": [],
-      "pagamenti": [[380, "VP"], [480, "MudJ"] ],
+      "pagamenti": [[380, "VP"], [480, "MudJ"]],
       "mance": [[10, "MudJ"]]
-    }
-  },
-  "MESI": {
+    },
     "GIUGNO": {
       "turni": {
         "VP": 12,
         "MudJ": 22,
         "CaricoScarico": 0
       },
-      "arbitraggi": [[150, "Torneo 1,5 g"], [100,"Torneo disabili"] ],
-      "pagamenti": [[150, "Torneo 1,5 g"], [100,"Torneo disabili"], [120, "Eden" ] ],
-      "mance": [[10, "MudJ"],[20, "MudJ"]]
-    },
+      "arbitraggi": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"]],
+      "pagamenti": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"], [120, "Eden"]],
+      "mance": [[10, "MudJ"], [20, "MudJ"]]
+    }
+  },
+  "MESI": {
     "LUGLIO": {
       "turni": {
         "VP": 0,
@@ -71,5 +71,6 @@
       "pagamenti": [],
       "mance": []
     }
-  }
+  },
+  "straordinario": {}
 }
