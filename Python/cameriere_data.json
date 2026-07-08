@@ -7,6 +7,11 @@
       "tariffa": 40
     }
   },
+  "extra": {
+    "altrò": {
+      "tariffa": 50
+    }
+  },
   "MESI_COMPLETATI": {
     "APRILE": {
       "turni": {
@@ -28,10 +33,11 @@
     "GIUGNO": {
       "turni": {
         "VP": 12,
-        "MudJ": 22
+        "MudJ": 22,
+        "altrò": 1
       },
       "arbitraggi": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"]],
-      "pagamenti": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"], [120, "Eden"]],
+      "pagamenti": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"], [120, "Eden"], [50, "altrò"]],
       "mance": [[10, "MudJ"], [20, "MudJ"]]
     }
   },
@@ -39,7 +45,7 @@
     "LUGLIO": {
       "turni": {
         "VP": 0,
-        "MudJ": 4
+        "MudJ": 5
       },
       "arbitraggi": [],
       "pagamenti": [],
@@ -64,5 +70,11 @@
       "mance": []
     }
   },
-  "straordinario": {}
+  "straordinario": {},
+  "risparmi": {
+    "luogo": "conto",
+    "saldo": 1179.68
+  }
+  ,
+  "obiettivo": 4500
 }

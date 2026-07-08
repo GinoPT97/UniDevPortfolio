@@ -574,7 +574,7 @@ def build_arbitraggio_detail(sub: ttk.Notebook, risultati: list[dict]) -> None:
 def build_riepilogo(notebook: ttk.Notebook,
                     cam_risultati: list[dict],
                     arb_risultati: list[dict]) -> None:
-    from Cameriere import format_euro
+    from Cameriere import format_euro, MESE_NUMERI, data as CAM_DATA
 
     tab = ttk.Frame(notebook)
     notebook.add(tab, text="  📈  Riepilogo Generale  ")
@@ -601,6 +601,34 @@ def build_riepilogo(notebook: ttk.Notebook,
     card(cf, "Arbitraggio (rimborsi)", f"€{arb_rim}",              C_ORANGE, col=2)
     card(cf, "Da ricevere (totale)", format_euro(totale_ricevere),
          C_RED if totale_ricevere > 0 else C_GREEN, col=3)
+
+    # prospetto fino al 30/09 e distanza dall'obiettivo
+    sep_num = MESE_NUMERI["SETTEMBRE"]
+    cam_until = [r for r in cam_risultati if MESE_NUMERI.get(r["mese"], 99) <= sep_num]
+    cam_comp_u  = sum(r["compensi_totali"]  for r in cam_until)
+    cam_mance_u = sum(r["somma_mance"]      for r in cam_until)
+    cam_arb_u   = sum(r["somma_arbitraggi"] for r in cam_until)
+    entrate_until = cam_comp_u + cam_mance_u + cam_arb_u
+
+    risparmi = CAM_DATA.get("risparmi", {}) if isinstance(CAM_DATA, dict) else {}
+    saldo_risparmi = float(risparmi.get("saldo", 0)) if risparmi else 0.0
+
+    obiettivo = float(CAM_DATA.get("obiettivo", 5000)) if isinstance(CAM_DATA, dict) else 5000.0
+
+    # somma di quanto mi devono: cameriere (fino a SETTEMBRE) + arbitraggio (totale)
+    cam_rec_until = sum(r.get("da_ricevere", 0) for r in cam_until)
+    arb_rec_total = sum(r.get("da_ricevere", 0) for r in arb_risultati)
+
+    # gap calcolato come: obiettivo - risparmi - (da ricevere cameriere + da ricevere arbitraggio)
+    mancanti = obiettivo - saldo_risparmi - (cam_rec_until + arb_rec_total)
+
+    pf = tk.Frame(tab, bg=C_BG)
+    pf.pack(fill="x", padx=8, pady=(6, 12))
+    for i in range(3): pf.columnconfigure(i, weight=1)
+    card(pf, "Entrate entro 30/09", format_euro(entrate_until), C_CYAN, col=0)
+    card(pf, "Risparmi attuali",    format_euro(saldo_risparmi),  C_ACCENT, col=1)
+    card(pf, f"Mancano a {int(obiettivo)}€", format_euro(mancanti),
+         C_RED if mancanti > 0 else C_GREEN, col=2)
 
     # grafico torta: composizione entrate
     categorie = []

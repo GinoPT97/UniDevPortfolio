@@ -71,6 +71,7 @@ def dump_json_with_compact_arrays(value, indent: int = 2, level: int = 0) -> str
 
 def save_dati() -> None:
     data["locali"] = LOCALI
+    data["extra"] = EXTRA_TARIFFE
     data["straordinario"] = STRAORDINARIO_TARIFFE
     data["MESI_COMPLETATI"] = MESI_COMPLETATI
     data["MESI"] = MESI
@@ -119,6 +120,7 @@ def sincronizza_mesi() -> None:
 
 data = load_dati()
 LOCALI:           dict[str, dict] = data.get("locali", {})
+EXTRA_TARIFFE:    dict[str, dict] = data.get("extra", {})
 STRAORDINARIO_TARIFFE: dict[str, float] = data.get("straordinario", {})
 MESI_COMPLETATI:  dict[str, dict] = data.get("MESI_COMPLETATI", {})
 MESI:             dict[str, dict] = data.get("MESI", {})
@@ -136,8 +138,8 @@ def mese_stato(mese: str) -> str:
 def valida_turni(mese: str, turni: dict) -> list[str]:
     avvisi = []
     for nome, n_turni in turni.items():
-        if nome not in LOCALI:
-            avvisi.append(f"[{mese}] '{nome}' non è in LOCALI")
+        if nome not in LOCALI and nome not in EXTRA_TARIFFE:
+            avvisi.append(f"[{mese}] '{nome}' non è in LOCALI o EXTRA")
             continue
         if n_turni < 0:
             avvisi.append(f"[{mese}] {nome}: turni negativi")
@@ -178,7 +180,7 @@ def valida_straordinario(mese: str, straordinario) -> list[str]:
 
     locale, ore = straordinario
     avvisi = []
-    if locale not in LOCALI:
+    if locale not in LOCALI and locale not in EXTRA_TARIFFE:
         avvisi.append(f"[{mese}] straordinario: locale sconosciuto '{locale}'")
     if not isinstance(ore, (int, float)) or ore <= 0:
         avvisi.append(f"[{mese}] straordinario: ore non valide {ore}")
@@ -280,7 +282,7 @@ def stato_pagamento(compensi: float, pagato: float) -> str:
 # ---------------------------------------------------------------------------
 
 def calcola_locale(nome: str, n_turni: int) -> tuple[float, int, str]:
-    tariffa = LOCALI.get(nome, {}).get("tariffa", 0)
+    tariffa = (LOCALI.get(nome, {}) or EXTRA_TARIFFE.get(nome, {})).get("tariffa", 0)
     totale  = tariffa * n_turni
     desc    = f"{nome}: {tariffa}€ x {n_turni} = {format_euro(totale)}" if n_turni else ""
     return totale, n_turni, desc
