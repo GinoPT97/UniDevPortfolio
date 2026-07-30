@@ -25,7 +25,7 @@ STAGIONI: dict[str, dict] = {
         "rimborso": [63, 79, 70, 61, 63, 63, 63, 70, 70, 61, 70, 79, 63, 70, 63, 63, 70, 61, 61, 70,
                      63, 63, 70, 61, 70, 70, 63, 61, 70, 54, 37, 63, 70, 63, 79, 63, 63, 61, 61, 37,
                      63, 63, 63, 63],
-        "pagato":   [63, 140, 259, 350, 133, 131, 257, 133, 107, 196, 142, 61, 37, 63, 516, 57,21],
+        "pagato":   [63, 140, 259, 350, 133, 131, 257, 133, 107, 196, 142, 61, 37, 63, 516, {"importo": 57.21, "detrazioni_fiscali": 5.79}],
     },
     "2026/2027": {
         "rimborso": [],
@@ -37,26 +37,40 @@ STAGIONI: dict[str, dict] = {
 # Calcolo
 # ---------------------------------------------------------------------------
 
+def _somma_pagamenti(pagamenti: list) -> tuple[float, float]:
+    """Somma importi netti e detrazioni fiscali da una lista di pagamenti."""
+    tot_pagato = 0.0
+    tot_detrazioni = 0.0
+    for voce in pagamenti:
+        if isinstance(voce, dict):
+            tot_pagato += voce.get("importo", 0)
+            tot_detrazioni += voce.get("detrazioni_fiscali", 0)
+        else:
+            tot_pagato += float(voce)
+    return tot_pagato, tot_detrazioni
+
+
 def calcola(stagione: str) -> dict:
     """Restituisce il dizionario dei dati calcolati per una stagione."""
     d        = STAGIONI[stagione]
     rimborso = d["rimborso"]
     pagato   = d["pagato"]
     tot_r    = sum(rimborso)
-    tot_p    = sum(pagato)
+    tot_p, tot_detrazioni = _somma_pagamenti(pagato)
     return {
-        "stagione":     stagione,
-        "rimborso":     rimborso,
-        "pagato":       pagato,
-        "tot_rimborso": tot_r,
-        "tot_pagato":   tot_p,
-        "da_ricevere":  tot_r - tot_p,
-        "n_gare":       len(rimborso),
-        "n_pagamenti":  len(pagato),
-        "media_gara":   tot_r / len(rimborso) if rimborso else 0,
-        "max_gara":     max(rimborso) if rimborso else 0,
-        "min_gara":     min(rimborso) if rimborso else 0,
-        "cumulativo":   list(np.cumsum(rimborso)),
+        "stagione":             stagione,
+        "rimborso":             rimborso,
+        "pagato":               pagato,
+        "tot_rimborso":         tot_r,
+        "tot_pagato":           tot_p,
+        "tot_detrazioni_fiscali": tot_detrazioni,
+        "da_ricevere":          tot_r - tot_p - tot_detrazioni,
+        "n_gare":               len(rimborso),
+        "n_pagamenti":          len(pagato),
+        "media_gara":           tot_r / len(rimborso) if rimborso else 0,
+        "max_gara":             max(rimborso) if rimborso else 0,
+        "min_gara":             min(rimborso) if rimborso else 0,
+        "cumulativo":           list(np.cumsum(rimborso)),
     }
 
 def calcola_tutte() -> list[dict]:
@@ -77,13 +91,16 @@ if __name__ == "__main__":
         print("-" * 60)
         print(f"Rimborsi totali: {r['n_gare']} gare = €{r['tot_rimborso']}")
         print(f"Pagato:          {r['n_pagamenti']} pagamenti = €{r['tot_pagato']}")
+        print(f"Detrazioni fiscali: €{r['tot_detrazioni_fiscali']}")
         print(f"Da ricevere:     €{r['da_ricevere']}")
     tot_r = sum(r["tot_rimborso"] for r in risultati)
     tot_p = sum(r["tot_pagato"]   for r in risultati)
+    tot_detrazioni = sum(r["tot_detrazioni_fiscali"] for r in risultati)
     print("\n" + "=" * 60)
     print(" RIEPILOGO GENERALE")
     print("=" * 60)
     print(f"Totale rimborsi maturati: €{tot_r}")
     print(f"Totale pagato:            €{tot_p}")
-    print(f"Totale da ricevere:       €{tot_r - tot_p}")
+    print(f"Totale detrazioni fiscali: €{tot_detrazioni}")
+    print(f"Totale da ricevere:       €{tot_r - tot_p - tot_detrazioni}")
     print("=" * 60)
