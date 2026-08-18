@@ -5,17 +5,13 @@
     },
     "MudJ": {
       "tariffa": 40
-    }
-    ,
+    },
     "Arco Romano": {
       "tariffa": 50
     }
   },
   "extra": {
     "altrò": {
-      "tariffa": 50
-    },
-    "Arco Romano": {
       "tariffa": 50
     }
   },
@@ -46,28 +42,29 @@
       "arbitraggi": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"]],
       "pagamenti": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"], [120, "Eden"], [50, "altrò"], [868.08, "MudJ"]],
       "mance": [[10, "MudJ"], [20, "MudJ"]]
-    }
-  },
-  "MESI": {
+    },
     "LUGLIO": {
       "turni": {
         "VP": 0,
         "MudJ": 11,
-        "Arco Romano": 15
+        "Arco Romano": 16
       },
       "arbitraggi": [],
-      "pagamenti": [[750, "Arco Romano"]],
-      "mance": [[20, "MudJ"], [60, "Arco Romano"]]
-    },
-    "AGOSTO": {
+      "pagamenti": [[800, "Arco Romano"]],
+      "mance": [[20, "MudJ"], [67, "Arco Romano"]]
+    }
+  },
+  "MESI": {
+        "AGOSTO": {
       "turni": {
         "VP": 0,
-        "MudJ": 0
+        "MudJ": 0,
+        "Arco Romano": 17
       },
       "arbitraggi": [],
-      "pagamenti": [],
-      "mance": []
-    },
+      "pagamenti": [[100, "Arco Romano"]],
+      "mance": [[70, "Arco Romano"]]
+        },
     "SETTEMBRE": {
       "turni": {
         "VP": 0,
@@ -81,7 +78,7 @@
   "straordinario": {},
   "risparmi": {
     "luogo": "conto",
-    "saldo": 1824.37
+    "saldo": 2350.00
   },
-  "obiettivo": 4500
+  "obiettivo": 5000
 }

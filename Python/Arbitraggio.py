@@ -25,7 +25,7 @@ STAGIONI: dict[str, dict] = {
         "rimborso": [63, 79, 70, 61, 63, 63, 63, 70, 70, 61, 70, 79, 63, 70, 63, 63, 70, 61, 61, 70,
                      63, 63, 70, 61, 70, 70, 63, 61, 70, 54, 37, 63, 70, 63, 79, 63, 63, 61, 61, 37,
                      63, 63, 63, 63],
-        "pagato":   [63, 140, 259, 350, 133, 131, 257, 133, 107, 196, 142, 61, 37, 63, 516, {"importo": 57.21, "detrazioni_fiscali": 5.79}],
+        "pagato":   [63, 140, 259, 350, 133, 131, 257, 133, 107, 196, 142, 61, 37, 63, 516, {"importo": 57.21, "detrazioni_fiscali": 5.79}, 122],
     },
     "2026/2027": {
         "rimborso": [],
@@ -50,6 +50,12 @@ def _somma_pagamenti(pagamenti: list) -> tuple[float, float]:
     return tot_pagato, tot_detrazioni
 
 
+def _normalize_amount(valore: float):
+    """Arrotonda a 2 decimali e ritorna intero se il risultato è un intero."""
+    valore = round(valore, 2)
+    return int(valore) if float(valore).is_integer() else valore
+
+
 def calcola(stagione: str) -> dict:
     """Restituisce il dizionario dei dati calcolati per una stagione."""
     d        = STAGIONI[stagione]
@@ -61,15 +67,15 @@ def calcola(stagione: str) -> dict:
         "stagione":             stagione,
         "rimborso":             rimborso,
         "pagato":               pagato,
-        "tot_rimborso":         tot_r,
-        "tot_pagato":           tot_p,
-        "tot_detrazioni_fiscali": tot_detrazioni,
-        "da_ricevere":          tot_r - tot_p - tot_detrazioni,
+        "tot_rimborso":         _normalize_amount(tot_r),
+        "tot_pagato":           _normalize_amount(tot_p),
+        "tot_detrazioni_fiscali": _normalize_amount(tot_detrazioni),
+        "da_ricevere":          _normalize_amount(tot_r - tot_p - tot_detrazioni),
         "n_gare":               len(rimborso),
         "n_pagamenti":          len(pagato),
-        "media_gara":           tot_r / len(rimborso) if rimborso else 0,
-        "max_gara":             max(rimborso) if rimborso else 0,
-        "min_gara":             min(rimborso) if rimborso else 0,
+        "media_gara":           _normalize_amount(tot_r / len(rimborso)) if rimborso else 0,
+        "max_gara":             _normalize_amount(max(rimborso)) if rimborso else 0,
+        "min_gara":             _normalize_amount(min(rimborso)) if rimborso else 0,
         "cumulativo":           list(np.cumsum(rimborso)),
     }
 
