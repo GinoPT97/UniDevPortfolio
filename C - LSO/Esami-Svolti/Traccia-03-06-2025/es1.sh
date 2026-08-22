@@ -8,4 +8,4 @@ awk '/^es.*E$/' parole.txt
 sed '/202[3-5]/! s/marzo/maggio/g' esami.txt
 
 #Esercizio 1.d
-ps -eo pid,comm,etimes --sort=-etimes | awk '$3 > 600 { print }' | head -5
+ps -eo pid,comm,etimes --sort=-etimes | awk '$3 > 600' | head -5
