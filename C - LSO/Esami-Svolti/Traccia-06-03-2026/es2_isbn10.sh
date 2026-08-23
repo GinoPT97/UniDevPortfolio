@@ -25,6 +25,7 @@ if ! [[ "$isbn9" =~ ^[0-9]{9}$ ]]; then
 fi
 
 somma=0
+
 for i in $(seq 0 8); do
     cifra=${isbn9:$i:1}
     peso=$((10 - i))
