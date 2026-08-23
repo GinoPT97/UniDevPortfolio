@@ -19,10 +19,11 @@ sed 's/[aeiouAEIOU]/ & /g' input.txt | tr -s ' '
 # ============================================================
 # Es 1c: contare vocali e consonanti per ogni riga
 # ============================================================
-awk '{v=0;c=0; s=tolower($0); 
-      for(i=1;i<=length(s);i++){ch=substr(s,i,1); 
-      if(ch~/[aeiou]/)v++; else if(ch~/[bcdfghjklmnpqrstvwxyz]/)c++}; 
-      print "Vocali: "v", Consonanti: "c}' input.txt
+while IFS= read -r riga; do
+    vocali=$(echo "$riga" | grep -oi '[aeiou]' | wc -l)
+    consonanti=$(echo "$riga" | grep -oi '[a-z]' | grep -vi '[aeiou]' | wc -l)
+    echo "$riga -> vocali=$vocali, consonanti=$consonanti"
+done < file.txt
 
 
 # ============================================================
