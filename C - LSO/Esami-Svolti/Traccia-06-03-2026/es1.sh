@@ -3,10 +3,11 @@
 # ============================================================
 # Es 1a: eliminare i numeri e stampare: frase = numeri
 # ============================================================
-awk '{f=$0; gsub(/[0-9]+/,"",f); gsub(/ +/," ",f); gsub(/^ | $/,"",f); n=""; 
-      for(i=1;i<=NF;i++) 
-       if($i~/^[0-9]+$/) n=n$i" "; 
-      gsub(/ $/,"",n); print f" = "n}' input.txt
+while IFS= read -r riga; do
+    frase=$(echo "$riga" | sed 's/[0-9]//g')
+    numeri=$(echo "$riga" | grep -o '[0-9]\+' | tr '\n' ' ')
+    echo "$frase = $numeri"
+done < input.txt
 
 
 # ============================================================
