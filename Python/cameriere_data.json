@@ -59,11 +59,11 @@
       "turni": {
         "VP": 0,
         "MudJ": 0,
-        "Arco Romano": 17
+        "Arco Romano": 30
       },
       "arbitraggi": [],
       "pagamenti": [[100, "Arco Romano"]],
-      "mance": [[70, "Arco Romano"]]
+      "mance": [[170, "Arco Romano"]]
         },
     "SETTEMBRE": {
       "turni": {
