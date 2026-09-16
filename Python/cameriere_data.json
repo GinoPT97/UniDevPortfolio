@@ -8,6 +8,9 @@
     },
     "Arco Romano": {
       "tariffa": 50
+    },
+    "Folaghe": {
+      "tariffa": 50
     }
   },
   "extra": {
@@ -62,23 +65,25 @@
         "Arco Romano": 30
       },
       "arbitraggi": [],
-      "pagamenti": [[100, "Arco Romano"]],
+      "pagamenti": [[1351.23, "Arco Romano"]],
       "mance": [[170, "Arco Romano"]]
         },
     "SETTEMBRE": {
       "turni": {
-        "VP": 0,
-        "MudJ": 0
+        "VP": 35,
+        "MudJ": 0,
+        "Arco Romano": 2,
+        "Folaghe": 0
       },
       "arbitraggi": [],
-      "pagamenti": [],
-      "mance": []
+      "pagamenti": [[350, "VP"], [100, "Arco Romano"], [50, "Folaghe"]],
+      "mance": [[15, "Arco Romano"]]
     }
   },
   "straordinario": {},
   "risparmi": {
     "luogo": "conto",
-    "saldo": 2350.00
+    "saldo": 2000.00
   },
   "obiettivo": 5000
 }

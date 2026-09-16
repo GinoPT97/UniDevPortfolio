@@ -28,7 +28,7 @@ STAGIONI: dict[str, dict] = {
         "pagato":   [63, 140, 259, 350, 133, 131, 257, 133, 107, 196, 142, 61, 37, 63, 516, {"importo": 57.21, "detrazioni_fiscali": 5.79}, 122],
     },
     "2026/2027": {
-        "rimborso": [],
+        "rimborso": [61, 89],
         "pagato":   [],
     },
 }
