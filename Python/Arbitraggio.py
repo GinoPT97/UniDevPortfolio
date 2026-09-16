@@ -63,6 +63,7 @@ def calcola(stagione: str) -> dict:
     pagato   = d["pagato"]
     tot_r    = sum(rimborso)
     tot_p, tot_detrazioni = _somma_pagamenti(pagato)
+    da_ricevere = max(0.0, tot_r - tot_p - tot_detrazioni)
     return {
         "stagione":             stagione,
         "rimborso":             rimborso,
@@ -70,7 +71,7 @@ def calcola(stagione: str) -> dict:
         "tot_rimborso":         _normalize_amount(tot_r),
         "tot_pagato":           _normalize_amount(tot_p),
         "tot_detrazioni_fiscali": _normalize_amount(tot_detrazioni),
-        "da_ricevere":          _normalize_amount(tot_r - tot_p - tot_detrazioni),
+        "da_ricevere":          _normalize_amount(da_ricevere),
         "n_gare":               len(rimborso),
         "n_pagamenti":          len(pagato),
         "media_gara":           _normalize_amount(tot_r / len(rimborso)) if rimborso else 0,

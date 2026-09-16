@@ -322,7 +322,8 @@ def calcola_mese(mese: str) -> dict:
 
     # Pagamenti può includere rimborsi da arbitraggio già registrati in `arbitraggi`.
     # In tal caso non devono ridurre il `da_ricevere` relativo ai compensi del cameriere.
-    da_ricevere  = compensi_totali - somma_pagato + somma_arbitraggi
+    # Se un mese è stato pagato in eccesso, non va considerato come credito da riscuotere.
+    da_ricevere = max(0.0, compensi_totali - somma_pagato + somma_arbitraggi)
 
     return {
         "mese":             mese,

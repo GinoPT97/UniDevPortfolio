@@ -43,7 +43,7 @@
         "altrò": 1
       },
       "arbitraggi": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"]],
-      "pagamenti": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"], [120, "Eden"], [50, "altrò"], [868.08, "MudJ"]],
+      "pagamenti": [[150, "Torneo 1,5 g"], [100, "Torneo disabili"], [120, "Eden"], [50, "altrò"], [1000, "MudJ"]],
       "mance": [[10, "MudJ"], [20, "MudJ"]]
     },
     "LUGLIO": {
@@ -53,21 +53,21 @@
         "Arco Romano": 16
       },
       "arbitraggi": [],
-      "pagamenti": [[800, "Arco Romano"]],
+      "pagamenti": [[440, "MudJ"], [800, "Arco Romano"]],
       "mance": [[20, "MudJ"], [67, "Arco Romano"]]
+    },
+    "AGOSTO": {
+      "turni": {
+        "VP": 35,
+        "MudJ": 0,
+        "Arco Romano": 2
+      },
+      "arbitraggi": [],
+      "pagamenti": [[350, "VP"], [100, "Arco Romano"]],
+      "mance": [[15, "Arco Romano"]]
     }
   },
   "MESI": {
-        "AGOSTO": {
-      "turni": {
-        "VP": 0,
-        "MudJ": 0,
-        "Arco Romano": 30
-      },
-      "arbitraggi": [],
-      "pagamenti": [[1351.23, "Arco Romano"]],
-      "mance": [[170, "Arco Romano"]]
-        },
     "SETTEMBRE": {
       "turni": {
         "VP": 35,
@@ -83,7 +83,7 @@
   "straordinario": {},
   "risparmi": {
     "luogo": "conto",
-    "saldo": 2000.00
+    "saldo": 2000.0
   },
   "obiettivo": 5000
 }
