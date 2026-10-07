@@ -9,6 +9,19 @@
 
 import numpy as np
 
+
+def format_euro(valore: float) -> str:
+    try:
+        numero = float(valore)
+    except (TypeError, ValueError):
+        return f"€{valore}"
+
+    segno = "-" if numero < 0 else ""
+    numero_assoluto = abs(numero)
+    parte_intera, parte_decimale = f"{numero_assoluto:.2f}".split(".")
+    parte_intera = f"{int(parte_intera):,}".replace(",", ".")
+    return f"{segno}€{parte_intera},{parte_decimale}"
+
 # ---------------------------------------------------------------------------
 # Dati
 # ---------------------------------------------------------------------------
@@ -96,18 +109,18 @@ if __name__ == "__main__":
     for r in risultati:
         print(f"\n STAGIONE {r['stagione']}")
         print("-" * 60)
-        print(f"Rimborsi totali: {r['n_gare']} gare = €{r['tot_rimborso']}")
-        print(f"Pagato:          {r['n_pagamenti']} pagamenti = €{r['tot_pagato']}")
-        print(f"Detrazioni fiscali: €{r['tot_detrazioni_fiscali']}")
-        print(f"Da ricevere:     €{r['da_ricevere']}")
+        print(f"Rimborsi totali: {r['n_gare']} gare = {format_euro(r['tot_rimborso'])}")
+        print(f"Pagato:          {r['n_pagamenti']} pagamenti = {format_euro(r['tot_pagato'])}")
+        print(f"Detrazioni fiscali: {format_euro(r['tot_detrazioni_fiscali'])}")
+        print(f"Da ricevere:     {format_euro(r['da_ricevere'])}")
     tot_r = sum(r["tot_rimborso"] for r in risultati)
     tot_p = sum(r["tot_pagato"]   for r in risultati)
     tot_detrazioni = sum(r["tot_detrazioni_fiscali"] for r in risultati)
     print("\n" + "=" * 60)
     print(" RIEPILOGO GENERALE")
     print("=" * 60)
-    print(f"Totale rimborsi maturati: €{tot_r}")
-    print(f"Totale pagato:            €{tot_p}")
-    print(f"Totale detrazioni fiscali: €{tot_detrazioni}")
-    print(f"Totale da ricevere:       €{tot_r - tot_p - tot_detrazioni}")
+    print(f"Totale rimborsi maturati: {format_euro(tot_r)}")
+    print(f"Totale pagato:            {format_euro(tot_p)}")
+    print(f"Totale detrazioni fiscali: {format_euro(tot_detrazioni)}")
+    print(f"Totale da ricevere:       {format_euro(tot_r - tot_p - tot_detrazioni)}")
     print("=" * 60)

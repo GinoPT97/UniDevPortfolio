@@ -263,9 +263,15 @@ def calcola_arbitraggi(arbitraggi_raw: list) -> tuple[list[dict], float]:
 
 def format_euro(valore: float) -> str:
     try:
-        return f"€{valore:.2f}"
+        numero = float(valore)
     except (TypeError, ValueError):
         return f"€{valore}"
+
+    segno = "-" if numero < 0 else ""
+    numero_assoluto = abs(numero)
+    parte_intera, parte_decimale = f"{numero_assoluto:.2f}".split(".")
+    parte_intera = f"{int(parte_intera):,}".replace(",", ".")
+    return f"{segno}€{parte_intera},{parte_decimale}"
 
 
 def stato_pagamento(compensi: float, pagato: float) -> str:

@@ -390,9 +390,9 @@ def build_arbitraggio_overview(sub: ttk.Notebook, risultati: list[dict]) -> None
     cf.pack(fill="x", padx=8, pady=(10, 4))
     for i in range(4): cf.columnconfigure(i, weight=1)
     card(cf, "Gare totali",       str(tot_gare),      C_CYAN,   col=0)
-    card(cf, "Rimborsi maturati", f"€{tot_rimborsi}", C_ACCENT, col=1)
-    card(cf, "Totale pagato",     f"€{tot_pagato}",   C_GREEN,  col=2)
-    card(cf, LBL_DA_RIC,          f"€{tot_ricevere}",
+    card(cf, "Rimborsi maturati", format_euro(tot_rimborsi), C_ACCENT, col=1)
+    card(cf, "Totale pagato",     format_euro(tot_pagato),   C_GREEN,  col=2)
+    card(cf, LBL_DA_RIC,          format_euro(tot_ricevere),
          C_RED if tot_ricevere > 0 else C_GREEN, col=3)
 
     cols = ("Stagione", "Gare", "Rimborsi", "Pagamenti", "Totale pagato", LBL_DA_RIC, "Media/gara")
@@ -406,9 +406,9 @@ def build_arbitraggio_overview(sub: ttk.Notebook, risultati: list[dict]) -> None
     for r in risultati:
         tag = "rosso" if r["da_ricevere"] > 0 else "verde"
         tree.insert("", "end", values=(
-            r["stagione"], r["n_gare"], f"€{r['tot_rimborso']}",
-            r["n_pagamenti"], f"€{r['tot_pagato']}",
-            f"€{r['da_ricevere']}", f"€{r['media_gara']:.1f}",
+            r["stagione"], r["n_gare"], format_euro(r['tot_rimborso']),
+            r["n_pagamenti"], format_euro(r['tot_pagato']),
+            format_euro(r['da_ricevere']), format_euro(r['media_gara']),
         ), tags=(tag,))
     tree.pack(fill="x", padx=20, pady=4)
 
@@ -421,9 +421,9 @@ def build_arbitraggio_overview(sub: ttk.Notebook, risultati: list[dict]) -> None
         tk.Label(pf, text=f"Stagione {r['stagione']}", bg=C_PANEL, fg=C_ACCENT,
                  font=(FONT_UI, 10, "bold")).pack(anchor="w")
         for label, val in [
-            ("Gara più alta",  f"€{r['max_gara']}"),
-            ("Gara più bassa", f"€{r['min_gara']}"),
-            ("Media per gara", f"€{r['media_gara']:.1f}"),
+            ("Gara più alta",  format_euro(r['max_gara'])),
+            ("Gara più bassa", format_euro(r['min_gara'])),
+            ("Media per gara", format_euro(r['media_gara'])),
             ("% pagata",       f"{r['tot_pagato']/r['tot_rimborso']*100:.1f}%" if r["tot_rimborso"] else "—"),
         ]:
             row = tk.Frame(pf, bg=C_PANEL); row.pack(fill="x", pady=1)
@@ -459,7 +459,7 @@ def build_arbitraggio_maturato_vs_pagato(sub: ttk.Notebook, risultati: list[dict
     ax2b.set_title(LBL_DA_RIC + " per stagione", color=C_TEXT, pad=8)
     ax2b.axhline(0, color=C_GRID, linewidth=1)
     for i, d in enumerate(diffs):
-        ax2b.text(i, d + 3, f"€{d}", ha="center", va="bottom",
+        ax2b.text(i, d + 3, format_euro(d), ha="center", va="bottom",
                   fontsize=10, color=C_TEXT, fontweight="bold")
     fig_a2.tight_layout(); embed(fig_a2, a2)
 
@@ -534,7 +534,7 @@ def build_arbitraggio_detail(sub: ttk.Notebook, risultati: list[dict]) -> None:
         sb_lb.pack(side="left", fill="y")
         prefix = "Gara" if fg == C_TEXT else "Pagamento"
         for idx, val in items:
-            lb.insert("end", f"  {prefix} {idx:>3}:  €{val}")
+            lb.insert("end", f"  {prefix} {idx:>3}:  {format_euro(val)}")
 
     def aggiorna_arb(*_: object) -> None:
         for w in detail_a5.winfo_children():
@@ -546,10 +546,10 @@ def build_arbitraggio_detail(sub: ttk.Notebook, risultati: list[dict]) -> None:
         for j in range(5): cf5.columnconfigure(j, weight=1)
         for j, (t, v, c) in enumerate([
             ("Gare",        str(r["n_gare"]),          C_CYAN),
-            ("Rimborsi",    f"€{r['tot_rimborso']}",   C_ACCENT),
-            ("Pagato",      f"€{r['tot_pagato']}",     C_GREEN),
-            (LBL_DA_RIC,    f"€{r['da_ricevere']}",    C_RED if r["da_ricevere"] > 0 else C_GREEN),
-            ("Media/gara",  f"€{r['media_gara']:.1f}", C_YELLOW),
+            ("Rimborsi",    format_euro(r['tot_rimborso']),   C_ACCENT),
+            ("Pagato",      format_euro(r['tot_pagato']),     C_GREEN),
+            (LBL_DA_RIC,    format_euro(r['da_ricevere']),    C_RED if r["da_ricevere"] > 0 else C_GREEN),
+            ("Media/gara",  format_euro(r['media_gara']), C_YELLOW),
         ]):
             card(cf5, t, v, c, col=j)
 
@@ -598,7 +598,7 @@ def build_riepilogo(notebook: ttk.Notebook,
     for i in range(4): cf.columnconfigure(i, weight=1)
     card(cf, "Totale entrate",       format_euro(totale_entrate),  C_CYAN,   col=0)
     card(cf, "Cameriere (compensi)", format_euro(cam_comp),        C_ACCENT, col=1)
-    card(cf, "Arbitraggio (rimborsi)", f"€{arb_rim}",              C_ORANGE, col=2)
+    card(cf, "Arbitraggio (rimborsi)", format_euro(arb_rim),              C_ORANGE, col=2)
     card(cf, "Da ricevere (totale)", format_euro(totale_ricevere),
          C_RED if totale_ricevere > 0 else C_GREEN, col=3)
 
