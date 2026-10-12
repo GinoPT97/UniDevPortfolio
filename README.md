@@ -16,14 +16,14 @@ La repository funge da **archivio didattico organizzato** per corso, linguaggio 
 | **Linguaggi dichiarativi** | Prolog, Standard ML |
 | **Basso livello** | Assembly Motorola 68000 |
 | **Database** | SQL, PostgreSQL |
-| **Tecnologie e framework** | Docker, Gradle, CMake, Makefile, React Native/Expo, Android |
+| **Tecnologie e framework** | Docker, Gradle, CMake, Makefile, Android |
 
 ### Aree Tematiche Coperte
 
 - **Programmazione di sistema**: processi, thread, socket TCP/UDP, pipe, concorrenza
 - **Algoritmi e strutture dati**: liste, stack, code, heap, BST, grafi, ricerca e ordinamento
 - **Sistemi operativi**: fork, gestione memoria, sincronizzazione
-- **Programmazione mobile**: Android Kotlin, React Native
+- **Programmazione mobile**: Android Kotlin
 - **Database**: SQL, query, schema relazionali
 - **Scripting e automation**: Shell script, Python per analisi dati
 - **Logica computazionale**: Prolog, programmazione funzionale (ML)
@@ -54,10 +54,9 @@ La repository funge da **archivio didattico organizzato** per corso, linguaggio 
 
 | Percorso | Descrizione |
 | --- | --- |
-| `ProgettoLSO24-25/` | **Progetto capstone**: server C concorrente + database PostgreSQL + client Android Kotlin. Include Docker compose per ambiente completo. |
-| `ProgettoLSO24-25-ReactNative/` | **Variante moderna**: stessa architettura backend C + PostgreSQL, ma con client Expo/React Native. Bridge HTTP verso il server. |
+| `ProgettoLSO24-25/` | **Progetto capstone** (in fase di ultimazione): server C concorrente + database PostgreSQL + client Android Kotlin. Docker compose con profilo opzionale per l'emulatore Android. |
 | `Python/` | Script, analisi numerica, data science, plotting, piccoli esempi di rete TCP e progetti di analisi dati |
-| `Rust/` | Progetti Cargo per apprendimento del linguaggio: calcolatrici, esercizi di base, esperimenti di sicurezza memoria |
+| `Rust/` | Progetti Cargo per apprendimento del linguaggio: hello world, fattoriale, Fibonacci, numeri primi, calcolatrice interattiva |
 
 ### Paradigmi Dichiarativi e Funzionali
 
@@ -85,8 +84,7 @@ Scegli in base ai tuoi obiettivi di apprendimento:
 | **Imparare C da zero** | `C - Generico/` |
 | **Strutture dati e algoritmi** | `C - LASD/` o `Librerie-C/` |
 | **Sistemi operativi: processi, thread, socket** | `C - LSO/Socket-Esempi/` o `C - LSO/Esami-Svolti/` |
-| **Architettura multi-tier completa** | `ProgettoLSO24-25/` o `ProgettoLSO24-25-ReactNative/` |
-| **Mobile e frontend web** | `ProgettoLSO24-25-ReactNative/` |
+| **Architettura multi-tier completa** | `ProgettoLSO24-25/` |
 | **Backend con Docker** | `ProgettoLSO24-25/` |
 | **Analisi dati e scripting** | `Python/` |
 | **Imparare Rust** | `Rust/CalcolatriceInterattiva/` o `Rust/basic/` |
@@ -120,17 +118,16 @@ rustup default stable
 
 ### Esempi di Esecuzione
 
-**Progetto LSO (Android + server C + PostgreSQL):**
+**Progetto LSO — solo backend (database + server C):**
 ```bash
 cd ProgettoLSO24-25
 docker compose up --build
 ```
 
-**Progetto LSO (React Native + server C):**
+**Progetto LSO — stack completo con emulatore Android:**
 ```bash
-cd ProgettoLSO24-25-ReactNative
-docker compose down --remove-orphans
-docker compose up --build
+cd ProgettoLSO24-25
+docker compose --profile android up --build
 ```
 
 **Script Python con virtual environment:**
@@ -163,8 +160,7 @@ gcc -o clientTCP ClientTCP.c
 
 Le cartelle più complesse hanno **README dedicati**:
 
-- [`ProgettoLSO24-25/README.md`](ProgettoLSO24-25/README.md) — Setup Docker, architettura Android
-- [`ProgettoLSO24-25-ReactNative/README.md`](ProgettoLSO24-25-ReactNative/README.md) — Setup React Native, bridge HTTP
+- [`ProgettoLSO24-25/README.md`](ProgettoLSO24-25/README.md) — Setup Docker, architettura Android, profilo emulatore
 
 **Consiglio**: per i progetti completi, leggi prima il README locale, poi usa questo file come mappa di orientamento generale.
 
@@ -181,7 +177,7 @@ Le cartelle più complesse hanno **README dedicati**:
 
 ### Dimensione e Natura
 
-- Repository size: ~500 MB
+- Repository size: ~535 MB (working tree, escluso `.git`)
 - Creato: Settembre 2023
 - Licenza: **MIT** (vedi [`LICENSE`](LICENSE))
 - Ateneo: Università degli Studi di Napoli Federico II
