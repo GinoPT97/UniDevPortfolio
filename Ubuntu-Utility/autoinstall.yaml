@@ -3,7 +3,7 @@ autoinstall:
 
   # ---------------------------------------------------------------------------
   # Pacchetti APT
-  # Sincronizzato con i pacchetti installati manualmente sul PC (marzo 2026)
+  # Sincronizzato con i pacchetti installati manualmente sul PC (ottobre 2026)
   # ---------------------------------------------------------------------------
   packages:
     # --- Rete e certificati ---
@@ -26,12 +26,10 @@ autoinstall:
     - git-lfs
     - git-filter-repo
     - cmake
-    - aptitude
     - gdebi
     - dos2unix
-    - cryptsetup
-    - lvm2
     - zenity
+    - ripgrep
 
     # --- Java ---
     - openjdk-21-jdk
@@ -43,20 +41,18 @@ autoinstall:
     # --- Rete anonima ---
     - tor
 
-    # --- Sicurezza ---
-    - clamav
-    - clamtk
-
     # --- Grafica e multimedia ---
     - vlc
-    - imagemagick
-    - inkscape
     - gparted
 
+    # --- Virtualizzazione e multimedia aggiuntivi ---
+    - virtualbox
+    - mpv
+    - ffmpeg
+    - scrcpy
+
     # --- Documentazione e LaTeX ---
-    - doxygen
     - graphviz
-    - pandoc
     - latexmk
     - texlive-latex-base
     - texlive-latex-extra
@@ -70,9 +66,6 @@ autoinstall:
 
     # --- Strumenti sistema ---
     - linux-tools-common
-    - linux-tools-generic
-    - libvips-dev
-    - jest
 
     # --- Desktop GNOME ---
     - gnome-tweaks
@@ -133,6 +126,7 @@ autoinstall:
     - curtin in-target -- bash -c 'USER_NAME=$(getent passwd 1000 | cut -d: -f1); su - "$USER_NAME" -c "curl --proto=https --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"'
 
     # --- Snap: strumenti sviluppo ---
+    - curtin in-target -- snap install --classic openjdk
     - curtin in-target -- snap install --classic android-studio
     - curtin in-target -- snap install --classic eclipse
     - curtin in-target -- snap install intellij-idea-ultimate --classic
@@ -146,9 +140,6 @@ autoinstall:
     - curtin in-target -- snap install firefox           # [AGGIUNTO] presente sul PC
     - curtin in-target -- snap install thunderbird       # [AGGIUNTO] presente sul PC
     - curtin in-target -- snap install steam             # [AGGIUNTO] presente sul PC
-
-    # --- Snap: utility ---
-    - curtin in-target -- snap install scrcpy
 
     # --- Docker ---
     - curtin in-target -- snap install docker

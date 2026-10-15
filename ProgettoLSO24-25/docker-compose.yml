@@ -10,6 +10,7 @@ services:
       POSTGRES_DB: LSO-24-25
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      TMDB_API_KEY: ${TMDB_API_KEY}
     init: true
     depends_on:
       db:
@@ -42,6 +43,7 @@ services:
 
   # Servizio emulatore Android (Ottimizzato per performance)
   android-emulator:
+    profiles: ["android"]
     container_name: android-container
     image: budtmo/docker-android:emulator_14.0  # Versione più recente e ottimizzata
     pull_policy: missing
@@ -74,6 +76,7 @@ services:
 
   # Servizio client
   client:
+    profiles: ["android"]
     build:
       context: ./Client
       dockerfile: Dockerfile

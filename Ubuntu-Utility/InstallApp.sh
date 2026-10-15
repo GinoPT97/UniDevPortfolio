@@ -16,14 +16,11 @@ sudo apt install -y \
   hplip hplip-gui \
   gnome-tweaks ptyxis stacer bleachbit \
   language-pack-it language-pack-it-base language-pack-gnome-it language-pack-gnome-it-base \
-  mythes-it hyphen-it libreoffice-l10n-it libreoffice-help-it ripgrep
+  mythes-it hyphen-it libreoffice-l10n-it libreoffice-help-it ripgrep scrcpy
 
 echo "Installazione di VirtualBox e strumenti multimediali..."
 sudo apt install virtualbox -y
 sudo apt install mpv curl ffmpeg -y
-
-echo "Installazione di ani-cli per vedere anime dal terminale..."
-sudo apt install ani-cli -y
 
 git lfs install
 
@@ -72,7 +69,7 @@ sudo snap install --classic android-studio
 sudo snap install --classic eclipse
 sudo snap install intellij-idea-ultimate --classic
 sudo snap install node --classic
-sudo snap install telegram-desktop teams-for-linux pgadmin4 perplexity-desktop scrcpy docker
+sudo snap install telegram-desktop teams-for-linux pgadmin4 perplexity-desktop docker
 
 echo "Installazione di Docker..."
 sudo snap start docker

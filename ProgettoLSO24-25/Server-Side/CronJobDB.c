@@ -138,10 +138,10 @@ void PopulateDatabaseWithTmdbData(PGconn *conn) {
     // Inizializza il seed del random solo una volta
     srand(time(NULL));
 
-    const char *tmdb_api_key = "771b37a5e226fd843d9460fe33c41412";
+    const char *tmdb_api_key = getenv("TMDB_API_KEY");
 
     if (!tmdb_api_key) {
-        fprintf(stderr, "API Key non trovata\n");
+        fprintf(stderr, "API Key non trovata: imposta la variabile d'ambiente TMDB_API_KEY\n");
         return;
     }
 
