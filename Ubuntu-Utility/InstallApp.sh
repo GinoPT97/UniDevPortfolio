@@ -7,7 +7,7 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
   ca-certificates curl gnupg lsb-release wget apt-transport-https net-tools \
   zram-config preload \
-  build-essential git git-lfs git-filter-repo cmake gdebi dos2unix \
+  build-essential git git-lfs git-filter-repo cmake gdebi dos2unix zenity linux-tools-common \
   openjdk-21-jdk \
   postgresql redis tor \
   vlc gparted \
@@ -46,16 +46,22 @@ install_deb "https://github.com/shiftkey/desktop/releases/download/release-2.8.1
 git config --global user.email "g.pandozzitrani@studenti.unina.it"                                  
 git config --global user.name "kenobi1797"
 
-#Installazione di code trmite apt
+#Installazione di code tramite apt (formato deb822, coerente con quello che apt genera di default)
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
+rm -f microsoft.gpg
 
-sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] \
-https://packages.microsoft.com/repos/code stable main" \
-> /etc/apt/sources.list.d/vscode.list'
+sudo tee /etc/apt/sources.list.d/vscode.sources > /dev/null << 'EOF'
+Types: deb
+URIs: https://packages.microsoft.com/repos/code
+Suites: stable
+Components: main
+Architectures: amd64
+Signed-By: /usr/share/keyrings/microsoft.gpg
+EOF
 
 sudo apt update
-sudo apt install code
+sudo apt install code -y
 
 #Installazione di Rust
 echo "Installazione di Rust..."
@@ -70,6 +76,7 @@ sudo snap install --classic eclipse
 sudo snap install intellij-idea-ultimate --classic
 sudo snap install node --classic
 sudo snap install telegram-desktop teams-for-linux pgadmin4 perplexity-desktop docker
+sudo snap install firefox thunderbird steam
 
 echo "Installazione di Docker..."
 sudo snap start docker

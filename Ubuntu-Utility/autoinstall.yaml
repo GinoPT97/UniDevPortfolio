@@ -116,9 +116,9 @@ autoinstall:
     - curtin in-target -- bash -c 'dpkg -i /tmp/github-desktop.deb || apt-get install -f -y'
     - curtin in-target -- rm -f /tmp/github-desktop.deb
 
-    # --- Visual Studio Code via APT ---
+    # --- Visual Studio Code via APT (formato deb822, coerente con quello generato da apt) ---
     - curtin in-target -- bash -c 'wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /usr/share/keyrings/microsoft.gpg'
-    - curtin in-target -- bash -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+    - "curtin in-target -- bash -c 'printf \"Types: deb\\nURIs: https://packages.microsoft.com/repos/code\\nSuites: stable\\nComponents: main\\nArchitectures: amd64\\nSigned-By: /usr/share/keyrings/microsoft.gpg\\n\" > /etc/apt/sources.list.d/vscode.sources'"
     - curtin in-target -- apt update
     - curtin in-target -- apt install -y code
 
