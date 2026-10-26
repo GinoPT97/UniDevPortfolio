@@ -71,8 +71,8 @@ install_snapd() {
 # Funzione per rimuovere gli snap disabilitati
 remove_disabled_snaps() {
     log "INFO" "Rimozione snap disabilitati..."
-    snap list --all | awk '/disabilitato/{print $1, $3}' | \
-      while read name rev; do sudo snap remove "$name" --revision="$rev"; done
+    snap list --all | awk '/disabled|disabilitato/{print $1, $3}' | \
+      while read name rev; do snap remove "$name" --revision="$rev"; done
     log "INFO" "Snap disabilitati rimossi."
 }
 
@@ -118,16 +118,6 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Funzione per aggiornare alla nuova versione di Ubuntu
-upgrade_ubuntu() {
-    log "INFO" "Aggiornamento alla nuova versione di Ubuntu..."
-    if do-release-upgrade; then
-        log "INFO" "Aggiornamento completato con successo."
-    else
-        log "INFO" "Nessuna nuova versione di Ubuntu trovata."
-    fi
-}
-
 # Inizio dello script
 log "INFO" "Inizio aggiornamenti..."
 
@@ -147,7 +137,19 @@ if [ -n "$PKGS_RC" ]; then
 else
     log "INFO" "Nessun pacchetto rc da rimuovere. Salto."
 fi
-sudo rm -rf ~/.cache/thumbnails/*
+# Pulisce la cache miniature dell'utente reale che ha lanciato lo script via
+# sudo, non quella di root: "~" qui espanderebbe a /root, lasciando intatta
+# (e non pulendo mai) la cache dell'utente effettivo.
+REAL_USER="${SUDO_USER:-$(logname 2>/dev/null || true)}"
+if [ -n "$REAL_USER" ]; then
+    REAL_HOME="$(getent passwd "$REAL_USER" | cut -d: -f6)"
+    if [ -n "$REAL_HOME" ] && [ -d "$REAL_HOME/.cache/thumbnails" ]; then
+        log "INFO" "Pulizia cache miniature di $REAL_USER..."
+        rm -rf "${REAL_HOME:?}/.cache/thumbnails"/*
+    fi
+else
+    log "WARN" "Impossibile determinare l'utente reale, salto pulizia cache miniature."
+fi
 # apt modernize-sources -y  # Comando non standard, commentato
 
 # Aggiungi comandi per aggiornare il sistema Ubuntu 24.10

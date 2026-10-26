@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 SCRIPT_NAME="Ubuntu 26.04 Cleaner"
-SCRIPT_VERSION="1.0.0"
+SCRIPT_VERSION="1.1.0"
 LOG_FILE="/var/log/ubuntu-cleaner.log"
 DRY_RUN=false
 SAFE_MODE=false
@@ -11,6 +11,8 @@ KEEP_JOURNAL_TIME="7d"
 KEEP_JOURNAL_SIZE="200M"
 TMP_DAYS=3
 VAR_TMP_DAYS=7
+CRASH_DAYS=30
+TRASH_DAYS=30
 
 # Safety rails: these paths are never deleted recursively.
 readonly -a PROTECTED_PATHS=(
@@ -46,6 +48,8 @@ Opzioni:
   --journal-size <v>   Limite size journal (default: $KEEP_JOURNAL_SIZE)
   --tmp-days <n>       Eta minima file da eliminare in /tmp (default: $TMP_DAYS)
   --var-tmp-days <n>   Eta minima file da eliminare in /var/tmp (default: $VAR_TMP_DAYS)
+  --crash-days <n>     Eta minima report di crash da eliminare (default: $CRASH_DAYS)
+  --trash-days <n>     Eta minima file nel Cestino utente da eliminare (default: $TRASH_DAYS)
   -h, --help           Mostra questo aiuto
 
 Esempi:
@@ -170,15 +174,20 @@ repair_package_state() {
 
 apt_cleanup() {
   wait_for_apt_locks
+  # Solo pulizia: niente upgrade/full-upgrade qui. Aggiornare i pacchetti e'
+  # compito di Aggiornamenti.sh - un cleaner non deve installare/rimuovere
+  # software per evitare di rompere il sistema durante una semplice pulizia.
   run_cmd "Aggiornamento indici pacchetti" apt-get update
-
-  # Dist-upgrade can remove/install packages and is useful for long-lived systems.
-  run_cmd "Upgrade pacchetti installati" apt-get upgrade -y
-  run_cmd "Full upgrade sistema" apt-get full-upgrade -y
 
   run_cmd "Pulizia cache APT" apt-get clean
   run_cmd "Pulizia cache obsoleta APT" apt-get autoclean -y
   run_cmd "Rimozione dipendenze inutilizzate" apt-get autoremove --purge -y
+}
+
+cleanup_apt_partial() {
+  # Residui di download interrotti: sicuri da rimuovere, non sono paccheti installati.
+  safe_find_delete "/var/cache/apt/archives/partial" "-type f"
+  safe_find_delete "/var/lib/apt/lists/partial" "-type f"
 }
 
 purge_rc_packages() {
@@ -275,6 +284,7 @@ cleanup_user_caches() {
     ".cache/google-chrome|-type f \\( -path '*/Cache/*' -o -path '*/Code Cache/*' \\)"
     ".cache/chromium|-type f \\( -path '*/Cache/*' -o -path '*/Code Cache/*' \\)"
     ".cache/mozilla/firefox|-type f -path '*/cache2/*'"
+    ".config/Code|-type f \\( -path '*/Cache/*' -o -path '*/CachedData/*' -o -path '*/Code Cache/*' -o -path '*/GPUCache/*' \\)"
   )
 
   local home
@@ -289,7 +299,22 @@ cleanup_user_caches() {
 }
 
 cleanup_rotated_logs() {
-  safe_find_delete "/var/log" "-type f \\( -name '*.log.[0-9]*' -o -name '*.log.old' -o -name '*.gz' \\) -mtime +7"
+  # Copre anche le rotazioni senza ".log" nel nome (es. "syslog.1", "auth.1"),
+  # non solo "*.log.N"/"*.log.old"/"*.gz" come nella versione precedente.
+  safe_find_delete "/var/log" "-type f -regextype posix-extended -regex '.*\\.([0-9]+|old)(\\.gz)?\$' -mtime +7"
+}
+
+cleanup_crash_reports() {
+  # Report whoopsie/apport: solo dati diagnostici, mai lo stato di un'app.
+  safe_find_delete "/var/crash" "-type f \\( -name '*.crash' -o -name '*.upload' -o -name '*.uploaded' \\) -mtime +$CRASH_DAYS"
+}
+
+cleanup_trash() {
+  local home
+  while IFS= read -r home; do
+    safe_find_delete "$home/.local/share/Trash/files" "-type f -mtime +$TRASH_DAYS"
+    safe_find_delete "$home/.local/share/Trash/info" "-type f -name '*.trashinfo' -mtime +$TRASH_DAYS"
+  done < <(for_each_regular_user_home)
 }
 
 cleanup_dev_caches() {
@@ -368,6 +393,16 @@ parse_args() {
         require_value "--var-tmp-days" "${1:-}"
         VAR_TMP_DAYS="${1:-}"
         ;;
+      --crash-days)
+        shift
+        require_value "--crash-days" "${1:-}"
+        CRASH_DAYS="${1:-}"
+        ;;
+      --trash-days)
+        shift
+        require_value "--trash-days" "${1:-}"
+        TRASH_DAYS="${1:-}"
+        ;;
       --safe-y|--yes-safe)
         SAFE_MODE=true
         ASSUME_YES=true
@@ -402,11 +437,14 @@ main() {
 
   repair_package_state
   apt_cleanup
+  cleanup_apt_partial
   purge_rc_packages
   cleanup_journal
   cleanup_snap_disabled_revisions
   cleanup_tmp_dirs
   cleanup_rotated_logs
+  cleanup_crash_reports
+  cleanup_trash
   cleanup_user_caches
 
   if ! $SAFE_MODE; then
