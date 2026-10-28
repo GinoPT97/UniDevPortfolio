@@ -1,109 +1,115 @@
 # UniDevPortfolio
 
-Portfolio tecnico universitario: raccolta strutturata di progetti, esercizi e soluzioni sviluppate durante il percorso accademico e attività di approfondimento personale presso l'Università degli Studi di Napoli Federico II.
+Portfolio tecnico universitario e archivio didattico di esercizi, soluzioni, librerie e progetti sviluppati durante il percorso accademico presso l'Università degli Studi di Napoli Federico II.
 
-La repository funge da **archivio didattico organizzato** per corso, linguaggio e area tematica — non è un singolo prodotto, ma un'ampia collezione di esperienze di apprendimento che spaziano da algoritmi e strutture dati a sistemi operativi, programmazione mobile e paradigmi dichiarativi.
+Questa repository non è un singolo prodotto software: è una raccolta organizzata per linguaggio, corso e area tematica, pensata come riferimento pratico per ripasso, studio e sviluppo personale.
 
----
+## Obiettivo
 
-## 📚 Contenuti Principali
-
-### Linguaggi e Tecnologie
-
-| Categoria | Contenuto |
-| --- | --- |
-| **Linguaggi imperativi** | C, C++, Java, Kotlin, JavaScript, TypeScript, Python, Rust, Bash |
-| **Linguaggi dichiarativi** | Prolog, Standard ML |
-| **Basso livello** | Assembly Motorola 68000 |
-| **Database** | SQL, PostgreSQL |
-| **Tecnologie e framework** | Docker, Gradle, CMake, Makefile, Android |
-
-### Aree Tematiche Coperte
-
-- **Programmazione di sistema**: processi, thread, socket TCP/UDP, pipe, concorrenza
-- **Algoritmi e strutture dati**: liste, stack, code, heap, BST, grafi, ricerca e ordinamento
-- **Sistemi operativi**: fork, gestione memoria, sincronizzazione
-- **Programmazione mobile**: Android Kotlin
-- **Database**: SQL, query, schema relazionali
-- **Scripting e automation**: Shell script, Python per analisi dati
-- **Logica computazionale**: Prolog, programmazione funzionale (ML)
+- raccogliere esercizi e soluzioni di base avanzata
+- documentare progetti universitari e mini-applicazioni
+- offrire una mappa chiara di apprendimento per linguaggi e temi
+- mantenere un archivio navigabile, anche fuori dal contesto universitario
 
 ---
 
-## 📁 Struttura della Repository
+## Panoramica
 
-### Fondamenti e Programmazione Procedurale
+### Linguaggi e tecnologie trattati
 
-| Percorso | Descrizione |
-| --- | --- |
-| `C - Generico/` | Fondamenti del C: ricorsione, vettori, matrici, ordinamenti, file, stack e progetti multi-file |
-| `C - LAB/` | Tracce di laboratorio ed esercizi d'esame in C con soluzioni complete |
-| `C - LASD/` | Algoritmi e strutture dati in C: implementazioni con CMake e soluzioni d'esame |
-| `Librerie-C/` | Librerie riutilizzabili: stack, code, heap, liste, BST, grafi e funzioni di input |
-| `C++/` | Esercizi organizzati per funzioni e strutture dati in C++ |
-| `Java - Personale/` | Studio Java: pattern MVC, esercizi elementari, piccoli progetti didattici |
+- Linguaggi imperativi e di sistema: C, C++, Java, Kotlin, Rust, Bash
+- Linguaggi dichiarativi e funzionali: Prolog, Standard ML
+- Scripting e analisi: Python, SQL
+- Basso livello: Assembly Motorola 68000
+- Database e infrastruttura: PostgreSQL, Docker, Gradle, CMake, Makefile
 
-### Sistemi Operativi e Networking
+### Aree di studio
 
-| Percorso | Descrizione |
-| --- | --- |
-| `C - LSO/` | Esercizi e soluzioni d'esame su sistemi operativi: fork, pipe, thread, socket, client/server concorrenti |
-| `Assembly/` | Programmi su Assembly Motorola 68000: operazioni, stringhe, indirizzamenti, strutture dati |
-
-### Progetti Completi e Applicazioni
-
-| Percorso | Descrizione |
-| --- | --- |
-| `ProgettoLSO24-25/` | **Progetto capstone** (in fase di ultimazione): server C concorrente + database PostgreSQL + client Android Kotlin. Docker compose con profilo opzionale per l'emulatore Android. |
-| `Python/` | Script, analisi numerica, data science, plotting, piccoli esempi di rete TCP e progetti di analisi dati |
-| `Rust/` | Progetti Cargo per apprendimento del linguaggio: hello world, fattoriale, Fibonacci, numeri primi, calcolatrice interattiva |
-
-### Paradigmi Dichiarativi e Funzionali
-
-| Percorso | Descrizione |
-| --- | --- |
-| `ML/` | Esercizi in Standard ML: funzioni, alberi, map/reduce, pattern matching, tracce d'esame |
-| `Prolog/` | Logica e programmazione dichiarativa: liste, grafi, puzzle, sudoku, giochi |
-| `SQL/` | Script SQL, tracce d'esame con query complesse, operazioni di normalizzazione e join |
-
-### Utility e Supporto
-
-| Percorso | Descrizione |
-| --- | --- |
-| `Ubuntu-Utility/` | Script shell e appunti pratici per ambienti Ubuntu/Linux |
-| `FileProgrammi/` | Configurazioni e materiale di supporto secondario |
+- algoritmi e strutture dati
+- sistemi operativi e networking
+- programmazione concorrente
+- database e SQL
+- programmazione mobile Android
+- logica computazionale e paradigma dichiarativo
+- data science e analisi dati
 
 ---
 
-## 🚀 Punti di Ingresso Consigliati
+## Mappa della repository
 
-Scegli in base ai tuoi obiettivi di apprendimento:
+### Fondamenti e programmazione procedurale
 
-| Obiettivo | Dove iniziare |
+| Cartella | Descrizione |
 | --- | --- |
-| **Imparare C da zero** | `C - Generico/` |
-| **Strutture dati e algoritmi** | `C - LASD/` o `Librerie-C/` |
-| **Sistemi operativi: processi, thread, socket** | `C - LSO/Socket-Esempi/` o `C - LSO/Esami-Svolti/` |
-| **Architettura multi-tier completa** | `ProgettoLSO24-25/` |
-| **Backend con Docker** | `ProgettoLSO24-25/` |
-| **Analisi dati e scripting** | `Python/` |
-| **Imparare Rust** | `Rust/CalcolatriceInterattiva/` o `Rust/basic/` |
-| **Logica e programmazione dichiarativa** | `Prolog/` e `ML/` |
+| `C - Generico/` | esercizi e mini-progetti in C: ricorsione, vettori, matrici, file, strutture dati, programmi multi-file |
+| `C - LAB/` | tracce di laboratorio, esercizi d'esame e soluzioni in C |
+| `C - LASD/` | algoritmi e strutture dati in C con soluzioni e template d'esame |
+| `Librerie-C/` | librerie riutilizzabili: liste, stack, code, heap, BST, grafi, input helpers |
+| `C++/` | esercizi e implementazioni in C++ orientate a funzioni e strutture dati |
+| `Java - Personale/` | esercitazioni Java, pattern MVC, semplici progetti didattici |
+
+### Sistemi operativi, networking e basso livello
+
+| Cartella | Descrizione |
+| --- | --- |
+| `C - LSO/` | esercizi e soluzioni su processi, thread, pipe, socket e sistemi operativi |
+| `Assembly/` | programmi in Assembly Motorola 68000 con operazioni, stringhe e indirizzamenti |
+
+### Progetti completi e applicazioni
+
+| Cartella | Descrizione |
+| --- | --- |
+| `ProgettoLSO24-25/` | progetto capstone universitario: backend concorrente in C, database PostgreSQL, client Android/Kotlin e Docker |
+| `Python/` | script, analisi numerica, progetti di ricerca, data analysis e piccoli esempi di rete |
+| `Rust/` | progetti introduttivi e applicativi in Rust: calcolatrice, fibonacci, numeri primi, hello world |
+
+### Paradigmi dichiarativi e funzionali
+
+| Cartella | Descrizione |
+| --- | --- |
+| `ML/` | esercizi in Standard ML: funzioni, alberi, pattern matching, map/reduce |
+| `Prolog/` | logica computazionale, puzzle, grafi, sudoku e giochi |
+| `SQL/` | script SQL e tracce d'esame su query, join, normalizzazione e schema relazionale |
+
+### Utility e supporto
+
+| Cartella | Descrizione |
+| --- | --- |
+| `Ubuntu-Utility/` | script shell, setup Linux e strumenti utili per ambienti Ubuntu |
+| `FileProgrammi/` | configurazioni, file di supporto e tool secondari |
+| `bin/` | file eseguibili o artefatti vari |
 
 ---
 
-## ⚡ Quick Start
+## Percorsi consigliati
+
+Scegli la cartella in base al tuo obiettivo di studio:
+
+| Obiettivo | Punto di partenza |
+| --- | --- |
+| imparare C da zero | `C - Generico/` |
+| strutture dati e algoritmi | `C - LASD/`, `Librerie-C/` |
+| sistemi operativi e socket | `C - LSO/Socket-Esempi/`, `C - LSO/Esami-Svolti/` |
+| architettura multi-tier | `ProgettoLSO24-25/` |
+| analisi dati e scripting | `Python/` |
+| Rust | `Rust/CalcolatriceInterattiva/`, `Rust/basic/` |
+| logica e programmazione dichiarativa | `Prolog/`, `ML/` |
+| SQL | `SQL/` |
+
+---
+
+## Quick start
 
 ### Clonazione
 
 ```bash
-git clone https://github.com/GinoPT97/UniDevPortfolio.git
+git clone git@github.com:Kenobi1797/UniDevPortfolio.git
 cd UniDevPortfolio
 ```
 
-### Prerequisiti Generali
+### Prerequisiti generali
 
-Per lavorare con la maggior parte del materiale:
+Per lavorare con la maggior parte del materiale, in un ambiente Ubuntu/Debian:
 
 ```bash
 sudo apt update
@@ -111,26 +117,30 @@ sudo apt install -y build-essential gcc g++ make cmake default-jdk \
   nodejs npm python3 python3-pip postgresql-client docker-compose
 ```
 
-Per **Rust**:
+Per Rust:
+
 ```bash
 rustup default stable
 ```
 
-### Esempi di Esecuzione
+### Esempi di esecuzione
 
-**Progetto LSO — solo backend (database + server C):**
+#### Progetto LSO: backend solo database + server
+
 ```bash
 cd ProgettoLSO24-25
 docker compose up --build
 ```
 
-**Progetto LSO — stack completo con emulatore Android:**
+#### Progetto LSO: stack completo con emulatore Android
+
 ```bash
 cd ProgettoLSO24-25
 docker compose --profile android up --build
 ```
 
-**Script Python con virtual environment:**
+#### Script Python con virtual environment
+
 ```bash
 cd Python/Risk-Analisis
 python3 -m venv .venv
@@ -139,13 +149,15 @@ pip install -r requirements.txt
 python3 EarthquakeRiskAnalysis.py
 ```
 
-**Progetto Rust:**
+#### Progetto Rust
+
 ```bash
 cd Rust/CalcolatriceInterattiva
 cargo run
 ```
 
-**Esempio C con socket TCP:**
+#### Esempio C con socket TCP
+
 ```bash
 cd "C - LSO/Socket-Esempi"
 gcc -o serverTCP ServerTCP.c
@@ -156,45 +168,45 @@ gcc -o clientTCP ClientTCP.c
 
 ---
 
-## 📖 Documentazione Specifica
+## Documentazione specifica
 
-Le cartelle più complesse hanno **README dedicati**:
+Per i progetti più complessi, la documentazione locale è la fonte più affidabile:
 
-- [`ProgettoLSO24-25/README.md`](ProgettoLSO24-25/README.md) — Setup Docker, architettura Android, profilo emulatore
+- [`ProgettoLSO24-25/README.md`](ProgettoLSO24-25/README.md) — setup Docker, architettura del sistema e profilo Android
 
-**Consiglio**: per i progetti completi, leggi prima il README locale, poi usa questo file come mappa di orientamento generale.
-
----
-
-## 📋 Informazioni Utili
-
-### Organizzazione della Repository
-
-- **Quasi ogni cartella è autonoma**: non esiste una build unica. Ogni progetto ha prerequisiti e setup propri.
-- **Ampia varietà didattica**: convivono esercizi piccoli, librerie riutilizzabili e progetti enterprise-like.
-- **Materiale eterogeneo**: oltre a codice eseguibile, contiene configurazioni, script e appunti di supporto.
-- **Storicità**: alcune cartelle riflettono le piattaforme o ambienti usati durante il corso; alcuni progetti sono evoluti nel tempo.
-
-### Dimensione e Natura
-
-- Repository size: ~535 MB (working tree, escluso `.git`)
-- Creato: Settembre 2023
-- Licenza: **MIT** (vedi [`LICENSE`](LICENSE))
-- Ateneo: Università degli Studi di Napoli Federico II
+Questa root README funge da indice generale e guida di orientamento.
 
 ---
 
-## 👤 Contatti
+## Nota sulla struttura
 
-- **GitHub**: [@GinoPT97](https://github.com/GinoPT97)
-- **Università**: Università degli Studi di Napoli Federico II
-
----
-
-## 📄 Licenza
-
-Questo repository è distribuito sotto licenza **MIT**. Consulta [`LICENSE`](LICENSE) per i dettagli completi.
+- la repository è composta da cartelle quasi autonome
+- non esiste un'unica build centrale o un solo comando di esecuzione condiviso
+- ogni modulo può richiedere dipendenze, toolchain o configurazioni diverse
+- alcuni contenuti riflettono ambienti o tecnologie usate nel percorso universitario e sono mantenuti come riferimento storico didattico
 
 ---
 
-**Nota**: Questo portfolio riflette un percorso accademico ricco e variegato. È pensato sia come riferimento tecnico per chi apprende che come documentazione dell'evoluzione didattica in informatica.
+## Informazioni utili
+
+- dimensione approssimativa: circa 535 MB (working tree, escluso `.git`)
+- anno di inizio: settembre 2023
+- licenza: MIT ([`LICENSE`](LICENSE))
+- ateneo: Università degli Studi di Napoli Federico II
+
+---
+
+## Contatti
+
+- GitHub: [@Kenobi1797](https://github.com/Kenobi1797)
+- Università: Università degli Studi di Napoli Federico II
+
+---
+
+## Licenza
+
+Questo repository è distribuito sotto licenza MIT. Consulta [`LICENSE`](LICENSE) per i dettagli completi.
+
+---
+
+Questo portfolio riflette un percorso accademico ampio e variegato, pensato come materiale di studio, riferimento tecnico e archivio personale di esperienze pratiche in informatica.
