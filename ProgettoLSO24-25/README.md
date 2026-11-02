@@ -1,25 +1,48 @@
-# ProgettoLSO24-25
+# Progetto LSO 2024-25
 
-Questa cartella contiene la versione iniziale del progetto con client Android, che e in fase di ultimazione.
+Progetto didattico per il corso di Sistemi Operativi. Questa cartella conserva la variante con server C, database PostgreSQL e client Android/Kotlin.
 
-La versione completa e ultimata del progetto e disponibile nella repository originale, dove il client è stato evoluto in versione web.
+## Architettura
 
-## Docker
+- **Server:** applicazione C con gestione di connessioni e accesso al database
+- **Database:** PostgreSQL 16, inizializzato dal server
+- **Client:** applicazione Android/Kotlin
+- **Ambiente:** Docker Compose; il client e l'emulatore Android sono inclusi nel profilo `android`
 
-L'avvio completo con emulatore Android e client mobile richiede tempo al primo utilizzo, perche l'immagine `budtmo/docker-android:emulator_14.0` e molto pesante da scaricare.
+## Prerequisiti
 
-Per un avvio piu rapido della parte base del progetto usa:
+- Docker Engine con Docker Compose v2
+- Per il profilo Android: supporto KVM (`/dev/kvm`) e risorse adeguate
+- Una chiave API TMDB per importare i dati dei film
+
+## Configurazione TMDB
+
+Copia il template e inserisci la tua chiave API personale:
+
+```bash
+cp .env.example .env
+```
+
+Apri `.env` e imposta `TMDB_API_KEY`. Il file `.env` è escluso da Git: non pubblicare né committare chiavi personali. Senza la chiave il server può avviarsi, ma il popolamento del database da TMDB non viene eseguito.
+
+## Avvio
+
+Avvia database e server:
 
 ```bash
 docker compose up --build
 ```
 
-Questo comando avvia solo i servizi base come database e server.
-
-Per avviare anche l'emulatore Android e il client mobile usa invece:
+Per avviare anche emulatore e client Android:
 
 ```bash
 docker compose --profile android up --build
 ```
 
-Dopo il primo download, i successivi avvii saranno piu veloci finche le immagini restano nella cache locale di Docker.
+Il primo avvio può richiedere tempo, soprattutto per il download dell'immagine dell'emulatore Android. Per fermare e rimuovere i container:
+
+```bash
+docker compose --profile android down
+```
+
+I dati PostgreSQL sono conservati nel volume Docker `db-data`; per istruzioni sui servizi, porte e profili, consulta [`docker-compose.yml`](./docker-compose.yml).

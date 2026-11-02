@@ -16,6 +16,7 @@ Applicazione didattica multi-servizio con server concorrente in C, database Post
 
 - **Tecnologie:** C, socket, PostgreSQL, Docker Compose, Android, Kotlin, Gradle
 - **Avvio e note sullo stato:** [README del progetto](./ProgettoLSO24-25/README.md)
+- **Configurazione:** per importare i film da TMDB serve una chiave API; parti dal [template `.env.example`](./ProgettoLSO24-25/.env.example)
 - **Codice:** [server](./ProgettoLSO24-25/Server-Side/) · [client Android](./ProgettoLSO24-25/Client/)
 
 ### Risk Analysis — analisi di eventi sismici
@@ -100,6 +101,8 @@ cd UniDevPortfolio
 
 ```bash
 cd ProgettoLSO24-25
+cp .env.example .env
+# Inserisci la tua chiave TMDB_API_KEY nel file .env
 docker compose up --build
 ```
 
