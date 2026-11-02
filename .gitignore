@@ -86,3 +86,6 @@ pnpm-debug.log*
 .env.*
 !.env.example
 !.env.*.example
+
+# Local access credentials
+ProgettoLSO24-25/Accessi.txt

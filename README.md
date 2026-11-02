@@ -110,6 +110,8 @@ docker compose up --build
 
 ```bash
 cd ProgettoLSO24-25
+cp .env.example .env
+# Inserisci la tua chiave TMDB_API_KEY nel file .env
 docker compose --profile android up --build
 ```
 
