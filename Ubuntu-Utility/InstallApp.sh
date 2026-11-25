@@ -6,7 +6,7 @@ echo "Aggiornamento del sistema..."
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y \
   ca-certificates curl gnupg lsb-release wget apt-transport-https net-tools \
-  zram-config preload \
+  zram-config \
   build-essential git git-lfs git-filter-repo cmake gdebi dos2unix zenity linux-tools-common \
   openjdk-21-jdk \
   postgresql redis tor \

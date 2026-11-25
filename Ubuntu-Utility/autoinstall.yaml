@@ -17,7 +17,6 @@ autoinstall:
 
     # --- Ottimizzazione sistema ---
     - zram-config
-    - preload
 
 
     # --- Pacchetti base sviluppo ---
