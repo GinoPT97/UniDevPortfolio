@@ -149,7 +149,7 @@ sudo snap install --classic eclipse
 sudo snap install intellij-idea-ultimate --classic
 sudo snap install node --classic
 sudo snap install telegram-desktop teams-for-linux pgadmin4 perplexity-desktop docker
-sudo snap install firefox thunderbird steam
+sudo snap install firefox thunderbird
 
 echo "Installazione di Docker..."
 sudo snap start docker

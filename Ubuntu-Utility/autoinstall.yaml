@@ -163,7 +163,6 @@ autoinstall:
     - curtin in-target -- snap install pgadmin4
     - curtin in-target -- snap install firefox           # [AGGIUNTO] presente sul PC
     - curtin in-target -- snap install thunderbird       # [AGGIUNTO] presente sul PC
-    - curtin in-target -- snap install steam             # [AGGIUNTO] presente sul PC
 
     # --- Docker ---
     - curtin in-target -- snap install docker
