@@ -69,12 +69,12 @@ Algoritmi e strutture dati · processi e thread · concorrenza · pipe e socket 
 | [Java - Personale](./Java%20-%20Personale/) | Esercitazioni Java e piccoli progetti, inclusi esempi MVC |
 | [Assembly](./Assembly/) | Esempi e tracce in Assembly Motorola 68000 |
 | [ProgettoLSO24-25](./ProgettoLSO24-25/) | Progetto Android e server/database per il corso di Sistemi Operativi |
-| [Python](./Python/) | Esercizi, analisi dati, progetti di ricerca ed esempi di rete |
+| [Python](./Python/) | Esercizi, analisi dati, progetti di ricerca, esempi di rete e piccole app personali (`Cameriere.py`, `Arbitraggio.py`, `Dashboard.py`: gestione di compensi e rimborsi con GUI Tkinter) |
 | [Rust](./Rust/) | Progetti Cargo introduttivi e applicativi |
 | [ML](./ML/) | Esercizi in Standard ML |
 | [Prolog](./Prolog/) | Programmazione logica: liste, grafi, puzzle e giochi |
 | [SQL](./SQL/) | Query, join, normalizzazione e tracce d'esame |
-| [Ubuntu-Utility](./Ubuntu-Utility/) | Script e appunti per ambienti Ubuntu/Linux |
+| [Ubuntu-Utility](./Ubuntu-Utility/) | Script e appunti per ambienti Ubuntu/Linux: installazione e autoinstall (`InstallApp.sh`, `autoinstall.yaml`), manutenzione (`Aggiornamenti.sh`, `Ottimizzazioni.sh`, `Prestazioni.sh`), utility e setup di VM |
 
 ### Percorsi di studio
 
