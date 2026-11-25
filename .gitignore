@@ -78,6 +78,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Generated frontend/build output and coverage
+.next/
+dist/
+coverage/
+
 # Jupyter generated state
 .ipynb_checkpoints/
 
