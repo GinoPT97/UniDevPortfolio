@@ -29,6 +29,8 @@ core.*
 *.dylib
 *.dll
 *.exe
+!FileProgrammi/asim.exe
+!FileProgrammi/asimtool.exe
 *.out
 *.gch
 *.pch
